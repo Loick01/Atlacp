@@ -7,14 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(SDL2 REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2IMAGE REQUIRED SDL2_image)
+
 set(SOURCES
     src/main.cpp
     src/window.cpp
     src/event.cpp
     src/texture.cpp
+    src/file.cpp
 )
 
 add_executable(atlacp ${SOURCES})
 
-target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS})
-target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES})
+target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
+target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})

@@ -26,6 +26,10 @@ void Window::CreateWindow()
 void Window::InitSdl()
 {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) std::cout << "Failed to initialize SDL library\n";
+
+    // https://stackoverflow.com/questions/63000761/why-am-i-failing-to-initialize-sdl-image
+    int flags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if ((IMG_Init(flags) & flags) != flags) std::cout << "Failed to initialize SDL image library\n";
 }
 
 bool Window::HasError() 
