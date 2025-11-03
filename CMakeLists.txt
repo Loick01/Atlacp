@@ -11,7 +11,7 @@ set(SOURCES
     src/main.cpp
     src/window.cpp
     src/event.cpp
-    src/image.cpp
+    src/texture.cpp
 )
 
 add_executable(atlacp ${SOURCES})
