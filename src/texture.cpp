@@ -1,39 +1,42 @@
 #include "texture.hpp"
 
-std::map<std::string,SDL_Surface*> TextureController::m_textures;
+std::map<std::string,SDL_Texture*> TextureController::m_textures;
 
-TextureController::TextureController()
+TextureController::TextureController(SDL_Renderer* window_renderer) :
+    m_window_renderer(window_renderer)
 {
     LoadTextureFromFile("../cpp.bmp");
 }
 
 TextureController::~TextureController()
 {
-    std::map<std::string, SDL_Surface*>::iterator it;
+    std::map<std::string, SDL_Texture*>::iterator it;
     for (it = m_textures.begin() ; it != m_textures.end() ; it++){
-        // std::cout << "Delete texture : " << it->first << "\n";
-        SDL_FreeSurface(it->second);
+        SDL_DestroyTexture(it->second);
     }
 }
 
 void TextureController::LoadTextureFromFile(const char* filepath)
 {
-    SDL_Surface* s = SDL_LoadBMP(filepath);
-    if (!s) std::cout << "Failed to load this texture : " << filepath << "\n";
-    m_textures[filepath] = s;
+    SDL_Surface* surface = SDL_LoadBMP(filepath);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer,surface);
+    if (!surface) std::cout << "Failed to load this texture : " << filepath << "\n";
+    else if (!texture) std::cout << "Failed to convert this surface into a texture : " << filepath << "\n";
+    SDL_FreeSurface(surface);
+    m_textures[filepath] = texture;
 }
 
 void TextureController::DeleteTexture(const char* texture_name)
 {
-    std::map<std::string, SDL_Surface*>::iterator it = m_textures.find(texture_name);
+    std::map<std::string, SDL_Texture*>::iterator it = m_textures.find(texture_name);
     if (it != m_textures.end()){
-        SDL_FreeSurface(it->second);
+        SDL_DestroyTexture(it->second);
         m_textures.erase(it);
     }
     else std::cout << "Can't delete " << texture_name << ", not in the map\n";
 }
 
-void TextureController::DrawTexture(const char* texture_name, SDL_Surface* window_surface, SDL_Rect position)
+void TextureController::RenderTexture(const char* texture_name, const SDL_Rect position)
 {
-    SDL_BlitSurface(m_textures[texture_name], NULL, window_surface, &position);
+    SDL_RenderCopy(m_window_renderer, m_textures[texture_name], nullptr, &position);
 }

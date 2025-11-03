@@ -11,16 +11,18 @@ class Window
         void InitSdl();
 
         SDL_Window* m_window;
-        SDL_Surface* m_surface;
+        SDL_Renderer* m_renderer;
+        const SDL_Color m_bg_color;
         const unsigned int m_width;
         const unsigned int m_height;
         const char* m_title;
 
     public:
-        Window(const char* title, const unsigned int width, const unsigned int height);
+        Window(const char* title, const unsigned int width, const unsigned int height, const SDL_Color bg_color);
         ~Window();
 
-        SDL_Surface* GetSurface();
+        SDL_Renderer* GetRenderer();
         bool HasError();
-        void UpdateSurface();
+        void ClearRenderer(const SDL_Color);
+        void UpdateRender();
 };
