@@ -16,6 +16,7 @@ set(SOURCES
     src/event.cpp
     src/texture.cpp
     src/file.cpp
+    src/tilemap.cpp
 )
 
 add_executable(atlacp ${SOURCES})

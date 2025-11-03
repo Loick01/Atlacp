@@ -9,12 +9,11 @@ class FileReader
 {
     private:
         std::ifstream m_input_file;
-        std::string m_current_line;
     public:
         FileReader();
         ~FileReader();
 
         void OpenFile(const char* filepath);
         void CloseFile();
-        std::vector<unsigned char> GetMapFromFile(const char* filepath);
+        std::vector<unsigned int> GetMapFromFile(const char* filepath, unsigned int& map_width, unsigned int& map_height, unsigned int& tile_size);
 };

@@ -6,6 +6,7 @@ TextureController::TextureController(SDL_Renderer* window_renderer) :
     m_window_renderer(window_renderer)
 {
     LoadTextureFromFile("../cpp.png");
+    LoadTextureFromFile("../tileset.png");
 }
 
 TextureController::~TextureController()
@@ -37,7 +38,7 @@ void TextureController::DeleteTexture(const char* texture_name)
     else std::cout << "Can't delete " << texture_name << ", not in the map\n";
 }
 
-void TextureController::RenderTexture(const char* texture_name, const SDL_Rect src, const SDL_Rect dst)
+void TextureController::RenderTexture(const char* texture_name, const SDL_Rect src, const SDL_Rect dst) const
 {
     SDL_RenderCopy(m_window_renderer, m_textures[texture_name], &src, &dst);
 }

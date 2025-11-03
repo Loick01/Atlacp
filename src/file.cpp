@@ -21,17 +21,16 @@ void FileReader::CloseFile()
     m_input_file.close();
 }
 
-std::vector<unsigned char> FileReader::GetMapFromFile(const char* filepath)
+std::vector<unsigned int> FileReader::GetMapFromFile(const char* filepath, unsigned int& map_width, unsigned int& map_height, unsigned int& tile_size)
 {
     OpenFile(filepath);
-    std::vector<unsigned char> map;
-    unsigned int map_width;
-    unsigned int map_height;
+    std::vector<unsigned int> map;
     m_input_file >> map_width;
     m_input_file >> map_height;
+    m_input_file >> tile_size;
     map.reserve(map_width*map_height);
     
-    unsigned char current_value;
+    unsigned int current_value;
     while (m_input_file >> current_value){
         map.push_back(current_value);
     }

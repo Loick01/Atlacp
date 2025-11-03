@@ -5,6 +5,7 @@
 #include "texture.hpp"
 #include "window.hpp"
 #include "file.hpp"
+#include "tilemap.hpp"
 
 int main(){
     Window* window = new Window("Atlacp", 1600, 900, {100,100,100});
@@ -12,25 +13,20 @@ int main(){
         return -1;
     }
     EventController* events = new EventController();
-    TextureController* textures = new TextureController(window->GetRenderer());
-    FileReader* file = new FileReader();
-    std::vector<unsigned char> map = file->GetMapFromFile("../map.txt");
-
-    // For a tile, this SDL_Rect for position will be in a struct with its SDL_Texture
-    const unsigned int image_width = 212;
-    const unsigned int image_height = 238;
-
-    const SDL_Rect src{0,0,image_width,image_height};
-    const SDL_Rect dst{50,50,image_width,image_height};
+    TextureController* texture_controller = new TextureController(window->GetRenderer());
+    FileReader* file_reader = new FileReader();
+    Tilemap* tilemap = new Tilemap(file_reader, "../map.txt", "../tileset.png");
     
     bool gameloop = true;
     while(gameloop){
         if (events->HandleEvents()==-1) gameloop=false;
-        textures->RenderTexture("../cpp.png", src, dst);
+        tilemap->DrawMap(texture_controller);
         window->UpdateRender();        
     }
 
-    delete textures;
+    delete tilemap;
+    delete file_reader;
+    delete texture_controller;
     delete events;
     delete window;
     return 0;

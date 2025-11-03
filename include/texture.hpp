@@ -20,5 +20,5 @@ class TextureController
 
         void LoadTextureFromFile(const char* filepath);
         void DeleteTexture(const char* texture_name);
-        void RenderTexture(const char* texture_name, const SDL_Rect src, const SDL_Rect dst);
+        void RenderTexture(const char* texture_name, const SDL_Rect src, const SDL_Rect dst) const;
 };
