@@ -5,15 +5,19 @@
 #include <string>
 #include <vector>
 
+#include <stdint.h>
+
 class FileReader
 {
     private:
         std::ifstream m_input_file;
+        void ReadHeaderMapFile(unsigned char& map_width, unsigned char& map_height, unsigned char& tile_size);
+
     public:
         FileReader();
         ~FileReader();
 
-        void OpenFile(const char* filepath);
+        void OpenFile(const std::string& filepath);
         void CloseFile();
-        std::vector<unsigned int> GetMapFromFile(const char* filepath, unsigned int& map_width, unsigned int& map_height, unsigned int& tile_size);
+        std::vector<unsigned char> GetMapFromFile(const std::string& filepath, unsigned char& map_width, unsigned char& map_height, unsigned char& tile_size);
 };

@@ -15,12 +15,12 @@ int main(){
     EventController* events = new EventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Tilemap* tilemap = new Tilemap(file_reader, "../map.txt", "../tileset.png");
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png");
     
     bool gameloop = true;
     while(gameloop){
         if (events->HandleEvents()==-1) gameloop=false;
-        tilemap->DrawMap(texture_controller);
+        tilemap->DrawMap();
         window->UpdateRender();        
     }
 

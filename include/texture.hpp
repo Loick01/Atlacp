@@ -10,15 +10,14 @@
 class TextureController
 {
     private:
-        // Should use unordered_map ?
-        static std::map<std::string,SDL_Texture*> m_textures;
+        std::map<std::string,SDL_Texture*> m_textures;
         SDL_Renderer* m_window_renderer;
 
     public:
         TextureController(SDL_Renderer* window_renderer);
         ~TextureController();
 
-        void LoadTextureFromFile(const char* filepath);
-        void DeleteTexture(const char* texture_name);
-        void RenderTexture(const char* texture_name, const SDL_Rect src, const SDL_Rect dst) const;
+        void LoadTextureFromFile(const std::string& filepath);
+        void DeleteTexture(const std::string& texture_name);
+        void RenderTexture(const std::string& texture_name, const SDL_Rect& src, const SDL_Rect& dst) const;
 };
