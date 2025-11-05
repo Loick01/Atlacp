@@ -12,11 +12,13 @@ pkg_check_modules(SDL2IMAGE REQUIRED SDL2_image)
 
 set(SOURCES
     src/main.cpp
+    src/player.cpp
     src/window.cpp
     src/event.cpp
     src/texture.cpp
     src/file.cpp
     src/tilemap.cpp
+    src/drawable.cpp
 )
 
 add_executable(atlacp ${SOURCES})

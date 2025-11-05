@@ -9,8 +9,8 @@
 class Window
 {
     private:
-        void CreateWindow();
         void InitSdl() const;
+        void CreateWindow();
 
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
@@ -25,6 +25,6 @@ class Window
 
         SDL_Renderer* GetRenderer() const;
         bool HasError() const;
-        void ClearRenderer(const SDL_Color rgb) const;
+        void ClearRenderer() const;
         void UpdateRender() const;
 };

@@ -18,6 +18,6 @@ class TextureController
         ~TextureController();
 
         void LoadTextureFromFile(const std::string& filepath);
-        void DeleteTexture(const std::string& texture_name);
         void RenderTexture(const std::string& texture_name, const SDL_Rect& src, const SDL_Rect& dst) const;
+        void DeleteTexture(const std::string& texture_name);
 };

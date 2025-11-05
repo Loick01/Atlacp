@@ -1,5 +1,7 @@
 #pragma once 
 
+#include<iostream>
+
 #include <SDL2/SDL.h>
 
 class EventController
@@ -11,5 +13,5 @@ class EventController
     EventController();
     ~EventController();
 
-    int HandleEvents();
+    int HandleWindowEvents();
 };

@@ -3,8 +3,7 @@
 TextureController::TextureController(SDL_Renderer* window_renderer) :
     m_window_renderer(window_renderer)
 {
-    LoadTextureFromFile("../cpp.png");
-    LoadTextureFromFile("../tileset.png");
+
 }
 
 TextureController::~TextureController()
@@ -26,6 +25,12 @@ void TextureController::LoadTextureFromFile(const std::string& filepath)
     m_textures[filepath] = texture;
 }
 
+void TextureController::RenderTexture(const std::string& texture_name, const SDL_Rect& src, const SDL_Rect& dst) const
+{
+    // A texture with key=texture_name must already be in the map, otherwise std::out_of_range
+    SDL_RenderCopy(m_window_renderer, m_textures.at(texture_name), &src, &dst);
+}
+
 void TextureController::DeleteTexture(const std::string& texture_name)
 {
     std::map<std::string, SDL_Texture*>::iterator it = m_textures.find(texture_name);
@@ -33,11 +38,5 @@ void TextureController::DeleteTexture(const std::string& texture_name)
         SDL_DestroyTexture(it->second);
         m_textures.erase(it);
     }
-    else std::cout << "Can't delete " << texture_name << ", not in the map\n";
-}
-
-void TextureController::RenderTexture(const std::string& texture_name, const SDL_Rect& src, const SDL_Rect& dst) const
-{
-    // A texture with key=texture_name must already be in the map, otherwise std::out_of_range
-    SDL_RenderCopy(m_window_renderer, m_textures.at(texture_name), &src, &dst);
+    else std::cout << "Can't delete " << texture_name << ", it's not in the map (this should not happen)\n";
 }

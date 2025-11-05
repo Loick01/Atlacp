@@ -1,26 +1,27 @@
+#pragma once 
+
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <stdint.h>
 
+#include "drawable.hpp"
 #include "file.hpp"
-#include "texture.hpp"
+//#include "texture.hpp"
+#include "type.hpp"
 
-class Tilemap
+class Tilemap : public Drawable
 {
     private:
-        const TextureController* m_texture_controller;
-        FileReader* m_file_reader;
-        std::vector<unsigned char> m_map; // Tile index must not be greater than 255
-        unsigned char m_map_width;
-        unsigned char m_map_height;
-        unsigned char m_tile_size;
-        std::string m_tileset_filepath;
+        const FileReader* m_file_reader;
+        MapData m_map;
 
     public:
-        Tilemap(const TextureController* texture_controller, FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath);
+        Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath);
         ~Tilemap();
+
+        void LoadTileset(const std::string& tileset_filepath);
         void LoadMap(const std::string& filepath);
-        void DrawMap() const;
+        void DrawTexture() const override;
 };
