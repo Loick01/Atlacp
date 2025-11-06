@@ -11,6 +11,18 @@ Tilemap::~Tilemap()
 
 }
 
+unsigned char Tilemap::GetTileFromPosition(const Position p) const
+{
+    return m_map.map[p.y*m_map.width+p.x];
+}
+
+bool Tilemap::IsPositionEmpty(const Position p) const
+{
+    const unsigned char tile = GetTileFromPosition(p);
+    static const std::set<unsigned char> solid = {1, 3}; // Will be read in a txt file + could use a unordered set
+    return solid.find(tile) == solid.end();
+}
+
 void Tilemap::LoadTileset(const std::string& tileset_filepath)
 {
    Drawable::LoadTexture(tileset_filepath);

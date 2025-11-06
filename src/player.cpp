@@ -27,6 +27,7 @@ void Player::DrawTexture() const
 void Player::Update()
 {
     Position new_pos = m_player_position + m_event_controller->HandlePlayerEvent();
-    //if (m_tilemap->IsPositionValid());
-    m_player_position = new_pos;
+    if (m_tilemap->IsPositionEmpty(new_pos)){
+        m_player_position = new_pos;
+    }
 }
