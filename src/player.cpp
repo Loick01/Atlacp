@@ -1,10 +1,9 @@
 #include "player.hpp"
 
-Player::Player(TextureController* texture_controller, EventController* event_controller, const std::string& sprite_filepath):
-    Drawable(texture_controller, sprite_filepath), m_event_controller(event_controller)
+Player::Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller, const std::string& sprite_filepath):
+    Drawable(texture_controller, sprite_filepath), m_event_controller(event_controller), m_tilemap(tilemap)
 {
     m_player_position = {10, 1};
-    //m_texture_controller->LoadTextureFromFile(m_sprite_texture); // Only for constructor, then use LoadSprite to change the sprite texture
 }
 
 Player::~Player()
@@ -23,4 +22,11 @@ void Player::DrawTexture() const
     const SDL_Rect src{0,0,tile_size,tile_size};
     const SDL_Rect dst{m_player_position.x*tile_size,m_player_position.y*tile_size,tile_size,tile_size};
     m_texture_controller->RenderTexture(m_texture_filepath, src, dst);
+}
+
+void Player::Update()
+{
+    Position new_pos = m_player_position + m_event_controller->HandlePlayerEvent();
+    //if (m_tilemap->IsPositionValid());
+    m_player_position = new_pos;
 }

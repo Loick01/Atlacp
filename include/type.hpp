@@ -4,8 +4,13 @@
 
 struct Position
 {
-    unsigned char x; // map_width is also unsigned char
-    unsigned char y;
+    int x;
+    int y;
+
+    Position operator+(Position p) const
+    {
+        return Position{x+p.x, y+p.y};
+    }
 };
 
 struct MapData

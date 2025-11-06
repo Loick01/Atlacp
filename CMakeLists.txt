@@ -19,6 +19,7 @@ set(SOURCES
     src/file.cpp
     src/tilemap.cpp
     src/drawable.cpp
+    src/element.cpp
 )
 
 add_executable(atlacp ${SOURCES})

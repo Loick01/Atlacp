@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <set>
 
 #include "event.hpp"
 #include "file.hpp"
@@ -18,13 +19,21 @@ int main(){
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png");
-    Player* player = new Player(texture_controller, event_controller, "../cpp.png");
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png");
 
-    std::list<Drawable*> drawables = {tilemap, player}; // using a set would be better, but rendering order must be respected
-    
+    std::list<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
+    std::set<Element*> elements = {player};
+
     bool gameloop = true;
     while(gameloop){
+        window->ClearRenderer();
+        event_controller->PollAllEvents();
+        
         if (event_controller->HandleWindowEvents()==-1) gameloop=false;
+        
+        for (std::set<Element*>::iterator it = elements.begin() ; it != elements.end() ; it++){
+            (*it)->Update();
+        }
         
         for (std::list<Drawable*>::iterator it = drawables.begin() ; it != drawables.end() ; it++){
             (*it)->DrawTexture();

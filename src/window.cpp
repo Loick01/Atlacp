@@ -5,7 +5,7 @@ Window::Window(const std::string& title, const unsigned int width, const unsigne
 {
     InitSdl();
     CreateWindow();
-    ClearRenderer();
+    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
 }
 
 Window::~Window()
@@ -43,7 +43,6 @@ bool Window::HasError() const
 
 void Window::ClearRenderer() const
 {
-    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
     SDL_RenderClear(m_renderer);
 }
 
