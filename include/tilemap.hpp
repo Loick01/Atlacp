@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <iostream>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -13,7 +12,8 @@ class Tilemap : public Drawable
 {
     private:
         const FileReader* m_file_reader;
-        MapData m_map;
+        MapData m_map_data;
+        TilesetData m_tileset_data;
 
         unsigned char GetTileFromMapPosition(const MapPosition p) const;
 
@@ -24,8 +24,10 @@ class Tilemap : public Drawable
 
         unsigned int GetTotalWidth() const;
         unsigned int GetTotalHeight() const;
+        unsigned int GetTileSize() const;
         bool IsMapPositionEmpty(const MapPosition p) const;
         void LoadTileset(const std::string& tileset_filepath);
+        void LoadTilesetHeader(const std::string& tileset_header);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;
 };

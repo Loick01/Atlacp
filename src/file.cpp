@@ -15,16 +15,15 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
     unsigned int v;
     input >> v; m.width = v;
     input >> v; m.height = v;
-    input >> v; m.tile_size = v;
 }
 
-MapData FileReader::GetMapFromFile(const std::string& filepath) const
+void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) const
 {
     std::ifstream input;
     input.open(filepath);
     
-    MapData data;
     ReadHeaderMapFile(input, data);
+    data.map.clear();
     data.map.reserve(data.width*data.height);
     
     unsigned int current_value;
@@ -33,5 +32,20 @@ MapData FileReader::GetMapFromFile(const std::string& filepath) const
     }
 
     input.close();
-    return data;
+}
+
+void FileReader::GetInfoFromTileset(const std::string& tileset_header, TilesetData& data) const
+{
+    std::ifstream input;
+    input.open(tileset_header);
+
+    unsigned int v;
+    input >> data.width;
+    input >> data.height;
+    input >> data.tile_size;
+
+    data.solid_tiles.clear();
+    while (input >> v){
+        data.solid_tiles.insert(v);
+    }
 }

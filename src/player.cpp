@@ -18,7 +18,7 @@ void Player::LoadSprite(const std::string& sprite_filepath)
 
 void Player::DrawTexture() const
 {
-    unsigned char tile_size = 32; // Will be read from tilemap file, through tilemap instance
+    unsigned char tile_size = m_tilemap->GetTileSize();
     const SDL_Rect src{0,0,tile_size,tile_size};
     const SDL_Rect dst{m_offset.d_x+m_position.x*tile_size,m_offset.d_y+m_position.y*tile_size,tile_size,tile_size};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
