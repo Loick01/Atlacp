@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <list>
-#include <set>
 
 #include "event.hpp"
 #include "file.hpp"
@@ -18,11 +16,12 @@ int main(){
     EventController* event_controller = new EventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png");
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png");
+    const Offset drawing_offset{50, 100};
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png", drawing_offset);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", drawing_offset);
 
-    std::list<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
-    std::set<Element*> elements = {player};
+    std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
+    std::vector<MapElement*> elements = {player};
 
     bool gameloop = true;
     while(gameloop){
@@ -31,13 +30,8 @@ int main(){
         
         if (event_controller->HandleWindowEvents()==-1) gameloop=false;
         
-        for (std::set<Element*>::iterator it = elements.begin() ; it != elements.end() ; it++){
-            (*it)->Update();
-        }
-        
-        for (std::list<Drawable*>::iterator it = drawables.begin() ; it != drawables.end() ; it++){
-            (*it)->DrawTexture();
-        }
+        for (MapElement* e : elements) e->Update();
+        for (const Drawable* d : drawables) d->DrawTexture();
         
         window->UpdateRender();        
     }
@@ -47,6 +41,6 @@ int main(){
     delete file_reader;
     delete event_controller;
     delete window;
-    delete texture_controller; // This instance must be delete last
+    delete texture_controller; // This instance must be delete after deleting every Drawable instance 
     return 0;
 }

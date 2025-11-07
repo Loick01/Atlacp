@@ -7,13 +7,14 @@
 class Drawable
 {
     protected:
-        Drawable(TextureController* texture_controller, const std::string& texture_filepath);
+        Drawable(TextureController* texture_controller, const std::string& texture_filepath, const Offset offset);
         ~Drawable();
 
         void LoadTexture(const std::string& texture_filepath);
 
         TextureController* m_texture_controller; // Should be const
-        std::string m_texture_filepath; // Could be private
+        TextureKey m_texture_key;
+        Offset m_offset;
     
     public:
         virtual void DrawTexture() const = 0;

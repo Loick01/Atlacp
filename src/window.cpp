@@ -50,3 +50,9 @@ void Window::UpdateRender() const
 {
     SDL_RenderPresent(m_renderer);
 }
+
+void Window::SetBackgroundColor(const SDL_Color bg_color)
+{
+    m_bg_color = bg_color;
+    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+}

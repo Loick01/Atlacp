@@ -36,9 +36,9 @@ int EventController::HandleWindowEvents() const
     return 0;
 }
 
-Position EventController::HandlePlayerEvent() const
+MapPosition EventController::HandlePlayerEvent() const
 {
-    Position pos{0, 0};
+    MapPosition pos{0, 0};
     for (SDL_Event event : m_events){
         switch (event.type){
             case SDL_KEYDOWN:

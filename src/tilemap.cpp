@@ -1,7 +1,7 @@
 #include "tilemap.hpp"
 
-Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath) :
-    Drawable(texture_controller, tileset_filepath), m_file_reader(file_reader)
+Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath, const Offset offset) :
+    Drawable(texture_controller, tileset_filepath, offset), m_file_reader(file_reader)
 {
     LoadMap(map_filepath);
 }
@@ -11,14 +11,16 @@ Tilemap::~Tilemap()
 
 }
 
-unsigned char Tilemap::GetTileFromPosition(const Position p) const
+unsigned char Tilemap::GetTileFromMapPosition(const MapPosition p) const
 {
     return m_map.map[p.y*m_map.width+p.x];
 }
 
-bool Tilemap::IsPositionEmpty(const Position p) const
+bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
 {
-    const unsigned char tile = GetTileFromPosition(p);
+    if (p.x < 0 || p.x >= m_map.width || p.y < 0 || p.y >= m_map.height) // This should not be here, but in GetTileFromMapPosition
+        return false;
+    const unsigned char tile = GetTileFromMapPosition(p);
     static const std::set<unsigned char> solid = {1, 3}; // Will be read in a txt file + could use a unordered set
     return solid.find(tile) == solid.end();
 }
@@ -40,7 +42,7 @@ void Tilemap::DrawTexture() const
     for (unsigned short i = 0 ; i < map.size() ; i++) // maximum map size (unsigned char * unsigned char) can't exceed the range of unsigned short
     {
         const SDL_Rect src{(map[i]%3)*tile_size,(map[i]/3)*tile_size,tile_size,tile_size};
-        const SDL_Rect dst{(i%m_map.width)*tile_size,(i/m_map.width)*tile_size,tile_size,tile_size};
-        m_texture_controller->RenderTexture(m_texture_filepath, src, dst);
+        const SDL_Rect dst{m_offset.d_x+(i%m_map.width)*tile_size,m_offset.d_y+(i/m_map.width)*tile_size,tile_size,tile_size};
+        m_texture_controller->RenderTexture(m_texture_key, src, dst);
     }
 }

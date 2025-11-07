@@ -1,15 +1,24 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
-struct Position
+using TextureKey = std::string;
+
+struct Offset
+{
+    int d_x;
+    int d_y;
+};
+
+struct MapPosition
 {
     int x;
     int y;
 
-    Position operator+(Position p) const
+    MapPosition operator+(const MapPosition p) const
     {
-        return Position{x+p.x, y+p.y};
+        return MapPosition{x+p.x, y+p.y};
     }
 };
 

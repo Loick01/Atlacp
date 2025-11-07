@@ -15,13 +15,13 @@ class Tilemap : public Drawable
         const FileReader* m_file_reader;
         MapData m_map;
 
-        unsigned char GetTileFromPosition(const Position p) const;
+        unsigned char GetTileFromMapPosition(const MapPosition p) const;
 
     public:
-        Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath);
+        Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, const std::string& tileset_filepath, const Offset offset);
         ~Tilemap();
 
-        bool IsPositionEmpty(const Position p) const;
+        bool IsMapPositionEmpty(const MapPosition p) const;
         void LoadTileset(const std::string& tileset_filepath);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;

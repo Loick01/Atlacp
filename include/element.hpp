@@ -2,11 +2,15 @@
 
 #include <iostream>
 
-class Element // Could rename this class MapElement, and use it for Player, NPC and Monster class
+#include "type.hpp"
+
+class MapElement // Will be use for Player, NPC, Monster, ...
 {
     protected:
-        Element();
-        ~Element();
+        MapElement(const MapPosition p);
+        ~MapElement();
+
+        MapPosition m_position;
 
     public:
         virtual void Update() = 0;

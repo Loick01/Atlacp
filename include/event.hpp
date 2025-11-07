@@ -18,5 +18,5 @@ class EventController
 
     void PollAllEvents();
     int HandleWindowEvents() const;
-    Position HandlePlayerEvent() const;
+    MapPosition HandlePlayerEvent() const;
 };

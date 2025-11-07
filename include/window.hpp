@@ -14,7 +14,7 @@ class Window
 
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
-        const SDL_Color m_bg_color;
+        SDL_Color m_bg_color;
         const unsigned int m_width;
         const unsigned int m_height;
         const std::string m_title;
@@ -27,4 +27,5 @@ class Window
         bool HasError() const;
         void ClearRenderer() const;
         void UpdateRender() const;
+        void SetBackgroundColor(const SDL_Color bg_color);
 };

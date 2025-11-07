@@ -1,11 +1,12 @@
 #include "element.hpp"
 
-Element::Element()
+MapElement::MapElement(const MapPosition p):
+    m_position(p)
 {
 
 }
 
-Element::~Element()
+MapElement::~MapElement()
 {
 
 }
