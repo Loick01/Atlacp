@@ -24,6 +24,8 @@ class Window
         ~Window();
 
         SDL_Renderer* GetRenderer() const;
+        unsigned int GetWidth() const;
+        unsigned int GetHeight() const;
         bool HasError() const;
         void ClearRenderer() const;
         void UpdateRender() const;

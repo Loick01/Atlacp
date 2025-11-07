@@ -16,6 +16,16 @@ unsigned char Tilemap::GetTileFromMapPosition(const MapPosition p) const
     return m_map.map[p.y*m_map.width+p.x];
 }
 
+unsigned int Tilemap::GetTotalWidth() const
+{
+    return m_map.width*m_map.tile_size;
+}
+
+unsigned int Tilemap::GetTotalHeight() const
+{
+    return m_map.height*m_map.tile_size;
+}
+
 bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
 {
     if (p.x < 0 || p.x >= m_map.width || p.y < 0 || p.y >= m_map.height) // This should not be here, but in GetTileFromMapPosition
@@ -38,11 +48,12 @@ void Tilemap::LoadMap(const std::string& filepath)
 void Tilemap::DrawTexture() const
 {
     std::vector<unsigned char> map = m_map.map;
-    unsigned char tile_size = m_map.tile_size;
-    for (unsigned short i = 0 ; i < map.size() ; i++) // maximum map size (unsigned char * unsigned char) can't exceed the range of unsigned short
+    int tile_size = static_cast<int>(m_map.tile_size);
+    for (unsigned int i = 0 ; i < map.size() ; i++)
     {
-        const SDL_Rect src{(map[i]%3)*tile_size,(map[i]/3)*tile_size,tile_size,tile_size};
-        const SDL_Rect dst{m_offset.d_x+(i%m_map.width)*tile_size,m_offset.d_y+(i/m_map.width)*tile_size,tile_size,tile_size};
+        const SDL_Rect src{(map[i]%3)*tile_size, (map[i]/3)*tile_size, tile_size, tile_size};
+        const SDL_Rect dst{static_cast<int>(m_offset.d_x+(i%m_map.width)*tile_size),
+                           static_cast<int>(m_offset.d_y+(i/m_map.width)*tile_size), tile_size, tile_size};
         m_texture_controller->RenderTexture(m_texture_key, src, dst);
     }
 }

@@ -17,3 +17,8 @@ void Drawable::LoadTexture(const std::string& texture_filepath)
     m_texture_controller->DeleteTexture(m_texture_key);
     m_texture_controller->LoadTextureFromFile(texture_filepath, m_texture_key); 
 }
+
+void Drawable::SetOffset(const Offset offset)
+{
+    m_offset = offset;
+}

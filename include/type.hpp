@@ -25,7 +25,7 @@ struct MapPosition
 struct MapData
 {
     std::vector<unsigned char> map; // Should define Tile type instead of using unsigned char ?
-    unsigned char width;
-    unsigned char height;
-    unsigned char tile_size;
+    unsigned int width;
+    unsigned int height;
+    unsigned int tile_size;
 };

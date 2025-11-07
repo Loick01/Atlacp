@@ -14,7 +14,8 @@ class Player : public Drawable, public MapElement
         const Tilemap* m_tilemap;
 
     public:
-        Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller, const std::string& sprite_filepath, const Offset offset);
+        Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller,
+            const std::string& sprite_filepath, const Offset offset={0,0});
         ~Player();
 
         void LoadSprite(const std::string& sprite_filepath);

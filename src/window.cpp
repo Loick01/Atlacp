@@ -36,6 +36,16 @@ SDL_Renderer* Window::GetRenderer() const
     return m_renderer;
 }
 
+unsigned int Window::GetWidth() const
+{
+    return m_width;
+}
+
+unsigned int Window::GetHeight() const
+{
+    return m_height;
+}
+
 bool Window::HasError() const
 { 
     return !m_window || !m_renderer;

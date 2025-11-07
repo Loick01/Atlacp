@@ -39,20 +39,14 @@ int EventController::HandleWindowEvents() const
 MapPosition EventController::HandlePlayerEvent() const
 {
     MapPosition pos{0, 0};
-    for (SDL_Event event : m_events){
-        switch (event.type){
-            case SDL_KEYDOWN:
-                SDL_Scancode event_scancode = event.key.keysym.scancode;
-                if (event_scancode == SDL_SCANCODE_W)
-                    pos.y = -1; 
-                if (event_scancode == SDL_SCANCODE_A)
-                    pos.x = -1;
-                if (event_scancode == SDL_SCANCODE_S)
-                    pos.y = 1;
-                if (event_scancode == SDL_SCANCODE_D)
-                    pos.x = 1;
-                break;
-        }
-    }
+    const Uint8* state = SDL_GetKeyboardState(NULL);
+    if (state[SDL_SCANCODE_W])
+        pos.y = -1; 
+    if (state[SDL_SCANCODE_A])
+        pos.x = -1;
+    if (state[SDL_SCANCODE_S])
+        pos.y = 1;
+    if (state[SDL_SCANCODE_D])
+        pos.x = 1;
     return pos;
 }

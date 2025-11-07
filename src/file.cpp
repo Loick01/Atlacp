@@ -13,9 +13,9 @@ FileReader::~FileReader()
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
 {
     unsigned int v;
-    input >> v; m.width = static_cast<unsigned char>(v);
-    input >> v; m.height = static_cast<unsigned char>(v);
-    input >> v; m.tile_size = static_cast<unsigned char>(v);
+    input >> v; m.width = v;
+    input >> v; m.height = v;
+    input >> v; m.tile_size = v;
 }
 
 MapData FileReader::GetMapFromFile(const std::string& filepath) const
