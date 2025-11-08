@@ -13,6 +13,11 @@ Tilemap::~Tilemap()
 
 }
 
+TilesetData Tilemap::GetTilesetData() const
+{
+    return m_tileset_data;
+}
+
 unsigned char Tilemap::GetTileFromMapPosition(const MapPosition p) const
 {
     return m_map_data.map[p.y*m_map_data.width+p.x];

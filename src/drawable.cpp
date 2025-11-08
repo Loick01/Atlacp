@@ -1,7 +1,7 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position) :
-    m_texture_controller(texture_controller), m_screen_position(position)
+Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw) :
+    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw)
 {
     LoadTexture(texture_filepath);
 }
@@ -18,16 +18,33 @@ void Drawable::LoadTexture(const std::string& texture_filepath)
     m_texture_controller->LoadTextureFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
 }
 
+ScreenPosition Drawable::GetScreenPosition() const
+{
+    return m_screen_position;
+}
+
+bool Drawable::GetShouldDraw() const
+{
+    return m_should_draw;
+}
+
+void Drawable::DrawTexture() const
+{
+    if (m_should_draw){
+        int texture_width = static_cast<int>(m_texture_width);
+        int texture_height = static_cast<int>(m_texture_height);
+        const SDL_Rect src{0, 0, texture_width, texture_height};
+        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, texture_width, texture_height};
+        m_texture_controller->RenderTexture(m_texture_key, src, dst);
+    }
+}
+
 void Drawable::SetScreenPosition(const ScreenPosition screen_position)
 {
     m_screen_position = screen_position;
 }
 
-void Drawable::DrawTexture() const
+void Drawable::InvertShouldDraw()
 {
-    int texture_width = static_cast<int>(m_texture_width);
-    int texture_height = static_cast<int>(m_texture_height);
-    const SDL_Rect src{0, 0, texture_width, texture_height};
-    const SDL_Rect dst{m_screen_position.x, m_screen_position.y, texture_width, texture_height};
-    m_texture_controller->RenderTexture(m_texture_key, src, dst);
+    m_should_draw = !m_should_draw;
 }

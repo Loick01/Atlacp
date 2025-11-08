@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "drawable.hpp"
+#include "tilemap.hpp"
 #include "type.hpp"
 
 class EventController
@@ -16,7 +18,9 @@ class EventController
     EventController();
     ~EventController();
 
-    void PollAllEvents();
-    int HandleWindowEvents() const;
+    ScreenPosition GetMousePosition() const;
     MapPosition HandlePlayerEvent() const;
+    int HandleWindowEvents() const;
+    void HandleEditorEvent(Drawable* tileset, const Tilemap* tilemap) const;
+    void PollAllEvents();
 };

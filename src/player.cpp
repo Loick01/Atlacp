@@ -23,6 +23,7 @@ void Player::DrawTexture() const
     int texture_width = static_cast<int>(m_texture_width);
     int texture_height = static_cast<int>(m_texture_height);
     const SDL_Rect src{0,0,texture_width,texture_height};
+    // Should use a scene graph instead of keeping screen position for each Drawable
     const SDL_Rect dst{m_screen_position.x+m_map_position.x*tile_size,m_screen_position.y+m_map_position.y*tile_size,texture_width,texture_height};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }

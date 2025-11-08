@@ -10,6 +10,11 @@ struct ScreenPosition
 {
     int x;
     int y;
+
+    ScreenPosition operator-(const ScreenPosition p) const
+    {
+        return ScreenPosition{x-p.x, y-p.y};
+    }
 };
 
 struct MapPosition

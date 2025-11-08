@@ -11,7 +11,6 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL2IMAGE REQUIRED SDL2_image)
 
 set(SOURCES
-    src/main.cpp
     src/player.cpp
     src/window.cpp
     src/event.cpp
@@ -22,7 +21,11 @@ set(SOURCES
     src/element.cpp
 )
 
-add_executable(atlacp ${SOURCES})
+add_executable(atlacp src/main.cpp ${SOURCES})
 
-target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
-target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
+add_executable(editor src/editor.cpp ${SOURCES})
+
+foreach (target atlacp editor)
+    target_include_directories(${target} PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
+    target_link_libraries(${target} PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
+endforeach()

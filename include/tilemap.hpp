@@ -22,6 +22,7 @@ class Tilemap : public Drawable
             const std::string& tileset_filepath, const ScreenPosition position={0,0});
         ~Tilemap();
 
+        TilesetData GetTilesetData() const;
         unsigned int GetTotalWidth() const;
         unsigned int GetTotalHeight() const;
         unsigned int GetTileSize() const;
