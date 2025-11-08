@@ -28,7 +28,7 @@ void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) cons
     
     unsigned int current_value;
     while (input >> current_value){
-        data.map.push_back(static_cast<unsigned char>(current_value));
+        data.map.push_back(current_value);
     }
 
     input.close();

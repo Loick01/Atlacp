@@ -19,7 +19,7 @@ class Tilemap : public Drawable
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, 
-            const std::string& tileset_filepath, const Offset offset={0,0});
+            const std::string& tileset_filepath, const ScreenPosition position={0,0});
         ~Tilemap();
 
         unsigned int GetTotalWidth() const;

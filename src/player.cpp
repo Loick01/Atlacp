@@ -1,7 +1,8 @@
 #include "player.hpp"
 
-Player::Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller, const std::string& sprite_filepath, const Offset offset):
-    Drawable(texture_controller, sprite_filepath, offset), MapElement({10,1}), m_event_controller(event_controller), m_tilemap(tilemap)
+Player::Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller,
+    const std::string& sprite_filepath, const ScreenPosition screen_position):
+    Drawable(texture_controller, sprite_filepath, screen_position), MapElement({10,1}), m_event_controller(event_controller), m_tilemap(tilemap)
 {
 
 }
@@ -18,16 +19,18 @@ void Player::LoadSprite(const std::string& sprite_filepath)
 
 void Player::DrawTexture() const
 {
-    unsigned char tile_size = m_tilemap->GetTileSize();
-    const SDL_Rect src{0,0,tile_size,tile_size};
-    const SDL_Rect dst{m_offset.d_x+m_position.x*tile_size,m_offset.d_y+m_position.y*tile_size,tile_size,tile_size};
+    int tile_size = static_cast<int>(m_tilemap->GetTileSize());
+    int texture_width = static_cast<int>(m_texture_width);
+    int texture_height = static_cast<int>(m_texture_height);
+    const SDL_Rect src{0,0,texture_width,texture_height};
+    const SDL_Rect dst{m_screen_position.x+m_map_position.x*tile_size,m_screen_position.y+m_map_position.y*tile_size,texture_width,texture_height};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 
 void Player::Update()
 {
-    MapPosition new_pos = m_position + m_event_controller->HandlePlayerEvent();
+    MapPosition new_pos = m_map_position + m_event_controller->HandlePlayerEvent();
     if (m_tilemap->IsMapPositionEmpty(new_pos)){
-        m_position = new_pos;
+        m_map_position = new_pos;
     }
 }

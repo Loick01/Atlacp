@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, 
-    const std::string& tileset_filepath, const Offset offset) :
-    Drawable(texture_controller, tileset_filepath, offset), m_file_reader(file_reader)
+    const std::string& tileset_filepath, const ScreenPosition screen_position) :
+    Drawable(texture_controller, tileset_filepath, screen_position), m_file_reader(file_reader)
 {
     LoadTilesetHeader("../tileset.txt");
     LoadMap(map_filepath);
@@ -62,11 +62,10 @@ void Tilemap::DrawTexture() const
     int tile_size = static_cast<int>(m_tileset_data.tile_size);
     int tileset_width = static_cast<int>(m_tileset_data.width);
     int map_width = static_cast<int>(m_map_data.width);
-    for (unsigned int i = 0 ; i < map.size() ; i++)
-    {
+    for (unsigned int i = 0 ; i < map.size() ; i++){
         const SDL_Rect src{(map[i]%tileset_width)*tile_size, (map[i]/tileset_width)*tile_size, tile_size, tile_size};
-        const SDL_Rect dst{static_cast<int>(m_offset.d_x+(i%map_width)*tile_size),
-                           static_cast<int>(m_offset.d_y+(i/map_width)*tile_size), tile_size, tile_size};
+        const SDL_Rect dst{static_cast<int>(m_screen_position.x+(i%map_width)*tile_size),
+                           static_cast<int>(m_screen_position.y+(i/map_width)*tile_size), tile_size, tile_size};
         m_texture_controller->RenderTexture(m_texture_key, src, dst);
     }
 }

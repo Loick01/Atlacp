@@ -13,12 +13,14 @@ TextureController::~TextureController()
     }
 }
 
-void TextureController::LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key)
+void TextureController::LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key,
+    unsigned int& texture_width, unsigned int& texture_height)
 {
     SDL_Surface* surface = IMG_Load(texture_filepath.c_str());
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer,surface);
     if (!surface) std::cout << "Failed to load this texture : " << texture_filepath << "\n";
     else if (!texture) std::cout << "Failed to convert this surface into a texture : " << texture_filepath << "\n";
+    texture_width = surface->w, texture_height = surface->h;
     SDL_FreeSurface(surface);
     if (m_textures[texture_key]) SDL_DestroyTexture(m_textures[texture_key]);
     m_textures[texture_key] = texture;

@@ -6,10 +6,10 @@
 
 using TextureKey = std::string;
 
-struct Offset
+struct ScreenPosition
 {
-    int d_x;
-    int d_y;
+    int x;
+    int y;
 };
 
 struct MapPosition

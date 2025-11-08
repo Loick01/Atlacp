@@ -10,7 +10,7 @@ class MapElement // Will be use for Player, NPC, Monster, ...
         MapElement(const MapPosition p);
         ~MapElement();
 
-        MapPosition m_position;
+        MapPosition m_map_position;
 
     public:
         virtual void Update() = 0;
