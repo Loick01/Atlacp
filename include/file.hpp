@@ -17,5 +17,5 @@ class FileReader
         ~FileReader();
 
         void GetMapFromFile(const std::string& filepath, MapData& data) const;
-        void GetInfoFromTileset(const std::string& tileset_header, TilesetData& m_map) const;
+        void ReadTilesetHeader(const std::string& tileset_header, TilesetData& m_map) const;
 };

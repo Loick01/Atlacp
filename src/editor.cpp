@@ -7,6 +7,7 @@
 #include "texture.hpp"
 #include "tilemap.hpp"
 #include "window.hpp"
+#include "tileset.hpp"
 
 int main(){
     Window* window = new Window("Map Editor - Atlacp", 1600, 900, {100,100,100});
@@ -16,8 +17,9 @@ int main(){
     EventController* event_controller = new EventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png", {100, 50});
-    Drawable* tileset = new Drawable(texture_controller, "../tileset.png", {0,0}, false);
+    Tileset* tileset = new Tileset(texture_controller, file_reader, "../tileset.png", {0,0}, false);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt", {100,50});
+    //Drawable* tileset = new Drawable(texture_controller, "../tileset.png", {0,0}, false);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 
     bool gameloop = true;

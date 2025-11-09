@@ -16,11 +16,12 @@ int main(){
     EventController* event_controller = new EventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png");
+    Tileset* tileset = new Tileset(texture_controller, file_reader, "../tileset.png", {0,0}, false);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt");
     const ScreenPosition drawing_offset{static_cast<int>(window->GetWidth()/2-tilemap->GetTextureWidth()/2),
                                 static_cast<int>(window->GetHeight()/2-tilemap->GetTextureHeight()/2)};
     tilemap->SetScreenPosition(drawing_offset);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", drawing_offset);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", tileset->GetTileSize(), drawing_offset);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};
@@ -39,6 +40,7 @@ int main(){
         SDL_Delay(48);   
     }
 
+    delete tileset;
     delete tilemap;
     delete player;
     delete file_reader;

@@ -2,7 +2,7 @@
 
 EventController::EventController()
 {
-    m_selected_tile = 0; // Will be in Tileset class
+
 }
 
 EventController::~EventController()
@@ -38,7 +38,7 @@ int EventController::HandleWindowEvents() const
 
 // Should create EditorEventController and GameEventControllr that both inherit from EventController ?
 // EditorEventController will have a m_selected_tile member
-void EventController::HandleEditorEvent(Drawable* tileset, Tilemap* tilemap)
+void EventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -55,20 +55,18 @@ void EventController::HandleEditorEvent(Drawable* tileset, Tilemap* tilemap)
                         // Should not be here
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
                         if (tileset->IsPositionInTexture(normalized_mouse_position)){
-                            const TilesetData data = tilemap->GetTilesetData(); // Should create a Tileset class instead of using Tilemap to get tileset_data
-                            int tile_size = static_cast<int>(data.tile_size);
+                            const unsigned int tile_size = tileset->GetTileSize();
                             int c = normalized_mouse_position.x/tile_size;
                             int l = normalized_mouse_position.y/tile_size;
-                            m_selected_tile = l*data.width+c;
+                            tileset->SetSelectedTile(l*tileset->GetTilesetWidth()+c);
                         }
                     }else{
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
                         if (tilemap->IsPositionInTexture(normalized_mouse_position)){
-                            const TilesetData data = tilemap->GetTilesetData(); // Should create a Tileset class instead of using Tilemap to get tileset_data
-                            int tile_size = static_cast<int>(data.tile_size);
+                            const unsigned int tile_size = tileset->GetTileSize();
                             int c = normalized_mouse_position.x/tile_size;
                             int l = normalized_mouse_position.y/tile_size;
-                            tilemap->SetTileAt(m_selected_tile,{c,l});
+                            tilemap->SetTileAt(tileset->GetSelectedTile(),{c,l});
                         }
                     }
                 }

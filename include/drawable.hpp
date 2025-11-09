@@ -7,6 +7,9 @@
 class Drawable
 {
     protected:
+        Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
+        ~Drawable();
+        
         void LoadTexture(const std::string& texture_filepath);
 
         TextureController* m_texture_controller;
@@ -17,9 +20,6 @@ class Drawable
         bool m_should_draw;
     
     public:
-        Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
-        ~Drawable();
-
         ScreenPosition GetScreenPosition() const;
         virtual unsigned int GetTextureWidth() const;
         virtual unsigned int GetTextureHeight() const;

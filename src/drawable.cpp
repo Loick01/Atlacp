@@ -40,7 +40,7 @@ bool Drawable::GetShouldDraw() const
 
 bool Drawable::IsPositionInTexture(const ScreenPosition screen_position) const // screen_position must be normalized
 {
-    // Use GetTextureWidth()/GetTextureHeight() instead of m_texture_width/m_texture_height
+    // Use GetTextureWidth()/GetTextureHeight() instead of m_texture_width/m_texture_height because of overrided functions
     return screen_position.x >= 0 && screen_position.y >= 0 && screen_position.x <= GetTextureWidth() && screen_position.y <= GetTextureHeight();
 }
 

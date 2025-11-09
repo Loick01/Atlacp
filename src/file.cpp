@@ -34,7 +34,7 @@ void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) cons
     input.close();
 }
 
-void FileReader::GetInfoFromTileset(const std::string& tileset_header, TilesetData& data) const
+void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetData& data) const
 {
     std::ifstream input;
     input.open(tileset_header);

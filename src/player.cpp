@@ -1,8 +1,9 @@
 #include "player.hpp"
 
 Player::Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller,
-    const std::string& sprite_filepath, const ScreenPosition screen_position):
-    Drawable(texture_controller, sprite_filepath, screen_position), MapElement({10,1}), m_event_controller(event_controller), m_tilemap(tilemap)
+    const std::string& sprite_filepath, const unsigned int tile_size, const ScreenPosition screen_position) :
+    Drawable(texture_controller, sprite_filepath, screen_position), MapElement({10,1}), m_event_controller(event_controller),
+    m_tilemap(tilemap), m_tile_size(tile_size)
 {
 
 }
@@ -19,7 +20,7 @@ void Player::LoadSprite(const std::string& sprite_filepath)
 
 void Player::DrawTexture() const
 {
-    int tile_size = static_cast<int>(m_tilemap->GetTileSize());
+    int tile_size = static_cast<int>(m_tile_size);
     int texture_width = static_cast<int>(m_texture_width);
     int texture_height = static_cast<int>(m_texture_height);
     const SDL_Rect src{0,0,texture_width,texture_height};
