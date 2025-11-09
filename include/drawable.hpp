@@ -21,7 +21,10 @@ class Drawable
         ~Drawable();
 
         ScreenPosition GetScreenPosition() const;
+        virtual unsigned int GetTextureWidth() const;
+        virtual unsigned int GetTextureHeight() const;
         bool GetShouldDraw() const;
+        bool IsPositionInTexture(const ScreenPosition screen_position) const;
         virtual void DrawTexture() const;
         void SetScreenPosition(const ScreenPosition screen_position);
         void InvertShouldDraw();

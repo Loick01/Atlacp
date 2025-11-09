@@ -13,6 +13,7 @@ class EventController
 {
     private:
         std::vector<SDL_Event> m_events;
+        unsigned char m_selected_tile; // Will be in Tileset class
 
     public:
     EventController();
@@ -21,6 +22,6 @@ class EventController
     ScreenPosition GetMousePosition() const;
     MapPosition HandlePlayerEvent() const;
     int HandleWindowEvents() const;
-    void HandleEditorEvent(Drawable* tileset, const Tilemap* tilemap) const;
+    void HandleEditorEvent(Drawable* tileset, Tilemap* tilemap); // Will be const once I moved m_selected_tile in Tileset class 
     void PollAllEvents();
 };

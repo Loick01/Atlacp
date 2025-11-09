@@ -16,7 +16,7 @@ int main(){
     EventController* event_controller = new EventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png");
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, "../map.txt", "../tileset.png", {100, 50});
     Drawable* tileset = new Drawable(texture_controller, "../tileset.png", {0,0}, false);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 
@@ -34,6 +34,7 @@ int main(){
         //SDL_Delay(48);
     }
 
+    delete tileset;
     delete tilemap;
     delete file_reader;
     delete event_controller;

@@ -15,7 +15,7 @@ class Tilemap : public Drawable
         MapData m_map_data;
         TilesetData m_tileset_data;
 
-        unsigned char GetTileFromMapPosition(const MapPosition p) const;
+        unsigned char GetTileAt(const MapPosition p) const;
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, const std::string& map_filepath, 
@@ -23,10 +23,11 @@ class Tilemap : public Drawable
         ~Tilemap();
 
         TilesetData GetTilesetData() const;
-        unsigned int GetTotalWidth() const;
-        unsigned int GetTotalHeight() const;
+        unsigned int GetTextureWidth() const override;
+        unsigned int GetTextureHeight() const override;
         unsigned int GetTileSize() const;
         bool IsMapPositionEmpty(const MapPosition p) const;
+        void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadTileset(const std::string& tileset_filepath);
         void LoadTilesetHeader(const std::string& tileset_header);
         void LoadMap(const std::string& filepath);

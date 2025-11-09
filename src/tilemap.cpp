@@ -18,17 +18,22 @@ TilesetData Tilemap::GetTilesetData() const
     return m_tileset_data;
 }
 
-unsigned char Tilemap::GetTileFromMapPosition(const MapPosition p) const
+unsigned char Tilemap::GetTileAt(const MapPosition p) const
 {
     return m_map_data.map[p.y*m_map_data.width+p.x];
 }
 
-unsigned int Tilemap::GetTotalWidth() const
+void Tilemap::SetTileAt(const unsigned char new_tile, const MapPosition p)
+{
+    m_map_data.map[p.y*m_map_data.width+p.x] = new_tile;
+}
+
+unsigned int Tilemap::GetTextureWidth() const
 {
     return m_map_data.width*m_tileset_data.tile_size;
 }
 
-unsigned int Tilemap::GetTotalHeight() const
+unsigned int Tilemap::GetTextureHeight() const
 {
     return m_map_data.height*m_tileset_data.tile_size;
 }
@@ -40,9 +45,9 @@ unsigned int Tilemap::GetTileSize() const
 
 bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
 {
-    if (p.x < 0 || p.x >= m_map_data.width || p.y < 0 || p.y >= m_map_data.height) // This should not be here, but in GetTileFromMapPosition
+    if (p.x < 0 || p.x >= m_map_data.width || p.y < 0 || p.y >= m_map_data.height) // This should not be here, but in GetTileAt
         return false;
-    const unsigned char tile = GetTileFromMapPosition(p);
+    const unsigned char tile = GetTileAt(p);
     return m_tileset_data.solid_tiles.find(tile) == m_tileset_data.solid_tiles.end();
 }
 
