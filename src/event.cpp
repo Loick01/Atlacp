@@ -10,6 +10,23 @@ EventController::~EventController()
     
 }
 
+bool EventController::HandleWindowEvents() const
+{
+    for (SDL_Event event : m_events){
+        switch (event.type){
+            case SDL_QUIT:
+                return false;
+            
+            case SDL_KEYDOWN:
+                SDL_Scancode event_scancode = event.key.keysym.scancode;
+                if (event_scancode == SDL_SCANCODE_ESCAPE)
+                    return false;
+                break;
+        }
+    }
+    return true;
+}
+
 void EventController::PollAllEvents()
 {
     m_events.clear();
@@ -19,63 +36,18 @@ void EventController::PollAllEvents()
     }
 }
 
-int EventController::HandleWindowEvents() const
+MapEventController::MapEventController():
+    EventController()
 {
-    for (SDL_Event event : m_events){
-        switch (event.type){
-            case SDL_QUIT:
-                return -1;
-            
-            case SDL_KEYDOWN:
-                SDL_Scancode event_scancode = event.key.keysym.scancode;
-                if (event_scancode == SDL_SCANCODE_ESCAPE)
-                    return -1;
-                break;
-        }
-    }
-    return 0;
+
 }
 
-// Should create EditorEventController and GameEventControllr that both inherit from EventController ?
-// EditorEventController will have a m_selected_tile member
-void EventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const
+MapEventController::~MapEventController()
 {
-    for (SDL_Event event : m_events){
-        switch (event.type){
-            case SDL_KEYDOWN: {
-                SDL_Scancode event_scancode = event.key.keysym.scancode;
-                if (event_scancode == SDL_SCANCODE_SPACE)
-                    tileset->InvertShouldDraw();
-                    tileset->SetScreenPosition(GetMousePosition());
-                break;
-            }
-            case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT){
-                    if (tileset->GetShouldDraw()){
-                        // Should not be here
-                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
-                        if (tileset->IsPositionInTexture(normalized_mouse_position)){
-                            const unsigned int tile_size = tileset->GetTileSize();
-                            int c = normalized_mouse_position.x/tile_size;
-                            int l = normalized_mouse_position.y/tile_size;
-                            tileset->SetSelectedTile(l*tileset->GetTilesetWidth()+c);
-                        }
-                    }else{
-                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
-                        if (tilemap->IsPositionInTexture(normalized_mouse_position)){
-                            const unsigned int tile_size = tileset->GetTileSize();
-                            int c = normalized_mouse_position.x/tile_size;
-                            int l = normalized_mouse_position.y/tile_size;
-                            tilemap->SetTileAt(tileset->GetSelectedTile(),{c,l});
-                        }
-                    }
-                }
-                break;
-        }
-    }
+
 }
 
-MapPosition EventController::HandlePlayerEvent() const
+MapPosition MapEventController::HandlePlayerEvent() const
 {
     MapPosition pos{0, 0};
     const Uint8* state = SDL_GetKeyboardState(NULL);
@@ -90,9 +62,46 @@ MapPosition EventController::HandlePlayerEvent() const
     return pos;
 }
 
-ScreenPosition EventController::GetMousePosition() const
+EditorEventController::EditorEventController():
+    EventController()
+{
+
+}
+
+EditorEventController::~EditorEventController()
+{
+
+}
+
+ScreenPosition EditorEventController::GetMousePosition() const
 {
     ScreenPosition p;
     SDL_GetMouseState(&p.x, &p.y);
     return p;
+}
+
+void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const
+{
+    for (SDL_Event event : m_events){
+        switch (event.type){
+            case SDL_KEYDOWN: {
+                SDL_Scancode event_scancode = event.key.keysym.scancode;
+                if (event_scancode == SDL_SCANCODE_SPACE)
+                    tileset->InvertShouldDraw();
+                    tileset->SetScreenPosition(GetMousePosition());
+                break;
+            }
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT){
+                    if (tileset->GetShouldDraw()){
+                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
+                        tileset->UpdateSelectedTile(normalized_mouse_position);
+                    }else{
+                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
+                        tilemap->ReplaceTileAt(normalized_mouse_position);
+                    }
+                }
+                break;
+        }
+    }
 }

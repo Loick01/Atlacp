@@ -2,7 +2,7 @@
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
     const std::string& map_filepath, const ScreenPosition screen_position) :
-    Drawable(texture_controller, "../tileset.png", screen_position), m_file_reader(file_reader), m_tileset(tileset)
+    Drawable(texture_controller, tileset->GetTilesetFilepath(), screen_position), m_file_reader(file_reader), m_tileset(tileset)
 {
     LoadMap(map_filepath);
 }
@@ -44,11 +44,6 @@ bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
     return m_tileset->IsEmptyTile(tile);
 }
 
-void Tilemap::LoadTileset(const std::string& tileset_filepath)
-{
-   Drawable::LoadTexture(tileset_filepath);
-}
-
 void Tilemap::LoadMap(const std::string& filepath)
 {
     m_file_reader->GetMapFromFile(filepath, m_map_data); 
@@ -65,5 +60,15 @@ void Tilemap::DrawTexture() const
         const SDL_Rect dst{static_cast<int>(m_screen_position.x+(i%map_width)*tile_size),
                            static_cast<int>(m_screen_position.y+(i/map_width)*tile_size), tile_size, tile_size};
         m_texture_controller->RenderTexture(m_texture_key, src, dst);
+    }
+}
+
+void Tilemap::ReplaceTileAt(const ScreenPosition position)
+{
+    if (IsPositionInTexture(position)){
+        const unsigned int tile_size = m_tileset->GetTileSize();
+        int c = position.x/tile_size;
+        int l = position.y/tile_size;
+        SetTileAt(m_tileset->GetSelectedTile(),{c,l});
     }
 }

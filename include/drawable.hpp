@@ -10,7 +10,7 @@ class Drawable
         Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Drawable();
         
-        void LoadTexture(const std::string& texture_filepath);
+        virtual void LoadTexture(const std::string& texture_filepath);
 
         TextureController* m_texture_controller;
         TextureKey m_texture_key;

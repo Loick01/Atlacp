@@ -39,5 +39,4 @@ void TextureController::DeleteTexture(const TextureKey& texture_key)
         SDL_DestroyTexture(it->second);
         m_textures.erase(it);
     }
-    // else std::cout << "Can't delete " << texture_key << ", it's not in the map (this should not happen)\n";
 }

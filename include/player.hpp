@@ -10,16 +10,15 @@
 class Player : public Drawable, public MapElement
 {
     private:
-        const EventController* m_event_controller;
+        const MapEventController* m_event_controller;
         const Tilemap* m_tilemap;
         const unsigned int m_tile_size;
 
     public:
-        Player(const Tilemap* tilemap, TextureController* texture_controller, const EventController* event_controller,
+        Player(const Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
             const std::string& sprite_filepath, const unsigned int tile_size, const ScreenPosition position={0,0});
         ~Player();
 
-        void LoadSprite(const std::string& sprite_filepath);
         void DrawTexture() const override;
         void Update() override;
 };

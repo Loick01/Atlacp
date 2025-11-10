@@ -11,16 +11,38 @@
 
 class EventController
 {
-    private:
+    protected:
+        EventController();
+        ~EventController();
+
         std::vector<SDL_Event> m_events;
+        
+    public:
+        bool HandleWindowEvents() const;
+        void PollAllEvents();
+        //virtual void HandleEvents() const = 0;
+};
+
+class MapEventController : public EventController
+{
+    private:
 
     public:
-    EventController();
-    ~EventController();
+        MapEventController();
+        ~MapEventController();
 
-    ScreenPosition GetMousePosition() const;
-    MapPosition HandlePlayerEvent() const;
-    int HandleWindowEvents() const;
-    void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const; 
-    void PollAllEvents();
+        MapPosition HandlePlayerEvent() const;
+};
+
+class EditorEventController : public EventController
+{
+    private:
+        ScreenPosition GetMousePosition() const;
+        // EditorEventController will have a m_selected_tile member
+
+    public:
+        EditorEventController();
+        ~EditorEventController();
+
+        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const; 
 };

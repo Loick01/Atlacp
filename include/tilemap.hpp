@@ -28,7 +28,7 @@ class Tilemap : public Drawable
         unsigned int GetTextureHeight() const override;
         bool IsMapPositionEmpty(const MapPosition p) const;
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
-        void LoadTileset(const std::string& tileset_filepath);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;
+        void ReplaceTileAt(const ScreenPosition position);
 };
