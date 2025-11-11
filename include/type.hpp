@@ -37,10 +37,9 @@ struct MapData
 
 struct TilesetData
 {
+    TextureKey tileset_key;
     std::set<unsigned char> solid_tiles; // Should use unordered set ?
     unsigned int width;
     unsigned int height;
     unsigned int tile_size;
 };
-
-using KeyData = std::pair<TextureKey, TilesetData>;

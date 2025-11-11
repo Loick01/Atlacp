@@ -2,7 +2,7 @@
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
     const std::string& map_filepath, const ScreenPosition screen_position, const bool should_draw) :
-    Drawable(tileset->GetTilesetKey(), texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
+    Drawable(tileset->GetTextureKey(), texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
     LoadMap(map_filepath);
 }

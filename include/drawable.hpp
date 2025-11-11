@@ -21,6 +21,7 @@ class Drawable
         bool m_should_draw;
     
     public:
+        TextureKey GetTextureKey() const;
         ScreenPosition GetScreenPosition() const;
         virtual unsigned int GetTextureWidth() const;
         virtual unsigned int GetTextureHeight() const;

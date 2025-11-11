@@ -17,8 +17,6 @@ int main(){
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Tileset* tileset = new Tileset(texture_controller, file_reader, "../tileset.png");
-    tileset->LoadTileset("../tileset2.png");
-    tileset->LoadTileset("../tileset3.png");
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt");
     const ScreenPosition drawing_offset{static_cast<int>(window->GetWidth()/2-tilemap->GetTextureWidth()/2),
                                 static_cast<int>(window->GetHeight()/2-tilemap->GetTextureHeight()/2)};

@@ -19,6 +19,8 @@ int main(){
     FileReader* file_reader = new FileReader();
     Tileset* tileset = new Tileset(texture_controller, file_reader, "../tileset.png");
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt", {100,50});
+    tileset->LoadTileset("../tileset2.png"); // Tilesets will be load according to the map (specified in map header)
+    tileset->LoadTileset("../tileset3.png");
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 
     bool gameloop = true;

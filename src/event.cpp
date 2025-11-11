@@ -104,8 +104,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 break;
             case SDL_MOUSEWHEEL:
                 if (tileset->GetShouldDraw()){
-                    if (event.wheel.y > 0) std::cout << "Wheel up\n";
-                    if (event.wheel.y < 0) std::cout << "Wheel down\n";
+                    if (event.wheel.y > 0) tileset->NextTileset();
                 }
                 break;
         }

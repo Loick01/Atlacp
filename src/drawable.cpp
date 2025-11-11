@@ -24,6 +24,11 @@ void Drawable::LoadTexture(const std::string& texture_filepath)
     m_texture_controller->LoadTextureFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
 }
 
+TextureKey Drawable::GetTextureKey() const
+{
+    return m_texture_key;
+}
+
 ScreenPosition Drawable::GetScreenPosition() const
 {
     return m_screen_position;
