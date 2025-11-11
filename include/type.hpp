@@ -42,3 +42,5 @@ struct TilesetData
     unsigned int height;
     unsigned int tile_size;
 };
+
+using KeyData = std::pair<TextureKey, TilesetData>;

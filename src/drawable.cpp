@@ -1,14 +1,20 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw) :
+Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):
     m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw)
 {
     LoadTexture(texture_filepath);
 }
 
+Drawable::Drawable(const TextureKey& texture_key, TextureController* texture_controller, const ScreenPosition position, const bool should_draw):
+    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw), m_texture_key(texture_key)
+{   
+
+}
+
 Drawable::~Drawable()
 {
-    m_texture_controller->DeleteTexture(m_texture_key);
+    
 }
 
 void Drawable::LoadTexture(const std::string& texture_filepath)

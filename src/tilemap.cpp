@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
-    const std::string& map_filepath, const ScreenPosition screen_position) :
-    Drawable(texture_controller, tileset->GetTilesetFilepath(), screen_position), m_file_reader(file_reader), m_tileset(tileset)
+    const std::string& map_filepath, const ScreenPosition screen_position, const bool should_draw) :
+    Drawable(tileset->GetTilesetKey(), texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
     LoadMap(map_filepath);
 }
@@ -10,6 +10,11 @@ Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_r
 Tilemap::~Tilemap()
 {
 
+}
+
+unsigned int Tilemap::GetTileSize() const
+{
+    return m_tileset->GetTileSize();
 }
 
 unsigned char Tilemap::GetTileAt(const MapPosition p) const
@@ -63,12 +68,12 @@ void Tilemap::DrawTexture() const
     }
 }
 
-void Tilemap::ReplaceTileAt(const ScreenPosition position)
+void Tilemap::ReplaceTileAt(const ScreenPosition position, const unsigned char new_tile)
 {
     if (IsPositionInTexture(position)){
         const unsigned int tile_size = m_tileset->GetTileSize();
         int c = position.x/tile_size;
         int l = position.y/tile_size;
-        SetTileAt(m_tileset->GetSelectedTile(),{c,l});
+        SetTileAt(new_tile,{c,l});
     }
 }

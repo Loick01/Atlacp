@@ -65,7 +65,7 @@ MapPosition MapEventController::HandlePlayerEvent() const
 EditorEventController::EditorEventController():
     EventController()
 {
-
+    m_selected_tile = 0;
 }
 
 EditorEventController::~EditorEventController()
@@ -80,7 +80,7 @@ ScreenPosition EditorEventController::GetMousePosition() const
     return p;
 }
 
-void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const
+void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap)
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -95,11 +95,17 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (tileset->GetShouldDraw()){
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
-                        tileset->UpdateSelectedTile(normalized_mouse_position);
+                        tileset->UpdateSelectedTile(normalized_mouse_position, m_selected_tile);
                     }else{
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
-                        tilemap->ReplaceTileAt(normalized_mouse_position);
+                        tilemap->ReplaceTileAt(normalized_mouse_position, m_selected_tile);
                     }
+                }
+                break;
+            case SDL_MOUSEWHEEL:
+                if (tileset->GetShouldDraw()){
+                    if (event.wheel.y > 0) std::cout << "Wheel up\n";
+                    if (event.wheel.y < 0) std::cout << "Wheel down\n";
                 }
                 break;
         }

@@ -21,14 +21,15 @@ class Tilemap : public Drawable
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
-            const std::string& map_filepath, const ScreenPosition position={0,0});
+            const std::string& map_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Tilemap();
 
         unsigned int GetTextureWidth() const override;
         unsigned int GetTextureHeight() const override;
+        unsigned int GetTileSize() const;
         bool IsMapPositionEmpty(const MapPosition p) const;
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;
-        void ReplaceTileAt(const ScreenPosition position);
+        void ReplaceTileAt(const ScreenPosition position, const unsigned char new_tile);
 };

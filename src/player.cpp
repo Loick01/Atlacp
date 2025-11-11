@@ -1,16 +1,16 @@
 #include "player.hpp"
 
 Player::Player(const Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
-    const std::string& sprite_filepath, const unsigned int tile_size, const ScreenPosition screen_position) :
-    Drawable(texture_controller, sprite_filepath, screen_position), MapElement({10,1}), m_event_controller(event_controller),
-    m_tilemap(tilemap), m_tile_size(tile_size)
+    const std::string& sprite_filepath, const ScreenPosition screen_position, const bool should_draw) :
+    Drawable(texture_controller, sprite_filepath, screen_position, should_draw), MapElement({10,1}), m_event_controller(event_controller),
+    m_tilemap(tilemap), m_tile_size(tilemap->GetTileSize())
 {
 
 }
 
 Player::~Player()
 {
-
+    m_texture_controller->DeleteTexture(m_texture_key);
 }
 
 void Player::DrawTexture() const

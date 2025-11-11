@@ -7,10 +7,11 @@
 class Drawable
 {
     protected:
-        Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
-        ~Drawable();
+        Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw);
+        Drawable(const TextureKey& texture_key, TextureController* texture_controller, const ScreenPosition position, const bool should_draw);
+        ~Drawable(); // If this class doesn't stay abstract, will need to delete m_texture_key in its destructor (texture_controller->DeleteTexture(texture_key))
         
-        virtual void LoadTexture(const std::string& texture_filepath);
+        void LoadTexture(const std::string& texture_filepath);
 
         TextureController* m_texture_controller;
         TextureKey m_texture_key;

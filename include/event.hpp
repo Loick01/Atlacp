@@ -38,11 +38,11 @@ class EditorEventController : public EventController
 {
     private:
         ScreenPosition GetMousePosition() const;
-        // EditorEventController will have a m_selected_tile member
+        unsigned char m_selected_tile;
 
     public:
         EditorEventController();
         ~EditorEventController();
 
-        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap) const; 
+        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap); 
 };
