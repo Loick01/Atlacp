@@ -14,14 +14,14 @@ class Tileset : public Drawable
         std::vector<TilesetData> m_tilesets;
         const FileReader* m_file_reader;
         unsigned int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
-        unsigned int m_current_tileset;
+        int m_current_tileset;
 
         TilesetData GetTilesetData() const;
         std::string GetHeaderForTileset(const std::string& tileset_filepath) const;
         void LoadTilesetHeader(const std::string& tileset_header, TilesetData& data);
 
     public:
-        Tileset(TextureController* texture_controller, const FileReader* file_reader, const std::string& tileset_filepath,
+        Tileset(TextureController* texture_controller, const FileReader* file_reader,
             const ScreenPosition position={0,0}, const bool should_draw=false);
         ~Tileset();
         

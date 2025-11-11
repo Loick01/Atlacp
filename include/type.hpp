@@ -31,6 +31,7 @@ struct MapPosition
 struct MapData
 {
     std::vector<unsigned char> map; // Should define Tile type instead of using unsigned char ?
+    std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     unsigned int width;
     unsigned int height;
 };

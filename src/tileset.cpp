@@ -1,14 +1,9 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController* texture_controller, const FileReader* file_reader, const std::string& tileset_filepath, 
-    const ScreenPosition position, const bool should_draw) :
-    Drawable(texture_controller, tileset_filepath, position, should_draw), m_file_reader(file_reader)
+Tileset::Tileset(TextureController* texture_controller, const FileReader* file_reader, const ScreenPosition position, const bool should_draw) :
+    Drawable(texture_controller, position, should_draw), m_file_reader(file_reader)
 {
-    TilesetData data;
-    LoadTilesetHeader(GetHeaderForTileset(tileset_filepath), data);
-    data.tileset_key = m_texture_key;
-    m_tilesets.push_back(data);
-    m_current_tileset = 0;
+    m_current_tileset = -1; // No tileset is loaded
 }
 
 Tileset::~Tileset()
@@ -70,7 +65,7 @@ void Tileset::UpdateSelectedTile(const ScreenPosition position, unsigned char& t
     }
 }
 
-TilesetData Tileset::GetTilesetData() const
+TilesetData Tileset::GetTilesetData() const // Use this function everytime I try to get a tileset from m_current_tileset ?
 {
     return m_tilesets[m_current_tileset];
 }

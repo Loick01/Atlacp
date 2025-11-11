@@ -13,14 +13,14 @@ class Tilemap : public Drawable
 {
     private:
         const FileReader* m_file_reader;
-        const Tileset* m_tileset;
+        Tileset* m_tileset;
         MapData m_map_data;
 
         unsigned char GetTileAt(const MapPosition p) const;
         bool IsOutOfMap(const MapPosition p) const;
 
     public:
-        Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
+        Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
             const std::string& map_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Tilemap();
 

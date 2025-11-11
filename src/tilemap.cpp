@@ -1,10 +1,11 @@
 #include "tilemap.hpp"
 
-Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, const Tileset* tileset, 
+Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
     const std::string& map_filepath, const ScreenPosition screen_position, const bool should_draw) :
-    Drawable(tileset->GetTextureKey(), texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
+    Drawable(texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
     LoadMap(map_filepath);
+    m_texture_key = tileset->GetTextureKey();
 }
 
 Tilemap::~Tilemap()
@@ -51,7 +52,13 @@ bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
 
 void Tilemap::LoadMap(const std::string& filepath)
 {
-    m_file_reader->GetMapFromFile(filepath, m_map_data); 
+    // When a new map will be load, useless tilesets will have to be remove
+
+    m_file_reader->GetMapFromFile(filepath, m_map_data);
+
+    // Load tilesets read in the header of the map file
+    for (const std::string& tileset_filepath : m_map_data.tilesets)
+        m_tileset->LoadTileset(tileset_filepath);
 }
 
 void Tilemap::DrawTexture() const

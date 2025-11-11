@@ -15,6 +15,10 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
     unsigned int v;
     input >> v; m.width = v;
     input >> v; m.height = v;
+    std::string s;
+    while (input >> s && s != "###"){
+        m.tilesets.push_back(s);
+    }
 }
 
 void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) const

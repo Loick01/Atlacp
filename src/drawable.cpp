@@ -6,10 +6,10 @@ Drawable::Drawable(TextureController* texture_controller, const std::string& tex
     LoadTexture(texture_filepath);
 }
 
-Drawable::Drawable(const TextureKey& texture_key, TextureController* texture_controller, const ScreenPosition position, const bool should_draw):
-    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw), m_texture_key(texture_key)
-{   
-
+Drawable::Drawable(TextureController* texture_controller, const ScreenPosition position, const bool should_draw):
+    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw)
+{
+    // This constructor is used only for Tileset and Tilemap, maybe I can remove it
 }
 
 Drawable::~Drawable()
