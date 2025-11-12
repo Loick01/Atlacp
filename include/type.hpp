@@ -44,3 +44,9 @@ struct TilesetData
     unsigned int height;
     unsigned int tile_size;
 };
+
+struct TilesetNormalizationInfo
+{
+    int last_lower_bound;
+    int last_upper_bound;
+};

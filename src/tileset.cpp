@@ -3,7 +3,7 @@
 Tileset::Tileset(TextureController* texture_controller, const FileReader* file_reader, const ScreenPosition position, const bool should_draw) :
     Drawable(texture_controller, position, should_draw), m_file_reader(file_reader)
 {
-    m_current_tileset = -1; // No tileset is loaded
+    m_index_tileset = -1; // No tileset is loaded
 }
 
 Tileset::~Tileset()
@@ -13,6 +13,7 @@ Tileset::~Tileset()
     }
 }
 
+// Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const std::string& tileset_filepath)
 {
     TilesetData data;
@@ -20,8 +21,17 @@ void Tileset::LoadTileset(const std::string& tileset_filepath)
     m_texture_key = tileset_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     m_texture_controller->LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
+    if (m_tilesets.empty()){
+        ++m_index_tileset; // This index was initialized with -1, it needs to be incremented at least once
+        m_normalization_info.last_lower_bound = 0;
+        m_normalization_info.last_upper_bound = data.width*data.height-1;
+    }
     m_tilesets.push_back(data);
-    ++m_current_tileset;
+}
+
+TextureKey Tileset::GetTextureKey() const
+{
+    return m_tilesets[m_index_tileset].tileset_key;
 }
 
 unsigned int Tileset::GetTileSize() const
@@ -31,17 +41,18 @@ unsigned int Tileset::GetTileSize() const
 
 unsigned int Tileset::GetTilesetWidth() const
 {
-    return m_tilesets[m_current_tileset].width;
+    return m_tilesets[m_index_tileset].width;
 }
 
 unsigned int Tileset::GetTilesetHeight() const
 {
-    return m_tilesets[m_current_tileset].height;
+    return m_tilesets[m_index_tileset].height;
 }
 
-bool Tileset::IsEmptyTile(const unsigned char tile) const
+bool Tileset::IsEmptyTile(const unsigned char tile) // Will be const once I remove GetNormalizedTile
 {
-    return m_tilesets[m_current_tileset].solid_tiles.find(tile) == m_tilesets[m_current_tileset].solid_tiles.end();
+    int t = GetNormalizedTile(tile); 
+    return m_tilesets[m_index_tileset].solid_tiles.find(t) == m_tilesets[m_index_tileset].solid_tiles.end();
 }
 
 std::string Tileset::GetHeaderForTileset(const std::string& tileset_filepath) const
@@ -65,17 +76,55 @@ void Tileset::UpdateSelectedTile(const ScreenPosition position, unsigned char& t
     }
 }
 
-TilesetData Tileset::GetTilesetData() const // Use this function everytime I try to get a tileset from m_current_tileset ?
+TilesetData Tileset::GetTilesetData() const // Use this function everytime I try to get a tileset from m_index_tileset ?
 {
-    return m_tilesets[m_current_tileset];
+    return m_tilesets[m_index_tileset];
 }
 
 void Tileset::NextTileset()
 {
-    m_current_tileset = ++m_current_tileset%m_tilesets.size();
+    m_index_tileset = ++m_index_tileset%m_tilesets.size();
 
     TilesetData current_data = GetTilesetData(); // Should be in a specific function, that will be used when drawing the tilemap
     m_texture_width = current_data.width*m_tile_size; 
     m_texture_height = current_data.height*m_tile_size;
     m_texture_key = current_data.tileset_key;
+}
+
+unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
+{
+    int t = tile;
+    if (t >= m_normalization_info.last_lower_bound && t <= m_normalization_info.last_upper_bound)
+        return t-m_normalization_info.last_lower_bound;
+
+    if (t > m_normalization_info.last_upper_bound){
+        t -= m_normalization_info.last_upper_bound+1;
+        for (unsigned int i = m_index_tileset+1 ; i < m_tilesets.size() ; i++){
+            const TilesetData data = m_tilesets[i];
+            int size = static_cast<int>(data.width*data.height);
+            m_normalization_info.last_lower_bound = m_normalization_info.last_upper_bound+1;
+            m_normalization_info.last_upper_bound = m_normalization_info.last_upper_bound+size;
+            if (t-size < 0){
+                m_index_tileset = i;
+                return t;
+            }
+            t -= size;
+        }
+        std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
+    }else{ // t < m_normalization_info.last_lower_bound
+        for (unsigned int i = m_index_tileset-1 ; i >= 0 ; i--){
+            const TilesetData data = m_tilesets[i];
+            int size = static_cast<int>(data.width*data.height);
+            m_normalization_info.last_upper_bound = m_normalization_info.last_lower_bound-1;
+            m_normalization_info.last_lower_bound = m_normalization_info.last_lower_bound-size;
+            if (t-m_normalization_info.last_lower_bound >= 0){
+                m_index_tileset = i;
+                return t-m_normalization_info.last_lower_bound;
+            }
+        }
+        std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
+    }
+
+    std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
+    return 0;
 }

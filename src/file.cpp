@@ -48,7 +48,7 @@ void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetDat
     input >> data.height;
     input >> data.tile_size;
 
-    data.solid_tiles.clear();
+    //data.solid_tiles.clear();
     while (input >> v){
         data.solid_tiles.insert(v);
     }

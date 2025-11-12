@@ -5,7 +5,7 @@ Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_r
     Drawable(texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
     LoadMap(map_filepath);
-    m_texture_key = tileset->GetTextureKey();
+    //m_texture_key = tileset->GetTextureKey();
 }
 
 Tilemap::~Tilemap()
@@ -65,13 +65,14 @@ void Tilemap::DrawTexture() const
 {
     std::vector<unsigned char> map = m_map_data.map;
     int tile_size = static_cast<int>(m_tileset->GetTileSize());
-    int tileset_width = static_cast<int>(m_tileset->GetTilesetWidth());
     int map_width = static_cast<int>(m_map_data.width);
     for (unsigned int i = 0 ; i < map.size() ; i++){
-        const SDL_Rect src{(map[i]%tileset_width)*tile_size, (map[i]/tileset_width)*tile_size, tile_size, tile_size};
+        int tile = m_tileset->GetNormalizedTile(map[i]);
+        int tileset_width = static_cast<int>(m_tileset->GetTilesetWidth());
+        const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
         const SDL_Rect dst{static_cast<int>(m_screen_position.x+(i%map_width)*tile_size),
                            static_cast<int>(m_screen_position.y+(i/map_width)*tile_size), tile_size, tile_size};
-        m_texture_controller->RenderTexture(m_texture_key, src, dst);
+        m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
     }
 }
 
