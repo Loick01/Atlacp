@@ -34,12 +34,12 @@ ScreenPosition Drawable::GetScreenPosition() const
     return m_screen_position;
 }
 
-unsigned int Drawable::GetTextureWidth() const
+int Drawable::GetTextureWidth() const
 {
     return m_texture_width;
 }
 
-unsigned int Drawable::GetTextureHeight() const
+int Drawable::GetTextureHeight() const
 {
     return m_texture_height;
 }
@@ -58,10 +58,8 @@ bool Drawable::IsPositionInTexture(const ScreenPosition screen_position) const /
 void Drawable::DrawTexture() const
 {
     if (m_should_draw){
-        int texture_width = static_cast<int>(m_texture_width);
-        int texture_height = static_cast<int>(m_texture_height);
-        const SDL_Rect src{0, 0, texture_width, texture_height};
-        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, texture_width, texture_height};
+        const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
+        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, m_texture_width, m_texture_height};
         m_texture_controller->RenderTexture(m_texture_key, src, dst);
     }
 }

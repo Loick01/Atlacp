@@ -16,15 +16,15 @@ class Drawable
         TextureController* m_texture_controller;
         TextureKey m_texture_key;
         ScreenPosition m_screen_position;
-        unsigned int m_texture_width;
-        unsigned int m_texture_height;
+        int m_texture_width;
+        int m_texture_height;
         bool m_should_draw;
     
     public:
         virtual TextureKey GetTextureKey() const;
         ScreenPosition GetScreenPosition() const;
-        virtual unsigned int GetTextureWidth() const;
-        virtual unsigned int GetTextureHeight() const;
+        virtual int GetTextureWidth() const;
+        virtual int GetTextureHeight() const;
         bool GetShouldDraw() const;
         bool IsPositionInTexture(const ScreenPosition screen_position) const;
         virtual void DrawTexture() const;

@@ -13,8 +13,7 @@ TextureController::~TextureController()
     }
 }
 
-void TextureController::LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key,
-    unsigned int& texture_width, unsigned int& texture_height)
+void TextureController::LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int& texture_width, int& texture_height)
 {
     SDL_Surface* surface = IMG_Load(texture_filepath.c_str());
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer,surface);

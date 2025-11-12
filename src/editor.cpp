@@ -14,7 +14,6 @@ int main(){
     if (window->HasError()){
         return -1;
     }
-    EditorEventController* event_controller = new EditorEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Tileset* tileset = new Tileset(texture_controller, file_reader);
@@ -22,6 +21,7 @@ int main(){
     tileset->LoadTileset("../tileset2.png"); 
     tileset->LoadTileset("../tileset3.png");
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt", {100,50});
+    EditorEventController* event_controller = new EditorEventController(tileset);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 
     bool gameloop = true;

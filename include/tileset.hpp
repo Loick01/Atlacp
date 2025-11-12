@@ -13,7 +13,7 @@ class Tileset : public Drawable
         std::vector<TilesetData> m_tilesets;
         TilesetNormalizationInfo m_normalization_info;
         const FileReader* m_file_reader;
-        unsigned int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
+        int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
         int m_index_tileset;
 
         TilesetData GetTilesetData() const;
@@ -26,12 +26,14 @@ class Tileset : public Drawable
         ~Tileset();
         
         TextureKey GetTextureKey() const override;
-        unsigned int GetTileSize() const;
-        unsigned int GetTilesetWidth() const;
-        unsigned int GetTilesetHeight() const;
-        bool IsEmptyTile(const unsigned char tile); // Should be const
-        void UpdateSelectedTile(const ScreenPosition position, unsigned char& tile) const;
+        int GetTilesetsSize() const;
+        int GetTileSize() const;
+        int GetTilesetWidth() const;
+        int GetTilesetWidth(const int selected_tileset) const;
+        int GetTilesetHeight() const;
+        bool IsEmptyTile(const unsigned char tile);
+        void UpdateSelectedTile(const ScreenPosition position, const int selected_tileset, unsigned char& tile) const;
         void LoadTileset(const std::string& texture_filepath);
-        void NextTileset();
+        void SetDisplayedTileset(const int selected_tileset);
         unsigned char GetNormalizedTile(const unsigned char tile);
 };

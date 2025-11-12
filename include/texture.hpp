@@ -18,8 +18,7 @@ class TextureController
         TextureController(SDL_Renderer* window_renderer);
         ~TextureController();
 
-        void LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key,
-            unsigned int &texture_width, unsigned int& texture_height);
+        void LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int &texture_width, int& texture_height);
         void RenderTexture(const TextureKey& texture_key, const SDL_Rect& src, const SDL_Rect& dst) const;
         void DeleteTexture(const TextureKey& texture_key);
 };

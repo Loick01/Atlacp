@@ -34,22 +34,40 @@ TextureKey Tileset::GetTextureKey() const
     return m_tilesets[m_index_tileset].tileset_key;
 }
 
-unsigned int Tileset::GetTileSize() const
+void Tileset::SetDisplayedTileset(const int selected_tileset)
+{
+    // Drawable::m_texture_key/m_texture_width/m_texture_height is not used in Tileset class, except in editor mode (when displaying the tileset) 
+    m_texture_key = m_tilesets[selected_tileset].tileset_key;
+    m_texture_width = m_tilesets[selected_tileset].width*m_tile_size;
+    m_texture_height = m_tilesets[selected_tileset].height*m_tile_size;
+}
+
+int Tileset::GetTilesetsSize() const
+{
+    return m_tilesets.size();
+}
+
+int Tileset::GetTileSize() const
 {
     return m_tile_size;
 }
 
-unsigned int Tileset::GetTilesetWidth() const
+int Tileset::GetTilesetWidth() const
 {
     return m_tilesets[m_index_tileset].width;
 }
 
-unsigned int Tileset::GetTilesetHeight() const
+int Tileset::GetTilesetWidth(const int selected_tileset) const
+{
+    return m_tilesets[selected_tileset].width;
+}
+
+int Tileset::GetTilesetHeight() const
 {
     return m_tilesets[m_index_tileset].height;
 }
 
-bool Tileset::IsEmptyTile(const unsigned char tile) // Will be const once I remove GetNormalizedTile
+bool Tileset::IsEmptyTile(const unsigned char tile)
 {
     int t = GetNormalizedTile(tile); 
     return m_tilesets[m_index_tileset].solid_tiles.find(t) == m_tilesets[m_index_tileset].solid_tiles.end();
@@ -67,28 +85,23 @@ void Tileset::LoadTilesetHeader(const std::string& tileset_header, TilesetData& 
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 }
 
-void Tileset::UpdateSelectedTile(const ScreenPosition position, unsigned char& tile) const
+void Tileset::UpdateSelectedTile(const ScreenPosition position, const int selected_tileset, unsigned char& tile) const
 {
     if (IsPositionInTexture(position)){
         int c = position.x/m_tile_size;
         int l = position.y/m_tile_size;
-        tile = l*GetTilesetWidth()+c;
+        int offset = 0;
+        for (size_t i = 0 ; i < selected_tileset ; i++){ // Should store the offset for each tileset in TilesetData ?
+            TilesetData t = m_tilesets[i];
+            offset += t.width*t.height;
+        }
+        tile = offset + l*GetTilesetWidth(selected_tileset)+c;
     }
 }
 
 TilesetData Tileset::GetTilesetData() const // Use this function everytime I try to get a tileset from m_index_tileset ?
 {
     return m_tilesets[m_index_tileset];
-}
-
-void Tileset::NextTileset()
-{
-    m_index_tileset = ++m_index_tileset%m_tilesets.size();
-
-    TilesetData current_data = GetTilesetData(); // Should be in a specific function, that will be used when drawing the tilemap
-    m_texture_width = current_data.width*m_tile_size; 
-    m_texture_height = current_data.height*m_tile_size;
-    m_texture_key = current_data.tileset_key;
 }
 
 unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
@@ -99,9 +112,9 @@ unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
 
     if (t > m_normalization_info.last_upper_bound){
         t -= m_normalization_info.last_upper_bound+1;
-        for (unsigned int i = m_index_tileset+1 ; i < m_tilesets.size() ; i++){
+        for (size_t i = m_index_tileset+1 ; i < m_tilesets.size() ; i++){
             const TilesetData data = m_tilesets[i];
-            int size = static_cast<int>(data.width*data.height);
+            int size = data.width*data.height;
             m_normalization_info.last_lower_bound = m_normalization_info.last_upper_bound+1;
             m_normalization_info.last_upper_bound = m_normalization_info.last_upper_bound+size;
             if (t-size < 0){
@@ -112,9 +125,9 @@ unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
         }
         std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
     }else{ // t < m_normalization_info.last_lower_bound
-        for (unsigned int i = m_index_tileset-1 ; i >= 0 ; i--){
+        for (size_t i = m_index_tileset-1 ; i >= 0 ; i--){
             const TilesetData data = m_tilesets[i];
-            int size = static_cast<int>(data.width*data.height);
+            int size = data.width*data.height;
             m_normalization_info.last_upper_bound = m_normalization_info.last_lower_bound-1;
             m_normalization_info.last_lower_bound = m_normalization_info.last_lower_bound-size;
             if (t-m_normalization_info.last_lower_bound >= 0){

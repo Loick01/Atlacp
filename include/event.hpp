@@ -37,11 +37,13 @@ class MapEventController : public EventController
 class EditorEventController : public EventController
 {
     private:
+        Tileset* m_tileset;
         ScreenPosition GetMousePosition() const;
         unsigned char m_selected_tile;
+        int m_selected_tileset;
 
     public:
-        EditorEventController();
+        EditorEventController(Tileset* tileset);
         ~EditorEventController();
 
         void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap); 

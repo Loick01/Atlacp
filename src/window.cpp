@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-Window::Window(const std::string& title, const unsigned int width, const unsigned int height, const SDL_Color bg_color) :
+Window::Window(const std::string& title, const int width, const int height, const SDL_Color bg_color) :
     m_title(title), m_width(width), m_height(height), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
     InitSdl();
@@ -36,12 +36,12 @@ SDL_Renderer* Window::GetRenderer() const
     return m_renderer;
 }
 
-unsigned int Window::GetWidth() const
+int Window::GetWidth() const
 {
     return m_width;
 }
 
-unsigned int Window::GetHeight() const
+int Window::GetHeight() const
 {
     return m_height;
 }

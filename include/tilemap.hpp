@@ -24,9 +24,9 @@ class Tilemap : public Drawable
             const std::string& map_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Tilemap();
 
-        unsigned int GetTextureWidth() const override;
-        unsigned int GetTextureHeight() const override;
-        unsigned int GetTileSize() const;
+        int GetTextureWidth() const override;
+        int GetTextureHeight() const override;
+        int GetTileSize() const;
         bool IsMapPositionEmpty(const MapPosition p) const;
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadMap(const std::string& filepath);

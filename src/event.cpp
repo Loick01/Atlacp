@@ -62,10 +62,12 @@ MapPosition MapEventController::HandlePlayerEvent() const
     return pos;
 }
 
-EditorEventController::EditorEventController():
-    EventController()
+EditorEventController::EditorEventController(Tileset* tileset):
+    EventController(), m_tileset(tileset)
 {
     m_selected_tile = 0;
+    m_selected_tileset = 0;
+    m_tileset->SetDisplayedTileset(m_selected_tileset);
 }
 
 EditorEventController::~EditorEventController()
@@ -95,7 +97,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (tileset->GetShouldDraw()){
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
-                        tileset->UpdateSelectedTile(normalized_mouse_position, m_selected_tile);
+                        tileset->UpdateSelectedTile(normalized_mouse_position, m_selected_tileset, m_selected_tile);
                     }else{
                         const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
                         tilemap->ReplaceTileAt(normalized_mouse_position, m_selected_tile);
@@ -104,7 +106,10 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 break;
             case SDL_MOUSEWHEEL:
                 if (tileset->GetShouldDraw()){
-                    if (event.wheel.y > 0) tileset->NextTileset();
+                    if (event.wheel.y > 0){
+                        m_selected_tileset = ++m_selected_tileset%tileset->GetTilesetsSize();
+                        tileset->SetDisplayedTileset(m_selected_tileset);
+                    }
                 }
                 break;
         }

@@ -12,7 +12,7 @@ FileReader::~FileReader()
 
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
 {
-    unsigned int v;
+    int v;
     input >> v; m.width = v;
     input >> v; m.height = v;
     std::string s;
@@ -43,7 +43,7 @@ void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetDat
     std::ifstream input;
     input.open(tileset_header);
 
-    unsigned int v;
+    int v;
     input >> data.width;
     input >> data.height;
     input >> data.tile_size;
