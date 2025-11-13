@@ -16,7 +16,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
     input >> v; m.width = v;
     input >> v; m.height = v;
     std::string s;
-    while (input >> s && s != "###"){
+    while (input >> s && s != MAP_HEADER_END){
         m.tilesets.push_back(s);
     }
 }
@@ -52,4 +52,29 @@ void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetDat
     while (input >> v){
         data.solid_tiles.insert(v);
     }
+}
+
+void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const
+{
+    std::ofstream map_file(map_filepath);
+    int width = map_data.width;
+    int height = map_data.height;
+    // Need to check if a file with the given name already exist
+
+    // Header
+    map_file << width << " " << height << std::endl;
+    for (const TextureKey& k : map_data.tilesets){ // Tileset filepath must be write in order
+        map_file << k << std::endl; // TilesetKey need definition for operator<<
+    }
+    map_file << MAP_HEADER_END << std::endl;
+    
+    // Map
+    for (size_t j = 0 ; j < height ; j++){
+        for (size_t i = 0 ; i < width ; i++){
+            map_file << static_cast<int>(map_data.map[j*width+i]) << " "; // Remove this cast once I use Tile type instead of unsigned char in MapData::map
+        }
+        map_file << std::endl;
+    }
+
+    map_file.close();
 }

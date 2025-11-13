@@ -32,4 +32,5 @@ class Tilemap : public Drawable
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;
         void ReplaceTileAt(const ScreenPosition position, const unsigned char new_tile);
+        void SaveMap(const std::string &map_filepath) const;
 };

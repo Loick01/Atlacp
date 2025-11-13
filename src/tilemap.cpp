@@ -84,3 +84,8 @@ void Tilemap::ReplaceTileAt(const ScreenPosition position, const unsigned char n
         SetTileAt(new_tile,{c,l});
     }
 }
+
+void Tilemap::SaveMap(const std::string &map_filepath) const
+{
+    m_file_reader->SaveMapFile(map_filepath, m_map_data);
+}

@@ -17,7 +17,7 @@ int main(){
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Tileset* tileset = new Tileset(texture_controller, file_reader);
-    tileset->LoadTileset("../tileset.png");// Tilesets will be load according to the map (specified in map header)
+    tileset->LoadTileset("../tileset.png");
     tileset->LoadTileset("../tileset2.png"); 
     tileset->LoadTileset("../tileset3.png");
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../map.txt", {100,50});
