@@ -1,10 +1,12 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-    const std::string& map_filepath, const ScreenPosition screen_position, const bool should_draw) :
+    const std::string& world_filepath, const ScreenPosition screen_position, const bool should_draw) :
     Drawable(texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
-    LoadMap(map_filepath);
+    m_world_data.maps = m_file_reader->ReadWorldFile(world_filepath, m_world_data.width, m_world_data.height);
+    m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
+    LoadMap(m_world_data.maps[m_current_map]); 
 }
 
 Tilemap::~Tilemap()
@@ -46,19 +48,31 @@ MapBound Tilemap::IsOutOfMap(const MapPosition p) const
     return MapBound::Inside;
 }
 
-MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound) const
+MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
 {
+    // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
+    // Maps are supposed to be designed in such a way the player can't get out of the world.
+    MapPosition projected_position = p;
     switch (bound){
         case MapBound::OutTop:
-            return {p.x,m_map_data.height-1};
+            m_current_map -= m_world_data.width;
+            projected_position.y = m_map_data.height-1;
+            break;
         case MapBound::OutBottom:
-            return {p.x,0};
+            m_current_map += m_world_data.width;
+            projected_position.y = 0;
+            break;
         case MapBound::OutRight:
-            return {0,p.y};
+            m_current_map += 1;
+            projected_position.x = 0;
+            break;
         case MapBound::OutLeft:
-            return {m_map_data.width-1,p.y};
+            m_current_map -= 1;
+            projected_position.x = m_map_data.width-1;
+            break;
     }
-    return p;
+    LoadMap(m_world_data.maps[m_current_map]);
+    return projected_position;
 }
 
 bool Tilemap::CheckNewPosition(MapPosition& p)
@@ -66,7 +80,6 @@ bool Tilemap::CheckNewPosition(MapPosition& p)
     MapBound is_in_bound = IsOutOfMap(p);
     if (is_in_bound != MapBound::Inside){
         p = GetProjectedPosition(p, is_in_bound);
-        LoadMap("../map2.txt");
     }else{
         const unsigned char tile = GetTileAt(p);
         return m_tileset->IsEmptyTile(tile);

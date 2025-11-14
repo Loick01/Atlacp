@@ -14,15 +14,17 @@ class Tilemap : public Drawable
     private:
         const FileReader* m_file_reader;
         Tileset* m_tileset;
+        WorldData m_world_data;
         MapData m_map_data;
 
-        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound) const;
+        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound); // Try to make it const ?
         MapBound IsOutOfMap(const MapPosition p) const;
         unsigned char GetTileAt(const MapPosition p) const;
+        int m_current_map;
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-            const std::string& map_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
+            const std::string& world_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Tilemap();
 
         int GetTextureWidth() const override;

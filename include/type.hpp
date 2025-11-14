@@ -37,6 +37,13 @@ struct MapPosition
     }
 };
 
+struct WorldData
+{
+    std::vector<std::string> maps;
+    int width;
+    int height;
+};
+
 struct MapData
 {
     std::vector<unsigned char> map; // Should define Tile type instead of using unsigned char ?

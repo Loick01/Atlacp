@@ -1,0 +1,3 @@
+2 2
+../map1.txt ../map.txt
+../map2.txt ../map1.txt

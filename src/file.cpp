@@ -10,6 +10,24 @@ FileReader::~FileReader()
 
 }
 
+std::vector<std::string> FileReader::ReadWorldFile(const std::string& world_filepath, int& world_width, int& world_height) const
+{
+    std::ifstream input;
+    input.open(world_filepath);
+
+    int v;
+    input >> v; world_width = v;
+    input >> v; world_height = v;
+    
+    std::vector<std::string> maps;
+    std::string s;
+    while (input >> s)
+        maps.push_back(s);
+
+    input.close();
+    return maps;
+}
+
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
 {
     int v;
