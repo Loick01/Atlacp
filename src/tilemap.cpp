@@ -37,16 +37,41 @@ int Tilemap::GetTextureHeight() const
     return m_map_data.height*m_tileset->GetTileSize();
 }
 
-bool Tilemap::IsOutOfMap(const MapPosition p) const
+MapBound Tilemap::IsOutOfMap(const MapPosition p) const
 {
-    return p.x < 0 || p.x >= m_map_data.width || p.y < 0 || p.y >= m_map_data.height;
+    if (p.x < 0) return MapBound::OutLeft;
+    if (p.x >= m_map_data.width) return MapBound::OutRight;
+    if (p.y < 0) return MapBound::OutTop;
+    if (p.y >= m_map_data.height) return MapBound::OutBottom;
+    return MapBound::Inside;
 }
 
-bool Tilemap::IsMapPositionEmpty(const MapPosition p) const
+MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound) const
 {
-    if (IsOutOfMap(p)) return false;
-    const unsigned char tile = GetTileAt(p);
-    return m_tileset->IsEmptyTile(tile);
+    switch (bound){
+        case MapBound::OutTop:
+            return {p.x,m_map_data.height-1};
+        case MapBound::OutBottom:
+            return {p.x,0};
+        case MapBound::OutRight:
+            return {0,p.y};
+        case MapBound::OutLeft:
+            return {m_map_data.width-1,p.y};
+    }
+    return p;
+}
+
+bool Tilemap::CheckNewPosition(MapPosition& p)
+{
+    MapBound is_in_bound = IsOutOfMap(p);
+    if (is_in_bound != MapBound::Inside){
+        p = GetProjectedPosition(p, is_in_bound);
+        LoadMap("../map2.txt");
+    }else{
+        const unsigned char tile = GetTileAt(p);
+        return m_tileset->IsEmptyTile(tile);
+    }
+    return true;
 }
 
 void Tilemap::LoadMap(const std::string& filepath)

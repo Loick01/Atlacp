@@ -17,6 +17,15 @@ struct ScreenPosition
     }
 };
 
+enum class MapBound
+{
+    Inside,
+    OutTop,
+    OutBottom,
+    OutRight,
+    OutLeft
+};
+
 struct MapPosition
 {
     int x;

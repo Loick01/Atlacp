@@ -16,8 +16,9 @@ class Tilemap : public Drawable
         Tileset* m_tileset;
         MapData m_map_data;
 
+        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound) const;
+        MapBound IsOutOfMap(const MapPosition p) const;
         unsigned char GetTileAt(const MapPosition p) const;
-        bool IsOutOfMap(const MapPosition p) const;
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
@@ -27,7 +28,7 @@ class Tilemap : public Drawable
         int GetTextureWidth() const override;
         int GetTextureHeight() const override;
         int GetTileSize() const;
-        bool IsMapPositionEmpty(const MapPosition p) const;
+        bool CheckNewPosition(MapPosition& p);
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;

@@ -11,11 +11,11 @@ class Player : public Drawable, public MapElement
 {
     private:
         const MapEventController* m_event_controller;
-        const Tilemap* m_tilemap;
+        Tilemap* m_tilemap; // Try to make it const ?
         const int m_tile_size;
 
     public:
-        Player(const Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
+        Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
             const std::string& sprite_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Player();
 
