@@ -31,9 +31,10 @@ class Tileset : public Drawable
         int GetTilesetWidth() const;
         int GetTilesetWidth(const int selected_tileset) const;
         int GetTilesetHeight() const;
+        unsigned char GetNormalizedTile(const unsigned char tile);
         bool IsEmptyTile(const unsigned char tile);
         void UpdateSelectedTile(const ScreenPosition position, const int selected_tileset, unsigned char& tile) const;
         void LoadTileset(const std::string& texture_filepath);
         void SetDisplayedTileset(const int selected_tileset);
-        unsigned char GetNormalizedTile(const unsigned char tile);
+        void CleanTilesets();
 };

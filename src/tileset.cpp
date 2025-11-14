@@ -22,7 +22,7 @@ void Tileset::LoadTileset(const std::string& tileset_filepath)
     m_texture_controller->LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
     if (m_tilesets.empty()){
-        ++m_index_tileset; // This index was initialized with -1, it needs to be incremented at least once
+        m_index_tileset = 0; // This index was initialized with -1, it needs to be 0 once the first tileset is loaded
         m_normalization_info.last_lower_bound = 0;
         m_normalization_info.last_upper_bound = data.width*data.height-1;
     }
@@ -140,4 +140,12 @@ unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
 
     std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
     return 0;
+}
+
+void Tileset::CleanTilesets()
+{
+    for (const TilesetData& e : m_tilesets){
+        m_texture_controller->DeleteTexture(e.tileset_key);
+    }
+    m_tilesets.clear();
 }

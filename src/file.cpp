@@ -26,8 +26,9 @@ void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) cons
     std::ifstream input;
     input.open(filepath);
     
-    ReadHeaderMapFile(input, data);
+    data.tilesets.clear();
     data.map.clear();
+    ReadHeaderMapFile(input, data);
     data.map.reserve(data.width*data.height);
     
     unsigned int current_value;
