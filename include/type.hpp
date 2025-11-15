@@ -11,6 +11,11 @@ struct ScreenPosition
     int x;
     int y;
 
+    ScreenPosition operator+(const ScreenPosition p) const
+    {
+        return ScreenPosition{x+p.x, y+p.y};
+    }
+
     ScreenPosition operator-(const ScreenPosition p) const
     {
         return ScreenPosition{x-p.x, y-p.y};
@@ -20,8 +25,8 @@ struct ScreenPosition
 enum class MapBound
 {
     Inside,
-    OutTop,
-    OutBottom,
+    OutUp,
+    OutDown,
     OutRight,
     OutLeft
 };
@@ -34,6 +39,16 @@ struct MapPosition
     MapPosition operator+(const MapPosition p) const
     {
         return MapPosition{x+p.x, y+p.y};
+    }
+
+    MapPosition operator*(const int i) const
+    {
+        return MapPosition{x*i, y*i};
+    }
+
+    ScreenPosition ToScreenPosition(const int tile_size) const
+    {
+        return ScreenPosition{x*tile_size, y*tile_size};
     }
 };
 

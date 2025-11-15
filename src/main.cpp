@@ -9,18 +9,18 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 1600, 900, {100,100,100});
+    Window* window = new Window("Atlacp", 640, 640, {100,100,100});
     if (window->HasError()){
         return -1;
     }
     MapEventController* event_controller = new MapEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
+
+    //ScreenPosition* drawing_offset = new ScreenPosition{0,0}; // Tilemap and player will share this screen position (should use a scene graph ?)
     Tileset* tileset = new Tileset(texture_controller, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt");
-    const ScreenPosition drawing_offset{window->GetWidth()/2-tilemap->GetTextureWidth()/2, window->GetHeight()/2-tilemap->GetTextureHeight()/2};
-    tilemap->SetScreenPosition(drawing_offset);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", drawing_offset);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt"/*, drawing_offset*/);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png"/*, drawing_offset*/);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};

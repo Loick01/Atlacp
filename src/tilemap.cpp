@@ -43,9 +43,30 @@ MapBound Tilemap::IsOutOfMap(const MapPosition p) const
 {
     if (p.x < 0) return MapBound::OutLeft;
     if (p.x >= m_map_data.width) return MapBound::OutRight;
-    if (p.y < 0) return MapBound::OutTop;
-    if (p.y >= m_map_data.height) return MapBound::OutBottom;
+    if (p.y < 0) return MapBound::OutUp;
+    if (p.y >= m_map_data.height) return MapBound::OutDown;
     return MapBound::Inside;
+}
+
+void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
+{
+    // Should I merge it with GetProjectedPosition ?
+    switch (bound){
+        case MapBound::OutUp:
+            m_current_map -= m_world_data.width;
+            break;
+        case MapBound::OutDown:
+            m_current_map += m_world_data.width;
+            break;
+        case MapBound::OutRight:
+            m_current_map += 1;
+            break;
+        case MapBound::OutLeft:
+            m_current_map -= 1;
+            break;
+    }
+    // Error if out of range for world ?
+    LoadMap(m_world_data.maps[m_current_map]);
 }
 
 MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
@@ -54,11 +75,11 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
     // Maps are supposed to be designed in such a way the player can't get out of the world.
     MapPosition projected_position = p;
     switch (bound){
-        case MapBound::OutTop:
+        case MapBound::OutUp:
             m_current_map -= m_world_data.width;
             projected_position.y = m_map_data.height-1;
             break;
-        case MapBound::OutBottom:
+        case MapBound::OutDown:
             m_current_map += m_world_data.width;
             projected_position.y = 0;
             break;

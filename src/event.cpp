@@ -87,13 +87,32 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
     for (SDL_Event event : m_events){
         switch (event.type){
             case SDL_KEYDOWN: {
+                if (event.key.repeat != 0) break;
                 SDL_Scancode event_scancode = event.key.keysym.scancode;
-                if (event_scancode == SDL_SCANCODE_SPACE){
-                    tileset->InvertShouldDraw();
-                    tileset->SetScreenPosition(GetMousePosition());
-                }else if (event_scancode == SDL_SCANCODE_S){
-                    tilemap->SaveMap("../map2.txt");
-                    std::cout << "Map saved in map2.txt\n";
+
+                switch(event_scancode){
+                    case SDL_SCANCODE_SPACE:
+                        tileset->InvertShouldDraw();
+                        tileset->SetScreenPosition(GetMousePosition());
+                        break;
+                    case SDL_SCANCODE_S:
+                        tilemap->SaveMap("../map2.txt");
+                        std::cout << "Map saved in map2.txt\n";
+                        break;
+                    case SDL_SCANCODE_UP:
+                        tilemap->LoadAdjacentMap(MapBound::OutUp);
+                        break;
+                    case SDL_SCANCODE_DOWN:
+                        tilemap->LoadAdjacentMap(MapBound::OutDown);
+                        break;
+                    case SDL_SCANCODE_RIGHT:
+                        tilemap->LoadAdjacentMap(MapBound::OutRight);
+                        break;
+                    case SDL_SCANCODE_LEFT:
+                        tilemap->LoadAdjacentMap(MapBound::OutLeft);
+                        break;
+                    default:
+                        break;
                 }
                 break;
             }

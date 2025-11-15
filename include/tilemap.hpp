@@ -31,6 +31,7 @@ class Tilemap : public Drawable
         int GetTextureHeight() const override;
         int GetTileSize() const;
         bool CheckNewPosition(MapPosition& p);
+        void LoadAdjacentMap(const MapBound bound);
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadMap(const std::string& filepath);
         void DrawTexture() const override;

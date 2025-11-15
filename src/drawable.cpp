@@ -49,10 +49,10 @@ bool Drawable::GetShouldDraw() const
     return m_should_draw;
 }
 
-bool Drawable::IsPositionInTexture(const ScreenPosition screen_position) const // screen_position must be normalized
+bool Drawable::IsPositionInTexture(const ScreenPosition sp) const // sp must be normalized
 {
     // Use GetTextureWidth()/GetTextureHeight() instead of m_texture_width/m_texture_height because of overrided functions
-    return screen_position.x >= 0 && screen_position.y >= 0 && screen_position.x <= GetTextureWidth() && screen_position.y <= GetTextureHeight();
+    return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
 void Drawable::DrawTexture() const
@@ -64,9 +64,14 @@ void Drawable::DrawTexture() const
     }
 }
 
-void Drawable::SetScreenPosition(const ScreenPosition screen_position)
+void Drawable::SetScreenPosition(const ScreenPosition sp)
 {
-    m_screen_position = screen_position;
+    m_screen_position = sp;
+}
+
+void Drawable::AddScreenPosition(const ScreenPosition sp)
+{
+    m_screen_position = m_screen_position + sp;
 }
 
 void Drawable::InvertShouldDraw()

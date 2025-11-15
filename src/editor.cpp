@@ -10,14 +10,14 @@
 #include "tileset.hpp"
 
 int main(){
-    Window* window = new Window("Map Editor - Atlacp", 1600, 900, {100,100,100});
+    Window* window = new Window("Map Editor - Atlacp", 640, 640, {100,100,100});
     if (window->HasError()){
         return -1;
     }
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Tileset* tileset = new Tileset(texture_controller, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", {100,50});
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt");
     EditorEventController* event_controller = new EditorEventController(tileset);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 
