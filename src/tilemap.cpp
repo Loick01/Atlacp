@@ -108,6 +108,12 @@ bool Tilemap::CheckNewPosition(MapPosition& p)
     return true;
 }
 
+bool Tilemap::CanMoveCamera(const ScreenPosition sp, const int window_width, const int window_height) const
+{
+    const ScreenPosition new_sp = GetScreenPosition() + sp;
+    return new_sp.x <= 0 && new_sp.y <= 0 && new_sp.x + GetTextureWidth() >= window_width && new_sp.y + GetTextureHeight() >= window_height;
+}
+
 void Tilemap::LoadMap(const std::string& filepath)
 {
     m_tileset->CleanTilesets(); // Delete tilesets used for the previous map
