@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-    const std::string& world_filepath, const ScreenPosition screen_position, const bool should_draw) :
-    Drawable(texture_controller, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
+    const std::string& world_filepath, Camera* camera, const ScreenPosition screen_position, const bool should_draw) :
+    Drawable(texture_controller, camera, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
 {
     m_world_data.maps = m_file_reader->ReadWorldFile(world_filepath, m_world_data.width, m_world_data.height);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
@@ -130,11 +130,14 @@ void Tilemap::DrawTexture() const
     std::vector<unsigned char> map = m_map_data.map;
     int tile_size = m_tileset->GetTileSize();
     int map_width = m_map_data.width;
+    const ScreenPosition camera_position = m_camera->GetCameraPosition();
     for (int i = 0 ; i < map.size() ; i++){ // i must be an int
         int tile = m_tileset->GetNormalizedTile(map[i]);
         int tileset_width = m_tileset->GetTilesetWidth();
         const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
-        const SDL_Rect dst{m_screen_position.x+(i%map_width)*tile_size, m_screen_position.y+(i/map_width)*tile_size, tile_size, tile_size};
+        const SDL_Rect dst{((i%map_width)*tile_size)-camera_position.x,
+                           ((i/map_width)*tile_size)-camera_position.y, 
+                           tile_size, tile_size};
         m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
     }
 }

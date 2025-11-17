@@ -20,6 +20,7 @@ set(SOURCES
     src/drawable.cpp
     src/element.cpp
     src/tileset.cpp
+    src/camera.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

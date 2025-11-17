@@ -16,6 +16,11 @@ struct ScreenPosition
         return ScreenPosition{x+p.x, y+p.y};
     }
 
+    ScreenPosition operator+(const int i) const
+    {
+        return ScreenPosition{x+i, y+i};
+    }
+
     ScreenPosition operator-(const ScreenPosition p) const
     {
         return ScreenPosition{x-p.x, y-p.y};

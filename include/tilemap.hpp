@@ -24,7 +24,7 @@ class Tilemap : public Drawable
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-            const std::string& world_filepath, const ScreenPosition position={0,0}, const bool should_draw=true);
+            const std::string& world_filepath, Camera* camera, const ScreenPosition position={0,0}, const bool should_draw=true);
         ~Tilemap();
 
         int GetTextureWidth() const override;

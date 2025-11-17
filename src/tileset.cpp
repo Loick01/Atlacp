@@ -1,7 +1,7 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController* texture_controller, const FileReader* file_reader, const ScreenPosition position, const bool should_draw) :
-    Drawable(texture_controller, position, should_draw), m_file_reader(file_reader)
+Tileset::Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const ScreenPosition position, const bool should_draw) :
+    Drawable(texture_controller, camera, position, should_draw), m_file_reader(file_reader)
 {
     m_index_tileset = -1; // No tileset is loaded
 }

@@ -21,7 +21,7 @@ class Tileset : public Drawable
         void LoadTilesetHeader(const std::string& tileset_header, TilesetData& data);
 
     public:
-        Tileset(TextureController* texture_controller, const FileReader* file_reader,
+        Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader,
             const ScreenPosition position={0,0}, const bool should_draw=false);
         ~Tileset();
         

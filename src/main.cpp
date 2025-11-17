@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 
+#include "camera.hpp"
 #include "event.hpp"
 #include "file.hpp"
 #include "player.hpp"
@@ -9,18 +10,19 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 320, 320, {100,100,100});
+    Window* window = new Window("Atlacp", 640, 640, {100,100,100});
     if (window->HasError()){
         return -1;
     }
     MapEventController* event_controller = new MapEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
+    Camera* camera = new Camera();
 
     //ScreenPosition* drawing_offset = new ScreenPosition{0,0}; // Tilemap and player will share this screen position (should use a scene graph ?)
-    Tileset* tileset = new Tileset(texture_controller, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt"/*, drawing_offset*/);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", window->GetWidth(), window->GetHeight()/*, drawing_offset*/);
+    Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", ScreenPosition{window->GetWidth()/2, window->GetHeight()/2}, camera);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};
@@ -39,6 +41,7 @@ int main(){
         SDL_Delay(48);   
     }
 
+    delete camera;
     delete tileset;
     delete tilemap;
     delete player;

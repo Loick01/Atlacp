@@ -14,12 +14,9 @@ class Player : public Drawable, public MapElement
         Tilemap* m_tilemap; // Try to make it const ?
         const int m_tile_size;
 
-        const int m_window_width; // Camera will need window size
-        const int m_window_height;
-
     public:
         Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
-            const std::string& sprite_filepath, const int window_width, const int window_height, const ScreenPosition position={0,0},
+            const std::string& sprite_filepath, const ScreenPosition window_center, Camera* camera, const ScreenPosition position={0,0},
             const bool should_draw=true);
         ~Player();
 

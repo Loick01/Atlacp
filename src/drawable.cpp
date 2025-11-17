@@ -1,13 +1,14 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):
-    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw)
+Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, Camera* camera, const ScreenPosition position, 
+    const bool should_draw):
+    m_texture_controller(texture_controller), m_position(position), m_should_draw(should_draw), m_camera(camera)
 {
     LoadTexture(texture_filepath);
 }
 
-Drawable::Drawable(TextureController* texture_controller, const ScreenPosition position, const bool should_draw):
-    m_texture_controller(texture_controller), m_screen_position(position), m_should_draw(should_draw)
+Drawable::Drawable(TextureController* texture_controller, Camera* camera, const ScreenPosition position, const bool should_draw):
+    m_texture_controller(texture_controller), m_position(position), m_should_draw(should_draw), m_camera(camera)
 {
     // This constructor is used only for Tileset and Tilemap, maybe I can remove it
 }
@@ -31,7 +32,7 @@ TextureKey Drawable::GetTextureKey() const
 
 ScreenPosition Drawable::GetScreenPosition() const
 {
-    return m_screen_position;
+    return m_position;
 }
 
 int Drawable::GetTextureWidth() const
@@ -59,19 +60,20 @@ void Drawable::DrawTexture() const
 {
     if (m_should_draw){
         const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
-        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, m_texture_width, m_texture_height};
+        const ScreenPosition camera_position = m_camera->GetCameraPosition();
+        const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, m_texture_width, m_texture_height};
         m_texture_controller->RenderTexture(m_texture_key, src, dst);
     }
 }
 
 void Drawable::SetScreenPosition(const ScreenPosition sp)
 {
-    m_screen_position = sp;
+    m_position = sp;
 }
 
 void Drawable::AddScreenPosition(const ScreenPosition sp)
 {
-    m_screen_position = m_screen_position + sp;
+    m_position = m_position + sp;
 }
 
 void Drawable::InvertShouldDraw()
