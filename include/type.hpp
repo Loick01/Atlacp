@@ -6,7 +6,7 @@
 
 using TextureKey = std::string;
 
-struct ScreenPosition
+struct ScreenPosition // Position on screen (could be out of window)
 {
     int x;
     int y;
@@ -24,6 +24,32 @@ struct ScreenPosition
     ScreenPosition operator-(const ScreenPosition p) const
     {
         return ScreenPosition{x-p.x, y-p.y};
+    }
+};
+
+struct ScenePosition // Position in 2D space
+{
+    int x;
+    int y;
+
+    ScenePosition operator+(const ScenePosition p) const
+    {
+        return ScenePosition{x+p.x, y+p.y};
+    }
+
+    ScenePosition operator+(const int i) const
+    {
+        return ScenePosition{x+i, y+i};
+    }
+
+    ScenePosition operator-(const ScenePosition p) const
+    {
+        return ScenePosition{x-p.x, y-p.y};
+    }
+
+    ScenePosition operator+(const ScreenPosition p) const
+    {
+        return ScenePosition{x+p.x, y+p.y};
     }
 };
 

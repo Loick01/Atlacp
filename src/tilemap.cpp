@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-    const std::string& world_filepath, Camera* camera, const ScreenPosition screen_position, const bool should_draw) :
-    Drawable(texture_controller, camera, screen_position, should_draw), m_file_reader(file_reader), m_tileset(tileset)
+    const std::string& world_filepath, Camera* camera) :
+    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset)
 {
     m_world_data.maps = m_file_reader->ReadWorldFile(world_filepath, m_world_data.width, m_world_data.height);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
@@ -130,7 +130,7 @@ void Tilemap::DrawTexture() const
     std::vector<unsigned char> map = m_map_data.map;
     int tile_size = m_tileset->GetTileSize();
     int map_width = m_map_data.width;
-    const ScreenPosition camera_position = m_camera->GetCameraPosition();
+    const ScenePosition camera_position = m_camera->GetCameraPosition();
     for (int i = 0 ; i < map.size() ; i++){ // i must be an int
         int tile = m_tileset->GetNormalizedTile(map[i]);
         int tileset_width = m_tileset->GetTilesetWidth();
@@ -142,12 +142,12 @@ void Tilemap::DrawTexture() const
     }
 }
 
-void Tilemap::ReplaceTileAt(const ScreenPosition position, const unsigned char new_tile)
+void Tilemap::ReplaceTileAt(const ScenePosition sp, const unsigned char new_tile)
 {
-    if (IsPositionInTexture(position)){
+    if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
         const int tile_size = m_tileset->GetTileSize();
-        int c = position.x/tile_size;
-        int l = position.y/tile_size;
+        int c = sp.x/tile_size;
+        int l = sp.y/tile_size;
         SetTileAt(new_tile,{c,l});
     }
 }

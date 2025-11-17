@@ -1,28 +1,20 @@
 #include "player.hpp"
 
 Player::Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
-    const std::string& sprite_filepath, const ScreenPosition window_center, Camera* camera, const ScreenPosition screen_position, const bool should_draw) :
-    Drawable(texture_controller, sprite_filepath, camera, screen_position, should_draw), MapElement({10,10}), m_event_controller(event_controller),
+    const std::string& sprite_filepath, Camera* camera):
+    Drawable(texture_controller, sprite_filepath, camera, ScenePosition{0,0}), MapElement({10,10}), m_event_controller(event_controller),
     m_tilemap(tilemap), m_tile_size(tilemap->GetTileSize())
 {
-    // Set the "camera" position to have the player in the middle of screen (without checking the tilemap bound)
+    // Set the camera position to have the player in the middle of screen (without checking the tilemap bound)
     //const ScreenPosition sp = m_map_position.ToScreenPosition(m_tile_size) /*+ m_tile_size/2*/;
     //m_camera->SetCameraPosition(window_center-sp); // Tilemap and player share the same drawing offset thanks to camera
+
+    m_position = ScenePosition{m_map_position.x*m_tile_size, m_map_position.y*m_tile_size};
 }
 
 Player::~Player()
 {
     m_texture_controller->DeleteTexture(m_texture_key);
-}
-
-void Player::DrawTexture() const
-{
-    const SDL_Rect src{0,0,m_texture_width,m_texture_height};
-    const ScreenPosition camera_position = m_camera->GetCameraPosition();
-    const SDL_Rect dst{(m_map_position.x*m_tile_size)-camera_position.x,
-                       (m_map_position.y*m_tile_size)-camera_position.y,
-                       m_texture_width,m_texture_height};
-    m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 
 void Player::GetNewPosition(const MapPosition movement) // Should be in MapElement class ?
@@ -45,6 +37,7 @@ void Player::GetNewPosition(const MapPosition movement) // Should be in MapEleme
         }
             */
         m_map_position = new_pos; // Update the position only after using the previous one (for axis_position)
+        m_position = ScenePosition{m_map_position.x*m_tile_size, m_map_position.y*m_tile_size};
     }
 }
 

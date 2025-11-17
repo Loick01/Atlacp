@@ -1,7 +1,7 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const ScreenPosition position, const bool should_draw) :
-    Drawable(texture_controller, camera, position, should_draw), m_file_reader(file_reader)
+Tileset::Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const bool should_draw):
+    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_should_draw(should_draw)
 {
     m_index_tileset = -1; // No tileset is loaded
 }
@@ -32,6 +32,11 @@ void Tileset::LoadTileset(const std::string& tileset_filepath)
 TextureKey Tileset::GetTextureKey() const
 {
     return m_tilesets[m_index_tileset].tileset_key;
+}
+
+ScreenPosition Tileset::GetScreenPosition() const
+{
+    return m_screen_position;
 }
 
 void Tileset::SetDisplayedTileset(const int selected_tileset)
@@ -85,11 +90,11 @@ void Tileset::LoadTilesetHeader(const std::string& tileset_header, TilesetData& 
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 }
 
-void Tileset::UpdateSelectedTile(const ScreenPosition position, const int selected_tileset, unsigned char& tile) const
+void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, unsigned char& tile) const
 {
-    if (IsPositionInTexture(position)){
-        int c = position.x/m_tile_size;
-        int l = position.y/m_tile_size;
+    if (IsPositionInTexture(sp)){ // sp must be normalized (with screen position)
+        int c = sp.x/m_tile_size;
+        int l = sp.y/m_tile_size;
         int offset = 0;
         for (size_t i = 0 ; i < selected_tileset ; i++){ // Should store the offset for each tileset in TilesetData ?
             TilesetData t = m_tilesets[i];
@@ -148,4 +153,29 @@ void Tileset::CleanTilesets()
         m_texture_controller->DeleteTexture(e.tileset_key);
     }
     m_tilesets.clear();
+}
+
+void Tileset::DrawTexture() const
+{
+    // Tileset is display using screen coordinates (instead of scene coordinates), so we don't need the camera position to render it
+    if (m_should_draw){
+        const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
+        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, m_texture_width, m_texture_height};
+        m_texture_controller->RenderTexture(m_texture_key, src, dst);
+    }
+}
+
+void Tileset::SetScreenPosition(const ScreenPosition sp)
+{
+    m_screen_position = sp;
+}
+
+bool Tileset::GetShouldDraw() const
+{
+    return m_should_draw;
+}
+
+void Tileset::InvertShouldDraw()
+{
+    m_should_draw = !m_should_draw;
 }

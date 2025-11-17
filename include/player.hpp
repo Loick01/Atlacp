@@ -16,11 +16,9 @@ class Player : public Drawable, public MapElement
 
     public:
         Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
-            const std::string& sprite_filepath, const ScreenPosition window_center, Camera* camera, const ScreenPosition position={0,0},
-            const bool should_draw=true);
+            const std::string& sprite_filepath, Camera* camera);
         ~Player();
 
-        void DrawTexture() const override;
         void Update() override;
         void GetNewPosition(const MapPosition movement);
 };

@@ -46,5 +46,5 @@ class EditorEventController : public EventController
         EditorEventController(Tileset* tileset);
         ~EditorEventController();
 
-        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap); 
+        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera); 
 };

@@ -7,13 +7,15 @@
 class Camera
 {
     private:
-        ScreenPosition m_position;
+        ScenePosition m_position;
+        const ScreenPosition m_window_center; // Coordinates at the center of the window (used to look at a specific ScenePosition)
 
     public:
-        Camera();
+        Camera(const ScreenPosition window_center);
         ~Camera();
 
-        ScreenPosition GetCameraPosition() const;
-        void SetCameraPosition(const ScreenPosition sp); // Set m_position to sp
-        void MoveCameraPosition(const ScreenPosition sp); // Add the argument sp to m_position (used when moving the player)
+        ScenePosition GetCameraPosition() const;
+        void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
+        void MoveCameraPosition(const ScenePosition sp); // Add the argument sp to m_position (used when moving the player)
+        void LookAt(const ScenePosition sp);
 };

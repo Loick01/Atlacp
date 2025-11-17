@@ -82,7 +82,7 @@ ScreenPosition EditorEventController::GetMousePosition() const
     return p;
 }
 
-void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap)
+void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -119,11 +119,11 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (tileset->GetShouldDraw()){
-                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tileset->GetScreenPosition();
-                        tileset->UpdateSelectedTile(normalized_mouse_position, m_selected_tileset, m_selected_tile);
+                        const ScreenPosition norm_screen_pos = GetMousePosition()-tileset->GetScreenPosition(); // Normalized mouse screen position
+                        tileset->UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
                     }else{
-                        const ScreenPosition normalized_mouse_position = GetMousePosition()-tilemap->GetScreenPosition();
-                        tilemap->ReplaceTileAt(normalized_mouse_position, m_selected_tile);
+                        const ScenePosition norm_scene_pos = (camera->GetCameraPosition() + GetMousePosition())-tilemap->GetScenePosition(); // Normalize mouse scene position
+                        tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
                     }
                 }
                 break;

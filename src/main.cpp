@@ -17,12 +17,11 @@ int main(){
     MapEventController* event_controller = new MapEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera();
+    Camera* camera = new Camera(ScreenPosition{window->GetWidth()/2, window->GetHeight()/2});
 
-    //ScreenPosition* drawing_offset = new ScreenPosition{0,0}; // Tilemap and player will share this screen position (should use a scene graph ?)
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", ScreenPosition{window->GetWidth()/2, window->GetHeight()/2}, camera);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", camera);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};

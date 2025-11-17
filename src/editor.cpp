@@ -15,7 +15,7 @@ int main(){
     }
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera();
+    Camera* camera = new Camera(ScreenPosition{window->GetWidth()/2, window->GetHeight()/2});
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
     EditorEventController* event_controller = new EditorEventController(tileset);
@@ -27,7 +27,7 @@ int main(){
         event_controller->PollAllEvents();
         
         gameloop = event_controller->HandleWindowEvents();
-        event_controller->HandleEditorEvent(tileset, tilemap);
+        event_controller->HandleEditorEvent(tileset, tilemap, camera);
 
         for (const Drawable* d : drawables) d->DrawTexture();
         
