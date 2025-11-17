@@ -31,7 +31,7 @@ class Tilemap : public Drawable
         int GetTextureHeight() const override;
         int GetTileSize() const;
         bool CheckNewPosition(MapPosition& p);
-        bool CanMoveCamera(const ScreenPosition sp, const int window_width, const int window_height) const;
+        bool CanMoveCamera(const int axis_position, const int axis_new_position) const;
         void LoadAdjacentMap(const MapBound bound);
         void SetTileAt(const unsigned char new_tile, const MapPosition p);
         void LoadMap(const std::string& filepath);

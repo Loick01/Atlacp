@@ -25,4 +25,5 @@ class Player : public Drawable, public MapElement
 
         void DrawTexture() const override;
         void Update() override;
+        void GetNewPosition(const MapPosition movement);
 };

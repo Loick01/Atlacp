@@ -47,19 +47,19 @@ MapEventController::~MapEventController()
 
 }
 
-MapPosition MapEventController::HandlePlayerEvent() const
+MapMovement MapEventController::HandlePlayerEvent() const
 {
-    MapPosition pos{0, 0};
+    MapMovement movement = MapMovement::None;
     const Uint8* state = SDL_GetKeyboardState(NULL);
     if (state[SDL_SCANCODE_W])
-        pos.y = -1; 
-    if (state[SDL_SCANCODE_A])
-        pos.x = -1;
-    if (state[SDL_SCANCODE_S])
-        pos.y = 1;
-    if (state[SDL_SCANCODE_D])
-        pos.x = 1;
-    return pos;
+        movement = MapMovement::Up;
+    else if (state[SDL_SCANCODE_A])
+        movement = MapMovement::Left;
+    else if (state[SDL_SCANCODE_S])
+        movement = MapMovement::Down;
+    else if (state[SDL_SCANCODE_D])
+        movement = MapMovement::Right;
+    return movement;
 }
 
 EditorEventController::EditorEventController(Tileset* tileset):

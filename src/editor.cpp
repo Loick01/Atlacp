@@ -3,7 +3,6 @@
 
 #include "event.hpp"
 #include "file.hpp"
-#include "player.hpp"
 #include "texture.hpp"
 #include "tilemap.hpp"
 #include "window.hpp"

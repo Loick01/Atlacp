@@ -31,6 +31,15 @@ enum class MapBound
     OutLeft
 };
 
+enum class MapMovement
+{
+    Up,
+    Down,
+    Right,
+    Left,
+    None
+};
+
 struct MapPosition
 {
     int x;

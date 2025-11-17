@@ -31,7 +31,7 @@ class MapEventController : public EventController
         MapEventController();
         ~MapEventController();
 
-        MapPosition HandlePlayerEvent() const;
+        MapMovement HandlePlayerEvent() const;
 };
 
 class EditorEventController : public EventController

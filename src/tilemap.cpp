@@ -108,10 +108,11 @@ bool Tilemap::CheckNewPosition(MapPosition& p)
     return true;
 }
 
-bool Tilemap::CanMoveCamera(const ScreenPosition sp, const int window_width, const int window_height) const
+bool Tilemap::CanMoveCamera(const int axis_position, const int axis_new_position) const
 {
-    const ScreenPosition new_sp = GetScreenPosition() + sp;
-    return new_sp.x <= 0 && new_sp.y <= 0 && new_sp.x + GetTextureWidth() >= window_width && new_sp.y + GetTextureHeight() >= window_height;
+    const int m_min_limit = 5, m_max_limit = 15; // Should be member of a Camera class
+    return (axis_position > m_min_limit || axis_new_position == m_min_limit+1)
+        && (axis_position < m_max_limit || axis_new_position == m_max_limit-1);
 }
 
 void Tilemap::LoadMap(const std::string& filepath)

@@ -25,16 +25,46 @@ void Player::DrawTexture() const
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 
-void Player::Update()
+void Player::GetNewPosition(const MapPosition movement) // Should be in MapElement class ?
 {
-    const MapPosition movement = m_event_controller->HandlePlayerEvent();
     MapPosition new_pos = m_map_position + movement;
     if (m_tilemap->CheckNewPosition(new_pos)){
-        m_map_position = new_pos;
-        const ScreenPosition sp = (movement*-1).ToScreenPosition(m_tile_size); // m_tile_size must be equal to the same tile_size in Tilemap, if not use tilemap->GetTileSize()
-        if (m_tilemap->CanMoveCamera(sp,m_window_width,m_window_height)){
+
+        int axis_position, axis_movement; // Previous position on the axis concerned by the movement
+        if (movement.x != 0){
+            axis_position = m_map_position.x;
+            axis_movement = movement.x;
+        }else{
+            axis_position = m_map_position.y;
+            axis_movement = movement.y;
+        }
+        if (m_tilemap->CanMoveCamera(axis_position, axis_position+axis_movement)){
+            const ScreenPosition sp = (movement*-1).ToScreenPosition(m_tile_size); // m_tile_size must be equal to the same tile_size in Tilemap, if not use tilemap->GetTileSize()
             m_tilemap->AddScreenPosition(sp); // Tilemap and player will have to share somehow this screen position
             AddScreenPosition(sp);
         }
+        m_map_position = new_pos; // Update the position only after using the previous one (for axis_position)
+    }
+}
+
+void Player::Update()
+{
+    const MapMovement movement = m_event_controller->HandlePlayerEvent();
+
+    switch(movement){
+        case MapMovement::None:
+            break;
+        case MapMovement::Up:
+            GetNewPosition(MapPosition{0,-1});
+            break;
+        case MapMovement::Down:
+            GetNewPosition(MapPosition{0,1});
+            break;
+        case MapMovement::Left:
+            GetNewPosition(MapPosition{-1,0});
+            break;
+        case MapMovement::Right:
+            GetNewPosition(MapPosition{1,0});
+            break;
     }
 }
