@@ -6,50 +6,53 @@
 
 using TextureKey = std::string;
 
-struct ScreenPosition // Position on screen (could be out of window)
+// Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
+
+template <typename T>
+struct Vec2
 {
     int x;
     int y;
 
-    ScreenPosition operator+(const ScreenPosition p) const
+    T operator+(const T& rhs) const
     {
-        return ScreenPosition{x+p.x, y+p.y};
+        return T{x+rhs.x, y+rhs.y};
+    }
+    
+    T& operator+=(const T& rhs)
+    {
+        x += rhs.x;
+        y += rhs.y;
+        return static_cast<T&>(*this);
     }
 
-    ScreenPosition operator+(const int i) const
+    T operator-(const T& rhs) const
     {
-        return ScreenPosition{x+i, y+i};
-    }
-
-    ScreenPosition operator-(const ScreenPosition p) const
-    {
-        return ScreenPosition{x-p.x, y-p.y};
+        return T{x-rhs.x, y-rhs.y};
     }
 };
 
-struct ScenePosition // Position in 2D space
+// CRTP
+struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out of window)
 {
-    int x;
-    int y;
 
-    ScenePosition operator+(const ScenePosition p) const
+};
+
+// CRTP
+struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
+{
+    ScenePosition operator+(const ScreenPosition rhs) const
     {
-        return ScenePosition{x+p.x, y+p.y};
+        return ScenePosition{x+rhs.x, y+rhs.y};
     }
+};
 
-    ScenePosition operator+(const int i) const
+// CRTP
+struct MapPosition : Vec2<MapPosition>
+{
+    ScreenPosition ToScreenPosition(const int tile_size) const
     {
-        return ScenePosition{x+i, y+i};
-    }
-
-    ScenePosition operator-(const ScenePosition p) const
-    {
-        return ScenePosition{x-p.x, y-p.y};
-    }
-
-    ScenePosition operator+(const ScreenPosition p) const
-    {
-        return ScenePosition{x+p.x, y+p.y};
+        return ScreenPosition{x*tile_size, y*tile_size};
     }
 };
 
@@ -69,27 +72,6 @@ enum class MapMovement
     Right,
     Left,
     None
-};
-
-struct MapPosition
-{
-    int x;
-    int y;
-
-    MapPosition operator+(const MapPosition p) const
-    {
-        return MapPosition{x+p.x, y+p.y};
-    }
-
-    MapPosition operator*(const int i) const
-    {
-        return MapPosition{x*i, y*i};
-    }
-
-    ScreenPosition ToScreenPosition(const int tile_size) const
-    {
-        return ScreenPosition{x*tile_size, y*tile_size};
-    }
 };
 
 struct WorldData

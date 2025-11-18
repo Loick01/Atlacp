@@ -38,7 +38,8 @@ class EditorEventController : public EventController
 {
     private:
         Tileset* m_tileset;
-        ScreenPosition GetMousePosition() const;
+        ScreenPosition GetMouseScreenPosition() const;
+        ScenePosition GetMouseScenePosition(const Camera* camera) const;
         unsigned char m_selected_tile;
         int m_selected_tileset;
 
@@ -46,5 +47,5 @@ class EditorEventController : public EventController
         EditorEventController(Tileset* tileset);
         ~EditorEventController();
 
-        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera); 
+        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, const Camera* camera); 
 };

@@ -75,14 +75,19 @@ EditorEventController::~EditorEventController()
 
 }
 
-ScreenPosition EditorEventController::GetMousePosition() const
+ScreenPosition EditorEventController::GetMouseScreenPosition() const
 {
-    ScreenPosition p;
-    SDL_GetMouseState(&p.x, &p.y);
-    return p;
+    ScreenPosition sp;
+    SDL_GetMouseState(&sp.x, &sp.y);
+    return sp;
 }
 
-void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
+ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera) const
+{
+    return camera->GetCameraPosition()+GetMouseScreenPosition();
+}
+
+void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, const Camera* camera)
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -93,7 +98,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 switch(event_scancode){
                     case SDL_SCANCODE_SPACE:
                         tileset->InvertShouldDraw();
-                        tileset->SetScreenPosition(GetMousePosition());
+                        tileset->SetScreenPosition(GetMouseScreenPosition());
                         break;
                     case SDL_SCANCODE_S:
                         tilemap->SaveMap("../map2.txt");
@@ -119,10 +124,10 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (tileset->GetShouldDraw()){
-                        const ScreenPosition norm_screen_pos = GetMousePosition()-tileset->GetScreenPosition(); // Normalized mouse screen position
+                        const ScreenPosition norm_screen_pos = GetMouseScreenPosition()-tileset->GetScreenPosition();
                         tileset->UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
                     }else{
-                        const ScenePosition norm_scene_pos = (camera->GetCameraPosition() + GetMousePosition())-tilemap->GetScenePosition(); // Normalize mouse scene position
+                        const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
                         tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
                     }
                 }

@@ -23,7 +23,7 @@ void Camera::SetCameraPosition(const ScenePosition sp)
 
 void Camera::MoveCameraPosition(const ScenePosition sp)
 {
-    m_position = m_position + sp;
+    m_position += sp;
 }
 
 void Camera::LookAt(const ScenePosition sp)

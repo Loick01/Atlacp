@@ -71,5 +71,5 @@ void Drawable::SetScenePosition(const ScenePosition sp)
 
 void Drawable::AddScenePosition(const ScenePosition sp)
 {
-    m_position = m_position + sp;
+    m_position += sp;
 }
