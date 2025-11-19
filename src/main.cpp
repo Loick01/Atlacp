@@ -10,14 +10,14 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 640, 640, {100,100,100});
+    Window* window = new Window("Atlacp", 352, 352, {100,100,100});
     if (window->HasError()){
         return -1;
     }
     MapEventController* event_controller = new MapEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera(ScenePosition{window->GetWidth()/2, window->GetHeight()/2});
+    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);

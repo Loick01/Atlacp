@@ -123,6 +123,8 @@ void Tilemap::LoadMap(const std::string& filepath)
     // Load tilesets read in the header of the map file
     for (const std::string& tileset_filepath : m_map_data.tilesets)
         m_tileset->LoadTileset(tileset_filepath);
+
+    m_camera->SetTilemapSize(ScenePosition{GetTextureWidth(),GetTextureHeight()}); // camera need map size to center the player on the screen
 }
 
 void Tilemap::DrawTexture() const

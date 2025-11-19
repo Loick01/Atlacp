@@ -30,6 +30,11 @@ struct Vec2
     {
         return T{x-rhs.x, y-rhs.y};
     }
+
+    T operator/(const int rhs) const
+    {
+        return T{x/rhs, y/rhs};
+    }
 };
 
 // CRTP
