@@ -30,5 +30,5 @@ class Drawable
         bool IsPositionInTexture(const ScenePosition sp) const;
         virtual void DrawTexture() const;
         void SetScenePosition(const ScenePosition sp);
-        void AddScenePosition(const ScenePosition sp); // AddTo ?
+        void AddScenePosition(const ScenePosition sp);
 };

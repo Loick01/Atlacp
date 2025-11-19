@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-Camera::Camera(const ScreenPosition window_center):
+Camera::Camera(const ScenePosition window_center):
     m_window_center(window_center)
 {
     m_position = ScenePosition{0,0};
@@ -26,7 +26,7 @@ void Camera::MoveCameraPosition(const ScenePosition sp)
     m_position += sp;
 }
 
-void Camera::LookAt(const ScenePosition sp)
+void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene position without checking any map bounds
 {
-    //SetCameraPosition(m_window_center-sp)
+    SetCameraPosition(sp-m_window_center);
 }

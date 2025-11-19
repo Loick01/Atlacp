@@ -8,10 +8,10 @@ class Camera
 {
     private:
         ScenePosition m_position;
-        const ScreenPosition m_window_center; // Coordinates at the center of the window (used to look at a specific ScenePosition)
+        const ScenePosition m_window_center; // Coordinates at the center of the window (used to look at a specific ScenePosition)
 
     public:
-        Camera(const ScreenPosition window_center);
+        Camera(const ScenePosition window_center);
         ~Camera();
 
         ScenePosition GetCameraPosition() const;

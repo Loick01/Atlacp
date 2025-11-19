@@ -41,7 +41,9 @@ struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out
 // CRTP
 struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 {
-    ScenePosition operator+(const ScreenPosition rhs) const
+    // using Vec2<ScenePosition>::operator+;
+
+    ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
     {
         return ScenePosition{x+rhs.x, y+rhs.y};
     }
@@ -50,10 +52,7 @@ struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 // CRTP
 struct MapPosition : Vec2<MapPosition>
 {
-    ScreenPosition ToScreenPosition(const int tile_size) const
-    {
-        return ScreenPosition{x*tile_size, y*tile_size};
-    }
+
 };
 
 enum class MapBound
