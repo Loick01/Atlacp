@@ -31,4 +31,5 @@ class Drawable
         virtual void DrawTexture() const;
         void SetScenePosition(const ScenePosition sp);
         void AddScenePosition(const ScenePosition sp);
+        void LookMe();
 };

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <cstdint>
 #include <set>
 #include <string>
+#include <vector>
 
 using TextureKey = std::string;
 
@@ -31,6 +32,11 @@ struct Vec2
         return T{x-rhs.x, y-rhs.y};
     }
 
+    T operator*(const float rhs) const
+    {
+        return T{static_cast<int>(x*rhs), static_cast<int>(y*rhs)};
+    }
+
     T operator/(const int rhs) const
     {
         return T{x/rhs, y/rhs};
@@ -46,7 +52,7 @@ struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out
 // CRTP
 struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 {
-    // using Vec2<ScenePosition>::operator+;
+    using Vec2<ScenePosition>::operator+;
 
     ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
     {
@@ -57,7 +63,10 @@ struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 // CRTP
 struct MapPosition : Vec2<MapPosition>
 {
-
+    ScenePosition ToScenePosition(const int tile_size) const
+    {
+        return ScenePosition{x*tile_size, y*tile_size};
+    }
 };
 
 enum class MapBound

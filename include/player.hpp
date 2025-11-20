@@ -16,9 +16,9 @@ class Player : public Drawable, public MapElement
 
     public:
         Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
-            const std::string& sprite_filepath, Camera* camera);
+            const std::string& sprite_filepath, Camera* camera, const float speed);
         ~Player();
 
         void Update() override;
-        void GetNewPosition(const MapPosition movement);
+        void StartMovement(const MapPosition movement);
 };

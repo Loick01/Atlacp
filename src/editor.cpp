@@ -32,7 +32,6 @@ int main(){
         for (const Drawable* d : drawables) d->DrawTexture();
         
         window->UpdateRender();     
-        //SDL_Delay(48);
     }
 
     delete tileset;

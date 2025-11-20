@@ -73,3 +73,8 @@ void Drawable::AddScenePosition(const ScenePosition sp)
 {
     m_position += sp;
 }
+
+void Drawable::LookMe()
+{
+    m_camera->LookAt(m_position);
+}

@@ -30,10 +30,8 @@ void Camera::MoveCameraPosition(const ScenePosition sp)
 void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene position with checking map bounds
 {
     ScenePosition camera_position = sp - m_window_size/2;
-    camera_position.x = std::max(camera_position.x, 0); 
-    camera_position.x = std::min(camera_position.x, m_tilemap_size.x-m_window_size.x); // Map must be render at ScenePosition{0,0}
-    camera_position.y = std::max(camera_position.y, 0);
-    camera_position.y = std::min(camera_position.y, m_tilemap_size.y-m_window_size.y);
+    camera_position.x = std::clamp(camera_position.x, 0, m_tilemap_size.x-m_window_size.x); // Map must be render at ScenePosition{0,0}
+    camera_position.y = std::clamp(camera_position.y, 0, m_tilemap_size.y-m_window_size.y);
     SetCameraPosition(camera_position);
 }
 
