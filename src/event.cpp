@@ -49,16 +49,16 @@ MapEventController::~MapEventController()
 
 MapMovement MapEventController::HandlePlayerEvent() const
 {
-    MapMovement movement = MapMovement::None;
+    MapMovement movement; // direction is None by default
     const Uint8* state = SDL_GetKeyboardState(NULL);
     if (state[SDL_SCANCODE_W])
-        movement = MapMovement::Up;
+        movement.DefineMovement(MapDirection::Up);
     else if (state[SDL_SCANCODE_A])
-        movement = MapMovement::Left;
+        movement.DefineMovement(MapDirection::Left);
     else if (state[SDL_SCANCODE_S])
-        movement = MapMovement::Down;
+        movement.DefineMovement(MapDirection::Down);
     else if (state[SDL_SCANCODE_D])
-        movement = MapMovement::Right;
+        movement.DefineMovement(MapDirection::Right);
     return movement;
 }
 

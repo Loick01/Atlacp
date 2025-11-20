@@ -5,6 +5,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "element.hpp"
 #include "drawable.hpp"
 #include "tilemap.hpp"
 #include "type.hpp"

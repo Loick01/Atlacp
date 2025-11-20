@@ -78,7 +78,7 @@ enum class MapBound
     OutLeft
 };
 
-enum class MapMovement
+enum class MapDirection
 {
     Up,
     Down,
