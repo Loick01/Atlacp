@@ -22,20 +22,12 @@ void Player::Update()
             case MapDirection::None:
                 break;
             default:
-                StartMovement(movement.GetMove());
+                m_current_movement = movement;
+                StartMovement(m_current_movement);
                 break;
         }
     }else{
-        uint32_t currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - m_last_time) / 1000.f;
-        m_last_time = currentTime;
-
-        m_progress += m_speed * deltaTime;
-        if (m_progress >= 1.0){
-            m_progress = 1.0;
-            m_is_free = true;
-        }
-        m_position = m_start_position + (m_end_position - m_start_position) * m_progress;
+        m_position = ContinueMovement(m_current_movement);
         LookMe();
     }
 }

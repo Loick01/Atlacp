@@ -21,6 +21,11 @@ MapDirection MapMovement::GetDirection() const
     return m_direction;
 }
 
+ScenePosition MapMovement::GetScenePosition() const
+{
+    return m_start_position + (m_end_position - m_start_position) * m_progress; // Should be in Interpolation struct ?
+}
+
 void MapMovement::DefineMovement(MapDirection direction)
 {
     m_direction = direction;
@@ -40,6 +45,14 @@ void MapMovement::DefineMovement(MapDirection direction)
     }
 }
 
+void MapMovement::Initialize(const int tile_size, const MapPosition start_position)
+{
+    m_start_position = start_position.ToScenePosition(tile_size);
+    m_end_position = (start_position+GetMove()).ToScenePosition(tile_size);
+    m_progress = 0.;
+    m_last_time = SDL_GetTicks();
+}
+
 MapElement::MapElement(Tilemap* tilemap, const MapPosition p, const float speed):
     m_tilemap(tilemap), m_map_position(p), m_is_free(true), m_speed(speed)
 {
@@ -51,20 +64,29 @@ MapElement::~MapElement()
 
 }
 
-void MapElement::StartMovement(const MapPosition movement)
+void MapElement::StartMovement(MapMovement& movement)
 {
-    MapPosition new_pos = m_map_position + movement;
+    MapPosition new_pos = m_map_position + movement.GetMove();
     if (m_tilemap->CheckNewPosition(new_pos)){
         m_is_free = false;
-
         int tile_size = m_tilemap->GetTileSize();
-        
-        // Should be in MapMovement class 
-        m_start_position = m_map_position.ToScenePosition(tile_size);
-        m_end_position = new_pos.ToScenePosition(tile_size);
-        m_progress = 0.;
-        m_last_time = SDL_GetTicks();
-
+        movement.Initialize(tile_size, m_map_position);
         m_map_position = new_pos;
     }
+}
+
+bool MapMovement::UpdateProgress(const float speed)
+{
+    uint32_t currentTime = SDL_GetTicks();
+    float deltaTime = (currentTime - m_last_time) / 1000.f;
+    m_last_time = currentTime;
+    m_progress += speed * deltaTime;
+    m_progress = std::min(1.0f, m_progress);
+    return m_progress == 1.0f;
+}
+
+ScenePosition MapElement::ContinueMovement(MapMovement& movement)
+{
+    m_is_free = movement.UpdateProgress(m_speed);
+    return movement.GetScenePosition();
 }

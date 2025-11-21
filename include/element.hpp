@@ -11,13 +11,21 @@ class MapMovement
         MapPosition m_move;
         MapDirection m_direction;
 
+        ScenePosition m_start_position;
+        ScenePosition m_end_position;
+        float m_progress;
+        uint32_t m_last_time;
+
     public:
         MapMovement();
         ~MapMovement();
 
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
+        ScenePosition GetScenePosition() const;
+        bool UpdateProgress(const float speed); // Return true if the movement must stop
         void DefineMovement(MapDirection direction);
+        void Initialize(const int tile_size, const MapPosition start_position);
 };
 
 class MapElement // Will be use for Player, NPC, Monster, ...
@@ -26,19 +34,14 @@ class MapElement // Will be use for Player, NPC, Monster, ...
         MapElement(Tilemap* tilemap, const MapPosition p, const float speed);
         ~MapElement();
 
-        Tilemap* m_tilemap; // Try to make it const ?
-
+        Tilemap* m_tilemap;
         MapPosition m_map_position;
+        MapMovement m_current_movement;
         float m_speed;
         bool m_is_free;
 
-        // Will be removed (4 lines)
-        ScenePosition m_start_position;
-        ScenePosition m_end_position;
-        float m_progress;
-        uint32_t m_last_time;
-
     public:
+        ScenePosition ContinueMovement(MapMovement& movement);
         virtual void Update() = 0;
-        void StartMovement(const MapPosition movement);
+        void StartMovement(MapMovement& movement);
 };
