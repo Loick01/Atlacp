@@ -37,9 +37,20 @@ struct Vec2
         return T{static_cast<int>(x*rhs), static_cast<int>(y*rhs)};
     }
 
+    T operator+(const int rhs) const
+    {
+        return T{x+rhs, y+rhs};
+    }
+
     T operator/(const int rhs) const
     {
         return T{x/rhs, y/rhs};
+    }
+    
+    void GetMin(const T& rhs)
+    {
+        x = std::min(x, rhs.x);
+        y = std::min(y, rhs.y);
     }
 };
 

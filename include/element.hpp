@@ -30,14 +30,16 @@ class MapMovement
 
 class MapElement // Will be use for Player, NPC, Monster, ...
 {
+    private:
+        Tilemap* m_tilemap;
+        float m_speed;
+
     protected:
         MapElement(Tilemap* tilemap, const MapPosition p, const float speed);
         ~MapElement();
 
-        Tilemap* m_tilemap;
         MapPosition m_map_position;
         MapMovement m_current_movement;
-        float m_speed;
         bool m_is_free;
 
     public:

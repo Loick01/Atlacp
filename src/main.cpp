@@ -10,7 +10,7 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 640, 640, {100,100,100});
+    Window* window = new Window("Atlacp", 320, 320, {100,100,100});
     if (window->HasError()){
         return -1;
     }

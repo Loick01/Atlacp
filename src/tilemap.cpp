@@ -125,6 +125,7 @@ void Tilemap::LoadMap(const std::string& filepath)
         m_tileset->LoadTileset(tileset_filepath);
 
     m_camera->SetTilemapSize(ScenePosition{GetTextureWidth(),GetTextureHeight()}); // camera need map size to center the player on the screen
+    m_camera->SetRangeTile(m_tileset->GetTileSize()); // Should not be here ?
 }
 
 void Tilemap::DrawTexture() const
@@ -132,15 +133,24 @@ void Tilemap::DrawTexture() const
     std::vector<unsigned char> map = m_map_data.map;
     int tile_size = m_tileset->GetTileSize();
     int map_width = m_map_data.width;
+    int map_height = m_map_data.height;
     const ScenePosition camera_position = m_camera->GetCameraPosition();
-    for (int i = 0 ; i < map.size() ; i++){ // i must be an int
-        int tile = m_tileset->GetNormalizedTile(map[i]);
-        int tileset_width = m_tileset->GetTilesetWidth();
-        const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
-        const SDL_Rect dst{((i%map_width)*tile_size)-camera_position.x,
-                           ((i/map_width)*tile_size)-camera_position.y, 
-                           tile_size, tile_size};
-        m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
+    
+    // Culling will later not be done here ?
+    const ScenePosition start_index = camera_position/tile_size; // Not a ScenePosition (should define a Couple struct in type.hpp ?)
+    ScenePosition end_index = start_index + m_camera->GetRangeTile();
+    // While animating a movement, end_index could not be enough to fill the window with the map
+    // So I add 1 to end_index, and check if it becomes greater than map size
+    end_index.GetMin(ScenePosition{map_width,map_height});
+
+    for (int j = start_index.y ; j < end_index.y ; j++){
+        for (int i = start_index.x ; i < end_index.x ; i++){
+            int tile = m_tileset->GetNormalizedTile(map[j*map_width+i]);
+            int tileset_width = m_tileset->GetTilesetWidth();
+            const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
+            const SDL_Rect dst{i*tile_size-camera_position.x, j*tile_size-camera_position.y, tile_size, tile_size};
+            m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
+        }
     }
 }
 

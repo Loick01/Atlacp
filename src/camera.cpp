@@ -16,6 +16,21 @@ ScenePosition Camera::GetCameraPosition() const
     return m_position;
 }
 
+ScenePosition Camera::GetWindowSize() const
+{
+    return m_window_size;
+}
+
+ScenePosition Camera::GetRangeTile() const
+{
+    return m_range_tile;
+}
+
+void Camera::SetRangeTile(const int tile_size)
+{
+    m_range_tile = m_window_size/tile_size+1;
+}
+
 void Camera::SetCameraPosition(const ScenePosition sp)
 {
     m_position = sp;
