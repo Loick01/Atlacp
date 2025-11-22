@@ -9,6 +9,8 @@ using TextureKey = std::string;
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
+// Should create a Couple struct ?
+
 template <typename T>
 struct Vec2
 {
@@ -63,7 +65,7 @@ struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out
 // CRTP
 struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 {
-    using Vec2<ScenePosition>::operator+;
+    using Vec2<ScenePosition>::operator+; // Used for ScenePosition + ScenePosition
 
     ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
     {

@@ -45,10 +45,10 @@ void MapMovement::DefineMovement(MapDirection direction)
     }
 }
 
-void MapMovement::Initialize(const int tile_size, const MapPosition start_position)
+void MapMovement::Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position)
 {
     m_start_position = start_position.ToScenePosition(tile_size);
-    m_end_position = (start_position+GetMove()).ToScenePosition(tile_size);
+    m_end_position = end_position.ToScenePosition(tile_size);
     m_progress = 0.;
     m_last_time = SDL_GetTicks();
 }
@@ -70,7 +70,7 @@ void MapElement::StartMovement(MapMovement& movement)
     if (m_tilemap->CheckNewPosition(new_pos)){
         m_is_free = false;
         int tile_size = m_tilemap->GetTileSize();
-        movement.Initialize(tile_size, m_map_position);
+        movement.Initialize(tile_size, m_map_position, new_pos);
         m_map_position = new_pos;
     }
 }

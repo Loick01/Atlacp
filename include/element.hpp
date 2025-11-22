@@ -25,7 +25,7 @@ class MapMovement
         ScenePosition GetScenePosition() const;
         bool UpdateProgress(const float speed); // Return true if the movement must stop
         void DefineMovement(MapDirection direction);
-        void Initialize(const int tile_size, const MapPosition start_position);
+        void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
 
 class MapElement // Will be use for Player, NPC, Monster, ...
