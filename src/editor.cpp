@@ -9,7 +9,7 @@
 #include "tileset.hpp"
 
 int main(){
-    Window* window = new Window("Map Editor - Atlacp", 640, 640, {100,100,100});
+    Window* window = new Window("Map Editor - Atlacp", 640, 640, {50,50,50});
     if (window->HasError()){
         return -1;
     }

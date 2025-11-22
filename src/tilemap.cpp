@@ -124,8 +124,7 @@ void Tilemap::LoadMap(const std::string& filepath)
     for (const std::string& tileset_filepath : m_map_data.tilesets)
         m_tileset->LoadTileset(tileset_filepath);
 
-    m_camera->SetTilemapSize(ScenePosition{GetTextureWidth(),GetTextureHeight()}); // camera need map size to center the player on the screen
-    m_camera->SetRangeTile(m_tileset->GetTileSize()); // Should not be here ?
+    m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset->GetTileSize());
 }
 
 void Tilemap::DrawTexture() const
@@ -136,12 +135,20 @@ void Tilemap::DrawTexture() const
     int map_height = m_map_data.height;
     const ScenePosition camera_position = m_camera->GetCameraPosition();
     
-    // Culling will later not be done here ?
-    const ScenePosition start_index = camera_position/tile_size; // Not a ScenePosition (should define a Couple struct in type.hpp ?)
-    ScenePosition end_index = start_index + m_camera->GetRangeTile();
+    // Culling
     // While animating a movement, end_index could not be enough to fill the window with the map
     // So I add 1 to end_index, and check if it becomes greater than map size
-    end_index.GetMin(ScenePosition{map_width,map_height});
+    Pair<int> start_index = Pair<int>{0, 0};
+    Pair<int> end_index = Pair<int>{map_width, map_height};
+    
+    if (m_camera->GetCulling().x){
+        start_index.x = camera_position.x/tile_size;
+        end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x);
+    }
+    if (m_camera->GetCulling().y){
+        start_index.y = camera_position.y/tile_size;
+        end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y);
+    }
 
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){

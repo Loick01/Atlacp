@@ -1,3 +1,4 @@
-2 2
+2 3
 ../map1.txt ../map.txt
 ../map2.txt ../map1.txt
+../map3.txt

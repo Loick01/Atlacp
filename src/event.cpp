@@ -101,8 +101,8 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         tileset->SetScreenPosition(GetMouseScreenPosition());
                         break;
                     case SDL_SCANCODE_S:
-                        tilemap->SaveMap("../map2.txt");
-                        std::cout << "Map saved in map2.txt\n";
+                        tilemap->SaveMap("../map3.txt");
+                        std::cout << "Map saved in map3.txt\n";
                         break;
                     case SDL_SCANCODE_UP:
                         tilemap->LoadAdjacentMap(MapBound::OutUp);

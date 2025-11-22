@@ -10,7 +10,7 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 640, 640, {100,100,100});
+    Window* window = new Window("Atlacp", 640, 640, {50,50,50});
     if (window->HasError()){
         return -1;
     }
@@ -21,7 +21,7 @@ int main(){
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", camera, 6.0f);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", camera, 12.0f);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};

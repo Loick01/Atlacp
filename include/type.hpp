@@ -9,7 +9,12 @@ using TextureKey = std::string;
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
-// Should create a Couple struct ?
+template <typename T>
+struct Pair
+{
+    T x;
+    T y;
+};
 
 template <typename T>
 struct Vec2
@@ -48,11 +53,10 @@ struct Vec2
     {
         return T{x/rhs, y/rhs};
     }
-    
-    void GetMin(const T& rhs)
+
+    Pair<bool> operator>(const T& rhs) const
     {
-        x = std::min(x, rhs.x);
-        y = std::min(y, rhs.y);
+        return Pair<bool>{x>rhs.x, y>rhs.y};
     }
 };
 
