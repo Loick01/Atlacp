@@ -70,10 +70,16 @@ struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out
 struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
 {
     using Vec2<ScenePosition>::operator+; // Used for ScenePosition + ScenePosition
+    using Vec2<ScenePosition>::operator-; // Used for ScenePosition - ScenePosition
 
     ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
     {
         return ScenePosition{x+rhs.x, y+rhs.y};
+    }
+
+    ScenePosition operator-(const ScreenPosition rhs) const // Hide Vec2::operator- (should not be in ScenePosition ?)
+    {
+        return ScenePosition{x-rhs.x, y-rhs.y};
     }
 };
 

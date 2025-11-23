@@ -68,6 +68,7 @@ EditorEventController::EditorEventController(Tileset* tileset):
     m_selected_tile = 0;
     m_selected_tileset = 0;
     m_tileset->SetDisplayedTileset(m_selected_tileset);
+    m_is_camera_moving = false;
 }
 
 EditorEventController::~EditorEventController()
@@ -87,7 +88,7 @@ ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera)
     return camera->GetCameraPosition()+GetMouseScreenPosition();
 }
 
-void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, const Camera* camera)
+void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -100,9 +101,12 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         tileset->InvertShouldDraw();
                         tileset->SetScreenPosition(GetMouseScreenPosition());
                         break;
-                    case SDL_SCANCODE_S:
+                    case SDL_SCANCODE_L:
                         tilemap->SaveMap("../map3.txt");
                         std::cout << "Map saved in map3.txt\n";
+                        break;
+                    case SDL_SCANCODE_R:
+                        camera->ResetCameraPosition();
                         break;
                     case SDL_SCANCODE_UP:
                         tilemap->LoadAdjacentMap(MapBound::OutUp);
@@ -130,6 +134,14 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
                         tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
                     }
+                }else if (event.button.button == SDL_BUTTON_MIDDLE){
+                    m_last_camera_origin = camera->GetCameraPosition() + GetMouseScreenPosition();
+                    m_is_camera_moving = true;
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_MIDDLE){
+                    m_is_camera_moving = false;
                 }
                 break;
             case SDL_MOUSEWHEEL:
@@ -141,5 +153,10 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 }
                 break;
         }
+    }
+
+    if (m_is_camera_moving){
+        const ScreenPosition mouse_position = GetMouseScreenPosition();
+        camera->SetCameraPosition(m_last_camera_origin-mouse_position);
     }
 }

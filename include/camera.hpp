@@ -25,6 +25,6 @@ class Camera
         Pair<bool> GetCulling() const;
         void SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size);
         void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
-        void MoveCameraPosition(const ScenePosition sp); // Add the argument sp to m_position (used when moving the player)
+        void ResetCameraPosition();
         void LookAt(const ScenePosition sp);
 };

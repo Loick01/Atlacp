@@ -43,9 +43,9 @@ void Camera::SetCameraPosition(const ScenePosition sp)
     m_position = sp;
 } 
 
-void Camera::MoveCameraPosition(const ScenePosition sp)
+void Camera::ResetCameraPosition()
 {
-    m_position += sp;
+    SetCameraPosition(ScenePosition{0,0});
 }
 
 // Should use 2 different version of this : x axis / y axis
