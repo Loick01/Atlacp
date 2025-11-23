@@ -35,7 +35,7 @@ class MapElement // Will be use for Player, NPC, Monster, ...
         float m_speed;
 
     protected:
-        MapElement(Tilemap* tilemap, const MapPosition p, const float speed);
+        MapElement(Tilemap* tilemap, const float speed);
         ~MapElement();
 
         MapPosition m_map_position;

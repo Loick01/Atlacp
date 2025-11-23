@@ -1,4 +1,4 @@
-20 20
+20 20 10 5
 ../tileset.png
 ../tileset2.png
 ../tileset3.png

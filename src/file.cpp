@@ -33,6 +33,8 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
     int v;
     input >> v; m.width = v;
     input >> v; m.height = v;
+    input >> v; m.spawn_position.x = v;
+    input >> v; m.spawn_position.y = v;
     std::string s;
     while (input >> s && s != MAP_HEADER_END){
         m.tilesets.push_back(s);
@@ -78,10 +80,11 @@ void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map
     std::ofstream map_file(map_filepath);
     int width = map_data.width;
     int height = map_data.height;
+    MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile
     // Need to check if a file with the given name already exist
 
     // Header
-    map_file << width << " " << height << std::endl;
+    map_file << width << " " << height << " " << spawn.x << " " << spawn.y << std::endl;
     for (const TextureKey& k : map_data.tilesets){ // Tileset filepath must be write in order
         map_file << k << std::endl; // TilesetKey need definition for operator<<
     }

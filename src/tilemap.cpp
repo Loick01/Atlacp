@@ -14,6 +14,11 @@ Tilemap::~Tilemap()
 
 }
 
+MapPosition Tilemap::GetSpawnPosition() const
+{
+    return m_map_data.spawn_position; // Return the spawn position of the loaded map (could be -1 if undefined)
+}
+
 int Tilemap::GetTileSize() const
 {
     return m_tileset->GetTileSize();
@@ -50,7 +55,8 @@ MapBound Tilemap::IsOutOfMap(const MapPosition p) const
 
 void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
 {
-    // Should I merge it with GetProjectedPosition ?
+    // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
+    // Maps are supposed to be designed in such a way the player can't get out of the world.
     switch (bound){
         case MapBound::OutUp:
             m_current_map -= m_world_data.width;
@@ -71,28 +77,23 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
 
 MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
 {
-    // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
-    // Maps are supposed to be designed in such a way the player can't get out of the world.
+    LoadAdjacentMap(bound);
+
     MapPosition projected_position = p;
     switch (bound){
         case MapBound::OutUp:
-            m_current_map -= m_world_data.width;
             projected_position.y = m_map_data.height-1;
             break;
         case MapBound::OutDown:
-            m_current_map += m_world_data.width;
             projected_position.y = 0;
             break;
         case MapBound::OutRight:
-            m_current_map += 1;
             projected_position.x = 0;
             break;
         case MapBound::OutLeft:
-            m_current_map -= 1;
             projected_position.x = m_map_data.width-1;
             break;
     }
-    LoadMap(m_world_data.maps[m_current_map]);
     return projected_position;
 }
 

@@ -53,8 +53,8 @@ void MapMovement::Initialize(const int tile_size, const MapPosition start_positi
     m_last_time = SDL_GetTicks();
 }
 
-MapElement::MapElement(Tilemap* tilemap, const MapPosition p, const float speed):
-    m_tilemap(tilemap), m_map_position(p), m_is_free(true), m_speed(speed)
+MapElement::MapElement(Tilemap* tilemap, const float speed):
+    m_tilemap(tilemap), m_is_free(true), m_speed(speed)
 {
 
 }
