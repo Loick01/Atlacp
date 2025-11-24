@@ -17,7 +17,7 @@ int main(){
     FileReader* file_reader = new FileReader();
     Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera, false);
     EditorEventController* event_controller = new EditorEventController(tileset);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 

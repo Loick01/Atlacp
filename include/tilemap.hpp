@@ -16,6 +16,7 @@ class Tilemap : public Drawable
         Tileset* m_tileset;
         WorldData m_world_data;
         MapData m_map_data;
+        const bool m_should_culling;
 
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound); // Try to make it const ?
         MapBound IsOutOfMap(const MapPosition p) const;
@@ -25,7 +26,7 @@ class Tilemap : public Drawable
 
     public:
         Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-            const std::string& world_filepath, Camera* camera);
+            const std::string& world_filepath, Camera* camera, const bool should_culling=true);
         ~Tilemap();
         
         MapPosition GetSpawnPosition() const;

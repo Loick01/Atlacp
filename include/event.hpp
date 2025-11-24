@@ -46,6 +46,7 @@ class EditorEventController : public EventController
         unsigned char m_selected_tile;
         int m_selected_tileset;
         bool m_is_camera_moving;
+        bool m_is_replacing_tile;
 
     public:
         EditorEventController(Tileset* tileset);

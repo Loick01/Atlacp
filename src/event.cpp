@@ -69,6 +69,7 @@ EditorEventController::EditorEventController(Tileset* tileset):
     m_selected_tileset = 0;
     m_tileset->SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
+    m_is_replacing_tile = false;
 }
 
 EditorEventController::~EditorEventController()
@@ -123,6 +124,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                     default:
                         break;
                 }
+                tileset->SetDisplayedTileset(m_selected_tileset);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
@@ -131,8 +133,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         const ScreenPosition norm_screen_pos = GetMouseScreenPosition()-tileset->GetScreenPosition();
                         tileset->UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
                     }else{
-                        const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
-                        tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
+                        m_is_replacing_tile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
                     m_last_camera_origin = camera->GetCameraPosition() + GetMouseScreenPosition();
@@ -140,16 +141,21 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_MIDDLE){
+                if (event.button.button == SDL_BUTTON_MIDDLE)
                     m_is_camera_moving = false;
-                }
+                else if (event.button.button == SDL_BUTTON_LEFT)
+                    m_is_replacing_tile = false;
                 break;
             case SDL_MOUSEWHEEL:
                 if (tileset->GetShouldDraw()){
-                    if (event.wheel.y > 0){
-                        m_selected_tileset = ++m_selected_tileset%tileset->GetTilesetsSize();
-                        tileset->SetDisplayedTileset(m_selected_tileset);
+                    if (event.wheel.y != 0){
+                        const int tileset_size = tileset->GetTilesetsSize();
+                        if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
+                            m_selected_tileset = (m_selected_tileset+1)%tileset_size;
+                        else
+                            m_selected_tileset = (m_selected_tileset-1+tileset_size)%tileset_size;
                     }
+                    tileset->SetDisplayedTileset(m_selected_tileset);
                 }
                 break;
         }
@@ -158,5 +164,8 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
     if (m_is_camera_moving){
         const ScreenPosition mouse_position = GetMouseScreenPosition();
         camera->SetCameraPosition(m_last_camera_origin-mouse_position);
+    } else if (m_is_replacing_tile){
+        const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
+        tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
     }
 }

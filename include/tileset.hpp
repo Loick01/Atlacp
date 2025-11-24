@@ -20,7 +20,7 @@ class Tileset : public Drawable
         ScreenPosition m_screen_position;
         int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
         int m_index_tileset;
-        bool m_should_draw;
+        bool m_should_draw; // Used in editor only
 
         TilesetData GetTilesetData() const;
         std::string GetHeaderForTileset(const std::string& tileset_filepath) const;

@@ -36,6 +36,14 @@ void Player::Update()
         }
     }else{
         m_position = ContinueMovement(m_current_movement);
+        /*
+        // (Create a class Animated)
+        // Update the player sprite based on the progress of the movement
+        int anim_step = 4;
+        float step = 1./anim_step;
+        int index = m_current_movement.GetProgress()/step;
+        // SDL_Rect{(index%width)*tile_size, (index/width)*tile_size, tile_size, tile_size}
+        */
         LookMe();
     }
 }

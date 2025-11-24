@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "tilemap.hpp"
 #include "type.hpp"
 
@@ -23,6 +21,7 @@ class MapMovement
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
         ScenePosition GetScenePosition() const;
+        float GetProgress() const;
         bool UpdateProgress(const float speed); // Return true if the movement must stop
         void DefineMovement(MapDirection direction);
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);

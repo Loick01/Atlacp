@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-    const std::string& world_filepath, Camera* camera) :
-    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset)
+    const std::string& world_filepath, Camera* camera, const bool should_culling) :
+    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset), m_should_culling(should_culling)
 {
     m_world_data.maps = m_file_reader->ReadWorldFile(world_filepath, m_world_data.width, m_world_data.height);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
@@ -142,13 +142,16 @@ void Tilemap::DrawTexture() const
     Pair<int> start_index = Pair<int>{0, 0};
     Pair<int> end_index = Pair<int>{map_width, map_height};
     
-    if (m_camera->GetCulling().x){
-        start_index.x = camera_position.x/tile_size;
-        end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x);
-    }
-    if (m_camera->GetCulling().y){
-        start_index.y = camera_position.y/tile_size;
-        end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y);
+    if (m_should_culling){ // No map culling in editor (find better way to do this)
+        // Should be in a function in Camera ?
+        if (m_camera->GetIsOffScreen().x){
+            start_index.x = camera_position.x/tile_size;
+            end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x);
+        }
+        if (m_camera->GetIsOffScreen().y){
+            start_index.y = camera_position.y/tile_size;
+            end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y);
+        }
     }
 
     for (int j = start_index.y ; j < end_index.y ; j++){

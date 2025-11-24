@@ -26,6 +26,21 @@ ScenePosition MapMovement::GetScenePosition() const
     return m_start_position + (m_end_position - m_start_position) * m_progress; // Should be in Interpolation struct ?
 }
 
+float MapMovement::GetProgress() const
+{
+    return m_progress;
+}
+
+bool MapMovement::UpdateProgress(const float speed)
+{
+    uint32_t currentTime = SDL_GetTicks();
+    float deltaTime = (currentTime - m_last_time) / 1000.f;
+    m_last_time = currentTime;
+    m_progress += speed * deltaTime;
+    m_progress = std::min(1.0f, m_progress);
+    return m_progress == 1.0f;
+}
+
 void MapMovement::DefineMovement(MapDirection direction)
 {
     m_direction = direction;
@@ -73,16 +88,6 @@ void MapElement::StartMovement(MapMovement& movement)
         movement.Initialize(tile_size, m_map_position, new_pos);
         m_map_position = new_pos;
     }
-}
-
-bool MapMovement::UpdateProgress(const float speed)
-{
-    uint32_t currentTime = SDL_GetTicks();
-    float deltaTime = (currentTime - m_last_time) / 1000.f;
-    m_last_time = currentTime;
-    m_progress += speed * deltaTime;
-    m_progress = std::min(1.0f, m_progress);
-    return m_progress == 1.0f;
 }
 
 ScenePosition MapElement::ContinueMovement(MapMovement& movement)
