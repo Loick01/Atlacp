@@ -21,7 +21,7 @@ int main(){
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../world.txt", camera);
-    Player* player = new Player(tilemap, texture_controller, event_controller, "../cpp.png", camera, 12.0f);
+    Player* player = new Player(tilemap, texture_controller, event_controller, "../player.png", camera, 1.0f);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<MapElement*> elements = {player};

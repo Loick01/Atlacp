@@ -23,6 +23,7 @@ class MapMovement
         ScenePosition GetScenePosition() const;
         float GetProgress() const;
         bool UpdateProgress(const float speed); // Return true if the movement must stop
+        void ResetProgress(); // Set m_progress to 0
         void DefineMovement(MapDirection direction);
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };

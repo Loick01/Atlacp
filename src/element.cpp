@@ -37,8 +37,13 @@ bool MapMovement::UpdateProgress(const float speed)
     float deltaTime = (currentTime - m_last_time) / 1000.f;
     m_last_time = currentTime;
     m_progress += speed * deltaTime;
-    m_progress = std::min(1.0f, m_progress);
-    return m_progress == 1.0f;
+    m_progress = std::min(1.0f, m_progress); 
+    return m_progress == 1.f;
+}
+
+void MapMovement::ResetProgress()
+{
+    m_progress = 0.f;
 }
 
 void MapMovement::DefineMovement(MapDirection direction)
