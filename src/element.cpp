@@ -31,14 +31,15 @@ float MapMovement::GetProgress() const
     return m_progress;
 }
 
-bool MapMovement::UpdateProgress(const float speed)
+ElementState MapMovement::UpdateProgress(const float speed)
 {
-    uint32_t currentTime = SDL_GetTicks();
-    float deltaTime = (currentTime - m_last_time) / 1000.f;
-    m_last_time = currentTime;
+    uint32_t current_time = SDL_GetTicks();
+    float deltaTime = (current_time - m_last_time) / 1000.f;
+    m_last_time = current_time;
     m_progress += speed * deltaTime;
     m_progress = std::min(1.0f, m_progress); 
-    return m_progress == 1.f;
+    ElementState new_state = m_progress == 1.f ? ElementState::StopMoving : ElementState::Moving;
+    return new_state;
 }
 
 void MapMovement::ResetProgress()
@@ -74,7 +75,7 @@ void MapMovement::Initialize(const int tile_size, const MapPosition start_positi
 }
 
 MapElement::MapElement(Tilemap* tilemap, const float speed):
-    m_tilemap(tilemap), m_is_free(true), m_speed(speed)
+    m_tilemap(tilemap), m_state(ElementState::Free), m_speed(speed)
 {
 
 }
@@ -88,7 +89,7 @@ void MapElement::StartMovement(MapMovement& movement)
 {
     MapPosition new_pos = m_map_position + movement.GetMove();
     if (m_tilemap->CheckNewPosition(new_pos)){
-        m_is_free = false;
+        m_state = ElementState::Moving;
         int tile_size = m_tilemap->GetTileSize();
         movement.Initialize(tile_size, m_map_position, new_pos);
         m_map_position = new_pos;
@@ -97,6 +98,6 @@ void MapElement::StartMovement(MapMovement& movement)
 
 ScenePosition MapElement::ContinueMovement(MapMovement& movement)
 {
-    m_is_free = movement.UpdateProgress(m_speed);
+    m_state = movement.UpdateProgress(m_speed);
     return movement.GetScenePosition();
 }

@@ -13,7 +13,11 @@ class Player : public Drawable, public MapElement
 
         // Class Animated
         int m_anim_step;
-        float m_step;
+        int m_anim_index;
+        bool m_is_first_movement;
+        uint32_t m_last_time;
+        float m_count;
+        float m_frame_duration; // Const
         Pair<int> m_spritesheet_size; // Const
         int m_sprite_size; // Const
         Pair<int> m_src;
