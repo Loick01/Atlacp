@@ -6,6 +6,7 @@
 #include <vector>
 
 using TextureKey = std::string;
+using Tile = unsigned int; // Use a struct ?
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
@@ -119,7 +120,7 @@ struct WorldData
 
 struct MapData
 {
-    std::vector<unsigned char> map; // Should define Tile type instead of using unsigned char ?
+    std::vector<Tile> map;
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     MapPosition spawn_position; // Position where the player will start when loading the associated map (-1 if no specific position)
     int width;
@@ -129,7 +130,7 @@ struct MapData
 struct TilesetData
 {
     TextureKey tileset_key;
-    std::set<unsigned char> solid_tiles; // Should use unordered set ?
+    std::set<Tile> solid_tiles; // Should use unordered set ?
     int width;
     int height;
     int tile_size;

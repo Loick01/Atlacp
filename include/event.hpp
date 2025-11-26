@@ -43,7 +43,7 @@ class EditorEventController : public EventController
         
         Tileset* m_tileset;
         ScenePosition m_last_camera_origin;
-        unsigned char m_selected_tile;
+        Tile m_selected_tile;
         int m_selected_tileset;
         bool m_is_camera_moving;
         bool m_is_replacing_tile;

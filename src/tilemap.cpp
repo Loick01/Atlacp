@@ -24,12 +24,12 @@ int Tilemap::GetTileSize() const
     return m_tileset->GetTileSize();
 }
 
-unsigned char Tilemap::GetTileAt(const MapPosition p) const
+Tile Tilemap::GetTileAt(const MapPosition p) const
 {
     return m_map_data.map[p.y*m_map_data.width+p.x];
 }
 
-void Tilemap::SetTileAt(const unsigned char new_tile, const MapPosition p)
+void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
 {
     m_map_data.map[p.y*m_map_data.width+p.x] = new_tile;
 }
@@ -103,7 +103,7 @@ bool Tilemap::CheckNewPosition(MapPosition& p)
     if (is_in_bound != MapBound::Inside){
         p = GetProjectedPosition(p, is_in_bound);
     }else{
-        const unsigned char tile = GetTileAt(p);
+        const Tile tile = GetTileAt(p);
         return m_tileset->IsEmptyTile(tile);
     }
     return true;
@@ -130,7 +130,7 @@ void Tilemap::LoadMap(const std::string& filepath)
 
 void Tilemap::DrawTexture() const
 {
-    std::vector<unsigned char> map = m_map_data.map;
+    std::vector<Tile> map = m_map_data.map;
     int tile_size = m_tileset->GetTileSize();
     int map_width = m_map_data.width;
     int map_height = m_map_data.height;
@@ -165,7 +165,7 @@ void Tilemap::DrawTexture() const
     }
 }
 
-void Tilemap::ReplaceTileAt(const ScenePosition sp, const unsigned char new_tile)
+void Tilemap::ReplaceTileAt(const ScenePosition sp, const Tile new_tile)
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
         const int tile_size = m_tileset->GetTileSize();

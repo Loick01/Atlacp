@@ -20,7 +20,7 @@ class Tilemap : public Drawable
 
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound); // Try to make it const ?
         MapBound IsOutOfMap(const MapPosition p) const;
-        unsigned char GetTileAt(const MapPosition p) const;
+        Tile GetTileAt(const MapPosition p) const;
         void LoadMap(const std::string& filepath);
         int m_current_map;
 
@@ -36,8 +36,8 @@ class Tilemap : public Drawable
         bool CheckNewPosition(MapPosition& p);
         bool CanMoveCamera(const int axis_position, const int axis_new_position) const;
         void LoadAdjacentMap(const MapBound bound);
-        void SetTileAt(const unsigned char new_tile, const MapPosition p);
+        void SetTileAt(const Tile new_tile, const MapPosition p);
         void DrawTexture() const override;
-        void ReplaceTileAt(const ScenePosition position, const unsigned char new_tile);
+        void ReplaceTileAt(const ScenePosition position, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
 };

@@ -51,7 +51,7 @@ void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) cons
     ReadHeaderMapFile(input, data);
     data.map.reserve(data.width*data.height);
     
-    unsigned int current_value;
+    Tile current_value;
     while (input >> current_value){
         data.map.push_back(current_value);
     }
@@ -93,7 +93,7 @@ void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map
     // Map
     for (size_t j = 0 ; j < height ; j++){
         for (size_t i = 0 ; i < width ; i++){
-            map_file << static_cast<int>(map_data.map[j*width+i]) << " "; // Remove this cast once I use Tile type instead of unsigned char in MapData::map
+            map_file << map_data.map[j*width+i] << " ";
         }
         map_file << std::endl;
     }

@@ -72,7 +72,7 @@ int Tileset::GetTilesetHeight() const
     return m_tilesets[m_index_tileset].height;
 }
 
-bool Tileset::IsEmptyTile(const unsigned char tile)
+bool Tileset::IsEmptyTile(const Tile tile)
 {
     int t = GetNormalizedTile(tile); 
     return m_tilesets[m_index_tileset].solid_tiles.find(t) == m_tilesets[m_index_tileset].solid_tiles.end();
@@ -90,7 +90,7 @@ void Tileset::LoadTilesetHeader(const std::string& tileset_header, TilesetData& 
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 }
 
-void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, unsigned char& tile) const
+void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, Tile& tile) const
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with screen position)
         int c = sp.x/m_tile_size;
@@ -109,7 +109,7 @@ TilesetData Tileset::GetTilesetData() const // Use this function everytime I try
     return m_tilesets[m_index_tileset];
 }
 
-unsigned char Tileset::GetNormalizedTile(const unsigned char tile)
+Tile Tileset::GetNormalizedTile(const Tile tile)
 {
     int t = tile;
     if (t >= m_normalization_info.last_lower_bound && t <= m_normalization_info.last_upper_bound)

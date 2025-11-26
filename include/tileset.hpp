@@ -37,11 +37,11 @@ class Tileset : public Drawable
         int GetTilesetWidth() const;
         int GetTilesetWidth(const int selected_tileset) const;
         int GetTilesetHeight() const;
-        unsigned char GetNormalizedTile(const unsigned char tile);
-        bool IsEmptyTile(const unsigned char tile);
+        Tile GetNormalizedTile(const Tile tile);
+        bool IsEmptyTile(const Tile tile);
         bool GetShouldDraw() const;
         void InvertShouldDraw();
-        void UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, unsigned char& tile) const;
+        void UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, Tile& tile) const;
         void LoadTileset(const std::string& texture_filepath);
         void SetDisplayedTileset(const int selected_tileset);
         void CleanTilesets();
