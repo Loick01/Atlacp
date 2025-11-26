@@ -21,6 +21,7 @@ set(SOURCES
     src/element.cpp
     src/tileset.cpp
     src/camera.cpp
+    src/animation.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

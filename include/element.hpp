@@ -1,5 +1,6 @@
 #pragma once
 
+#include "animation.hpp"
 #include "tilemap.hpp"
 #include "type.hpp"
 
@@ -45,9 +46,10 @@ class MapElement // Will be use for Player, NPC, Monster, ...
         MapElement(Tilemap* tilemap, const float speed);
         ~MapElement();
 
+        Animation m_animation;
+        ElementState m_state; // Should be in Animation class ?
         MapPosition m_map_position;
         MapMovement m_current_movement;
-        ElementState m_state;
 
     public:
         ScenePosition ContinueMovement(MapMovement& movement);
