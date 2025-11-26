@@ -36,17 +36,17 @@ class MapMovement
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
 
-class MapElement // Will be use for Player, NPC, Monster, ...
+class MapElement // Will be use for Player, NPC, Monster.
 {
     private:
         Tilemap* m_tilemap;
         float m_speed;
 
     protected:
-        MapElement(Tilemap* tilemap, const float speed);
+        MapElement(Tilemap* tilemap, const float speed, const int animation_step, const float frame_duration, const Pair<int> spritesheet_size);
         ~MapElement();
 
-        Animation m_animation;
+        Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 
         ElementState m_state; // Should be in Animation class ?
         MapPosition m_map_position;
         MapMovement m_current_movement;
@@ -54,5 +54,5 @@ class MapElement // Will be use for Player, NPC, Monster, ...
     public:
         ScenePosition ContinueMovement(MapMovement& movement);
         virtual void Update() = 0;
-        void StartMovement(MapMovement& movement);
+        void StartMovement(MapMovement& movement, const bool is_first_movement);
 };

@@ -2,7 +2,8 @@
 
 Player::Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
     const std::string& sprite_filepath, Camera* camera, const float speed):
-    Drawable(texture_controller, sprite_filepath, camera, ScenePosition{0,0}), MapElement(tilemap, speed), m_event_controller(event_controller)
+    Drawable(texture_controller, sprite_filepath, camera, ScenePosition{0,0}), MapElement(tilemap, speed, 4, 0.3f, Pair<int>{2, 2}),
+    m_event_controller(event_controller)
 {
     const MapPosition spawn = tilemap->GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -23,8 +24,8 @@ Player::~Player()
 
 void Player::DrawTexture() const
 {
-    Pair<int> sprite = m_animation.GetCurrentSprite();
-    const int sprite_size = m_animation.GetSpriteSize();
+    Pair<int> sprite = m_animation.GetCurrentSprite(); 
+    const int sprite_size = m_animation.GetSpriteSize(); // Could use Drawable::m_texture_width/height instead (need to set these values)
 
     const SDL_Rect src{sprite.x, sprite.y, sprite_size, sprite_size};
     const ScenePosition camera_position = m_camera->GetCameraPosition();
@@ -43,9 +44,8 @@ void Player::Update()
                 case MapDirection::None:
                     break;
                 default:
-                    m_animation.Initialize();
                     m_current_movement = movement;
-                    StartMovement(m_current_movement);
+                    StartMovement(m_current_movement, true);
                     break;
             }
             break;
@@ -54,7 +54,6 @@ void Player::Update()
         case ElementState::Moving:
         {
             m_position = ContinueMovement(m_current_movement);
-            m_animation.ContinueAnimation();
             LookMe();
             break;
         }
@@ -64,7 +63,7 @@ void Player::Update()
             const MapMovement movement = m_event_controller->HandlePlayerEvent();
 
             switch(movement.GetDirection()){
-                case MapDirection::None: // No more movement, animation must reset
+                case MapDirection::None:
                 {
                     m_animation.Reset();
                     m_state = ElementState::Free;
@@ -72,7 +71,7 @@ void Player::Update()
                 }
                 default:
                     m_current_movement = movement;
-                    StartMovement(m_current_movement);
+                    StartMovement(m_current_movement, false);
                     break;
             }
             break;

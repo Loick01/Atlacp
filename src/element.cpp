@@ -74,10 +74,11 @@ void MapMovement::Initialize(const int tile_size, const MapPosition start_positi
     m_last_time = SDL_GetTicks();
 }
 
-MapElement::MapElement(Tilemap* tilemap, const float speed):
-    m_tilemap(tilemap), m_state(ElementState::Free), m_speed(speed), m_animation(4, 0.3f, tilemap->GetTileSize(), Pair<int>{2, 2})
+MapElement::MapElement(Tilemap* tilemap, const float speed, const int animation_step, const float frame_duration, const Pair<int> spritesheet_size):
+    m_tilemap(tilemap), m_state(ElementState::Free), m_speed(speed), 
+    m_animation(animation_step, frame_duration, tilemap->GetTileSize(), spritesheet_size)
 {
-
+    
 }
 
 MapElement::~MapElement()
@@ -85,19 +86,21 @@ MapElement::~MapElement()
 
 }
 
-void MapElement::StartMovement(MapMovement& movement)
+void MapElement::StartMovement(MapMovement& movement, const bool is_first_movement)
 {
     MapPosition new_pos = m_map_position + movement.GetMove();
     if (m_tilemap->CheckNewPosition(new_pos)){
+        if (is_first_movement) m_animation.Initialize();
         m_state = ElementState::Moving;
         int tile_size = m_tilemap->GetTileSize();
         movement.Initialize(tile_size, m_map_position, new_pos);
         m_map_position = new_pos;
-    }
+    } // Should reset here the animation to use idle sprite when there is a collision ?
 }
 
 ScenePosition MapElement::ContinueMovement(MapMovement& movement)
 {
     m_state = movement.UpdateProgress(m_speed);
+    m_animation.ContinueAnimation();
     return movement.GetScenePosition();
 }
