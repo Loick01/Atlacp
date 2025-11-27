@@ -142,7 +142,7 @@ void Tilemap::DrawTexture() const
     Pair<int> start_index = Pair<int>{0, 0};
     Pair<int> end_index = Pair<int>{map_width, map_height};
     
-    if (m_should_culling){ // No map culling in editor (find better way to do this)
+    if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
         if (m_camera->GetIsOffScreen().x){
             start_index.x = camera_position.x/tile_size;

@@ -46,6 +46,7 @@ void Player::Update()
                 default:
                     m_current_movement = movement;
                     StartMovement(m_current_movement, true);
+                    LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
             break;
@@ -72,6 +73,7 @@ void Player::Update()
                 default:
                     m_current_movement = movement;
                     StartMovement(m_current_movement, false);
+                    LookMe(); // Same reason than case ElementState::Free
                     break;
             }
             break;

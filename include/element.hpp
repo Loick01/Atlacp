@@ -29,7 +29,6 @@ class MapMovement
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
         ScenePosition GetScenePosition() const;
-        float GetProgress() const;
         ElementState UpdateProgress(const float speed); // Return the new state the element should have
         void ResetProgress(); // Set m_progress to 0
         void DefineMovement(MapDirection direction);

@@ -26,11 +26,6 @@ ScenePosition MapMovement::GetScenePosition() const
     return m_start_position + (m_end_position - m_start_position) * m_progress; // Should be in Interpolation struct ?
 }
 
-float MapMovement::GetProgress() const
-{
-    return m_progress;
-}
-
 ElementState MapMovement::UpdateProgress(const float speed)
 {
     uint32_t current_time = SDL_GetTicks();
