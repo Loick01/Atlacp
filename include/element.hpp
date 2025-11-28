@@ -20,7 +20,6 @@ class MapMovement
         ScenePosition m_start_position;
         ScenePosition m_end_position;
         float m_progress;
-        uint32_t m_last_time;
 
     public:
         MapMovement();
@@ -29,8 +28,8 @@ class MapMovement
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
         ScenePosition GetScenePosition() const;
-        ElementState UpdateProgress(const float speed); // Return the new state the element should have
-        void ResetProgress(); // Set m_progress to 0
+        ElementState UpdateProgress(const float speed, const float delta_time); // Return the new state the element should have
+        void ResetProgress();
         void DefineMovement(MapDirection direction);
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
@@ -39,6 +38,7 @@ class MapElement // Will be use for Player, NPC, Monster.
 {
     private:
         Tilemap* m_tilemap;
+        MapMovement m_current_movement;
         float m_speed;
 
     protected:
@@ -48,10 +48,9 @@ class MapElement // Will be use for Player, NPC, Monster.
         Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 
         ElementState m_state; // Should be in Animation class ?
         MapPosition m_map_position;
-        MapMovement m_current_movement;
 
     public:
-        ScenePosition ContinueMovement(MapMovement& movement);
-        virtual void Update() = 0;
-        void StartMovement(MapMovement& movement, const bool is_first_movement);
+        ScenePosition ContinueMovement(const float delta_time);
+        virtual void Update(const float delta_time) = 0;
+        void StartMovement(const MapMovement movement, const bool is_first_movement);
 };

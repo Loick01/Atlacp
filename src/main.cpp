@@ -7,6 +7,7 @@
 #include "player.hpp"
 #include "texture.hpp"
 #include "tilemap.hpp"
+#include "time.hpp"
 #include "window.hpp"
 
 int main(){
@@ -14,6 +15,8 @@ int main(){
     if (window->HasError()){
         return -1;
     }
+    
+    Time time;
     MapEventController* event_controller = new MapEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
@@ -28,12 +31,14 @@ int main(){
 
     bool gameloop = true;
     while(gameloop){
+        time.Update();
         window->ClearRenderer();
         event_controller->PollAllEvents();
         
         gameloop = event_controller->HandleWindowEvents();
         
-        for (MapElement* e : elements) e->Update();
+        const float delta_time = time.GetDeltaTime();
+        for (MapElement* e : elements) e->Update(delta_time);
         for (const Drawable* d : drawables) d->DrawTexture();
         
         window->UpdateRender();       

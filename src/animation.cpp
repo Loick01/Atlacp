@@ -27,7 +27,6 @@ void Animation::Initialize() // Initialize only when this is the first movement
 {
     m_count = 0.f;
     m_sprite_index = 1; // Important --> Force to don't use the idle sprite 
-    m_last_time = SDL_GetTicks();
 }
 
 void Animation::Reset()
@@ -41,12 +40,9 @@ void Animation::UpdateCurrentSprite() // Use this function after setting m_sprit
     m_current_sprite = Pair<int>{(m_sprite_index%m_spritesheet_size.x)*m_sprite_size, (m_sprite_index/m_spritesheet_size.x)*m_sprite_size};
 }
 
-void Animation::ContinueAnimation()
+void Animation::ContinueAnimation(const float delta_time)
 {
-    uint32_t current_time = SDL_GetTicks(); // Should use a Time class (same code in MapMovement::UpdateProgress)
-    float deltaTime = (current_time - m_last_time) / 1000.f;
-    m_last_time = current_time;
-    m_count += deltaTime;
+    m_count += delta_time;
     if (m_count >= m_frame_duration){
         m_count -= m_frame_duration;
         m_sprite_index = (m_sprite_index+1)%m_animation_step;

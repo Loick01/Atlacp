@@ -17,5 +17,5 @@ class Player : public Drawable, public MapElement
         ~Player();
 
         void DrawTexture() const override;
-        void Update() override;
+        void Update(const float delta_time) override;
 };

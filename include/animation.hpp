@@ -9,7 +9,6 @@ class Animation
     private:
         int m_animation_step;
         int m_sprite_index;
-        uint32_t m_last_time; // Remove (will be in class Time)
         float m_count; // Elapsed time since the last sprite update
         const float m_frame_duration;
         const Pair<int> m_spritesheet_size;
@@ -27,5 +26,5 @@ class Animation
         int GetSpriteSize() const;
         void Initialize();
         void Reset();
-        void ContinueAnimation();
+        void ContinueAnimation(const float delta_time);
 };

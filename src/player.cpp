@@ -33,7 +33,7 @@ void Player::DrawTexture() const
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 
-void Player::Update()
+void Player::Update(const float delta_time)
 {
     switch (m_state){
         case ElementState::Free:
@@ -44,8 +44,7 @@ void Player::Update()
                 case MapDirection::None:
                     break;
                 default:
-                    m_current_movement = movement;
-                    StartMovement(m_current_movement, true);
+                    StartMovement(movement, true);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
@@ -54,7 +53,7 @@ void Player::Update()
 
         case ElementState::Moving:
         {
-            m_position = ContinueMovement(m_current_movement);
+            m_position = ContinueMovement(delta_time);
             LookMe();
             break;
         }
@@ -71,8 +70,7 @@ void Player::Update()
                     break;
                 }
                 default:
-                    m_current_movement = movement;
-                    StartMovement(m_current_movement, false);
+                    StartMovement(movement, false);
                     LookMe(); // Same reason than case ElementState::Free
                     break;
             }
