@@ -41,10 +41,11 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
     }
 }
 
-void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) const
+void FileReader::GetMapFromFile(const std::string& path, MapData& data) const
 {
     std::ifstream input;
-    input.open(filepath);
+    const std::string map_filepath = "../asset/maps/" + path; // Create a function in File
+    input.open(map_filepath);
     
     data.tilesets.clear();
     data.map.clear();
@@ -59,10 +60,12 @@ void FileReader::GetMapFromFile(const std::string& filepath, MapData& data) cons
     input.close();
 }
 
-void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetData& data) const
+void FileReader::ReadTilesetHeader(const std::string& path, TilesetData& data) const
 {
     std::ifstream input;
-    input.open(tileset_header);
+
+    const std::string header_filepath = "../asset/tilesets/" + path; // Create a function in File
+    input.open(header_filepath);
 
     int v;
     input >> data.width;
@@ -77,7 +80,7 @@ void FileReader::ReadTilesetHeader(const std::string& tileset_header, TilesetDat
 
 void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const
 {
-    std::ofstream map_file(map_filepath);
+    std::ofstream map_file("../asset/maps/"+map_filepath); // Create a function in file
     int width = map_data.width;
     int height = map_data.height;
     MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile

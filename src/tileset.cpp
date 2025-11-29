@@ -14,11 +14,12 @@ Tileset::~Tileset()
 }
 
 // Should be an override of Drawable::LoadTexture ?
-void Tileset::LoadTileset(const std::string& tileset_filepath)
+void Tileset::LoadTileset(const std::string& path)
 {
     TilesetData data;
-    LoadTilesetHeader(GetHeaderForTileset(tileset_filepath), data);
-    m_texture_key = tileset_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
+    LoadTilesetHeader(path, data);
+    m_texture_key = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
+    const std::string tileset_filepath = "../asset/tilesets/" + path + ".png"; // Create a function in File
     m_texture_controller->LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
     if (m_tilesets.empty()){
@@ -78,14 +79,9 @@ bool Tileset::IsEmptyTile(const Tile tile)
     return m_tilesets[m_index_tileset].solid_tiles.find(t) == m_tilesets[m_index_tileset].solid_tiles.end();
 }
 
-std::string Tileset::GetHeaderForTileset(const std::string& tileset_filepath) const
+void Tileset::LoadTilesetHeader(const std::string& path, TilesetData& data)
 {
-    return tileset_filepath.substr(0, tileset_filepath.size() - 3) + "txt";
-}
-
-void Tileset::LoadTilesetHeader(const std::string& tileset_header, TilesetData& data)
-{
-    m_file_reader->ReadTilesetHeader(tileset_header, data);
+    m_file_reader->ReadTilesetHeader(path, data);
     if (m_tilesets.empty()) m_tile_size = data.tile_size; // Use data.tile_size for m_tile_size only when loading the first tileset
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 }

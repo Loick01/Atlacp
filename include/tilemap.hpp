@@ -21,7 +21,7 @@ class Tilemap : public Drawable
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound); // Try to make it const ?
         MapBound IsOutOfMap(const MapPosition p) const;
         Tile GetTileAt(const MapPosition p) const;
-        void LoadMap(const std::string& filepath);
+        void LoadMap(const std::string& path);
         int m_current_map;
 
     public:

@@ -116,14 +116,13 @@ bool Tilemap::CanMoveCamera(const int axis_position, const int axis_new_position
         && (axis_position < m_max_limit || axis_new_position == m_max_limit-1);
 }
 
-void Tilemap::LoadMap(const std::string& filepath)
+void Tilemap::LoadMap(const std::string& path)
 {
     m_tileset->CleanTilesets(); // Delete tilesets used for the previous map
-    m_file_reader->GetMapFromFile(filepath, m_map_data);
-    
+    m_file_reader->GetMapFromFile(path, m_map_data);
     // Load tilesets read in the header of the map file
-    for (const std::string& tileset_filepath : m_map_data.tilesets)
-        m_tileset->LoadTileset(tileset_filepath);
+    for (const std::string& p : m_map_data.tilesets)
+        m_tileset->LoadTileset(p);
 
     m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset->GetTileSize());
 }

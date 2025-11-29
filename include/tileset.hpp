@@ -23,8 +23,7 @@ class Tileset : public Drawable
         bool m_should_draw; // Used in editor only
 
         TilesetData GetTilesetData() const;
-        std::string GetHeaderForTileset(const std::string& tileset_filepath) const;
-        void LoadTilesetHeader(const std::string& tileset_header, TilesetData& data);
+        void LoadTilesetHeader(const std::string& path, TilesetData& data);
 
     public:
         Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const bool should_draw=false);
@@ -42,7 +41,7 @@ class Tileset : public Drawable
         bool GetShouldDraw() const;
         void InvertShouldDraw();
         void UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, Tile& tile) const;
-        void LoadTileset(const std::string& texture_filepath);
+        void LoadTileset(const std::string& path);
         void SetDisplayedTileset(const int selected_tileset);
         void CleanTilesets();
         void DrawTexture() const override;
