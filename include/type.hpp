@@ -10,11 +10,18 @@ using Tile = unsigned int; // Use a struct ?
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
+// Should create a Dimension struct
+
 template <typename T>
-struct Pair
+struct Pair // Should merge with Vec2 ?
 {
     T x;
     T y;
+
+    Pair<T> operator*(const Pair<T> rhs) const
+    {
+        return Pair<T>{x*rhs.x, y*rhs.y};
+    }
 };
 
 template <typename T>

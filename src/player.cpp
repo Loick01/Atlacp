@@ -2,8 +2,8 @@
 
 Player::Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
     const std::string& sprite_filepath, Camera* camera, const float speed):
-    Drawable(texture_controller, sprite_filepath, camera, ScenePosition{0,0}), MapElement(tilemap, speed, 4, 0.3f, Pair<int>{2, 2}),
-    m_event_controller(event_controller)
+    Drawable(texture_controller, sprite_filepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap, speed, 4, 0.3f),
+    m_event_controller(event_controller) // Remove +".png" if I create RessourceFile struct ?
 {
     const MapPosition spawn = tilemap->GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -14,6 +14,9 @@ Player::Player(Tilemap* tilemap, TextureController* texture_controller, const Ma
     }
 
     m_position = m_map_position.ToScenePosition(tilemap->GetTileSize());
+    const Pair<int> sprite_size = m_animation.GetSpriteSize();
+    m_texture_width = sprite_size.x;
+    m_texture_height = sprite_size.y;
     LookMe();
 }
 
@@ -24,12 +27,10 @@ Player::~Player()
 
 void Player::DrawTexture() const
 {
-    Pair<int> sprite = m_animation.GetCurrentSprite(); 
-    const int sprite_size = m_animation.GetSpriteSize(); // Could use Drawable::m_texture_width/height instead (need to set these values)
-
-    const SDL_Rect src{sprite.x, sprite.y, sprite_size, sprite_size};
+    const Pair<int> sprite = m_animation.GetCurrentSprite(); 
+    const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
     const ScenePosition camera_position = m_camera->GetCameraPosition();
-    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, sprite_size, sprite_size};
+    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, m_texture_width, m_texture_height};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 

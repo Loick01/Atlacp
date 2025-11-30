@@ -42,7 +42,7 @@ class MapElement // Will be use for Player, NPC, Monster.
         float m_speed;
 
     protected:
-        MapElement(Tilemap* tilemap, const float speed, const int animation_step, const float frame_duration, const Pair<int> spritesheet_size);
+        MapElement(Tilemap* tilemap, const float speed, const int animation_step, const float frame_duration);
         ~MapElement();
 
         Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 

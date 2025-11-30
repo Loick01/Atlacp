@@ -7,22 +7,18 @@ class Animation
 {
     private:
         int m_animation_step;
-        int m_sprite_index;
+        int m_current_sprite_index;
         float m_count; // Elapsed time since the last sprite update
         const float m_frame_duration;
-        const Pair<int> m_spritesheet_size;
-        const int m_sprite_size;
-        Pair<int> m_current_sprite; // Remove (will use m_sprite_index instead) 
-        // std::vector<Pair<int>> m_sprites; // Position (column, line) of each sprites in spritesheet
-
-        void UpdateCurrentSprite();
+        std::vector<Pair<int>> m_sprites; // Position (column, line) of each sprites in spritesheet
+        Pair<int> m_sprite_size;
 
     public:
-        Animation(const int step, const float frame_duration, const int sprite_size, const Pair<int> spritesheet_size);
+        Animation(const int step, const float frame_duration);
         ~Animation();
 
         Pair<int> GetCurrentSprite() const;
-        int GetSpriteSize() const;
+        Pair<int> GetSpriteSize() const;
         void Initialize();
         void Reset();
         void ContinueAnimation(const float delta_time);
