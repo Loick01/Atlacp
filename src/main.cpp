@@ -11,7 +11,7 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 800, 640, {50,50,50});
+    Window* window = new Window("Atlacp", 480, 320, {50,50,50});
     if (window->HasError()){
         return -1;
     }
@@ -23,7 +23,7 @@ int main(){
     Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../asset/world.txt", camera);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../asset/ff_world", camera);
     Player* player = new Player(tilemap, texture_controller, event_controller, "../asset/sprites/player.png", camera, 12.0f);
 
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected

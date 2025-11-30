@@ -1,7 +1,6 @@
 #pragma once
 
 #include "type.hpp"
-#include "texture.hpp" // Remove
 
 // Rename this class
 class Animation

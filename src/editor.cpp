@@ -9,7 +9,7 @@
 #include "tileset.hpp"
 
 int main(){
-    Window* window = new Window("Map Editor - Atlacp", 640, 640, {50,50,50});
+    Window* window = new Window("Map Editor - Atlacp", 1024, 768, {50,50,50});
     if (window->HasError()){
         return -1;
     }
@@ -17,7 +17,7 @@ int main(){
     FileReader* file_reader = new FileReader();
     Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
-    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../asset/world.txt", camera, false);
+    Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../asset/ff_world", camera, false);
     EditorEventController* event_controller = new EditorEventController(tileset);
     std::vector<Drawable*> drawables = {tilemap, tileset}; // Rendering order must be respected
 

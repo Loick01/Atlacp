@@ -103,8 +103,8 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         tileset->SetScreenPosition(GetMouseScreenPosition());
                         break;
                     case SDL_SCANCODE_L:
-                        tilemap->SaveMap("map3");
-                        std::cout << "Map saved in asset/maps/map3\n";
+                        tilemap->SaveMap("ff_map");
+                        std::cout << "Map saved in asset/maps/ff_map\n";
                         break;
                     case SDL_SCANCODE_R:
                         camera->ResetCameraPosition();
