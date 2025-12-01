@@ -111,10 +111,10 @@ enum class MapBound
 
 enum class MapDirection
 {
-    Up,
-    Down,
     Right,
     Left,
+    Up,
+    Down,
     None
 };
 

@@ -10,22 +10,23 @@ FileReader::~FileReader()
 
 }
 
-std::vector<std::string> FileReader::ReadWorldFile(const std::string& world_filepath, int& world_width, int& world_height) const
+WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
 {
     std::ifstream input;
     input.open(world_filepath);
-
-    int v;
-    input >> v; world_width = v;
-    input >> v; world_height = v;
+    WorldData data;
     
-    std::vector<std::string> maps;
+    int v;
+    input >> v; data.width = v;
+    input >> v; data.height = v;
+    
     std::string s;
+    data.maps.reserve(data.width*data.height);
     while (input >> s)
-        maps.push_back(s);
+        data.maps.push_back(s);
 
     input.close();
-    return maps;
+    return data;
 }
 
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
@@ -71,6 +72,7 @@ AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
     input >> data.frame_duration;
 
     int v1, v2;
+    data.sprites.reserve(data.step*4);
     while (input >> v1 && input >> v2) // Use a for loop with data.step instead ?
         data.sprites.push_back(Pair<int>{v1, v2}*data.sprite_size);
 

@@ -18,7 +18,7 @@ class FileReader
         FileReader();
         ~FileReader();
 
-        std::vector<std::string> ReadWorldFile(const std::string& world_filepath, int& world_width, int& world_height) const;
+        WorldData ReadWorldFile(const std::string& world_filepath) const;
         MapData GetMapFromFile(const std::string& path) const;
         TilesetData GetTilesetFromFile(const std::string& path) const;
         AnimationData GetAnimationFromFile(const std::string& path) const;

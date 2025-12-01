@@ -4,7 +4,7 @@ Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_r
     const std::string& world_filepath, Camera* camera, const bool should_culling) :
     Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset), m_should_culling(should_culling)
 {
-    m_world_data.maps = m_file_reader->ReadWorldFile(world_filepath, m_world_data.width, m_world_data.height);
+    m_world_data = m_file_reader->ReadWorldFile(world_filepath);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
     LoadMap(m_world_data.maps[m_current_map]); 
 }
