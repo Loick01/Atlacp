@@ -28,27 +28,25 @@ std::vector<std::string> FileReader::ReadWorldFile(const std::string& world_file
     return maps;
 }
 
-void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& m) const
+void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 {
     int v;
-    input >> v; m.width = v;
-    input >> v; m.height = v;
-    input >> v; m.spawn_position.x = v;
-    input >> v; m.spawn_position.y = v;
+    input >> v; data.width = v;
+    input >> v; data.height = v;
+    input >> v; data.spawn_position.x = v;
+    input >> v; data.spawn_position.y = v;
     std::string s;
-    while (input >> s && s != MAP_HEADER_END){
-        m.tilesets.push_back(s);
-    }
+    while (input >> s && s != MAP_HEADER_END)
+        data.tilesets.push_back(s);
 }
 
-void FileReader::GetMapFromFile(const std::string& path, MapData& data) const
+MapData FileReader::GetMapFromFile(const std::string& path) const
 {
     std::ifstream input;
     const std::string map_filepath = "../asset/maps/" + path; // Create a function in File
     input.open(map_filepath);
-    
-    data.tilesets.clear();
-    data.map.clear();
+    MapData data;
+
     ReadHeaderMapFile(input, data);
     data.map.reserve(data.width*data.height);
     
@@ -58,24 +56,45 @@ void FileReader::GetMapFromFile(const std::string& path, MapData& data) const
     }
 
     input.close();
+    return data;
 }
 
-void FileReader::ReadTilesetHeader(const std::string& path, TilesetData& data) const
+AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
 {
     std::ifstream input;
+    input.open(path);
+    AnimationData data;
 
-    const std::string header_filepath = "../asset/tilesets/" + path; // Create a function in File
-    input.open(header_filepath);
+    input >> data.sprite_size.x;
+    input >> data.sprite_size.y;
+    input >> data.step;
+    input >> data.frame_duration;
 
-    int v;
+    int v1, v2;
+    while (input >> v1 && input >> v2) // Use a for loop with data.step instead ?
+        data.sprites.push_back(Pair<int>{v1, v2}*data.sprite_size);
+
+    input.close();
+    return data;
+}
+
+TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
+{
+    std::ifstream input;
+    const std::string tileset_filepath = "../asset/tilesets/" + path; // Create a function in File
+    input.open(tileset_filepath);
+    TilesetData data;
+
     input >> data.width;
     input >> data.height;
     input >> data.tile_size;
 
-    //data.solid_tiles.clear();
-    while (input >> v){
+    int v;
+    while (input >> v)
         data.solid_tiles.insert(v);
-    }
+
+    input.close();
+    return data;
 }
 
 void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const

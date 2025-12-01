@@ -1,14 +1,9 @@
 #include "animation.hpp"
 
-Animation::Animation(const int step, const float frame_duration):
-    m_animation_step(step), m_frame_duration(frame_duration), m_current_sprite_index(0)
+Animation::Animation(const FileReader* file_reader, const std::string& path):
+    m_current_sprite_index(0)
 {
-    // Will be read from header file
-    m_sprite_size = Pair<int>{32,32};
-    m_sprites.push_back(Pair<int>{0, 0}*m_sprite_size);
-    m_sprites.push_back(Pair<int>{1, 0}*m_sprite_size);
-    m_sprites.push_back(Pair<int>{0, 1}*m_sprite_size);
-    m_sprites.push_back(Pair<int>{1, 1}*m_sprite_size);
+    m_animation_data = file_reader->GetAnimationFromFile(path);
 }
 
 Animation::~Animation()
@@ -18,12 +13,12 @@ Animation::~Animation()
 
 Pair<int> Animation::GetCurrentSprite() const
 {
-    return m_sprites[m_current_sprite_index];
+    return m_animation_data.sprites[m_current_sprite_index];
 }
 
 Pair<int> Animation::GetSpriteSize() const
 {
-    return m_sprite_size;
+    return m_animation_data.sprite_size;
 }
 
 void Animation::Initialize() // Initialize only when this is the first movement
@@ -40,8 +35,8 @@ void Animation::Reset()
 void Animation::ContinueAnimation(const float delta_time)
 {
     m_count += delta_time;
-    if (m_count >= m_frame_duration){
-        m_count -= m_frame_duration;
-        m_current_sprite_index = (m_current_sprite_index+1)%m_animation_step;
+    if (m_count >= m_animation_data.frame_duration){
+        m_count -= m_animation_data.frame_duration;
+        m_current_sprite_index = (m_current_sprite_index+1)%m_animation_data.step;
     }
 }

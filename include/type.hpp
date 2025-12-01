@@ -143,6 +143,14 @@ struct TilesetData
     int tile_size;
 };
 
+struct AnimationData
+{
+    std::vector<Pair<int>> sprites; // Position (column, line) of each sprites in spritesheet
+    Pair<int> sprite_size;
+    int step; // How many step for the animation
+    float frame_duration;
+};
+
 struct TilesetNormalizationInfo
 {
     int last_lower_bound;

@@ -12,7 +12,7 @@ class Player : public Drawable, public MapElement
         const MapEventController* m_event_controller;
 
     public:
-        Player(Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
+        Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
             const std::string& sprite_filepath, Camera* camera, const float speed);
         ~Player();
 

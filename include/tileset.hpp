@@ -23,8 +23,7 @@ class Tileset : public Drawable
         bool m_should_draw; // Used in editor only
 
         TilesetData GetTilesetData() const;
-        void LoadTilesetHeader(const std::string& path, TilesetData& data);
-
+        
     public:
         Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const bool should_draw=false);
         ~Tileset();

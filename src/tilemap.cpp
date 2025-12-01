@@ -119,7 +119,7 @@ bool Tilemap::CanMoveCamera(const int axis_position, const int axis_new_position
 void Tilemap::LoadMap(const std::string& path)
 {
     m_tileset->CleanTilesets(); // Delete tilesets used for the previous map
-    m_file_reader->GetMapFromFile(path, m_map_data);
+    m_map_data = m_file_reader->GetMapFromFile(path);
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
         m_tileset->LoadTileset(p);

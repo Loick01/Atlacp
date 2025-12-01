@@ -65,8 +65,8 @@ void MapMovement::Initialize(const int tile_size, const MapPosition start_positi
     m_progress = 0.;
 }
 
-MapElement::MapElement(Tilemap* tilemap, const float speed, const int animation_step, const float frame_duration):
-    m_tilemap(tilemap), m_state(ElementState::Free), m_speed(speed), m_animation(animation_step, frame_duration)
+MapElement::MapElement(const FileReader* file_reader, const std::string& sprite_filepath, Tilemap* tilemap, const float speed):
+    m_tilemap(tilemap), m_state(ElementState::Free), m_speed(speed), m_animation(file_reader, sprite_filepath)
 {
     
 }
