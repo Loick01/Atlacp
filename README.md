@@ -4,7 +4,6 @@
 
 ```bash
 # Run these commands from the root directory
-
 mkdir build
 cd build
 cmake ..

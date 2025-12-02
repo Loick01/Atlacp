@@ -44,7 +44,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 MapData FileReader::GetMapFromFile(const std::string& path) const
 {
     std::ifstream input;
-    const std::string map_filepath = "../asset/maps/" + path; // Create a function in File
+    const std::string map_filepath = "../assets/maps/" + path; // Create a function in File
     input.open(map_filepath);
     MapData data;
 
@@ -83,7 +83,7 @@ AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
 TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 {
     std::ifstream input;
-    const std::string tileset_filepath = "../asset/tilesets/" + path; // Create a function in File
+    const std::string tileset_filepath = "../assets/tilesets/" + path; // Create a function in File
     input.open(tileset_filepath);
     TilesetData data;
 
@@ -101,7 +101,7 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 
 void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const
 {
-    std::ofstream map_file("../asset/maps/"+map_filepath); // Create a function in file
+    std::ofstream map_file("../assets/maps/"+map_filepath); // Create a function in file
     int width = map_data.width;
     int height = map_data.height;
     MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile

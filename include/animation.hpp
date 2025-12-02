@@ -18,8 +18,7 @@ class Animation // Must have sprites for 4 directions
 
         Pair<int> GetCurrentSprite() const;
         Pair<int> GetSpriteSize() const;
-        void SetOffset(const MapDirection direction);
-        void Initialize();
+        void Initialize(const MapDirection direction, const bool is_first_movement);
         void Reset();
         void ContinueAnimation(const float delta_time);
 };

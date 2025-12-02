@@ -22,7 +22,7 @@ void Tileset::LoadTileset(const std::string& path)
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 
     m_texture_key = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    const std::string tileset_filepath = "../asset/tilesets/" + path + ".png"; // Create a function in File
+    const std::string tileset_filepath = "../assets/tilesets/" + path + ".png"; // Create a function in File
     m_texture_controller->LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
     if (m_tilesets.empty()){

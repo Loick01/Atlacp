@@ -81,8 +81,7 @@ void MapElement::StartMovement(const MapMovement movement, const bool is_first_m
     MapPosition new_pos = m_map_position + movement.GetMove();
     if (m_tilemap->CheckNewPosition(new_pos)){
         m_current_movement = movement;
-        m_animation.SetOffset(movement.GetDirection()); // Set the offset for sprite animation BEFORE initialize it (should not be here ?)
-        if (is_first_movement) m_animation.Initialize();
+        m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_state = ElementState::Moving;
         int tile_size = m_tilemap->GetTileSize();
         m_current_movement.Initialize(tile_size, m_map_position, new_pos);

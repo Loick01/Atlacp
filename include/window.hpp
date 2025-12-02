@@ -15,12 +15,12 @@ class Window
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
         SDL_Color m_bg_color;
-        const int m_width;
-        const int m_height;
+        int m_width;
+        int m_height;
         const std::string m_title;
 
     public:
-        Window(const std::string& title, const int width, const int height, const SDL_Color bg_color);
+        Window(const std::string& title, const int grid_width, const int grid_height, const SDL_Color bg_color);
         ~Window();
 
         SDL_Renderer* GetRenderer() const;

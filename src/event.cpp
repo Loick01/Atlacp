@@ -104,7 +104,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         break;
                     case SDL_SCANCODE_L:
                         tilemap->SaveMap("ff_map");
-                        std::cout << "Map saved in asset/maps/ff_map\n";
+                        std::cout << "Map saved in assets/maps/ff_map\n";
                         break;
                     case SDL_SCANCODE_R:
                         camera->ResetCameraPosition();

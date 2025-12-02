@@ -56,16 +56,6 @@ bool Drawable::IsPositionInTexture(const ScenePosition sp) const // sp must be n
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
-/*
-void Drawable::DrawTexture() const
-{
-    const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
-    const ScenePosition camera_position = m_camera->GetCameraPosition();
-    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, m_texture_width, m_texture_height};
-    m_texture_controller->RenderTexture(m_texture_key, src, dst);
-}
-*/
-
 void Drawable::SetScenePosition(const ScenePosition sp)
 {
     m_position = sp;
