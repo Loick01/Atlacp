@@ -17,6 +17,7 @@ Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureControlle
     const Pair<int> sprite_size = m_animation.GetSpriteSize();
     m_texture_width = sprite_size.x;
     m_texture_height = sprite_size.y;
+    m_display_offset = ScenePosition{0, m_texture_height-tilemap->GetTileSize()}; // x = (m_texture_width - tilemap->GetTileSize())/2 ?
     LookMe();
 }
 
@@ -30,7 +31,7 @@ void Player::DrawTexture() const
     const Pair<int> sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
     const ScenePosition camera_position = m_camera->GetCameraPosition();
-    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, m_texture_width, m_texture_height};
+    const SDL_Rect dst{m_position.x-camera_position.x/*-m_display_offset.x*/, m_position.y-camera_position.y-m_display_offset.y, m_texture_width, m_texture_height};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 

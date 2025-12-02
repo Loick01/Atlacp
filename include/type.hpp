@@ -111,10 +111,11 @@ enum class MapBound
 
 enum class MapDirection
 {
-    Right,
-    Left,
-    Up,
-    Down,
+    // Do not change the order (sprite animation is based on implicit int defined in this enum)
+    Down, // 0
+    Right, // 1
+    Up, // 2
+    Left, // 3
     None
 };
 
