@@ -10,6 +10,8 @@
 #include "tilemap.hpp"
 #include "type.hpp"
 
+#define JOYSTICK_DEAD_ZONE 15000
+
 class EventController
 {
     protected:
@@ -24,13 +26,14 @@ class EventController
         //virtual void HandleEvents() const = 0;
 };
 
-class MapEventController : public EventController
+class GameplayEventController : public EventController
 {
     private:
+        SDL_Joystick* m_joystick;
 
     public:
-        MapEventController();
-        ~MapEventController();
+        GameplayEventController();
+        ~GameplayEventController();
 
         MapMovement HandlePlayerEvent() const;
 };

@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-Window::Window(const std::string& title, const int grid_width, const int grid_height, const SDL_Color bg_color) :
+Window::Window(const std::string& title, const int grid_width, const int grid_height, const SDL_Color bg_color, const bool hide_cursor) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
     m_width = grid_width*32;
@@ -8,7 +8,7 @@ Window::Window(const std::string& title, const int grid_width, const int grid_he
     InitSdl();
     CreateWindow();
     SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
-    // SDL_ShowCursor(SDL_DISABLE); 
+    if (hide_cursor) SDL_ShowCursor(SDL_DISABLE); 
 }
 
 Window::~Window()

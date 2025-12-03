@@ -17,7 +17,7 @@ int main(){
     }
     
     Time time;
-    MapEventController* event_controller = new MapEventController();
+    GameplayEventController* event_controller = new GameplayEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
     Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});

@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
+Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const GameplayEventController* event_controller,
     const std::string& sprite_filepath, Camera* camera, const float speed):
     Drawable(texture_controller, sprite_filepath+".png", camera, ScenePosition{0,0}), MapElement(file_reader, sprite_filepath, tilemap, speed),
     m_event_controller(event_controller) // Remove +".png" if I create RessourceFile struct ?

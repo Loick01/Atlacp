@@ -9,11 +9,11 @@
 class Player : public Drawable, public MapElement
 {
     private:
-        const MapEventController* m_event_controller;
+        const GameplayEventController* m_event_controller;
         ScenePosition m_display_offset; // Should be in MapElement or Drawable ? (NPC sprites could also be greater than tile size)
 
     public:
-        Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const MapEventController* event_controller,
+        Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const GameplayEventController* event_controller,
             const std::string& sprite_filepath, Camera* camera, const float speed);
         ~Player();
 

@@ -36,29 +36,72 @@ void EventController::PollAllEvents()
     }
 }
 
-MapEventController::MapEventController():
-    EventController()
+GameplayEventController::GameplayEventController():
+    EventController(), m_joystick(nullptr)
+{
+    // Controller can be use only for gameplay mode
+    const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
+    if (joystick==0){
+        if (SDL_NumJoysticks() != 0){
+            m_joystick = SDL_JoystickOpen(0);
+            if (m_joystick == nullptr)
+                std::cout << "Error while opening the joystick: " << SDL_GetError() << "\n";
+            else
+                std::cout << "Joystick connected\n";
+        }else{
+            std::cout << "No joystick connected\n";
+        }
+    }
+    else{
+        std::cout << "Unable to initialize joystick system\n";
+    }
+}
+
+GameplayEventController::~GameplayEventController()
 {
 
 }
 
-MapEventController::~MapEventController()
+MapMovement GameplayEventController::HandlePlayerEvent() const
 {
-
-}
-
-MapMovement MapEventController::HandlePlayerEvent() const
-{
+    // Will find better solution than just testing is_joystick_connected
     MapMovement movement; // direction is None by default
-    const Uint8* state = SDL_GetKeyboardState(NULL);
-    if (state[SDL_SCANCODE_W])
-        movement.DefineMovement(MapDirection::Up);
-    else if (state[SDL_SCANCODE_A])
-        movement.DefineMovement(MapDirection::Left);
-    else if (state[SDL_SCANCODE_S])
-        movement.DefineMovement(MapDirection::Down);
-    else if (state[SDL_SCANCODE_D])
-        movement.DefineMovement(MapDirection::Right);
+    if (m_joystick != nullptr){
+        /* // Remove ?
+        for (SDL_Event event : m_events){
+            switch (event.type){
+                case SDL_JOYDEVICEREMOVED: {
+                    //m_joystick = nullptr;
+                    std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n";
+                    break;
+                }
+            }
+        }
+        */
+        const int axis_x = SDL_JoystickGetAxis(m_joystick, 0);
+        const int axis_y = SDL_JoystickGetAxis(m_joystick, 1);
+        if (std::abs(axis_x) > JOYSTICK_DEAD_ZONE){
+            if (axis_x < 0)
+                movement.DefineMovement(MapDirection::Left);
+            else
+                movement.DefineMovement(MapDirection::Right);
+        }else if (std::abs(axis_y) > JOYSTICK_DEAD_ZONE){
+            if (axis_y < 0)
+                movement.DefineMovement(MapDirection::Up);
+            else
+                movement.DefineMovement(MapDirection::Down);
+        }
+    }else{
+        const Uint8* state = SDL_GetKeyboardState(NULL);
+        if (state[SDL_SCANCODE_W])
+            movement.DefineMovement(MapDirection::Up);
+        else if (state[SDL_SCANCODE_A])
+            movement.DefineMovement(MapDirection::Left);
+        else if (state[SDL_SCANCODE_S])
+            movement.DefineMovement(MapDirection::Down);
+        else if (state[SDL_SCANCODE_D])
+            movement.DefineMovement(MapDirection::Right);
+        }
     return movement;
 }
 
