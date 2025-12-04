@@ -57,6 +57,11 @@ struct Vec2
         return T{x+rhs, y+rhs};
     }
 
+    T operator/(const float rhs) const
+    {
+        return T{static_cast<int>(x/rhs), static_cast<int>(y/rhs)};
+    }
+
     T operator/(const int rhs) const
     {
         return T{x/rhs, y/rhs};
@@ -83,11 +88,6 @@ struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
     ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
     {
         return ScenePosition{x+rhs.x, y+rhs.y};
-    }
-
-    ScenePosition operator-(const ScreenPosition rhs) const // Hide Vec2::operator- (should not be in ScenePosition ?)
-    {
-        return ScenePosition{x-rhs.x, y-rhs.y};
     }
 };
 

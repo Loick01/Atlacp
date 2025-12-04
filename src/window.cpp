@@ -1,10 +1,8 @@
 #include "window.hpp"
 
-Window::Window(const std::string& title, const int grid_width, const int grid_height, const SDL_Color bg_color, const bool hide_cursor) :
+Window::Window(const std::string& title/*, const int grid_width, const int grid_height*/, const SDL_Color bg_color, const bool hide_cursor) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
-    m_width = grid_width*32;
-    m_height = grid_height*32;
     InitSdl();
     CreateWindow();
     SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
@@ -29,11 +27,9 @@ void Window::CreateWindow()
 {
     m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if(!m_window) std::cout << "Failed to initialize SDL window\n";
-    
+    SDL_GetWindowSize(m_window, &m_width, &m_height);
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
     if(!m_renderer) std::cout << "Failed to create a renderer for the window\n";
-
-    SDL_RenderSetLogicalSize(m_renderer, m_width, m_height);
 }
 
 SDL_Renderer* Window::GetRenderer() const

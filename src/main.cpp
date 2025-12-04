@@ -11,7 +11,7 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp", 25, 14, {50,50,50});
+    Window* window = new Window("Atlacp"/*, 25, 14*/, {25,25,25});
     if (window->HasError()){
         return -1;
     }

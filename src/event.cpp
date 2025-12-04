@@ -129,7 +129,7 @@ ScreenPosition EditorEventController::GetMouseScreenPosition() const
 
 ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera) const
 {
-    return camera->GetCameraPosition()+GetMouseScreenPosition();
+    return camera->GetCameraPosition()+GetMouseScreenPosition()/camera->GetZoom();
 }
 
 void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
@@ -150,7 +150,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         std::cout << "Map saved in assets/maps/ff_map\n";
                         break;
                     case SDL_SCANCODE_R:
-                        camera->ResetCameraPosition();
+                        camera->Reset();
                         break;
                     case SDL_SCANCODE_UP:
                         tilemap->LoadAdjacentMap(MapBound::OutUp);
@@ -179,7 +179,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         m_is_replacing_tile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
-                    m_last_camera_origin = camera->GetCameraPosition() + GetMouseScreenPosition();
+                    m_last_camera_origin = GetMouseScreenPosition();
                     m_is_camera_moving = true;
                 }
                 break;
@@ -191,14 +191,20 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                 break;
             case SDL_MOUSEWHEEL:
                 if (tileset->GetShouldDraw()){
-                    if (event.wheel.y != 0){
-                        const int tileset_size = tileset->GetTilesetsSize();
-                        if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
-                            m_selected_tileset = (m_selected_tileset+1)%tileset_size;
-                        else
-                            m_selected_tileset = (m_selected_tileset-1+tileset_size)%tileset_size;
-                    }
+                    const int tileset_size = tileset->GetTilesetsSize();
+                    if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
+                        m_selected_tileset = (m_selected_tileset+1)%tileset_size;
+                    else
+                        m_selected_tileset = (m_selected_tileset-1+tileset_size)%tileset_size;
                     tileset->SetDisplayedTileset(m_selected_tileset);
+                }else{ // If the tileset is not opened, the mouse control the camera zoom
+                    const ScenePosition mouse_before_zoom = GetMouseScenePosition(camera);
+                    if (event.wheel.y > 0)
+                        camera->AddZoom(0.05f);
+                    else
+                        camera->AddZoom(-0.05f);
+                    const ScenePosition mouse_after_zoom = GetMouseScenePosition(camera);
+                    camera->MoveCameraPosition(mouse_before_zoom-mouse_after_zoom); // Will zoom on mouse cursor
                 }
                 break;
         }
@@ -206,7 +212,8 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
 
     if (m_is_camera_moving){
         const ScreenPosition mouse_position = GetMouseScreenPosition();
-        camera->SetCameraPosition(m_last_camera_origin-mouse_position);
+        const ScreenPosition new_camera_position = m_last_camera_origin-mouse_position;
+        camera->SetCameraPosition(ScenePosition{new_camera_position.x, new_camera_position.y});
     } else if (m_is_replacing_tile){
         const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
         tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);

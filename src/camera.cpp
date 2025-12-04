@@ -4,6 +4,7 @@ Camera::Camera(const ScenePosition window_size):
     m_window_size(window_size)
 {
     m_position = ScenePosition{0,0};
+    m_zoom = 1.0f;
 }
 
 Camera::~Camera()
@@ -31,6 +32,16 @@ Pair<bool> Camera::GetIsOffScreen() const
     return m_is_off_screen;
 }
 
+float Camera::GetZoom() const
+{
+    return m_zoom;
+}
+
+void Camera::AddZoom(const float z)
+{
+    m_zoom += z;
+}   
+
 void Camera::SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size)
 {
     m_tilemap_size = tilemap_size;
@@ -43,8 +54,14 @@ void Camera::SetCameraPosition(const ScenePosition sp)
     m_position = sp;
 } 
 
-void Camera::ResetCameraPosition()
+void Camera::MoveCameraPosition(const ScenePosition sp)
 {
+    m_position += sp;
+} 
+
+void Camera::Reset() // Used in editor
+{
+    m_zoom = 1.0f;
     SetCameraPosition(ScenePosition{0,0});
 }
 

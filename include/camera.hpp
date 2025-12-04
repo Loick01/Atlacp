@@ -14,6 +14,7 @@ class Camera
         ScenePosition m_range_tile; // How many tiles can fit in the window (width and height), used for map culling. This should not be a ScenePosition
         ScenePosition m_tilemap_size; // Could change when loading a new map
         Pair<bool> m_is_off_screen;
+        float m_zoom;
 
     public:
         Camera(const ScenePosition window_size);
@@ -23,8 +24,11 @@ class Camera
         ScenePosition GetWindowSize() const;
         ScenePosition GetRangeTile() const;
         Pair<bool> GetIsOffScreen() const;
+        float GetZoom() const;
+        void AddZoom(const float z);
         void SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size);
         void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
-        void ResetCameraPosition();
+        void MoveCameraPosition(const ScenePosition sp); // Add sp to m_position
+        void Reset();
         void LookAt(const ScenePosition sp);
 };

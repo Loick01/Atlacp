@@ -45,7 +45,7 @@ class EditorEventController : public EventController
         ScenePosition GetMouseScenePosition(const Camera* camera) const;
         
         Tileset* m_tileset;
-        ScenePosition m_last_camera_origin;
+        ScreenPosition m_last_camera_origin;
         Tile m_selected_tile;
         int m_selected_tileset;
         bool m_is_camera_moving;
