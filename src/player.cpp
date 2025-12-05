@@ -13,11 +13,11 @@ Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureControlle
         std::cout << "A spawn position must be defined for the first loaded map in tilemap (check world file)\n";
     }
 
-    m_position = m_map_position.ToScenePosition(tilemap->GetTileSize());
     const Pair<int> sprite_size = m_animation.GetSpriteSize();
     m_texture_width = sprite_size.x;
     m_texture_height = sprite_size.y;
-    m_display_offset = ScenePosition{0, m_texture_height-tilemap->GetTileSize()}; // x = (m_texture_width - tilemap->GetTileSize())/2 ?
+    m_display_offset = ScenePosition{(m_texture_width-tilemap->GetTileSize())/2, m_texture_height-tilemap->GetTileSize()};
+    m_position = GetFinalDrawingPosition(m_map_position.ToScenePosition(tilemap->GetTileSize()));
     LookMe();
 }
 
@@ -26,12 +26,19 @@ Player::~Player()
     m_texture_controller->DeleteTexture(m_texture_key);
 }
 
+// Rename
+ScenePosition Player::GetFinalDrawingPosition(const ScenePosition sp) const
+{
+    return (sp-m_display_offset)*m_camera->GetZoom();
+}
+
 void Player::DrawTexture() const
 {
     const Pair<int> sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
     const ScenePosition camera_position = m_camera->GetCameraPosition();
-    const SDL_Rect dst{m_position.x-camera_position.x/*-m_display_offset.x*/, m_position.y-camera_position.y-m_display_offset.y, m_texture_width, m_texture_height};
+    const float zoom = m_camera->GetZoom();
+    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y, m_texture_width*zoom, m_texture_height*zoom};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }
 
@@ -55,7 +62,7 @@ void Player::Update(const float delta_time)
 
         case ElementState::Moving:
         {
-            m_position = ContinueMovement(delta_time);
+            m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
             LookMe();
             break;
         }

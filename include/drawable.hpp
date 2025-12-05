@@ -30,7 +30,5 @@ class Drawable
         bool IsPositionInTexture(const ScreenPosition sp) const; 
         bool IsPositionInTexture(const ScenePosition sp) const;
         virtual void DrawTexture() const = 0;
-        void SetScenePosition(const ScenePosition sp);
-        void AddScenePosition(const ScenePosition sp);
         void LookMe();
 };

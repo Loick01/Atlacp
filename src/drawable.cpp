@@ -56,16 +56,6 @@ bool Drawable::IsPositionInTexture(const ScenePosition sp) const // sp must be n
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
-void Drawable::SetScenePosition(const ScenePosition sp)
-{
-    m_position = sp;
-}
-
-void Drawable::AddScenePosition(const ScenePosition sp)
-{
-    m_position += sp;
-}
-
 void Drawable::LookMe()
 {
     m_camera->LookAt(m_position);

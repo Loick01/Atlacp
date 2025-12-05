@@ -11,6 +11,7 @@ class Player : public Drawable, public MapElement
     private:
         const GameplayEventController* m_event_controller;
         ScenePosition m_display_offset; // Should be in MapElement or Drawable ? (NPC sprites could also be greater than tile size)
+        ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const; // Should be in MapElement or Drawable ?
 
     public:
         Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const GameplayEventController* event_controller,

@@ -129,7 +129,7 @@ ScreenPosition EditorEventController::GetMouseScreenPosition() const
 
 ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera) const
 {
-    return camera->GetCameraPosition()+GetMouseScreenPosition()/camera->GetZoom();
+    return (camera->GetCameraPosition()+GetMouseScreenPosition())/camera->GetZoom();
 }
 
 void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)

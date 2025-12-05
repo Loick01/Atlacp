@@ -160,7 +160,7 @@ void Tilemap::DrawTexture() const
             int tileset_width = m_tileset->GetTilesetWidth();
             const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
             const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
-            const SDL_Rect dst{zoom*(i*tile_size-camera_position.x), zoom*(j*tile_size-camera_position.y), tile_screen_size, tile_screen_size};
+            const SDL_Rect dst{zoom*(i*tile_size)-camera_position.x, zoom*(j*tile_size)-camera_position.y, tile_screen_size, tile_screen_size};
             m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
         }
     }
