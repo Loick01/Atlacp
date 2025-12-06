@@ -11,7 +11,11 @@ class Camera
         ScenePosition m_position;
         const ScenePosition m_window_size;
 
-        ScenePosition m_range_tile; // How many tiles can fit in the window (width and height), used for map culling. This should not be a ScenePosition
+        // Rename m_range_tile
+        ScenePosition m_range_tile; // How many tiles can fit in the window (width and height)
+        // Currently this value is get from window size, but this value will be given to the initialization of the camera (and will never change)
+        // Camera zoom will be compute from this value  
+        
         ScenePosition m_tilemap_size; // Could change when loading a new map
         Pair<bool> m_is_off_screen;
         float m_zoom;

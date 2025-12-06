@@ -36,12 +36,12 @@ void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
 
 int Tilemap::GetTextureWidth() const
 {
-    return m_map_data.width*m_tileset->GetTileSize();
+    return m_map_data.width*m_tileset->GetTileSize()*m_camera->GetZoom();
 }
 
 int Tilemap::GetTextureHeight() const
 {
-    return m_map_data.height*m_tileset->GetTileSize();
+    return m_map_data.height*m_tileset->GetTileSize()*m_camera->GetZoom();
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
@@ -134,26 +134,26 @@ void Tilemap::DrawTexture() const
     int map_width = m_map_data.width;
     int map_height = m_map_data.height;
     const ScenePosition camera_position = m_camera->GetCameraPosition();
-    
+    const float zoom = m_camera->GetZoom();
+
     // Culling
     // While animating a movement, end_index could not be enough to fill the window with the map
     // So I add 1 to end_index, and check if it becomes greater than map size
     Pair<int> start_index = Pair<int>{0, 0};
     Pair<int> end_index = Pair<int>{map_width, map_height};
-    
+
     if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
         if (m_camera->GetIsOffScreen().x){
-            start_index.x = camera_position.x/tile_size;
+            start_index.x = camera_position.x/(tile_size*zoom);
             end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x);
         }
         if (m_camera->GetIsOffScreen().y){
-            start_index.y = camera_position.y/tile_size;
+            start_index.y = camera_position.y/(tile_size*zoom);
             end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y);
         }
     }
 
-    const float zoom = m_camera->GetZoom();
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
             int tile = m_tileset->GetNormalizedTile(map[j*map_width+i]);

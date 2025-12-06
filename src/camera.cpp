@@ -69,11 +69,9 @@ void Camera::Reset() // Used in editor
 void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene position with checking map bounds
 {
     ScenePosition camera_position = sp - m_window_size/2;
-    /*
     if (m_is_off_screen.x) camera_position.x = std::clamp(camera_position.x, 0, m_tilemap_size.x-m_window_size.x); // Map must be render at ScenePosition{0,0}
     else camera_position.x = m_tilemap_size.x/2 - m_window_size.x/2;
     if (m_is_off_screen.y) camera_position.y = std::clamp(camera_position.y, 0, m_tilemap_size.y-m_window_size.y); // Map must be render at ScenePosition{0,0}
     else camera_position.y = m_tilemap_size.y/2 - m_window_size.y/2;
-    */
     SetCameraPosition(camera_position);
 }

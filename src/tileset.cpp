@@ -84,6 +84,7 @@ bool Tileset::IsEmptyTile(const Tile tile)
 
 void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, Tile& tile) const
 {
+    // Tileset is not displayed with zoom, Drawable::IsPositionInTexture will be used, so GetTextureWidth() will simply return m_texture_width 
     if (IsPositionInTexture(sp)){ // sp must be normalized (with screen position)
         int c = sp.x/m_tile_size;
         int l = sp.y/m_tile_size;
