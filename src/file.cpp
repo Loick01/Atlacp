@@ -74,7 +74,7 @@ AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
     int v1, v2;
     data.sprites.reserve(data.step*4);
     while (input >> v1 && input >> v2) // Use a for loop with data.step instead ?
-        data.sprites.push_back(Pair<int>{v1, v2}*data.sprite_size);
+        data.sprites.push_back(Vec2{v1, v2}*data.sprite_size);
 
     input.close();
     return data;

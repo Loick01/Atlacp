@@ -13,92 +13,78 @@ using Tile = unsigned int; // Use a struct ?
 // Should create a Dimension struct
 
 template <typename T>
-struct Pair // Should merge with Vec2 ?
+struct Pair
 {
     T x;
     T y;
-
-    Pair<T> operator*(const Pair<T> rhs) const
-    {
-        return Pair<T>{x*rhs.x, y*rhs.y};
-    }
 };
 
-template <typename T>
-struct Vec2
+struct Vec2 : public Pair<int>
 {
-    int x;
-    int y;
-
-    T operator+(const T& rhs) const
+    Vec2 operator+(const Vec2 rhs) const
     {
-        return T{x+rhs.x, y+rhs.y};
+        return {x+rhs.x, y+rhs.y};
     }
-    
-    T& operator+=(const T& rhs)
+
+    Vec2 operator-(const Vec2 rhs) const
+    {
+        return {x-rhs.x, y-rhs.y};
+    }
+
+    Vec2 operator+(const int rhs) const
+    {
+        return {x+rhs, y+rhs};
+    }
+
+    Vec2& operator+=(const Vec2& rhs) 
     {
         x += rhs.x;
         y += rhs.y;
-        return static_cast<T&>(*this);
+        return *this;
     }
 
-    T operator-(const T& rhs) const
+    Vec2 operator*(const Pair<int> rhs) const
     {
-        return T{x-rhs.x, y-rhs.y};
+        return {x*rhs.x, y*rhs.y};
     }
 
-    T operator*(const float rhs) const
+    Vec2 operator*(const float rhs) const
     {
-        return T{static_cast<int>(x*rhs), static_cast<int>(y*rhs)};
+        return {static_cast<int>(x*rhs), static_cast<int>(y*rhs)};
     }
 
-    T operator+(const int rhs) const
+    Vec2 operator/(const float rhs) const
     {
-        return T{x+rhs, y+rhs};
-    }
-
-    T operator/(const float rhs) const
-    {
-        return T{static_cast<int>(x/rhs), static_cast<int>(y/rhs)};
-    }
-
-    T operator/(const int rhs) const
-    {
-        return T{x/rhs, y/rhs};
-    }
-
-    Pair<bool> operator>(const T& rhs) const
-    {
-        return Pair<bool>{x>rhs.x, y>rhs.y};
+        return {static_cast<int>(x/rhs), static_cast<int>(y/rhs)};
     }
 };
 
-// CRTP
-struct ScreenPosition : Vec2<ScreenPosition> // Position on screen (could be out of window)
+struct ScenePosition : public Vec2
 {
+    ScenePosition() = default;
+    ScenePosition(const int px, const int py) { x = px; y = py; }
+    ScenePosition(const Vec2& v) { x = v.x; y = v.y; }
 
-};
-
-// CRTP
-struct ScenePosition : Vec2<ScenePosition> // Position in 2D space
-{
-    using Vec2<ScenePosition>::operator+; // Used for ScenePosition + ScenePosition
-    using Vec2<ScenePosition>::operator-; // Used for ScenePosition - ScenePosition
-
-    ScenePosition operator+(const ScreenPosition rhs) const // Hide Vec2::operator+ (should not be in ScenePosition ?)
+    Pair<bool> operator>(const Vec2 rhs) const
     {
-        return ScenePosition{x+rhs.x, y+rhs.y};
-    }
-
-    ScenePosition operator-(const ScreenPosition rhs) const // Hide Vec2::operator- (should not be in ScenePosition ?)
-    {
-        return ScenePosition{x-rhs.x, y-rhs.y};
+        return {x>rhs.x, y>rhs.y};
     }
 };
 
-// CRTP
-struct MapPosition : Vec2<MapPosition>
+struct ScreenPosition : public Vec2
 {
+    ScreenPosition() = default;
+    ScreenPosition(const int px, const int py) { x = px; y = py; }
+    ScreenPosition(const Vec2& v) { x = v.x; y = v.y; }
+};
+
+// Rename GridPosition ?
+struct MapPosition : public Vec2
+{
+    MapPosition() = default;
+    MapPosition(const int px, const int py) { x = px; y = py; }
+    MapPosition(const Vec2& v) { x = v.x; y = v.y; }
+
     ScenePosition ToScenePosition(const int tile_size) const
     {
         return ScenePosition{x*tile_size, y*tile_size};
@@ -151,7 +137,7 @@ struct TilesetData
 
 struct AnimationData
 {
-    std::vector<Pair<int>> sprites; // Position (column, line) of each sprites in spritesheet
+    std::vector<Vec2> sprites; // Position (column, line) of each sprites in spritesheet
     Pair<int> sprite_size;
     int step; // How many step for the animation
     float frame_duration;
