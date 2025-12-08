@@ -26,10 +26,14 @@ int main(){
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
     Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 3.0f);
-    NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
 
-    std::vector<Drawable*> drawables = {tilemap, npc, player}; // Rendering order must be respected
-    std::vector<Entity*> elements = {player, npc};
+    std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
+    std::vector<Entity*> elements = {player};
+    for (unsigned int i = 0 ; i < 100 ; i++){
+        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
+        drawables.push_back(npc);
+        elements.push_back(npc);
+    }
 
     bool gameloop = true;
     while(gameloop){

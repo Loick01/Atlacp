@@ -7,6 +7,7 @@
 class NPC : public Entity
 {
     private:
+        Random m_random;
 
     public:
         NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller,

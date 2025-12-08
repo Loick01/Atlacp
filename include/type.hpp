@@ -2,8 +2,10 @@
 
 #include <cstdint>
 #include <set>
+#include <stdlib.h>
 #include <string>
-#include <vector>
+#include <time.h>
+#include <vector>    
 
 using TextureKey = std::string;
 using Tile = unsigned int; // Use a struct ?
@@ -103,6 +105,7 @@ enum class MapBound
 enum class MapDirection
 {
     // Do not change the order (sprite animation is based on implicit int defined in this enum)
+    // Random::GetRandomDirection also use this order
     Down, // 0
     Right, // 1
     Up, // 2
@@ -147,4 +150,18 @@ struct TilesetNormalizationInfo
 {
     int last_lower_bound;
     int last_upper_bound;
+};
+
+// Should not be here ?
+struct Random
+{
+    Random()
+    {
+        srand(time(NULL));
+    }
+
+    MapDirection GetRandomDirection() const
+    {
+        return static_cast<MapDirection>(rand()%4);
+    }
 };
