@@ -10,7 +10,7 @@ using Tile = unsigned int; // Use a struct ?
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
-// Should create a Dimension struct
+// Should create a Size struct ?
 
 template <typename T>
 struct Pair

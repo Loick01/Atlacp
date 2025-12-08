@@ -4,6 +4,7 @@
 #include "camera.hpp"
 #include "event.hpp"
 #include "file.hpp"
+#include "npc.hpp"
 #include "player.hpp"
 #include "texture.hpp"
 #include "tilemap.hpp"
@@ -25,9 +26,10 @@ int main(){
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
     Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 3.0f);
+    NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
 
-    std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
-    std::vector<MapElement*> elements = {player};
+    std::vector<Drawable*> drawables = {tilemap, npc, player}; // Rendering order must be respected
+    std::vector<Entity*> elements = {player, npc};
 
     bool gameloop = true;
     while(gameloop){
@@ -38,7 +40,7 @@ int main(){
         gameloop = event_controller->HandleWindowEvents();
         
         const float delta_time = time.GetDeltaTime();
-        for (MapElement* e : elements) e->Update(delta_time);
+        for (Entity* e : elements) e->Update(delta_time);
         for (const Drawable* d : drawables) d->DrawTexture();
         
         window->UpdateRender();       
