@@ -21,9 +21,10 @@ ScenePosition Entity::GetFinalDrawingPosition(const ScenePosition sp) const
     return (sp-m_display_offset)*m_camera->GetZoom();
 }
 
-void Entity::SetMapPosition(const MapPosition mp)
+void Entity::SetMapPosition(const MapPosition mp) // Should be in MapElement
 {
     m_map_position = mp;
+    m_tilemap->TakePosition(m_map_position); // Should be in MapElement or in Entity constructor ? (I'm not sure, a door will be a MapElement and an Entity should be able to be at the same position)
 }
 
 void Entity::DrawTexture() const

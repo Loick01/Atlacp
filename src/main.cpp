@@ -30,7 +30,7 @@ int main(){
     std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
     std::vector<Entity*> elements = {player};
     for (unsigned int i = 0 ; i < 100 ; i++){
-        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
+        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 10.0f);
         drawables.push_back(npc);
         elements.push_back(npc);
     }

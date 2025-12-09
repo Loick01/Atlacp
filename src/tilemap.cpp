@@ -24,14 +24,14 @@ int Tilemap::GetTileSize() const
     return m_tileset->GetTileSize();
 }
 
-Tile Tilemap::GetTileAt(const MapPosition p) const
+unsigned int Tilemap::GetTileIndex(const MapPosition p) const
 {
-    return m_map_data.map[p.y*m_map_data.width+p.x];
+    return p.y*m_map_data.width+p.x;
 }
 
 void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
 {
-    m_map_data.map[p.y*m_map_data.width+p.x] = new_tile;
+    m_map_data.map[GetTileIndex(p)] = new_tile;
 }
 
 int Tilemap::GetTextureWidth() const
@@ -97,15 +97,23 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
     return projected_position;
 }
 
-bool Tilemap::CheckNewPosition(MapPosition& p)
+void Tilemap::TakePosition(const MapPosition p)
+{
+    m_map_data.occupancy_grid[GetTileIndex(p)] = false;
+}
+
+void Tilemap::FreePosition(const MapPosition p)
+{
+    m_map_data.occupancy_grid[GetTileIndex(p)] = true;
+}
+
+bool Tilemap::IsFreePosition(MapPosition& p)
 {
     MapBound is_in_bound = IsOutOfMap(p);
-    if (is_in_bound != MapBound::Inside){
+    if (is_in_bound != MapBound::Inside)
         p = GetProjectedPosition(p, is_in_bound);
-    }else{
-        const Tile tile = GetTileAt(p);
-        return m_tileset->IsEmptyTile(tile);
-    }
+    else
+        return m_map_data.occupancy_grid[GetTileIndex(p)];
     return true;
 }
 
@@ -120,9 +128,13 @@ void Tilemap::LoadMap(const std::string& path)
 {
     m_tileset->CleanTilesets(); // Delete tilesets used for the previous map
     m_map_data = m_file_reader->GetMapFromFile(path);
+
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
         m_tileset->LoadTileset(p);
+
+    for (Tile t : m_map_data.map)
+        m_map_data.occupancy_grid.push_back(m_tileset->IsEmptyTile(t));
 
     m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset->GetTileSize());
 }
@@ -156,7 +168,7 @@ void Tilemap::DrawTexture() const
 
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
-            int tile = m_tileset->GetNormalizedTile(map[j*map_width+i]);
+            int tile = m_tileset->GetNormalizedTile(map[j*map_width+i]); // Should use Tile type ?
             int tileset_width = m_tileset->GetTilesetWidth();
             const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
             const int tile_screen_size = static_cast<int>(tile_size*zoom+1);

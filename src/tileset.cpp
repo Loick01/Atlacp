@@ -78,7 +78,7 @@ int Tileset::GetTilesetHeight() const
 
 bool Tileset::IsEmptyTile(const Tile tile)
 {
-    int t = GetNormalizedTile(tile); 
+    Tile t = GetNormalizedTile(tile); 
     return m_tilesets[m_index_tileset].solid_tiles.find(t) == m_tilesets[m_index_tileset].solid_tiles.end();
 }
 

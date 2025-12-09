@@ -123,6 +123,7 @@ struct WorldData
 struct MapData
 {
     std::vector<Tile> map;
+    std::vector<bool> occupancy_grid;
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     MapPosition spawn_position; // Position where the player will start when loading the associated map (-1 if no specific position)
     int width;

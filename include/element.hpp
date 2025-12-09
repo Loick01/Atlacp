@@ -37,7 +37,6 @@ class MapMovement
 class MapElement // Will be use for Player, NPC, Monster.
 {
     private:
-        Tilemap* m_tilemap;
         MapMovement m_current_movement;
         float m_speed;
 
@@ -48,6 +47,7 @@ class MapElement // Will be use for Player, NPC, Monster.
         Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 
         ElementState m_state; // Should be in Animation class ?
         MapPosition m_map_position;
+        Tilemap* m_tilemap; // Should be private ?
 
     public:
         ScenePosition ContinueMovement(const float delta_time);
