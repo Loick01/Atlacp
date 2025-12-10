@@ -76,6 +76,11 @@ MapElement::~MapElement()
 
 }
 
+void MapElement::SetMapPosition(const MapPosition mp)
+{
+    m_map_position = mp;
+}
+
 void MapElement::StartMovement(const MapMovement movement, const bool is_first_movement)
 {
     MapPosition new_pos = m_map_position + movement.GetMove();

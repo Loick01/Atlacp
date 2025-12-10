@@ -11,6 +11,7 @@ Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureControlle
         SetMapPosition(MapPosition{0, 0});
         std::cout << "A spawn position must be defined for the first loaded map in tilemap (check world file)\n";
     }
+    tilemap->TakePosition(m_map_position); // Should be in Entity ?
     m_position = GetFinalDrawingPosition(m_map_position.ToScenePosition(tilemap->GetTileSize()));
     LookMe();
 }

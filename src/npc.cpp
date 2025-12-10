@@ -5,6 +5,7 @@ NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* tex
     Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed)
 {
     SetMapPosition(MapPosition{16,22});
+    tilemap->TakePosition(m_map_position); // Should be in Entity ?
     m_position = GetFinalDrawingPosition(m_map_position.ToScenePosition(tilemap->GetTileSize()));
 }
 

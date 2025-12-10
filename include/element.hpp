@@ -38,16 +38,17 @@ class MapElement // Will be use for Player, NPC, Monster.
 {
     private:
         MapMovement m_current_movement;
+        Tilemap* m_tilemap;
         float m_speed;
 
     protected:
         MapElement(const FileReader* file_reader, const std::string& sprite_filepath, Tilemap* tilemap, const float speed);
         ~MapElement();
 
+        void SetMapPosition(const MapPosition mp);
         Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 
         ElementState m_state; // Should be in Animation class ?
-        MapPosition m_map_position;
-        Tilemap* m_tilemap; // Should be private ?
+        MapPosition m_map_position; // Should be private ?
 
     public:
         ScenePosition ContinueMovement(const float delta_time);

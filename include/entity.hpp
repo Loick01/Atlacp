@@ -16,6 +16,7 @@ class Entity : public Drawable, public MapElement
         ~Entity();
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
-        void SetMapPosition(const MapPosition mp); // Should be in MapElement ?
+    
+    public:
         void DrawTexture() const override;
 };

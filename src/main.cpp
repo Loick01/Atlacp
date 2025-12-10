@@ -12,7 +12,7 @@
 #include "window.hpp"
 
 int main(){
-    Window* window = new Window("Atlacp"/*, 25, 14*/, {25,25,25});
+    Window* window = new Window("Atlacp", {25,25,25});
     if (window->HasError()){
         return -1;
     }
@@ -21,17 +21,21 @@ int main(){
     GameplayEventController* event_controller = new GameplayEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
+    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()}, ScenePosition{16, 14}, 32);
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
     Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 3.0f);
 
-    std::vector<Drawable*> drawables = {tilemap, player}; // Rendering order must be respected
+    // Layer 1
+    std::vector<Drawable*> drawables = {tilemap};
+    // Layer 2
+    std::vector<Entity*> entities = {player};
+    
     std::vector<Entity*> elements = {player};
-    for (unsigned int i = 0 ; i < 100 ; i++){
-        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 10.0f);
-        drawables.push_back(npc);
+    for (unsigned int i = 0 ; i < 10 ; i++){
+        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
+        entities.push_back(npc);
         elements.push_back(npc);
     }
 
@@ -44,8 +48,9 @@ int main(){
         gameloop = event_controller->HandleWindowEvents();
         
         const float delta_time = time.GetDeltaTime();
-        for (Entity* e : elements) e->Update(delta_time);
         for (const Drawable* d : drawables) d->DrawTexture();
+        for (const Entity* e : entities) e->DrawTexture();
+        for (Entity* e : elements) e->Update(delta_time);
         
         window->UpdateRender();       
     }

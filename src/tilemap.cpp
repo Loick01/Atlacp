@@ -136,7 +136,7 @@ void Tilemap::LoadMap(const std::string& path)
     for (Tile t : m_map_data.map)
         m_map_data.occupancy_grid.push_back(m_tileset->IsEmptyTile(t));
 
-    m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset->GetTileSize());
+    m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()});
 }
 
 void Tilemap::DrawTexture() const
@@ -158,11 +158,11 @@ void Tilemap::DrawTexture() const
         // Should be in a function in Camera ?
         if (m_camera->GetIsOffScreen().x){
             start_index.x = camera_position.x/(tile_size*zoom);
-            end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x);
+            end_index.x = std::min(end_index.x, start_index.x + m_camera->GetViewport().x + 1);
         }
         if (m_camera->GetIsOffScreen().y){
             start_index.y = camera_position.y/(tile_size*zoom);
-            end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y);
+            end_index.y = std::min(end_index.y, start_index.y + m_camera->GetViewport().y + 1);
         }
     }
 

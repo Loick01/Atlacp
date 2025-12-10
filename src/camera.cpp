@@ -1,10 +1,12 @@
 #include "camera.hpp"
 
-Camera::Camera(const ScenePosition window_size):
-    m_window_size(window_size)
+Camera::Camera(const ScenePosition window_size, const ScenePosition viewport, const int tile_size):
+    m_window_size(window_size), m_viewport(viewport)
 {
     m_position = ScenePosition{0,0};
-    m_zoom = 2.5f;
+    const Pair<float> best_possible_zoom = {(window_size.x/viewport.x)/static_cast<float>(tile_size),
+                                            (window_size.y/viewport.y)/static_cast<float>(tile_size)};
+    m_zoom = std::min(best_possible_zoom.x, best_possible_zoom.y);
 }
 
 Camera::~Camera()
@@ -22,9 +24,9 @@ ScenePosition Camera::GetWindowSize() const
     return m_window_size;
 }
 
-ScenePosition Camera::GetRangeTile() const
+ScenePosition Camera::GetViewport() const
 {
-    return m_range_tile;
+    return m_viewport;
 }
 
 Pair<bool> Camera::GetIsOffScreen() const
@@ -42,10 +44,9 @@ void Camera::AddZoom(const float z)
     m_zoom += z;
 }   
 
-void Camera::SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size)
+void Camera::SetTilemapInfo(const ScenePosition tilemap_size)
 {
     m_tilemap_size = tilemap_size;
-    m_range_tile = m_window_size/tile_size+1;
     m_is_off_screen = m_tilemap_size > m_window_size;
 }
 

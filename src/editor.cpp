@@ -9,13 +9,13 @@
 #include "tileset.hpp"
 
 int main(){
-    Window* window = new Window("Map Editor - Atlacp"/*, 16, 11*/, {25,25,25}, false);
+    Window* window = new Window("Map Editor - Atlacp", {25,25,25}, false);
     if (window->HasError()){
         return -1;
     }
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()});
+    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()}, ScenePosition{16, 14}, 32);
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera, false);
     EditorEventController* event_controller = new EditorEventController(tileset);
