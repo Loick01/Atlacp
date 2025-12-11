@@ -6,6 +6,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+struct Boxing
+{
+    SDL_Rect rect_a; // Left or Top rectangle
+    SDL_Rect rect_b; // Right or Bottom rectangle
+};
+
 class Window
 {
     private:
@@ -15,6 +21,7 @@ class Window
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
         SDL_Color m_bg_color;
+        Boxing m_box;
         int m_width;
         int m_height;
         const std::string m_title;
@@ -27,7 +34,9 @@ class Window
         int GetWidth() const;
         int GetHeight() const;
         bool HasError() const;
+        void SetBoxing(const int x_b, const int y_b, const int w, const int h);
         void ClearRenderer() const;
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bg_color);
+        void DrawBoxing();
 };

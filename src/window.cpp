@@ -52,6 +52,20 @@ bool Window::HasError() const
     return !m_window || !m_renderer;
 }
 
+void Window::SetBoxing(const int x_b, const int y_b, const int w, const int h)
+{
+    m_box.rect_a = SDL_Rect{0, 0, w, h};
+    m_box.rect_b = SDL_Rect{x_b, y_b, w, h};
+}
+
+void Window::DrawBoxing()
+{
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(m_renderer, &m_box.rect_a);
+    SDL_RenderFillRect(m_renderer, &m_box.rect_b);
+    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+}
+
 void Window::ClearRenderer() const
 {
     SDL_RenderClear(m_renderer);

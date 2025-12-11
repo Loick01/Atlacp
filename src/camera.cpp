@@ -1,18 +1,34 @@
 #include "camera.hpp"
 
-Camera::Camera(const ScenePosition window_size, const ScenePosition range_tile, const int tile_size):
+Camera::Camera(Window* window, const ScenePosition range_tile, const int tile_size):
     m_range_tile(range_tile)
 {
     m_position = ScenePosition{0,0};
-    const Pair<float> best_possible_zoom = {(window_size.x/range_tile.x)/static_cast<float>(tile_size),
-                                            (window_size.y/range_tile.y)/static_cast<float>(tile_size)};
+    const int window_width = window->GetWidth();
+    const int window_height = window->GetHeight();
+    const Pair<float> best_possible_zoom = {(window_width/range_tile.x)/static_cast<float>(tile_size),
+                                            (window_height/range_tile.y)/static_cast<float>(tile_size)};
     m_zoom = std::min(best_possible_zoom.x, best_possible_zoom.y);
     m_viewport = m_range_tile*tile_size*m_zoom;
+
+    const ScenePosition outside_viewport = ScenePosition{window_width, window_height} - m_viewport;
+    if (best_possible_zoom.x < best_possible_zoom.y){ // Letterboxing
+        window->SetBoxing(0, window_height-outside_viewport.y/2, window_width, outside_viewport.y/2);
+        m_offset = ScenePosition{0, outside_viewport.y/2}; // Remove
+    }else{ // Pillarboxing
+        window->SetBoxing(window_width-outside_viewport.x/2, 0, outside_viewport.x/2, window_height);
+        m_offset = ScenePosition{outside_viewport.x/2, 0}; // Remove
+    }
 }
 
 Camera::~Camera()
 {
 
+}
+
+ScenePosition Camera::GetOffset() const
+{   
+    return m_offset;
 }
 
 ScenePosition Camera::GetCameraPosition() const

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "type.hpp"
+#include "window.hpp"
 
 class Camera
 {
@@ -16,10 +17,13 @@ class Camera
         Pair<bool> m_is_off_screen;
         float m_zoom;
 
+        ScenePosition m_offset; // Remove
+
     public:
-        Camera(const ScenePosition window_size, const ScenePosition range_tile, const int tile_size);
+        Camera(Window* window, const ScenePosition range_tile, const int tile_size);
         ~Camera();
 
+        ScenePosition GetOffset() const; // Remove
         ScenePosition GetCameraPosition() const;
         ScenePosition GetRangeTile() const;
         Pair<bool> GetIsOffScreen() const;

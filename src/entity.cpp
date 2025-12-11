@@ -26,8 +26,9 @@ void Entity::DrawTexture() const
     const Pair<int> sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
     const ScenePosition camera_position = m_camera->GetCameraPosition();
+    const ScenePosition camera_offset = m_camera->GetOffset(); // Remove
     const float zoom = m_camera->GetZoom();
-    const SDL_Rect dst{m_position.x-camera_position.x, m_position.y-camera_position.y,
+    const SDL_Rect dst{m_position.x-camera_position.x+camera_offset.x, m_position.y-camera_position.y+camera_offset.y,
                        static_cast<int>(m_texture_width*zoom), static_cast<int>(m_texture_height*zoom)};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
 }

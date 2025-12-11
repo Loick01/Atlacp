@@ -21,7 +21,7 @@ int main(){
     GameplayEventController* event_controller = new GameplayEventController();
     TextureController* texture_controller = new TextureController(window->GetRenderer());
     FileReader* file_reader = new FileReader();
-    Camera* camera = new Camera(ScenePosition{window->GetWidth(), window->GetHeight()}, ScenePosition{16, 14}, 32);
+    Camera* camera = new Camera(window, ScenePosition{16, 12}, 32);
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
@@ -52,6 +52,7 @@ int main(){
         for (const Entity* e : entities) e->DrawTexture();
         for (Entity* e : elements) e->Update(delta_time);
         
+        window->DrawBoxing();
         window->UpdateRender();       
     }
 
