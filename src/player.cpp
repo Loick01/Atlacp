@@ -32,7 +32,7 @@ void Player::Update(const float delta_time)
                 case MapDirection::None:
                     break;
                 default:
-                    StartMovement(movement, true);
+                    StartMovement(movement, true, true);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
@@ -58,7 +58,7 @@ void Player::Update(const float delta_time)
                     break;
                 }
                 default:
-                    StartMovement(movement, false);
+                    StartMovement(movement, false, true);
                     LookMe(); // Same reason than case ElementState::Free
                     break;
             }

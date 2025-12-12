@@ -81,10 +81,10 @@ void MapElement::SetMapPosition(const MapPosition mp)
     m_map_position = mp;
 }
 
-void MapElement::StartMovement(const MapMovement movement, const bool is_first_movement)
+void MapElement::StartMovement(const MapMovement movement, const bool is_first_movement, const bool can_exit_map)
 {
     MapPosition new_pos = m_map_position + movement.GetMove();
-    if (m_tilemap->IsFreePosition(new_pos)){
+    if (m_tilemap->IsFreePosition(new_pos, can_exit_map)){
         m_current_movement = movement;
         m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_state = ElementState::Moving;

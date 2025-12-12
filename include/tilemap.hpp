@@ -35,7 +35,7 @@ class Tilemap : public Drawable
         int GetTileSize() const;
         void TakePosition(const MapPosition p);
         void FreePosition(const MapPosition p);
-        bool IsFreePosition(MapPosition& p);
+        bool IsFreePosition(MapPosition& p, const bool can_exit_map);
         bool CanMoveCamera(const int axis_position, const int axis_new_position) const;
         void LoadAdjacentMap(const MapBound bound);
         void SetTileAt(const Tile new_tile, const MapPosition p);

@@ -25,7 +25,7 @@ int main(){
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
-    Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 3.0f);
+    Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 8.0f);
 
     // Layer 1
     std::vector<Drawable*> drawables = {tilemap};

@@ -107,11 +107,13 @@ void Tilemap::FreePosition(const MapPosition p)
     m_map_data.occupancy_grid[GetTileIndex(p)] = true;
 }
 
-bool Tilemap::IsFreePosition(MapPosition& p)
+bool Tilemap::IsFreePosition(MapPosition& p, const bool can_exit_map)
 {
-    MapBound is_in_bound = IsOutOfMap(p);
-    if (is_in_bound != MapBound::Inside)
-        p = GetProjectedPosition(p, is_in_bound);
+    const MapBound bound = IsOutOfMap(p);
+    if (bound != MapBound::Inside)
+        if (can_exit_map)
+            p = GetProjectedPosition(p, bound);
+        else return false;
     else
         return m_map_data.occupancy_grid[GetTileIndex(p)];
     return true;

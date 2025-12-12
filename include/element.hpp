@@ -53,5 +53,5 @@ class MapElement // Will be use for Player, NPC, Monster.
     public:
         ScenePosition ContinueMovement(const float delta_time);
         virtual void Update(const float delta_time) = 0;
-        void StartMovement(const MapMovement movement, const bool is_first_movement);
+        void StartMovement(const MapMovement movement, const bool is_first_movement, const bool can_exit_map=false);
 };
