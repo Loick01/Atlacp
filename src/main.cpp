@@ -25,18 +25,16 @@ int main(){
 
     Tileset* tileset = new Tileset(texture_controller, camera, file_reader);
     Tilemap* tilemap = new Tilemap(texture_controller, file_reader, tileset, "../assets/worlds/ff_world", camera);
-    Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 8.0f);
+    Player* player = new Player(file_reader, tilemap, texture_controller, event_controller, "../assets/sprites/character", camera, 5.0f);
 
     // Layer 1
     std::vector<Drawable*> drawables = {tilemap};
     // Layer 2
     std::vector<Entity*> entities = {player};
     
-    std::vector<Entity*> elements = {player};
-    for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 3.0f);
+    for (unsigned int i = 0 ; i < 100 ; i++){
+        NPC* npc = new NPC(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 10.0f);
         entities.push_back(npc);
-        elements.push_back(npc);
     }
 
     bool gameloop = true;
@@ -47,11 +45,18 @@ int main(){
         
         gameloop = event_controller->HandleWindowEvents();
         
+        // Remove (should sort only at the end of any movement, or even better --> remove then insert the moving npc at the correct index)
+        std::sort(entities.begin(), entities.end(),
+            [](Entity* a, Entity* b){
+                return a->GetMapPosition().y < b->GetMapPosition().y; 
+            });
         const float delta_time = time.GetDeltaTime();
         for (const Drawable* d : drawables) d->DrawTexture();
-        for (const Entity* e : entities) e->DrawTexture();
-        for (Entity* e : elements) e->Update(delta_time);
-        
+        for (Entity* e : entities){
+            e->DrawTexture();
+            e->Update(delta_time);
+        }
+
         window->DrawBoxing();
         window->UpdateRender();       
     }

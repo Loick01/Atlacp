@@ -5,8 +5,8 @@
 
 #include <SDL2/SDL.h>
 
-#include "element.hpp"
 #include "drawable.hpp"
+#include "entity.hpp"
 #include "tilemap.hpp"
 #include "type.hpp"
 
@@ -35,7 +35,7 @@ class GameplayEventController : public EventController
         GameplayEventController();
         ~GameplayEventController();
 
-        MapMovement HandlePlayerEvent() const;
+        EntityMovement HandlePlayerEvent() const;
 };
 
 class EditorEventController : public EventController

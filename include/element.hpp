@@ -4,54 +4,22 @@
 #include "tilemap.hpp"
 #include "type.hpp"
 
-enum class ElementState
-{
-    Free,
-    Moving,
-    StopMoving
-};
-
-class MapMovement
+class MapElement
 {
     private:
-        MapPosition m_move;
-        MapDirection m_direction;
-
-        ScenePosition m_start_position;
-        ScenePosition m_end_position;
-        float m_progress;
-
-    public:
-        MapMovement();
-        ~MapMovement();
-
-        MapPosition GetMove() const;
-        MapDirection GetDirection() const;
-        ScenePosition GetScenePosition() const;
-        ElementState UpdateProgress(const float speed, const float delta_time); // Return the new state the element should have
-        void ResetProgress();
-        void DefineMovement(MapDirection direction);
-        void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
-};
-
-class MapElement // Will be use for Player, NPC, Monster.
-{
-    private:
-        MapMovement m_current_movement;
         Tilemap* m_tilemap;
-        float m_speed;
+        ScenePosition m_display_offset;
+        MapPosition m_map_position;
 
     protected:
-        MapElement(const FileReader* file_reader, const std::string& sprite_filepath, Tilemap* tilemap, const float speed);
+        MapElement(Tilemap* tilemap);
         ~MapElement();
 
+        Tilemap* GetTilemap() const;
+        ScenePosition GetDisplayOffset() const;
         void SetMapPosition(const MapPosition mp);
-        Animation m_animation; // For now, every MapElement have an animation but it will not be the case in the future 
-        ElementState m_state; // Should be in Animation class ?
-        MapPosition m_map_position; // Should be private ?
+        void SetDisplayOffset(const ScenePosition offset);
 
     public:
-        ScenePosition ContinueMovement(const float delta_time);
-        virtual void Update(const float delta_time) = 0;
-        void StartMovement(const MapMovement movement, const bool is_first_movement, const bool can_exit_map=false);
+        MapPosition GetMapPosition() const; // Should be protected (will not be called in main.cpp)
 };

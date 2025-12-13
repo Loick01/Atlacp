@@ -62,10 +62,10 @@ GameplayEventController::~GameplayEventController()
 
 }
 
-MapMovement GameplayEventController::HandlePlayerEvent() const
+EntityMovement GameplayEventController::HandlePlayerEvent() const
 {
     // Will find better solution than just testing is_joystick_connected
-    MapMovement movement; // direction is None by default
+    EntityMovement movement; // direction is None by default
     if (m_joystick != nullptr){
         /* // Remove ?
         for (SDL_Event event : m_events){

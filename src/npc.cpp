@@ -5,8 +5,9 @@ NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* tex
     Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed)
 {
     SetMapPosition(MapPosition{16,22}); // Only for ff_world
-    tilemap->TakePosition(m_map_position); // Should be in Entity ?
-    m_position = GetFinalDrawingPosition(m_map_position.ToScenePosition(tilemap->GetTileSize()));
+    const MapPosition mp = GetMapPosition();
+    tilemap->TakePosition(mp); // Should be in Entity ?
+    m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap->GetTileSize()));
 }
 
 NPC::~NPC()
@@ -16,24 +17,24 @@ NPC::~NPC()
 
 void NPC::Update(const float delta_time)
 {
-    switch (m_state){
-        case ElementState::Free:
+    switch (GetState()){
+        case EntityState::Free:
         {
-            MapMovement movement;
+            EntityMovement movement;
             movement.DefineMovement(m_random.GetRandomDirection());
             StartMovement(movement, true);
             break;
         }
 
-        case ElementState::Moving:
+        case EntityState::Moving:
         {
             m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
             break;
         }
 
-        case ElementState::StopMoving: // Enter this case at the end of the current movement
+        case EntityState::StopMoving: // Enter this case at the end of the current movement
         {
-            MapMovement movement;
+            EntityMovement movement;
             movement.DefineMovement(m_random.GetRandomDirection());
             StartMovement(movement, false);
             break;

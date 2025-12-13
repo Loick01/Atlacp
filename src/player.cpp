@@ -11,8 +11,9 @@ Player::Player(const FileReader* file_reader, Tilemap* tilemap, TextureControlle
         SetMapPosition(MapPosition{0, 0});
         std::cout << "A spawn position must be defined for the first loaded map in tilemap (check world file)\n";
     }
-    tilemap->TakePosition(m_map_position); // Should be in Entity ?
-    m_position = GetFinalDrawingPosition(m_map_position.ToScenePosition(tilemap->GetTileSize()));
+    const MapPosition mp = GetMapPosition();
+    tilemap->TakePosition(mp); // Should be in Entity ?
+    m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap->GetTileSize()));
     LookMe();
 }
 
@@ -23,10 +24,10 @@ Player::~Player()
 
 void Player::Update(const float delta_time)
 {
-    switch (m_state){
-        case ElementState::Free:
+    switch (GetState()){
+        case EntityState::Free:
         {
-            const MapMovement movement = m_event_controller->HandlePlayerEvent();
+            const EntityMovement movement = m_event_controller->HandlePlayerEvent();
 
             switch(movement.GetDirection()){
                 case MapDirection::None:
@@ -39,27 +40,26 @@ void Player::Update(const float delta_time)
             break;
         }
 
-        case ElementState::Moving:
+        case EntityState::Moving:
         {
             m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
             LookMe();
             break;
         }
 
-        case ElementState::StopMoving: // Enter this case at the end of the current movement
+        case EntityState::StopMoving: // Enter this case at the end of the current movement
         {
-            const MapMovement movement = m_event_controller->HandlePlayerEvent();
+            const EntityMovement movement = m_event_controller->HandlePlayerEvent();
 
             switch(movement.GetDirection()){
                 case MapDirection::None:
                 {
-                    m_animation.Reset();
-                    m_state = ElementState::Free;
+                    Reset();
                     break;
                 }
                 default:
                     StartMovement(movement, false, true);
-                    LookMe(); // Same reason than case ElementState::Free
+                    LookMe(); // Same reason than case EntityState::Free
                     break;
             }
             break;
