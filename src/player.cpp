@@ -27,13 +27,13 @@ void Player::Update(const float delta_time)
     switch (GetState()){
         case EntityState::Free:
         {
-            const EntityMovement movement = m_event_controller->HandlePlayerEvent();
+            const MapDirection direction = m_event_controller->HandlePlayerEvent();
 
-            switch(movement.GetDirection()){
+            switch(direction){
                 case MapDirection::None:
                     break;
                 default:
-                    StartMovement(movement, true, true);
+                    OrderStartMovement(direction, true, true);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
@@ -42,23 +42,23 @@ void Player::Update(const float delta_time)
 
         case EntityState::Moving:
         {
-            m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
+            OrderUpdateMovement(delta_time);
             LookMe();
             break;
         }
 
-        case EntityState::StopMoving: // Enter this case at the end of the current movement
+        case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            const EntityMovement movement = m_event_controller->HandlePlayerEvent();
+            const MapDirection direction = m_event_controller->HandlePlayerEvent();
 
-            switch(movement.GetDirection()){
+            switch(direction){
                 case MapDirection::None:
                 {
                     Reset();
                     break;
                 }
                 default:
-                    StartMovement(movement, false, true);
+                    OrderStartMovement(direction, false, true);
                     LookMe(); // Same reason than case EntityState::Free
                     break;
             }

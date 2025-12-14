@@ -24,6 +24,7 @@ set(SOURCES
     src/animation.cpp
     src/npc.cpp
     src/entity.cpp
+    src/behaviour.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

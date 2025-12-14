@@ -8,6 +8,7 @@ NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* tex
     const MapPosition mp = GetMapPosition();
     tilemap->TakePosition(mp); // Should be in Entity ?
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap->GetTileSize()));
+    m_behaviour = new RandomMovementBehaviour();
 }
 
 NPC::~NPC()
@@ -17,26 +18,22 @@ NPC::~NPC()
 
 void NPC::Update(const float delta_time)
 {
-    switch (GetState()){
+    switch (GetState()){ // This code has the same structure than Player::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            EntityMovement movement;
-            movement.DefineMovement(m_random.GetRandomDirection());
-            StartMovement(movement, true);
+            m_behaviour->FreeCase(*this);
             break;
         }
 
         case EntityState::Moving:
         {
-            m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
+            m_behaviour->MovingCase(*this, delta_time);
             break;
         }
 
-        case EntityState::StopMoving: // Enter this case at the end of the current movement
+        case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            EntityMovement movement;
-            movement.DefineMovement(m_random.GetRandomDirection());
-            StartMovement(movement, false);
+            m_behaviour->OnStopCase(*this);
             break;
         }
 

@@ -30,7 +30,7 @@ EntityState EntityMovement::UpdateProgress(const float speed, const float delta_
 {
     m_progress += speed * delta_time;
     m_progress = std::min(1.0f, m_progress); 
-    EntityState new_state = m_progress == 1.f ? EntityState::StopMoving : EntityState::Moving;
+    EntityState new_state = m_progress == 1.f ? EntityState::OnStop : EntityState::Moving;
     return new_state;
 }
 
@@ -98,7 +98,7 @@ void Entity::Reset()
     m_state = EntityState::Free;
 }
 
-void Entity::StartMovement(const EntityMovement movement, const bool is_first_movement, const bool can_exit_map)
+void Entity::TryStartMovement(const EntityMovement movement, const bool is_first_movement, const bool can_exit_map)
 {
     const MapPosition current_position = GetMapPosition();
     MapPosition next_position = current_position + movement.GetMove();
@@ -137,4 +137,16 @@ void Entity::DrawTexture() const
     const SDL_Rect dst{m_position.x-camera_position.x+camera_offset.x, m_position.y-camera_position.y+camera_offset.y,
                        static_cast<int>(m_texture_width*zoom), static_cast<int>(m_texture_height*zoom)};
     m_texture_controller->RenderTexture(m_texture_key, src, dst);
+}
+
+void Entity::OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map)
+{
+    EntityMovement movement;
+    movement.DefineMovement(direction);
+    TryStartMovement(movement, is_first_movement, can_exit_map);
+}
+
+void Entity::OrderUpdateMovement(const float delta_time)
+{
+    SetScenePosition(GetFinalDrawingPosition(ContinueMovement(delta_time)));
 }

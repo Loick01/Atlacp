@@ -35,7 +35,7 @@ class GameplayEventController : public EventController
         GameplayEventController();
         ~GameplayEventController();
 
-        EntityMovement HandlePlayerEvent() const;
+        MapDirection HandlePlayerEvent() const;
 };
 
 class EditorEventController : public EventController

@@ -62,10 +62,10 @@ GameplayEventController::~GameplayEventController()
 
 }
 
-EntityMovement GameplayEventController::HandlePlayerEvent() const
+MapDirection GameplayEventController::HandlePlayerEvent() const
 {
     // Will find better solution than just testing is_joystick_connected
-    EntityMovement movement; // direction is None by default
+    MapDirection direction = MapDirection::None;
     if (m_joystick != nullptr){
         /* // Remove ?
         for (SDL_Event event : m_events){
@@ -82,27 +82,27 @@ EntityMovement GameplayEventController::HandlePlayerEvent() const
         const int axis_y = SDL_JoystickGetAxis(m_joystick, 1);
         if (std::abs(axis_x) > JOYSTICK_DEAD_ZONE){
             if (axis_x < 0)
-                movement.DefineMovement(MapDirection::Left);
+                return MapDirection::Left;
             else
-                movement.DefineMovement(MapDirection::Right);
+                return MapDirection::Right;
         }else if (std::abs(axis_y) > JOYSTICK_DEAD_ZONE){
             if (axis_y < 0)
-                movement.DefineMovement(MapDirection::Up);
+                return MapDirection::Up;
             else
-                movement.DefineMovement(MapDirection::Down);
+                return MapDirection::Down;
         }
     }else{
         const Uint8* state = SDL_GetKeyboardState(NULL);
         if (state[SDL_SCANCODE_W])
-            movement.DefineMovement(MapDirection::Up);
+            return MapDirection::Up;
         else if (state[SDL_SCANCODE_A])
-            movement.DefineMovement(MapDirection::Left);
+            return MapDirection::Left;
         else if (state[SDL_SCANCODE_S])
-            movement.DefineMovement(MapDirection::Down);
+            return MapDirection::Down;
         else if (state[SDL_SCANCODE_D])
-            movement.DefineMovement(MapDirection::Right);
+            return MapDirection::Right;
         }
-    return movement;
+    return MapDirection::None;
 }
 
 EditorEventController::EditorEventController(Tileset* tileset):

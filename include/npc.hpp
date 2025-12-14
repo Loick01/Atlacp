@@ -2,12 +2,13 @@
 
 #include <iostream>
 
+#include "behaviour.hpp"
 #include "entity.hpp"
 
 class NPC : public Entity
 {
     private:
-        Random m_random;
+        EntityBehaviour* m_behaviour;
 
     public:
         NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller,
