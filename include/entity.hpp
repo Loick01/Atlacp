@@ -59,16 +59,16 @@ class Entity : public Drawable, public MapElement
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
         void SetState(const EntityState state);
-        void Reset();
     
     public:
         virtual void Update(const float delta_time) = 0;
         void DrawTexture() const override;
 
-        void OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map=false);
+        void OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map=false); 
         void OrderUpdateMovement(const float delta_time);
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;
         float GetSpeed() const;
+        void Reset();
 };

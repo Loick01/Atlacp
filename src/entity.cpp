@@ -127,15 +127,17 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
     if (tilemap->IsFreePosition(next_position, can_exit_map)){
         m_current_movement = movement;
         m_state = EntityState::Moving;
+
         int tile_size = tilemap->GetTileSize();
         m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_current_movement.Initialize(tile_size, current_position, next_position);
+        
         tilemap->FreePosition(current_position);
         tilemap->TakePosition(next_position);
         SetMapPosition(next_position);
-    } /*else {
+    }else{
         Reset(); // Reset animation to idle + state to Free
-    }*/
+    }
 }
 
 ScenePosition Entity::ContinueMovement(const float delta_time)

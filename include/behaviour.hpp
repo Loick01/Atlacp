@@ -28,8 +28,9 @@ class RandomBehaviour : public EntityBehaviour // Always try to move in random d
         void OnStopCase(Entity& entity) override;
 };
 
-class FollowEntityBehaviour : public EntityBehaviour // Assume the tracked entity is one tile away from the follower. Later I will make a behaviour with pathfiding
+class FollowEntityBehaviour : public EntityBehaviour
 {
+    // Assume the tracked entity is one tile away from the follower. Later I will make a follow behaviour with pathfiding
     private:
         const Entity* m_tracked_entity;
 

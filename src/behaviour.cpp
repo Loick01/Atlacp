@@ -35,10 +35,12 @@ FollowEntityBehaviour::FollowEntityBehaviour(const Entity* tracked_entity, const
 
 void FollowEntityBehaviour::FreeCase(Entity& entity)
 {
-    const EntityMovement movement = m_tracked_entity->GetCurrentMovement();
-    const MapPosition delta_position = movement.GetStartPosition() - entity.GetMapPosition();
-    const MapDirection direction = movement.GetDirectionFromMove(delta_position); // Could use a static function instead ?
-    entity.OrderStartMovement(direction, true);
+    if (m_tracked_entity->GetState() != EntityState::Free){
+        const EntityMovement movement = m_tracked_entity->GetCurrentMovement();
+        const MapPosition delta_position = movement.GetStartPosition() - entity.GetMapPosition();
+        const MapDirection direction = movement.GetDirectionFromMove(delta_position); // Could use a static function instead ?
+        entity.OrderStartMovement(direction, true);
+    }
 }
 
 void FollowEntityBehaviour::MovingCase(Entity& entity, const float delta_time)
@@ -48,8 +50,13 @@ void FollowEntityBehaviour::MovingCase(Entity& entity, const float delta_time)
 
 void FollowEntityBehaviour::OnStopCase(Entity& entity)
 {
-    const EntityMovement movement = m_tracked_entity->GetCurrentMovement();
-    const MapPosition delta_position = movement.GetStartPosition() - entity.GetMapPosition();
-    const MapDirection direction = movement.GetDirectionFromMove(delta_position); // Could use a static function instead ?
-    entity.OrderStartMovement(direction, false);
+    if (m_tracked_entity->GetState() != EntityState::Free){
+        const EntityMovement movement = m_tracked_entity->GetCurrentMovement();
+        const MapPosition start_mp = movement.GetStartPosition();
+        const MapPosition delta_position = movement.GetStartPosition() - entity.GetMapPosition();
+        const MapDirection direction = movement.GetDirectionFromMove(delta_position); // Could use a static function instead ?
+        entity.OrderStartMovement(direction, false);
+    }else{
+        entity.Reset();
+    }
 }
