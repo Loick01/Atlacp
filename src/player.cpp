@@ -28,7 +28,6 @@ void Player::Update(const float delta_time)
         case EntityState::Free:
         {
             const MapDirection direction = m_event_controller->HandlePlayerEvent();
-
             switch(direction){
                 case MapDirection::None:
                     break;
@@ -50,7 +49,6 @@ void Player::Update(const float delta_time)
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
             const MapDirection direction = m_event_controller->HandlePlayerEvent();
-
             switch(direction){
                 case MapDirection::None:
                 {

@@ -21,6 +21,11 @@ MapDirection EntityMovement::GetDirection() const
     return m_direction;
 }
 
+MapPosition EntityMovement::GetStartPosition() const
+{
+    return m_start_map_position;
+}
+
 ScenePosition EntityMovement::GetScenePosition() const
 {
     return m_start_position + (m_end_position - m_start_position) * m_progress; // Should be in Interpolation struct ?
@@ -34,32 +39,43 @@ EntityState EntityMovement::UpdateProgress(const float speed, const float delta_
     return new_state;
 }
 
-void EntityMovement::ResetProgress()
+MapPosition EntityMovement::GetMoveFromDirection(const MapDirection direction) const
 {
-    m_progress = 0.f;
-}
-
-void EntityMovement::DefineMovement(MapDirection direction)
-{
-    m_direction = direction;
     switch(direction){
         case MapDirection::Up:
-            m_move = MapPosition{0, -1};
-            break;
+            return MapPosition{0, -1};
         case MapDirection::Down:
-            m_move = MapPosition{0, 1};
-            break;
+            return MapPosition{0, 1};
         case MapDirection::Left:
-            m_move = MapPosition{-1, 0};
-            break;
+            return MapPosition{-1, 0};
         case MapDirection::Right:
-            m_move = MapPosition{1, 0};
-            break;
+            return MapPosition{1, 0};
+        default: // Should not happen ? (Maybe for MapDirection::None)
+            return MapPosition{0, 0}; 
     }
+}
+
+MapDirection EntityMovement::GetDirectionFromMove(const MapPosition move) const
+{
+    if (move.x==0){
+        if (move.y==-1) return MapDirection::Up;
+        else if (move.y==1) return MapDirection::Down;
+    }else{
+        if (move.x==-1) return MapDirection::Left;
+        else if (move.x==1) return MapDirection::Right;
+    }
+    return MapDirection::None; // Should not happen ?
+}
+
+void EntityMovement::DefineMovement(const MapDirection direction)
+{
+    m_direction = direction;
+    m_move = GetMoveFromDirection(direction);
 }
 
 void EntityMovement::Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position)
 {
+    m_start_map_position = start_position;
     m_start_position = start_position.ToScenePosition(tile_size);
     m_end_position = end_position.ToScenePosition(tile_size);
     m_progress = 0.;
@@ -87,6 +103,11 @@ EntityState Entity::GetState() const
     return m_state;
 }
 
+EntityMovement Entity::GetCurrentMovement() const
+{
+    return m_current_movement;
+}
+
 void Entity::SetState(const EntityState state)
 {
     m_state = state;
@@ -105,14 +126,16 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
     Tilemap* tilemap = GetTilemap();
     if (tilemap->IsFreePosition(next_position, can_exit_map)){
         m_current_movement = movement;
-        m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_state = EntityState::Moving;
         int tile_size = tilemap->GetTileSize();
+        m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_current_movement.Initialize(tile_size, current_position, next_position);
         tilemap->FreePosition(current_position);
         tilemap->TakePosition(next_position);
         SetMapPosition(next_position);
-    } // Should reset here the animation to use idle sprite when there is a collision ?
+    } /*else {
+        Reset(); // Reset animation to idle + state to Free
+    }*/
 }
 
 ScenePosition Entity::ContinueMovement(const float delta_time)
@@ -149,4 +172,9 @@ void Entity::OrderStartMovement(const MapDirection direction, const bool is_firs
 void Entity::OrderUpdateMovement(const float delta_time)
 {
     SetScenePosition(GetFinalDrawingPosition(ContinueMovement(delta_time)));
+}
+
+float Entity::GetSpeed() const
+{
+    return m_speed;
 }

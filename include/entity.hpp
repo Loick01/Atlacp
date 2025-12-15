@@ -18,6 +18,7 @@ class EntityMovement
         MapPosition m_move;
         MapDirection m_direction;
 
+        MapPosition m_start_map_position;
         ScenePosition m_start_position;
         ScenePosition m_end_position;
         float m_progress;
@@ -28,10 +29,15 @@ class EntityMovement
 
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
+        MapPosition GetStartPosition() const;
         ScenePosition GetScenePosition() const;
         EntityState UpdateProgress(const float speed, const float delta_time); // Return the new state the entity should have
-        void ResetProgress();
-        void DefineMovement(MapDirection direction);
+        
+        // Not sure to keep these 2 functions
+        MapPosition GetMoveFromDirection(const MapDirection direction) const;
+        MapDirection GetDirectionFromMove(const MapPosition move) const;
+
+        void DefineMovement(const MapDirection direction);
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
 
@@ -52,7 +58,6 @@ class Entity : public Drawable, public MapElement
         ~Entity();
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
-        EntityState GetState() const;
         void SetState(const EntityState state);
         void Reset();
     
@@ -62,4 +67,8 @@ class Entity : public Drawable, public MapElement
 
         void OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map=false);
         void OrderUpdateMovement(const float delta_time);
+
+        EntityState GetState() const;
+        EntityMovement GetCurrentMovement() const;
+        float GetSpeed() const;
 };

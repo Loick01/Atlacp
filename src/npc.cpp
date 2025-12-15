@@ -1,6 +1,6 @@
 #include "npc.hpp"
 
-NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller,
+NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const Entity* tracked_entity, // Entity parameter use for follow behaviour, should not be here
     const std::string& sprite_filepath, Camera* camera, const float speed):
     Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed)
 {
@@ -8,7 +8,8 @@ NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* tex
     const MapPosition mp = GetMapPosition();
     tilemap->TakePosition(mp); // Should be in Entity ?
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap->GetTileSize()));
-    m_behaviour = new RandomMovementBehaviour();
+    //m_behaviour = new RandomBehaviour();
+    m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
 }
 
 NPC::~NPC()
