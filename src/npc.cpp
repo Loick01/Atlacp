@@ -9,7 +9,8 @@ NPC::NPC(const FileReader* file_reader, Tilemap* tilemap, TextureController* tex
     tilemap->TakePosition(mp); // Should be in Entity ?
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap->GetTileSize()));
     //m_behaviour = new RandomBehaviour();
-    m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
+    //m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
+    m_behaviour = new GoToBehaviour(GetMapPosition(), MapPosition{19, 15});
 }
 
 NPC::~NPC()

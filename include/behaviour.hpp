@@ -41,3 +41,18 @@ class FollowEntityBehaviour : public EntityBehaviour
         void MovingCase(Entity& entity, const float delta_time) override;
         void OnStopCase(Entity& entity) override;
 };
+
+class GoToBehaviour : public EntityBehaviour
+{
+    // Entity with this behaviour will go to a given position, following the MapPosition inside m_path (will be determined later with pathfinding) 
+    private:
+        std::vector<MapPosition> m_path;
+        unsigned int m_path_index;
+
+    public:
+        GoToBehaviour(const MapPosition start_position, const MapPosition end_position);
+
+        void FreeCase(Entity& entity) override;
+        void MovingCase(Entity& entity, const float delta_time) override;
+        void OnStopCase(Entity& entity) override;
+};

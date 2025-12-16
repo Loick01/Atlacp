@@ -40,7 +40,7 @@ int main(){
 
     // Testing follow behaviour (will be remove)
     const Entity* tracked_entity = player;
-    for (unsigned int i = 0 ; i < 10 ; i++){
+    for (unsigned int i = 0 ; i < 1 ; i++){
         NPC* npc = new NPC(file_reader, tilemap, texture_controller, tracked_entity, "../assets/sprites/npc", camera, 5.0f);
         entities.push_back(npc);
         tracked_entity = npc;

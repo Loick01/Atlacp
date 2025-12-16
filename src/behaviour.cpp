@@ -60,3 +60,41 @@ void FollowEntityBehaviour::OnStopCase(Entity& entity)
         entity.Reset();
     }
 }
+
+GoToBehaviour::GoToBehaviour(const MapPosition start_position, const MapPosition end_position):
+    m_path_index(0)
+{
+    // Path will be determined with pathfiding from start_position to end_position
+    // Example of path for ff_map (npc must start at 16/22)
+    m_path.push_back({16,21}); m_path.push_back({17,21}); m_path.push_back({18,21}); m_path.push_back({18,20});
+    m_path.push_back({18,19}); m_path.push_back({18,18}); m_path.push_back({18,17}); m_path.push_back({18,16});
+    m_path.push_back({18,15}); m_path.push_back({19,15});
+}
+
+void GoToBehaviour::FreeCase(Entity& entity)
+{
+    if (m_path_index < m_path.size()){
+        const MapPosition next_position = m_path[m_path_index];
+        const MapPosition delta_position = next_position - entity.GetMapPosition();
+        const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(delta_position); // Could use a static function instead ?
+        entity.OrderStartMovement(direction, true);
+    }
+}
+
+void GoToBehaviour::MovingCase(Entity& entity, const float delta_time)
+{
+    entity.OrderUpdateMovement(delta_time);
+}
+
+void GoToBehaviour::OnStopCase(Entity& entity)
+{
+    m_path_index++;
+    if (m_path_index < m_path.size()){
+        const MapPosition next_position = m_path[m_path_index];
+        const MapPosition delta_position = next_position - entity.GetMapPosition();
+        const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(delta_position); // Could use a static function instead ?
+        entity.OrderStartMovement(direction, false);
+    }else{
+        entity.Reset();
+    }
+}
