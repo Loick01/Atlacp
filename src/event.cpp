@@ -129,7 +129,7 @@ ScreenPosition EditorEventController::GetMouseScreenPosition() const
 
 ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera) const
 {
-    return (camera->GetCameraPosition()+GetMouseScreenPosition())/camera->GetZoom();
+    return (camera->GetPosition()-camera->GetOffset()+GetMouseScreenPosition())/camera->GetZoom();
 }
 
 void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
@@ -179,7 +179,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                         m_is_replacing_tile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
-                    m_last_camera_origin = camera->GetCameraPosition() + GetMouseScreenPosition(); // Do not use the zoom here
+                    m_last_camera_origin = camera->GetPosition() + GetMouseScreenPosition(); // Do not use the zoom here
                     m_is_camera_moving = true;
                 }
                 break;
@@ -215,7 +215,7 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
         const ScreenPosition mouse_position = GetMouseScreenPosition();
         camera->SetCameraPosition(m_last_camera_origin-mouse_position);
     } else if (m_is_replacing_tile){
-        const ScenePosition norm_scene_pos = GetMouseScenePosition(camera)-tilemap->GetScenePosition();
+        const ScenePosition norm_scene_pos = GetMouseScenePosition(camera);
         tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
     }
 }

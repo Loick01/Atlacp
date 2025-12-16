@@ -24,7 +24,7 @@ class Camera
         ~Camera();
 
         ScenePosition GetOffset() const; // Remove
-        ScenePosition GetCameraPosition() const;
+        ScenePosition GetPosition() const;
         ScenePosition GetRangeTile() const;
         Pair<bool> GetIsOffScreen() const;
         float GetZoom() const;

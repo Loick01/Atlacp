@@ -31,7 +31,7 @@ ScenePosition Camera::GetOffset() const
     return m_offset;
 }
 
-ScenePosition Camera::GetCameraPosition() const
+ScenePosition Camera::GetPosition() const
 {
     return m_position;
 }
@@ -58,7 +58,7 @@ void Camera::AddZoom(const float z)
 
 void Camera::SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size)
 {
-    m_tilemap_size = tilemap_size;
+    m_tilemap_size = tilemap_size*m_zoom;
     m_is_off_screen = m_tilemap_size > m_viewport;
 }
 

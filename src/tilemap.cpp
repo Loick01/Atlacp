@@ -34,14 +34,15 @@ void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
     m_map_data.map[GetTileIndex(p)] = new_tile;
 }
 
+// Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
 int Tilemap::GetTextureWidth() const
 {
-    return m_map_data.width*m_tileset->GetTileSize()*m_camera->GetZoom();
+    return m_map_data.width*m_tileset->GetTileSize();
 }
 
 int Tilemap::GetTextureHeight() const
 {
-    return m_map_data.height*m_tileset->GetTileSize()*m_camera->GetZoom();
+    return m_map_data.height*m_tileset->GetTileSize();
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
@@ -147,7 +148,7 @@ void Tilemap::DrawTexture() const
     int tile_size = m_tileset->GetTileSize();
     int map_width = m_map_data.width;
     int map_height = m_map_data.height;
-    const ScenePosition camera_position = m_camera->GetCameraPosition();
+    const ScenePosition camera_position = m_camera->GetPosition();
     const ScenePosition camera_offset = m_camera->GetOffset(); // Remove
     const float zoom = m_camera->GetZoom();
 
