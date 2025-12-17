@@ -1,12 +1,11 @@
 #include "window.hpp"
 
-Window::Window(const std::string& title/*, const int grid_width, const int grid_height*/, const SDL_Color bg_color, const bool hide_cursor) :
+Window::Window(const std::string& title, const SDL_Color bg_color) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
     InitSdl();
     CreateWindow();
     SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
-    if (hide_cursor) SDL_ShowCursor(SDL_DISABLE); 
 }
 
 Window::~Window()
@@ -80,4 +79,9 @@ void Window::SetBackgroundColor(const SDL_Color bg_color)
 {
     m_bg_color = bg_color;
     SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+}
+
+void Window::HideCursor()
+{
+    SDL_ShowCursor(SDL_DISABLE); 
 }

@@ -27,7 +27,7 @@ class Window
         const std::string m_title;
 
     public:
-        Window(const std::string& title/*, const int grid_width, const int grid_height*/, const SDL_Color bg_color, const bool hide_cursor=true);
+        Window(const std::string& title, const SDL_Color bg_color);
         ~Window();
 
         SDL_Renderer* GetRenderer() const;
@@ -39,4 +39,5 @@ class Window
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bg_color);
         void DrawBoxing();
+        void HideCursor();
 };

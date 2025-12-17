@@ -25,13 +25,12 @@ set(SOURCES
     src/npc.cpp
     src/entity.cpp
     src/behaviour.cpp
+    src/scene.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})
 
-add_executable(editor src/editor.cpp ${SOURCES})
-
-foreach (target atlacp editor)
+foreach (target atlacp)
     target_include_directories(${target} PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
     target_link_libraries(${target} PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
 endforeach()

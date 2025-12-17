@@ -1,8 +1,8 @@
 #include "tilemap.hpp"
 
 Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
-    const std::string& world_filepath, Camera& camera, const bool should_culling) :
-    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset), m_should_culling(should_culling)
+    const std::string& world_filepath, Camera& camera) :
+    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset)
 {
     m_world_data = m_file_reader.ReadWorldFile(world_filepath);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
@@ -191,4 +191,9 @@ void Tilemap::ReplaceTileAt(const ScenePosition sp, const Tile new_tile)
 void Tilemap::SaveMap(const std::string &map_filepath) const
 {
     m_file_reader.SaveMapFile(map_filepath, m_map_data);
+}
+
+void Tilemap::SetShouldCulling(const bool should_culling)
+{
+    m_should_culling = should_culling;
 }
