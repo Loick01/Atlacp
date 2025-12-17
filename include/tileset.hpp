@@ -12,11 +12,7 @@ class Tileset : public Drawable
     private:
         std::vector<TilesetData> m_tilesets;
         TilesetNormalizationInfo m_normalization_info;
-        const FileReader* m_file_reader;
-        // Even if Tileset is a Drawable object, it's displayed by ScreenPosition instead
-        // of ScenePosition, so moving the camera in editor will not moves the tileset
-        // (I could also make it work with ScenePosition, but it would be a bit weird)
-        // (Maybe I could create a ScreenDrawable Vs SceneDrawable ?)
+        const FileReader& m_file_reader;
         ScreenPosition m_screen_position;
         int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
         int m_index_tileset;
@@ -25,7 +21,7 @@ class Tileset : public Drawable
         TilesetData GetTilesetData() const;
         
     public:
-        Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const bool should_draw=false);
+        Tileset(TextureController& texture_controller, Camera& camera, const FileReader& file_reader, const bool should_draw=false);
         ~Tileset();
         
         TextureKey GetTextureKey() const override;

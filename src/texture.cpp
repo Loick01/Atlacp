@@ -9,6 +9,7 @@ TextureController::TextureController(SDL_Renderer* window_renderer) :
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, SDL_Texture*>& p : m_textures){
+        std::cout << "Drawable should destroy their respective texture in their own destructor. Try to avoid being here\n";
         SDL_DestroyTexture(p.second);
     }
 }

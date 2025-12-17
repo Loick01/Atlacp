@@ -13,8 +13,7 @@ class Animation // Must have sprites for 4 directions
         int m_offset;
 
     public:
-        Animation(const FileReader* file_reader, const std::string& path);
-        ~Animation();
+        Animation(const FileReader& file_reader, const std::string& path);
 
         Pair<int> GetCurrentSprite() const;
         Pair<int> GetSpriteSize() const;

@@ -20,8 +20,7 @@ class Camera
         ScenePosition m_offset; // Remove
 
     public:
-        Camera(Window* window, const ScenePosition range_tile, const int tile_size);
-        ~Camera();
+        Camera(Window& window, const ScenePosition range_tile, const int tile_size);
 
         ScenePosition GetOffset() const; // Remove
         ScenePosition GetPosition() const;

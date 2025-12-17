@@ -9,14 +9,15 @@ class Drawable
 {
     protected:
         // string texture_filepath could be replace by a RessourceFile struct, which contains the path without its extension
-        Drawable(TextureController* texture_controller, const std::string& texture_filepath, Camera* camera, const ScenePosition position);
-        Drawable(TextureController* texture_controller, Camera* camera, const ScenePosition position);
-        ~Drawable(); // If this class doesn't stay abstract, will need to delete m_texture_key in its destructor (texture_controller->DeleteTexture(texture_key))
+        Drawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position);
+        Drawable(TextureController& texture_controller, Camera& camera, const ScenePosition position);
+        // If this class doesn't stay abstract, will need to delete m_texture_key in its destructor (texture_controller->DeleteTexture(texture_key))
+        // If that happens, beware of every destructor of derivated class from Drawable
         
         void LoadTexture(const std::string& texture_filepath);
 
-        TextureController* m_texture_controller;
-        Camera* m_camera;
+        TextureController& m_texture_controller;
+        Camera& m_camera;
         TextureKey m_texture_key;
         ScenePosition m_position;
         int m_texture_width;

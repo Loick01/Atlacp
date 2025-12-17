@@ -12,8 +12,8 @@
 class Tilemap : public Drawable
 {
     private:
-        const FileReader* m_file_reader;
-        Tileset* m_tileset;
+        const FileReader& m_file_reader;
+        Tileset& m_tileset;
         WorldData m_world_data;
         MapData m_map_data;
         const bool m_should_culling;
@@ -25,9 +25,8 @@ class Tilemap : public Drawable
         int m_current_map;
 
     public:
-        Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-            const std::string& world_filepath, Camera* camera, const bool should_culling=true);
-        ~Tilemap();
+        Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
+            const std::string& world_filepath, Camera& camera, const bool should_culling=true);
         
         MapPosition GetSpawnPosition() const;
         int GetTextureWidth() const override;

@@ -81,8 +81,8 @@ void EntityMovement::Initialize(const int tile_size, const MapPosition start_pos
     m_progress = 0.;
 }
 
-Entity::Entity(TextureController* texture_controller, const std::string& sprite_filepath, Camera* camera, const FileReader* file_reader,
-    Tilemap* tilemap, const float speed):
+Entity::Entity(TextureController& texture_controller, const std::string& sprite_filepath, Camera& camera, const FileReader& file_reader,
+    Tilemap& tilemap, const float speed):
     Drawable(texture_controller, sprite_filepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
     m_speed(speed), m_state(EntityState::Free), m_animation(file_reader, sprite_filepath)
     // Remove +".png" if I create RessourceFile struct ?
@@ -90,12 +90,12 @@ Entity::Entity(TextureController* texture_controller, const std::string& sprite_
     const Pair<int> sprite_size = m_animation.GetSpriteSize();
     m_texture_width = sprite_size.x;
     m_texture_height = sprite_size.y;
-    SetDisplayOffset(ScenePosition{(m_texture_width-tilemap->GetTileSize())/2, m_texture_height-tilemap->GetTileSize()});
+    SetDisplayOffset(ScenePosition{(m_texture_width-tilemap.GetTileSize())/2, m_texture_height-tilemap.GetTileSize()});
 }
 
 Entity::~Entity()
 {
-
+    m_texture_controller.DeleteTexture(m_texture_key);
 }
 
 EntityState Entity::GetState() const
@@ -123,17 +123,16 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
 {
     const MapPosition current_position = GetMapPosition();
     MapPosition next_position = current_position + movement.GetMove();
-    Tilemap* tilemap = GetTilemap();
-    if (tilemap->IsFreePosition(next_position, can_exit_map)){
+    if (m_tilemap.IsFreePosition(next_position, can_exit_map)){
         m_current_movement = movement;
         m_state = EntityState::Moving;
 
-        int tile_size = tilemap->GetTileSize();
+        int tile_size = m_tilemap.GetTileSize();
         m_animation.Initialize(movement.GetDirection(), is_first_movement);
         m_current_movement.Initialize(tile_size, current_position, next_position);
         
-        tilemap->FreePosition(current_position);
-        tilemap->TakePosition(next_position);
+        m_tilemap.FreePosition(current_position);
+        m_tilemap.TakePosition(next_position);
         SetMapPosition(next_position);
     }else{
         Reset(); // Reset animation to idle + state to Free
@@ -149,19 +148,19 @@ ScenePosition Entity::ContinueMovement(const float delta_time)
 
 ScenePosition Entity::GetFinalDrawingPosition(const ScenePosition sp) const
 {
-    return (sp-GetDisplayOffset())*m_camera->GetZoom();
+    return (sp-GetDisplayOffset())*m_camera.GetZoom();
 }
 
 void Entity::DrawTexture() const
 {
     const Pair<int> sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
-    const ScenePosition camera_position = m_camera->GetPosition();
-    const ScenePosition camera_offset = m_camera->GetOffset(); // Remove
-    const float zoom = m_camera->GetZoom();
+    const ScenePosition camera_position = m_camera.GetPosition();
+    const ScenePosition camera_offset = m_camera.GetOffset(); // Remove
+    const float zoom = m_camera.GetZoom();
     const SDL_Rect dst{m_position.x-camera_position.x+camera_offset.x, m_position.y-camera_position.y+camera_offset.y,
                        static_cast<int>(m_texture_width*zoom), static_cast<int>(m_texture_height*zoom)};
-    m_texture_controller->RenderTexture(m_texture_key, src, dst);
+    m_texture_controller.RenderTexture(m_texture_key, src, dst);
 }
 
 void Entity::OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map)

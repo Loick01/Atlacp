@@ -8,12 +8,11 @@
 class Player : public Entity
 {
     private:
-        const GameplayEventController* m_event_controller;
+        const GameplayEventController& m_event_controller;
 
     public:
-        Player(const FileReader* file_reader, Tilemap* tilemap, TextureController* texture_controller, const GameplayEventController* event_controller,
-            const std::string& sprite_filepath, Camera* camera, const float speed);
-        ~Player();
+        Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller, const GameplayEventController& event_controller,
+            const std::string& sprite_filepath, Camera& camera, const float speed);
 
         void Update(const float delta_time) override;
 };

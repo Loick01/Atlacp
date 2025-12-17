@@ -1,19 +1,9 @@
 #include "element.hpp"
 
-MapElement::MapElement(Tilemap* tilemap):
+MapElement::MapElement(Tilemap& tilemap):
     m_tilemap(tilemap)
 {
     
-}
-
-MapElement::~MapElement()
-{
-
-}
-
-Tilemap* MapElement::GetTilemap() const
-{
-    return m_tilemap;
 }
 
 MapPosition MapElement::GetMapPosition() const

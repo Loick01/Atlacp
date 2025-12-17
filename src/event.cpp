@@ -5,11 +5,6 @@ EventController::EventController()
 
 }
 
-EventController::~EventController()
-{
-    
-}
-
 bool EventController::HandleWindowEvents() const
 {
     for (SDL_Event event : m_events){
@@ -57,11 +52,6 @@ GameplayEventController::GameplayEventController():
     }
 }
 
-GameplayEventController::~GameplayEventController()
-{
-
-}
-
 MapDirection GameplayEventController::HandlePlayerEvent() const
 {
     // Will find better solution than just testing is_joystick_connected
@@ -105,19 +95,14 @@ MapDirection GameplayEventController::HandlePlayerEvent() const
     return MapDirection::None;
 }
 
-EditorEventController::EditorEventController(Tileset* tileset):
+EditorEventController::EditorEventController(Tileset& tileset):
     EventController(), m_tileset(tileset)
 {
     m_selected_tile = 0;
     m_selected_tileset = 0;
-    m_tileset->SetDisplayedTileset(m_selected_tileset);
+    m_tileset.SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
     m_is_replacing_tile = false;
-}
-
-EditorEventController::~EditorEventController()
-{
-
 }
 
 ScreenPosition EditorEventController::GetMouseScreenPosition() const
@@ -127,12 +112,12 @@ ScreenPosition EditorEventController::GetMouseScreenPosition() const
     return sp;
 }
 
-ScenePosition EditorEventController::GetMouseScenePosition(const Camera* camera) const
+ScenePosition EditorEventController::GetMouseScenePosition(const Camera& camera) const
 {
-    return (camera->GetPosition()-camera->GetOffset()+GetMouseScreenPosition())/camera->GetZoom();
+    return (camera.GetPosition()-camera.GetOffset()+GetMouseScreenPosition())/camera.GetZoom();
 }
 
-void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera)
+void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -142,44 +127,44 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
 
                 switch(event_scancode){
                     case SDL_SCANCODE_SPACE:
-                        tileset->InvertShouldDraw();
-                        tileset->SetScreenPosition(GetMouseScreenPosition());
+                        m_tileset.InvertShouldDraw();
+                        m_tileset.SetScreenPosition(GetMouseScreenPosition());
                         break;
                     case SDL_SCANCODE_L:
-                        tilemap->SaveMap("ff_map");
+                        tilemap.SaveMap("ff_map");
                         std::cout << "Map saved in assets/maps/ff_map\n";
                         break;
                     case SDL_SCANCODE_R:
-                        camera->Reset();
+                        camera.Reset();
                         break;
                     case SDL_SCANCODE_UP:
-                        tilemap->LoadAdjacentMap(MapBound::OutUp);
+                        tilemap.LoadAdjacentMap(MapBound::OutUp);
                         break;
                     case SDL_SCANCODE_DOWN:
-                        tilemap->LoadAdjacentMap(MapBound::OutDown);
+                        tilemap.LoadAdjacentMap(MapBound::OutDown);
                         break;
                     case SDL_SCANCODE_RIGHT:
-                        tilemap->LoadAdjacentMap(MapBound::OutRight);
+                        tilemap.LoadAdjacentMap(MapBound::OutRight);
                         break;
                     case SDL_SCANCODE_LEFT:
-                        tilemap->LoadAdjacentMap(MapBound::OutLeft);
+                        tilemap.LoadAdjacentMap(MapBound::OutLeft);
                         break;
                     default:
                         break;
                 }
-                tileset->SetDisplayedTileset(m_selected_tileset);
+                m_tileset.SetDisplayedTileset(m_selected_tileset);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT){
-                    if (tileset->GetShouldDraw()){
-                        const ScreenPosition norm_screen_pos = GetMouseScreenPosition()-tileset->GetScreenPosition();
-                        tileset->UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
+                    if (m_tileset.GetShouldDraw()){
+                        const ScreenPosition norm_screen_pos = GetMouseScreenPosition()-m_tileset.GetScreenPosition();
+                        m_tileset.UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
                     }else{
                         m_is_replacing_tile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
-                    m_last_camera_origin = camera->GetPosition() + GetMouseScreenPosition(); // Do not use the zoom here
+                    m_last_camera_origin = camera.GetPosition() + GetMouseScreenPosition(); // Do not use the zoom here
                     m_is_camera_moving = true;
                 }
                 break;
@@ -190,22 +175,22 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
                     m_is_replacing_tile = false;
                 break;
             case SDL_MOUSEWHEEL:
-                if (tileset->GetShouldDraw()){
-                    const int tileset_size = tileset->GetTilesetsSize();
+                if (m_tileset.GetShouldDraw()){
+                    const int tileset_size = m_tileset.GetTilesetsSize();
                     if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
                         m_selected_tileset = (m_selected_tileset+1)%tileset_size;
                     else
                         m_selected_tileset = (m_selected_tileset-1+tileset_size)%tileset_size;
-                    tileset->SetDisplayedTileset(m_selected_tileset);
+                    m_tileset.SetDisplayedTileset(m_selected_tileset);
                 }else{ // If the tileset is not opened, the mouse wheel control the camera zoom
                     const ScenePosition mouse_before_zoom = GetMouseScenePosition(camera);
                     if (event.wheel.y > 0)
-                        camera->AddZoom(0.05f);
+                        camera.AddZoom(0.05f);
                     else
-                        camera->AddZoom(-0.05f);
+                        camera.AddZoom(-0.05f);
                     const ScenePosition mouse_after_zoom = GetMouseScenePosition(camera);
-                    const ScenePosition delta = (mouse_before_zoom-mouse_after_zoom)*camera->GetZoom();
-                    camera->MoveCameraPosition(delta); // Will zoom on mouse cursor
+                    const ScenePosition delta = (mouse_before_zoom-mouse_after_zoom)*camera.GetZoom();
+                    camera.MoveCameraPosition(delta); // Will zoom on mouse cursor
                 }
                 break;
         }
@@ -213,9 +198,9 @@ void EditorEventController::HandleEditorEvent(Tileset* tileset, Tilemap* tilemap
 
     if (m_is_camera_moving){
         const ScreenPosition mouse_position = GetMouseScreenPosition();
-        camera->SetCameraPosition(m_last_camera_origin-mouse_position);
+        camera.SetCameraPosition(m_last_camera_origin-mouse_position);
     } else if (m_is_replacing_tile){
         const ScenePosition norm_scene_pos = GetMouseScenePosition(camera);
-        tilemap->ReplaceTileAt(norm_scene_pos, m_selected_tile);
+        tilemap.ReplaceTileAt(norm_scene_pos, m_selected_tile);
     }
 }

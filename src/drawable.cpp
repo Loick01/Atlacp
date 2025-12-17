@@ -1,27 +1,22 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController* texture_controller, const std::string& texture_filepath, Camera* camera, const ScenePosition position):
+Drawable::Drawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position):
     m_texture_controller(texture_controller), m_position(position), m_camera(camera)
 {
     LoadTexture(texture_filepath);
 }
 
-Drawable::Drawable(TextureController* texture_controller, Camera* camera, const ScenePosition position):
+Drawable::Drawable(TextureController& texture_controller, Camera& camera, const ScenePosition position):
     m_texture_controller(texture_controller), m_position(position), m_camera(camera)
 {
-    // This constructor is used only for Tileset and Tilemap, maybe I can remove it
-}
 
-Drawable::~Drawable()
-{
-    
 }
 
 void Drawable::LoadTexture(const std::string& texture_filepath)
 {
-    m_texture_controller->DeleteTexture(m_texture_key);
+    m_texture_controller.DeleteTexture(m_texture_key);
     m_texture_key = texture_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    m_texture_controller->LoadTextureFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
+    m_texture_controller.LoadTextureFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
 }
 
 TextureKey Drawable::GetTextureKey() const
@@ -63,5 +58,5 @@ bool Drawable::IsPositionInTexture(const ScenePosition sp) const // sp must be n
 
 void Drawable::LookMe()
 {
-    m_camera->LookAt(m_position);
+    m_camera.LookAt(m_position);
 }

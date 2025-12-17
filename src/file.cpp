@@ -1,15 +1,5 @@
 #include "file.hpp"
 
-FileReader::FileReader()
-{
-
-}
-
-FileReader::~FileReader()
-{
-
-}
-
 WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
 {
     std::ifstream input;

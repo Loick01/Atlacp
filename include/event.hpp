@@ -16,7 +16,6 @@ class EventController
 {
     protected:
         EventController();
-        ~EventController();
 
         std::vector<SDL_Event> m_events;
         
@@ -33,7 +32,6 @@ class GameplayEventController : public EventController
 
     public:
         GameplayEventController();
-        ~GameplayEventController();
 
         MapDirection HandlePlayerEvent() const;
 };
@@ -42,9 +40,10 @@ class EditorEventController : public EventController
 {
     private:
         ScreenPosition GetMouseScreenPosition() const;
-        ScenePosition GetMouseScenePosition(const Camera* camera) const;
+        ScenePosition GetMouseScenePosition(const Camera& camera) const;
         
-        Tileset* m_tileset;
+        Tileset& m_tileset;
+        // Should have a Camera& instead of a extra paremeter in HandleEditorEvent ?
         ScenePosition m_last_camera_origin;
 
         Tile m_selected_tile;
@@ -53,8 +52,7 @@ class EditorEventController : public EventController
         bool m_is_replacing_tile;
 
     public:
-        EditorEventController(Tileset* tileset);
-        ~EditorEventController();
+        EditorEventController(Tileset& tileset);
 
-        void HandleEditorEvent(Tileset* tileset, Tilemap* tilemap, Camera* camera); 
+        void HandleEditorEvent(Tilemap& tilemap, Camera& camera); 
 };

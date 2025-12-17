@@ -1,14 +1,9 @@
 #include "animation.hpp"
 
-Animation::Animation(const FileReader* file_reader, const std::string& path):
+Animation::Animation(const FileReader& file_reader, const std::string& path):
     m_current_sprite_index(0), m_offset(0) // useless to initialize offset here ?
 {
-    m_animation_data = file_reader->GetAnimationFromFile(path);
-}
-
-Animation::~Animation()
-{
-
+    m_animation_data = file_reader.GetAnimationFromFile(path);
 }
 
 Pair<int> Animation::GetCurrentSprite() const

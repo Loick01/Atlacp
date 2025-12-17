@@ -1,6 +1,6 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController* texture_controller, Camera* camera, const FileReader* file_reader, const bool should_draw):
+Tileset::Tileset(TextureController& texture_controller, Camera& camera, const FileReader& file_reader, const bool should_draw):
     Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_should_draw(should_draw)
 {
     m_index_tileset = -1; // No tileset is loaded
@@ -8,22 +8,20 @@ Tileset::Tileset(TextureController* texture_controller, Camera* camera, const Fi
 
 Tileset::~Tileset()
 {
-    for (const TilesetData& e : m_tilesets){
-        m_texture_controller->DeleteTexture(e.tileset_key);
-    }
+    CleanTilesets(); // Delete every textures whose keys are in m_tilesets
 }
 
 // Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const std::string& path)
 {
-    TilesetData data = m_file_reader->GetTilesetFromFile(path);
+    TilesetData data = m_file_reader.GetTilesetFromFile(path);
 
     if (m_tilesets.empty()) m_tile_size = data.tile_size; // Use data.tile_size for m_tile_size only when loading the first tileset
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n";
 
     m_texture_key = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     const std::string tileset_filepath = "../assets/tilesets/" + path + ".png"; // Create a function in File
-    m_texture_controller->LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
+    m_texture_controller.LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
     if (m_tilesets.empty()){
         m_index_tileset = 0; // This index was initialized with -1, it needs to be 0 once the first tileset is loaded
@@ -143,7 +141,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
 void Tileset::CleanTilesets()
 {
     for (const TilesetData& e : m_tilesets){
-        m_texture_controller->DeleteTexture(e.tileset_key);
+        m_texture_controller.DeleteTexture(e.tileset_key);
     }
     m_tilesets.clear();
 }
@@ -154,7 +152,7 @@ void Tileset::DrawTexture() const
     if (m_should_draw){
         const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
         const SDL_Rect dst{m_screen_position.x, m_screen_position.y, m_texture_width, m_texture_height};
-        m_texture_controller->RenderTexture(m_texture_key, src, dst);
+        m_texture_controller.RenderTexture(m_texture_key, src, dst);
     }
 }
 

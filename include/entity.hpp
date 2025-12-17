@@ -53,14 +53,14 @@ class Entity : public Drawable, public MapElement
         void TryStartMovement(const EntityMovement movement, const bool is_first_movement, const bool can_exit_map);
 
     protected:
-        Entity(TextureController* texture_controller, const std::string& sprite_filepath, Camera* camera, const FileReader* file_reader,
-            Tilemap* tilemap, const float speed);
-        ~Entity();
+        Entity(TextureController& texture_controller, const std::string& sprite_filepath, Camera& camera, const FileReader& file_reader,
+            Tilemap& tilemap, const float speed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
         void SetState(const EntityState state);
     
     public:
+        ~Entity();
         virtual void Update(const float delta_time) = 0;
         void DrawTexture() const override;
 

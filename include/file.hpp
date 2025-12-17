@@ -15,8 +15,7 @@ class FileReader
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:
-        FileReader();
-        ~FileReader();
+        FileReader() = default;
 
         WorldData ReadWorldFile(const std::string& world_filepath) const;
         MapData GetMapFromFile(const std::string& path) const;

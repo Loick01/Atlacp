@@ -10,7 +10,6 @@ class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehav
 
     public:
         EntityBehaviour();
-        ~EntityBehaviour();
 
         // Must have one function for each value in Entity::EntityState
         virtual void FreeCase(Entity& entity) = 0;

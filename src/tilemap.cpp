@@ -1,17 +1,12 @@
 #include "tilemap.hpp"
 
-Tilemap::Tilemap(TextureController* texture_controller, const FileReader* file_reader, Tileset* tileset, 
-    const std::string& world_filepath, Camera* camera, const bool should_culling) :
+Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
+    const std::string& world_filepath, Camera& camera, const bool should_culling) :
     Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset), m_should_culling(should_culling)
 {
-    m_world_data = m_file_reader->ReadWorldFile(world_filepath);
+    m_world_data = m_file_reader.ReadWorldFile(world_filepath);
     m_current_map = 0; // Load the first map write in the world file (should be specified in the world file ?)
     LoadMap(m_world_data.maps[m_current_map]); 
-}
-
-Tilemap::~Tilemap()
-{
-
 }
 
 MapPosition Tilemap::GetSpawnPosition() const
@@ -21,7 +16,7 @@ MapPosition Tilemap::GetSpawnPosition() const
 
 int Tilemap::GetTileSize() const
 {
-    return m_tileset->GetTileSize();
+    return m_tileset.GetTileSize();
 }
 
 unsigned int Tilemap::GetTileIndex(const MapPosition p) const
@@ -37,12 +32,12 @@ void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
 // Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
 int Tilemap::GetTextureWidth() const
 {
-    return m_map_data.width*m_tileset->GetTileSize();
+    return m_map_data.width*m_tileset.GetTileSize();
 }
 
 int Tilemap::GetTextureHeight() const
 {
-    return m_map_data.height*m_tileset->GetTileSize();
+    return m_map_data.height*m_tileset.GetTileSize();
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
@@ -129,28 +124,28 @@ bool Tilemap::CanMoveCamera(const int axis_position, const int axis_new_position
 
 void Tilemap::LoadMap(const std::string& path)
 {
-    m_tileset->CleanTilesets(); // Delete tilesets used for the previous map
-    m_map_data = m_file_reader->GetMapFromFile(path);
+    m_tileset.CleanTilesets(); // Delete tilesets used for the previous map
+    m_map_data = m_file_reader.GetMapFromFile(path);
 
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
-        m_tileset->LoadTileset(p);
+        m_tileset.LoadTileset(p);
 
     for (Tile t : m_map_data.map)
-        m_map_data.occupancy_grid.push_back(m_tileset->IsEmptyTile(t));
+        m_map_data.occupancy_grid.push_back(m_tileset.IsEmptyTile(t));
 
-    m_camera->SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset->GetTileSize());
+    m_camera.SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset.GetTileSize());
 }
 
 void Tilemap::DrawTexture() const
 {
     std::vector<Tile> map = m_map_data.map;
-    int tile_size = m_tileset->GetTileSize();
+    int tile_size = m_tileset.GetTileSize();
     int map_width = m_map_data.width;
     int map_height = m_map_data.height;
-    const ScenePosition camera_position = m_camera->GetPosition();
-    const ScenePosition camera_offset = m_camera->GetOffset(); // Remove
-    const float zoom = m_camera->GetZoom();
+    const ScenePosition camera_position = m_camera.GetPosition();
+    const ScenePosition camera_offset = m_camera.GetOffset(); // Remove
+    const float zoom = m_camera.GetZoom();
 
     // Culling
     // While animating a movement, end_index could not be enough to fill the window with the map
@@ -160,25 +155,25 @@ void Tilemap::DrawTexture() const
 
     if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
-        if (m_camera->GetIsOffScreen().x){
+        if (m_camera.GetIsOffScreen().x){
             start_index.x = camera_position.x/(tile_size*zoom);
-            end_index.x = std::min(end_index.x, start_index.x + m_camera->GetRangeTile().x + 1);
+            end_index.x = std::min(end_index.x, start_index.x + m_camera.GetRangeTile().x + 1);
         }
-        if (m_camera->GetIsOffScreen().y){
+        if (m_camera.GetIsOffScreen().y){
             start_index.y = camera_position.y/(tile_size*zoom);
-            end_index.y = std::min(end_index.y, start_index.y + m_camera->GetRangeTile().y + 1);
+            end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
         }
     }
 
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
-            int tile = m_tileset->GetNormalizedTile(map[j*map_width+i]); // Should use Tile type ?
-            int tileset_width = m_tileset->GetTilesetWidth();
+            int tile = m_tileset.GetNormalizedTile(map[j*map_width+i]); // Should use Tile type ?
+            int tileset_width = m_tileset.GetTilesetWidth();
             const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
             const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
             const Pair<int> dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position+camera_offset;
             const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
-            m_texture_controller->RenderTexture(m_tileset->GetTextureKey(), src, dst);
+            m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
         }
     }
 }
@@ -186,7 +181,7 @@ void Tilemap::DrawTexture() const
 void Tilemap::ReplaceTileAt(const ScenePosition sp, const Tile new_tile)
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
-        const int tile_size = m_tileset->GetTileSize();
+        const int tile_size = m_tileset.GetTileSize();
         int c = sp.x/tile_size;
         int l = sp.y/tile_size;
         SetTileAt(new_tile,{c,l});
@@ -195,5 +190,5 @@ void Tilemap::ReplaceTileAt(const ScenePosition sp, const Tile new_tile)
 
 void Tilemap::SaveMap(const std::string &map_filepath) const
 {
-    m_file_reader->SaveMapFile(map_filepath, m_map_data);
+    m_file_reader.SaveMapFile(map_filepath, m_map_data);
 }

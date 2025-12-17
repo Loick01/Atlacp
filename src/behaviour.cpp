@@ -5,11 +5,6 @@ EntityBehaviour::EntityBehaviour()
 
 }
 
-EntityBehaviour::~EntityBehaviour()
-{
-    
-}
-
 void RandomBehaviour::FreeCase(Entity& entity)
 {
     entity.OrderStartMovement(m_random.GetRandomDirection(), true);
