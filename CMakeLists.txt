@@ -30,7 +30,5 @@ set(SOURCES
 
 add_executable(atlacp src/main.cpp ${SOURCES})
 
-foreach (target atlacp)
-    target_include_directories(${target} PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
-    target_link_libraries(${target} PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
-endforeach()
+target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
+target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})

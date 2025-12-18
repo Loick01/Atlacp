@@ -15,21 +15,13 @@
 
 class Scene
 {
-    private:
-        //Window m_window; 
-        //Camera m_camera; 
-        //TextureController m_texture_controller;
-        //FileReader m_file_reader;
-        //std::vector<Drawable*> m_drawables; // Must be a vector of Drawable* because we need dynamic dispatch
-        //bool m_gameloop
-
     protected:
-        Window m_window; // Should be private
-        FileReader m_file_reader; // Should be private
-        TextureController m_texture_controller; // Should be private
-        Camera m_camera; // Should be private
-        bool m_gameloop; // Should be private
-        std::vector<Drawable*> m_drawables; // Should be private
+        Window m_window;
+        FileReader m_file_reader;
+        TextureController m_texture_controller;
+        Camera m_camera;
+        bool m_gameloop;
+        std::vector<Drawable*> m_drawables; // Must be a vector of Drawable* because we need dynamic dispatch
 
     public:
         Scene();
@@ -39,13 +31,9 @@ class Scene
 
 class TilemapScene : public Scene
 {
-    private:
-        //Tileset m_tileset;
-        //Tilemap m_tilemap;
-    
     protected:
-        Tileset m_tileset; // Should be private
-        Tilemap m_tilemap; // Should be private
+        Tileset m_tileset;
+        Tilemap m_tilemap;
 
     public:
         TilemapScene();

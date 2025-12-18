@@ -8,9 +8,29 @@ mkdir build
 cd build
 cmake ..
 make
-./atlacp # Run the game
-./editor # Run the tilemap editor
+./atlacp 0 # Run the game
+./atlacp 1 # Run the tilemap editor
 ```
+### Demo videos
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=z1e4advGHfU">
+        <img src="https://img.youtube.com/vi/z1e4advGHfU/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Player, Camera and Editor</strong>
+    </td>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=6zPQBOPspiM">
+        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Random NPC</strong>
+    </td>
+  </tr>
+</table>
 
 ### Assets
 - https://www.spriters-resource.com/nes/finalfantasy/asset/10564/ 

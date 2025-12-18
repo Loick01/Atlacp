@@ -61,6 +61,12 @@ struct Vec2 : public Pair<int>
     }
 };
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Pair<T>& v) {
+    os << "(x=" << v.x << ", y=" << v.y << ")\n";
+    return os;
+}
+
 struct ScenePosition : public Vec2
 {
     ScenePosition() = default;
