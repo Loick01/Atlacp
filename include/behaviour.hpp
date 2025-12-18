@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity.hpp"
+#include "pathfind.hpp"
 #include "type.hpp"
 
 class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehaviour ?
@@ -43,13 +44,13 @@ class FollowEntityBehaviour : public EntityBehaviour
 
 class GoToBehaviour : public EntityBehaviour
 {
-    // Entity with this behaviour will go to a given position, following the MapPosition inside m_path (will be determined later with pathfinding) 
+    // Entity with this behaviour will go to a given position, following the MapPosition inside m_path
     private:
         std::vector<MapPosition> m_path;
         unsigned int m_path_index;
 
     public:
-        GoToBehaviour(const MapPosition start_position, const MapPosition end_position);
+        GoToBehaviour(const MapPosition start_position, const MapPosition end_position, const Tilemap& tilemap);
 
         void FreeCase(Entity& entity) override;
         void MovingCase(Entity& entity, const float delta_time) override;

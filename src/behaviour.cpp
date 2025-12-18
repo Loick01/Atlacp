@@ -56,14 +56,10 @@ void FollowEntityBehaviour::OnStopCase(Entity& entity)
     }
 }
 
-GoToBehaviour::GoToBehaviour(const MapPosition start_position, const MapPosition end_position):
+GoToBehaviour::GoToBehaviour(const MapPosition start_position, const MapPosition end_position, const Tilemap& tilemap):
     m_path_index(0)
 {
-    // Path will be determined with pathfiding from start_position to end_position
-    // Example of path for ff_map (npc must start at 16/22)
-    m_path.push_back({16,21}); m_path.push_back({17,21}); m_path.push_back({18,21}); m_path.push_back({18,20});
-    m_path.push_back({18,19}); m_path.push_back({18,18}); m_path.push_back({18,17}); m_path.push_back({18,16});
-    m_path.push_back({18,15}); m_path.push_back({19,15});
+    m_path = Pathfind::GetInstance().ComputePath(start_position, end_position, tilemap);
 }
 
 void GoToBehaviour::FreeCase(Entity& entity)

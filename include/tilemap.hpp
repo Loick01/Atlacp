@@ -19,8 +19,6 @@ class Tilemap : public Drawable
         bool m_should_culling; // Const ?
 
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound); // Try to make it const ?
-        MapBound IsOutOfMap(const MapPosition p) const;
-        unsigned int GetTileIndex(const MapPosition p) const;
         void LoadMap(const std::string& path);
         int m_current_map;
 
@@ -29,9 +27,13 @@ class Tilemap : public Drawable
             const std::string& world_filepath, Camera& camera);
         
         MapPosition GetSpawnPosition() const;
+        std::vector<bool> GetOccupancyGrid() const;
         int GetTextureWidth() const override;
         int GetTextureHeight() const override;
         int GetTileSize() const;
+        int GetGridSize() const;
+        MapBound IsOutOfMap(const MapPosition p) const;
+        unsigned int GetTileIndex(const MapPosition p) const;
         void TakePosition(const MapPosition p);
         void FreePosition(const MapPosition p);
         bool IsFreePosition(MapPosition& p, const bool can_exit_map);

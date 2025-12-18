@@ -31,22 +31,21 @@ GameplayTilemapScene::GameplayTilemapScene():
     m_drawables = {&m_tilemap};
     // Layer 2
     m_entities = {&m_player};
-
     // Testing my NPC, will be remove (they will be load from the tilemap header)
+    for (unsigned int i = 0 ; i < 10 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 5.0f);
+        // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
+        m_entities.push_back(npc);
+    }
     /*
-    for (unsigned int i = 0 ; i < 1 ; i++){
-        NPC npc(file_reader, tilemap, texture_controller, "../assets/sprites/npc", camera, 10.0f);
-        entities.push_back(&npc);
-    }*/
-
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
     Entity* tracked_entity = &m_player;
-    for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc", m_camera, 5.0f);
-        // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController (as explained below)
+    for (unsigned int i = 0 ; i < 14 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc", m_camera, 3.0f);
+        // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
         m_entities.push_back(npc);
         tracked_entity = npc;
-    }
+    }*/
 }
 
 void GameplayTilemapScene::Gameloop()

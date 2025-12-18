@@ -71,6 +71,11 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
     LoadMap(m_world_data.maps[m_current_map]);
 }
 
+std::vector<bool> Tilemap::GetOccupancyGrid() const
+{
+    return m_map_data.occupancy_grid;
+}
+
 MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
 {
     LoadAdjacentMap(bound);
@@ -101,6 +106,11 @@ void Tilemap::TakePosition(const MapPosition p)
 void Tilemap::FreePosition(const MapPosition p)
 {
     m_map_data.occupancy_grid[GetTileIndex(p)] = true;
+}
+
+int Tilemap::GetGridSize() const
+{
+    return m_map_data.width*m_map_data.height;
 }
 
 bool Tilemap::IsFreePosition(MapPosition& p, const bool can_exit_map)

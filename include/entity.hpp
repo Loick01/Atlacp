@@ -46,7 +46,7 @@ class Entity : public Drawable, public MapElement
     private:
         EntityMovement m_current_movement;
         Animation m_animation;
-        EntityState m_state; // Should be in Animation class ?
+        EntityState m_state;
         float m_speed;
 
         ScenePosition ContinueMovement(const float delta_time);

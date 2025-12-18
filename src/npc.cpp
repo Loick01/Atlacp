@@ -9,8 +9,8 @@ NPC::NPC(const FileReader& file_reader, Tilemap& tilemap, TextureController& tex
     tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in NPC constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     //m_behaviour = new RandomBehaviour();
-    m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
-    //m_behaviour = new GoToBehaviour(GetMapPosition(), MapPosition{19, 15});
+    //m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
+    m_behaviour = new GoToBehaviour(GetMapPosition(), MapPosition{4, 1}, tilemap);
 }
 
 void NPC::Update(const float delta_time)
