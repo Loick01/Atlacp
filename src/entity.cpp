@@ -172,7 +172,7 @@ void Entity::OrderStartMovement(const MapDirection direction, const bool is_firs
 
 void Entity::OrderUpdateMovement(const float delta_time)
 {
-    SetScenePosition(GetFinalDrawingPosition(ContinueMovement(delta_time)));
+    m_position = GetFinalDrawingPosition(ContinueMovement(delta_time));
 }
 
 float Entity::GetSpeed() const

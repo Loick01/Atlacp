@@ -26,7 +26,6 @@ class Drawable
     public:
         virtual TextureKey GetTextureKey() const;
         ScenePosition GetScenePosition() const;
-        void SetScenePosition(const ScenePosition sp);
         virtual int GetTextureWidth() const;
         virtual int GetTextureHeight() const;
         bool IsPositionInTexture(const ScreenPosition sp) const; 

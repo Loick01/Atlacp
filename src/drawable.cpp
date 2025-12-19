@@ -29,11 +29,6 @@ ScenePosition Drawable::GetScenePosition() const
     return m_position;
 }
 
-void Drawable::SetScenePosition(const ScenePosition sp)
-{
-    m_position = sp;
-}
-
 int Drawable::GetTextureWidth() const
 {
     return m_texture_width;

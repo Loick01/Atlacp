@@ -30,22 +30,22 @@ GameplayTilemapScene::GameplayTilemapScene():
     // Layer 1
     m_drawables = {&m_tilemap};
     // Layer 2
-    m_entities = {&m_player};
+    m_rendered_entities = {&m_player};
     // Testing my NPC, will be remove (they will be load from the tilemap header)
-    for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 5.0f);
-        // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
-        m_entities.push_back(npc);
-    }
-    /*
+    // for (unsigned int i = 0 ; i < 10 ; i++){
+    //     NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 5.0f);
+    //     // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
+    //     m_rendered_entities.push_back(npc);
+    // }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
     Entity* tracked_entity = &m_player;
     for (unsigned int i = 0 ; i < 14 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc", m_camera, 3.0f);
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc", m_camera, 5.0f);
         // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
-        m_entities.push_back(npc);
+        m_rendered_entities.push_back(npc);
         tracked_entity = npc;
-    }*/
+    }
+    m_updated_entities = m_rendered_entities;
 }
 
 void GameplayTilemapScene::Gameloop()
@@ -57,16 +57,16 @@ void GameplayTilemapScene::Gameloop()
     m_gameloop = m_game_event_controller.HandleWindowEvents();
     
     // Remove (should sort only at the end of any movement, or even better --> remove then insert the moving npc at the correct index)
-    std::sort(m_entities.begin(), m_entities.end(),
+    std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
         [](Entity* a, Entity* b){
             return a->GetMapPosition().y < b->GetMapPosition().y; 
         });
     const float delta_time = m_time.GetDeltaTime();
     for (const Drawable* d : m_drawables) d->DrawTexture();
-    for (Entity* e : m_entities){
+    for (Entity* e : m_rendered_entities)
         e->DrawTexture();
+    for (Entity* e : m_updated_entities)
         e->Update(delta_time);
-    }
 
     m_window.DrawBoxing();
     m_window.UpdateRender();

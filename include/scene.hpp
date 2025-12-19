@@ -45,7 +45,10 @@ class GameplayTilemapScene : public TilemapScene
         Time m_time;
         GameplayEventController m_game_event_controller; // Should be in Scene as a EventController ?
         Player m_player;
-        std::vector<Entity*> m_entities; // Must be a vector of Drawable* because we need dynamic dispatch
+        std::vector<Entity*> m_rendered_entities; // Must be a vector of Entity* because we need dynamic dispatch
+        // For now, m_rendered_entities is sorted by y position. Because a specific order could be necessary for Entity updating 
+        // (for example with FollowEntityBehaviour), I use a second vector of Entity*
+        std::vector<Entity*> m_updated_entities;
         
     public:
         GameplayTilemapScene();
