@@ -10,29 +10,65 @@
 #include "tilemap.hpp"
 #include "type.hpp"
 
-#define JOYSTICK_DEAD_ZONE 15000
+#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 (should be a member in JoystickActionController to verify ?)
+
+class ActionController
+{
+    public:
+        virtual bool IsLeftAction() = 0;
+        virtual bool IsRightAction() = 0;
+        virtual bool IsUpAction() = 0;
+        virtual bool IsDownAction() = 0;
+        virtual void GetActions() = 0;
+};
+
+class KeyboardActionController : public ActionController
+{
+    private:
+        const Uint8* m_state;
+
+    public: 
+        bool IsLeftAction() override;
+        bool IsRightAction() override;
+        bool IsUpAction() override;
+        bool IsDownAction() override;
+        void GetActions() override;
+};
+
+class JoystickActionController : public ActionController
+{
+    private:
+        SDL_Joystick* m_joystick;
+        int m_axis_x;
+        int m_axis_y;
+
+    public:
+        JoystickActionController();
+        bool IsLeftAction() override;
+        bool IsRightAction() override;
+        bool IsUpAction() override;
+        bool IsDownAction() override;
+        void GetActions() override;
+};
 
 class EventController
 {
     protected:
         EventController();
-
         std::vector<SDL_Event> m_events;
         
     public:
         bool HandleWindowEvents() const;
         void PollAllEvents();
-        //virtual void HandleEvents() const = 0;
 };
 
 class GameplayEventController : public EventController
 {
     private:
-        SDL_Joystick* m_joystick;
+        ActionController* m_action_controller;
 
     public:
         GameplayEventController();
-
         MapDirection HandlePlayerEvent() const;
 };
 

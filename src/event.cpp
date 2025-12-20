@@ -1,5 +1,79 @@
 #include "event.hpp"
 
+void KeyboardActionController::GetActions()
+{
+    m_state = SDL_GetKeyboardState(NULL);
+}
+
+bool KeyboardActionController::IsLeftAction()
+{
+    return m_state[SDL_SCANCODE_A];
+}
+
+bool KeyboardActionController::IsRightAction()
+{
+    return m_state[SDL_SCANCODE_D];
+}
+
+bool KeyboardActionController::IsUpAction()
+{
+    return m_state[SDL_SCANCODE_W];
+}
+
+bool KeyboardActionController::IsDownAction()
+{
+    return m_state[SDL_SCANCODE_S];
+}
+
+JoystickActionController::JoystickActionController() :
+    m_joystick(nullptr)
+{
+    m_joystick = SDL_JoystickOpen(0);
+    if (m_joystick == nullptr)
+        std::cout << "Error while opening the joystick: " << SDL_GetError() << "\n"; // Will throw error
+    else
+        std::cout << "Joystick connected\n";
+}
+
+/* If I need to know when the joystick is removed
+
+for (SDL_Event event : m_events){
+    switch (event.type){
+        case SDL_JOYDEVICEREMOVED: {
+            //m_joystick = nullptr;
+            std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n";
+            break;
+        }
+    }
+}
+*/
+
+void JoystickActionController::GetActions()
+{
+    m_axis_x = SDL_JoystickGetAxis(m_joystick, 0);
+    m_axis_y = SDL_JoystickGetAxis(m_joystick, 1);
+}
+
+bool JoystickActionController::IsLeftAction()
+{
+    return m_axis_x < -JOYSTICK_DEAD_ZONE;
+}
+
+bool JoystickActionController::IsRightAction()
+{
+    return m_axis_x > JOYSTICK_DEAD_ZONE;
+}
+
+bool JoystickActionController::IsUpAction()
+{
+    return m_axis_y < -JOYSTICK_DEAD_ZONE;
+}
+
+bool JoystickActionController::IsDownAction()
+{
+    return m_axis_y > JOYSTICK_DEAD_ZONE;
+}
+
 EventController::EventController()
 {
 
@@ -32,66 +106,30 @@ void EventController::PollAllEvents()
 }
 
 GameplayEventController::GameplayEventController():
-    EventController(), m_joystick(nullptr)
+    EventController()
 {
-    // Controller can be use only for gameplay mode
     const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
     if (joystick==0){
-        if (SDL_NumJoysticks() != 0){
-            m_joystick = SDL_JoystickOpen(0);
-            if (m_joystick == nullptr)
-                std::cout << "Error while opening the joystick: " << SDL_GetError() << "\n";
-            else
-                std::cout << "Joystick connected\n";
-        }else{
-            std::cout << "No joystick connected\n";
-        }
-    }
-    else{
-        std::cout << "Unable to initialize joystick system\n";
-    }
+        if (SDL_NumJoysticks() != 0)
+            m_action_controller = new JoystickActionController();
+        else 
+            m_action_controller = new KeyboardActionController();
+    }else{
+        std::cout << "Unable to initialize joystick system\n"; // Throw error ? or use KeyboardActionController
+    }   
 }
 
 MapDirection GameplayEventController::HandlePlayerEvent() const
 {
-    // Will find better solution than just testing is_joystick_connected
-    MapDirection direction = MapDirection::None;
-    if (m_joystick != nullptr){
-        /* // Remove ?
-        for (SDL_Event event : m_events){
-            switch (event.type){
-                case SDL_JOYDEVICEREMOVED: {
-                    //m_joystick = nullptr;
-                    std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n";
-                    break;
-                }
-            }
-        }
-        */
-        const int axis_x = SDL_JoystickGetAxis(m_joystick, 0);
-        const int axis_y = SDL_JoystickGetAxis(m_joystick, 1);
-        if (std::abs(axis_x) > JOYSTICK_DEAD_ZONE){
-            if (axis_x < 0)
-                return MapDirection::Left;
-            else
-                return MapDirection::Right;
-        }else if (std::abs(axis_y) > JOYSTICK_DEAD_ZONE){
-            if (axis_y < 0)
-                return MapDirection::Up;
-            else
-                return MapDirection::Down;
-        }
-    }else{
-        const Uint8* state = SDL_GetKeyboardState(NULL);
-        if (state[SDL_SCANCODE_W])
-            return MapDirection::Up;
-        else if (state[SDL_SCANCODE_A])
-            return MapDirection::Left;
-        else if (state[SDL_SCANCODE_S])
-            return MapDirection::Down;
-        else if (state[SDL_SCANCODE_D])
-            return MapDirection::Right;
-        }
+    m_action_controller->GetActions();
+    if (m_action_controller->IsLeftAction())
+        return MapDirection::Left;
+    if (m_action_controller->IsRightAction())
+        return MapDirection::Right;
+    if (m_action_controller->IsUpAction())
+        return MapDirection::Up;
+    if (m_action_controller->IsDownAction())
+        return MapDirection::Down;
     return MapDirection::None;
 }
 
