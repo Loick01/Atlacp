@@ -10,7 +10,7 @@ class Animation // Must have sprites for 4 directions
         AnimationData m_animation_data;
         int m_current_sprite_index;
         float m_count; // Elapsed time since the last sprite update
-        int m_offset;
+        int m_index_offset;
 
     public:
         Animation(const FileReader& file_reader, const std::string& path);

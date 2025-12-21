@@ -153,8 +153,7 @@ void Tilemap::DrawTexture() const
     int tile_size = m_tileset.GetTileSize();
     int map_width = m_map_data.width;
     int map_height = m_map_data.height;
-    const ScenePosition camera_position = m_camera.GetPosition();
-    const ScenePosition camera_offset = m_camera.GetOffset(); // Remove
+    ScenePosition camera_position = m_camera.GetPosition();
     const float zoom = m_camera.GetZoom();
 
     // Culling
@@ -174,14 +173,14 @@ void Tilemap::DrawTexture() const
             end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
         }
     }
-
+    camera_position = camera_position-m_camera.GetScreenOffset();
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
             int tile = m_tileset.GetNormalizedTile(map[j*map_width+i]); // Should use Tile type ?
             int tileset_width = m_tileset.GetTilesetWidth();
             const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
             const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
-            const Pair<int> dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position+camera_offset;
+            const Pair<int> dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
             const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
             m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
         }
