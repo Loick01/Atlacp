@@ -4,7 +4,7 @@ NPC::NPC(const FileReader& file_reader, Tilemap& tilemap, TextureController& tex
     const std::string& sprite_filepath, Camera& camera, const float speed):
     Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed)
 {
-    SetMapPosition(MapPosition{16,22}); // Only for ff_world
+    SetMapPosition(MapPosition{8,10});
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in NPC constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
