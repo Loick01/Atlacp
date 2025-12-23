@@ -1,13 +1,13 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position):
-    m_texture_controller(texture_controller), m_position(position), m_camera(camera)
+Drawable::Drawable(TextureController& texture_controller, const std::string& texture_filepath):
+    m_texture_controller(texture_controller)
 {
     LoadTexture(texture_filepath);
 }
 
-Drawable::Drawable(TextureController& texture_controller, Camera& camera, const ScenePosition position):
-    m_texture_controller(texture_controller), m_position(position), m_camera(camera)
+Drawable::Drawable(TextureController& texture_controller):
+    m_texture_controller(texture_controller)
 {
 
 }
@@ -22,11 +22,6 @@ void Drawable::LoadTexture(const std::string& texture_filepath)
 TextureKey Drawable::GetTextureKey() const
 {
     return m_texture_key;
-}
-
-ScenePosition Drawable::GetScenePosition() const
-{
-    return m_position;
 }
 
 int Drawable::GetTextureWidth() const
@@ -51,7 +46,60 @@ bool Drawable::IsPositionInTexture(const ScenePosition sp) const // sp must be n
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
-void Drawable::LookMe()
+SceneDrawable::SceneDrawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position):
+    Drawable(texture_controller, texture_filepath), m_camera(camera), m_position(position)
+{
+
+}
+
+SceneDrawable::SceneDrawable(TextureController& texture_controller, Camera& camera, const ScenePosition position):
+    Drawable(texture_controller), m_camera(camera), m_position(position)
+{
+
+}
+
+void SceneDrawable::LookMe()
 {
     m_camera.LookAt(m_position);
+}
+
+ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):
+    Drawable(texture_controller, texture_filepath), m_position(position), m_should_draw(should_draw)
+{
+    
+}
+
+ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const ScreenPosition position, const bool should_draw):
+    Drawable(texture_controller), m_position(position), m_should_draw(should_draw)
+{
+
+}
+
+ScreenPosition ScreenDrawable::GetScreenPosition() const
+{
+    return m_position;
+}
+
+bool ScreenDrawable::GetShouldDraw() const
+{
+    return m_should_draw;
+}
+
+void ScreenDrawable::DrawTexture() const
+{
+    if (m_should_draw){
+        const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
+        const SDL_Rect dst{m_position.x, m_position.y, m_texture_width, m_texture_height};
+        m_texture_controller.RenderTexture(m_texture_key, src, dst);
+    }
+}
+
+void ScreenDrawable::SetScreenPosition(const ScreenPosition position)
+{
+    m_position = position;
+}
+
+void ScreenDrawable::InvertShouldDraw()
+{
+    m_should_draw = !m_should_draw;
 }

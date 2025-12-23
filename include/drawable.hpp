@@ -9,27 +9,52 @@ class Drawable
 {
     protected:
         // string texture_filepath could be replace by a RessourceFile struct, which contains the path without its extension
-        Drawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position);
-        Drawable(TextureController& texture_controller, Camera& camera, const ScenePosition position);
+        Drawable(TextureController& texture_controller, const std::string& texture_filepath);
+        Drawable(TextureController& texture_controller);
         // If this class doesn't stay abstract, will need to delete m_texture_key in its destructor (texture_controller->DeleteTexture(texture_key))
         // If that happens, beware of every destructor of derivated class from Drawable
         
         void LoadTexture(const std::string& texture_filepath);
 
         TextureController& m_texture_controller;
-        Camera& m_camera;
         TextureKey m_texture_key;
-        ScenePosition m_position;
         int m_texture_width;
         int m_texture_height;
     
     public:
         virtual TextureKey GetTextureKey() const;
-        ScenePosition GetScenePosition() const;
         virtual int GetTextureWidth() const;
         virtual int GetTextureHeight() const;
         bool IsPositionInTexture(const ScreenPosition sp) const; 
         bool IsPositionInTexture(const ScenePosition sp) const;
         virtual void DrawTexture() const = 0;
+};
+
+class SceneDrawable : public Drawable
+{
+    protected:
+        ScenePosition m_position;
+        Camera& m_camera;
+    
+    public:
+        SceneDrawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position);
+        SceneDrawable(TextureController& texture_controller, Camera& camera, const ScenePosition position);
         void LookMe();
+};
+
+class ScreenDrawable : public Drawable
+{
+    protected:
+        ScreenPosition m_position;
+        bool m_should_draw;
+
+    public:
+        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw=false);
+        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position, const bool should_draw=false);
+
+        ScreenPosition GetScreenPosition() const;
+        bool GetShouldDraw() const;
+        void DrawTexture() const override;
+        void SetScreenPosition(const ScreenPosition position);
+        void InvertShouldDraw();
 };

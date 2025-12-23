@@ -27,6 +27,7 @@ set(SOURCES
     src/behaviour.cpp
     src/scene.cpp
     src/pathfind.cpp
+    src/ui.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

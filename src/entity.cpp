@@ -83,7 +83,7 @@ void EntityMovement::Initialize(const int tile_size, const MapPosition start_pos
 
 Entity::Entity(TextureController& texture_controller, const std::string& sprite_filepath, Camera& camera, const FileReader& file_reader,
     Tilemap& tilemap, const float speed):
-    Drawable(texture_controller, sprite_filepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
+    SceneDrawable(texture_controller, sprite_filepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
     m_speed(speed), m_state(EntityState::Free), m_animation(file_reader, sprite_filepath)
     // Remove +".png" if I create RessourceFile struct ?
 {

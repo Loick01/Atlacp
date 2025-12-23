@@ -11,6 +11,7 @@
 #include "texture.hpp"
 #include "tilemap.hpp"
 #include "time.hpp"
+#include "ui.hpp"
 #include "window.hpp"
 
 class Scene
@@ -49,6 +50,8 @@ class GameplayTilemapScene : public TilemapScene
         // For now, m_rendered_entities is sorted by y position. Because a specific order could be necessary for Entity updating 
         // (for example with FollowEntityBehaviour), I use a second vector of Entity*
         std::vector<Entity*> m_updated_entities;
+
+        UiElement m_dialog; // Remove
         
     public:
         GameplayTilemapScene();

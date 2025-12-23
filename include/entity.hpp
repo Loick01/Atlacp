@@ -41,7 +41,7 @@ class EntityMovement
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
 
-class Entity : public Drawable, public MapElement
+class Entity : public SceneDrawable, public MapElement
 {
     private:
         EntityMovement m_current_movement;

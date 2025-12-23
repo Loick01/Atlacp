@@ -1,7 +1,7 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController& texture_controller, Camera& camera, const FileReader& file_reader, const bool should_draw):
-    Drawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_should_draw(should_draw)
+Tileset::Tileset(TextureController& texture_controller, const FileReader& file_reader):
+    ScreenDrawable(texture_controller, ScreenPosition{0,0}), m_file_reader(file_reader)
 {
     m_index_tileset = -1; // No tileset is loaded
 }
@@ -34,11 +34,6 @@ void Tileset::LoadTileset(const std::string& path)
 TextureKey Tileset::GetTextureKey() const
 {
     return m_tilesets[m_index_tileset].tileset_key;
-}
-
-ScreenPosition Tileset::GetScreenPosition() const
-{
-    return m_screen_position;
 }
 
 void Tileset::SetDisplayedTileset(const int selected_tileset)
@@ -144,29 +139,4 @@ void Tileset::CleanTilesets()
         m_texture_controller.DeleteTexture(e.tileset_key);
     }
     m_tilesets.clear();
-}
-
-void Tileset::DrawTexture() const
-{
-    // Tileset is display using screen coordinates (instead of scene coordinates), so we don't need the camera position to render it
-    if (m_should_draw){
-        const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
-        const SDL_Rect dst{m_screen_position.x, m_screen_position.y, m_texture_width, m_texture_height};
-        m_texture_controller.RenderTexture(m_texture_key, src, dst);
-    }
-}
-
-void Tileset::SetScreenPosition(const ScreenPosition sp)
-{
-    m_screen_position = sp;
-}
-
-bool Tileset::GetShouldDraw() const
-{
-    return m_should_draw;
-}
-
-void Tileset::InvertShouldDraw()
-{
-    m_should_draw = !m_should_draw;
 }

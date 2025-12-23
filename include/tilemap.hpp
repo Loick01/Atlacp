@@ -9,7 +9,7 @@
 #include "tileset.hpp"
 #include "type.hpp"
 
-class Tilemap : public Drawable
+class Tilemap : public SceneDrawable
 {
     private:
         const FileReader& m_file_reader;
