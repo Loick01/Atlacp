@@ -14,3 +14,15 @@ void UiElement::DrawTexture() const
                        static_cast<int>(m_texture_width*zoom), static_cast<int>(m_texture_height*zoom)};
     m_texture_controller.RenderTexture(m_texture_key, src, dst);
 }
+
+void UiController::Draw() const
+{
+    for (UiElement* e : m_ui_elements)
+        e->DrawTexture();
+}
+
+GameplayUiController::GameplayUiController(TextureController& texture_controller):
+    m_dialog_box(texture_controller, "../assets/ui/box.png", ScreenPosition{0, 0})
+{
+    m_ui_elements.push_back(&m_dialog_box);
+}

@@ -60,7 +60,6 @@ class Entity : public SceneDrawable, public MapElement
         void SetState(const EntityState state);
     
     public:
-        ~Entity();
         virtual void Update(const float delta_time) = 0;
         void DrawTexture() const override;
 

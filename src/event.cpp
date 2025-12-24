@@ -227,9 +227,9 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
                 }else{ // If the tileset is not opened, the mouse wheel control the camera zoom
                     const ScenePosition mouse_before_zoom = GetMouseScenePosition(camera);
                     if (event.wheel.y > 0)
-                        camera.AddZoom(0.05f);
+                        camera.AddZoom(0.1f);
                     else
-                        camera.AddZoom(-0.05f);
+                        camera.AddZoom(-0.1f);
                     const ScenePosition mouse_after_zoom = GetMouseScenePosition(camera);
                     const ScenePosition delta = (mouse_before_zoom-mouse_after_zoom)*camera.GetZoom();
                     camera.MoveCameraPosition(delta); // Will zoom on mouse cursor

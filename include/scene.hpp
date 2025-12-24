@@ -22,7 +22,9 @@ class Scene
         TextureController m_texture_controller;
         Camera m_camera;
         bool m_gameloop;
-        std::vector<Drawable*> m_drawables; // Must be a vector of Drawable* because we need dynamic dispatch
+        // Will use a drawable/layer controller 
+        std::vector<Drawable*> m_drawables; // Need dynamic dispatch
+
 
     public:
         Scene();
@@ -44,17 +46,17 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        GameplayEventController m_game_event_controller; // Should be in Scene as a EventController ?
+        GameplayEventController m_game_event_controller; // Will be in Scene as a EventController 
+        GameplayUiController m_game_ui_controller; // Will be in Scene as a UiController
         Player m_player;
-        std::vector<Entity*> m_rendered_entities; // Must be a vector of Entity* because we need dynamic dispatch
+        std::vector<Entity*> m_rendered_entities; // Need dynamic dispatch
         // For now, m_rendered_entities is sorted by y position. Because a specific order could be necessary for Entity updating 
         // (for example with FollowEntityBehaviour), I use a second vector of Entity*
         std::vector<Entity*> m_updated_entities;
-
-        UiElement m_dialog; // Remove
         
     public:
         GameplayTilemapScene();
+        ~GameplayTilemapScene();
         void Gameloop() override;
 };
 

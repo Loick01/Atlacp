@@ -78,7 +78,7 @@ class EditorEventController : public EventController
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition(const Camera& camera) const;
         
-        Tileset& m_tileset;
+        Tileset& m_tileset; // Should be a UiElement ?
         // Should have a Camera& instead of a extra paremeter in HandleEditorEvent ?
         ScenePosition m_last_camera_origin;
 

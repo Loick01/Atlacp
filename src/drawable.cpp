@@ -12,6 +12,11 @@ Drawable::Drawable(TextureController& texture_controller):
 
 }
 
+Drawable::~Drawable()
+{
+    m_texture_controller.DeleteTexture(m_texture_key);
+}
+
 void Drawable::LoadTexture(const std::string& texture_filepath)
 {
     m_texture_controller.DeleteTexture(m_texture_key);

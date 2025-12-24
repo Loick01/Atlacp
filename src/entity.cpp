@@ -93,11 +93,6 @@ Entity::Entity(TextureController& texture_controller, const std::string& sprite_
     SetDisplayOffset(ScenePosition{(m_texture_width-tilemap.GetTileSize())/2, m_texture_height-tilemap.GetTileSize()});
 }
 
-Entity::~Entity()
-{
-    m_texture_controller.DeleteTexture(m_texture_key);
-}
-
 EntityState Entity::GetState() const
 {
     return m_state;

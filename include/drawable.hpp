@@ -22,6 +22,7 @@ class Drawable
         int m_texture_height;
     
     public:
+        ~Drawable();
         virtual TextureKey GetTextureKey() const;
         virtual int GetTextureWidth() const;
         virtual int GetTextureHeight() const;

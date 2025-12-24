@@ -24,7 +24,7 @@ TilemapScene::TilemapScene():
 
 GameplayTilemapScene::GameplayTilemapScene():
     m_player(m_file_reader, m_tilemap, m_texture_controller, m_game_event_controller, "../assets/sprites/character16", m_camera, 3.0f),
-    m_dialog(m_texture_controller, "../assets/ui/box.png", ScreenPosition{0, 0}) // Will be removed
+    m_game_ui_controller(m_texture_controller)
 {
     m_window.HideCursor();
     m_tilemap.SetShouldCulling(true);
@@ -35,18 +35,23 @@ GameplayTilemapScene::GameplayTilemapScene():
     // Testing my NPC, will be remove (they will be load from the tilemap header)
     // for (unsigned int i = 0 ; i < 10 ; i++){
     //     NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 5.0f);
-    //     // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
     //     m_rendered_entities.push_back(npc);
     // }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
     Entity* tracked_entity = &m_player;
     for (unsigned int i = 0 ; i < 4 ; i++){
         NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 3.0f);
-        // NPC are not yet deleted + their texture is destroy by TextureController::~TextureController
         m_rendered_entities.push_back(npc);
         tracked_entity = npc;
     }
     m_updated_entities = m_rendered_entities;
+}
+
+GameplayTilemapScene::~GameplayTilemapScene()
+{
+    // Do not try to delete the player (first element in m_updated_entities, be sure to don't modify the order)
+    for (unsigned int i = 1 ; i < m_updated_entities.size() ; i++)
+        delete m_updated_entities[i];
 }
 
 void GameplayTilemapScene::Gameloop()
@@ -69,7 +74,7 @@ void GameplayTilemapScene::Gameloop()
     for (Entity* e : m_updated_entities)
         e->Update(delta_time);
 
-    m_dialog.DrawTexture(); // Will be removed 
+    m_game_ui_controller.Draw();
     
     m_window.DrawBoxing();
     m_window.UpdateRender();
