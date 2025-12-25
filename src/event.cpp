@@ -200,7 +200,7 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (m_tileset.GetShouldDraw()){
-                        const ScreenPosition norm_screen_pos = GetMouseScreenPosition()-m_tileset.GetScreenPosition();
+                        const ScreenPosition norm_screen_pos = (GetMouseScreenPosition()-m_tileset.GetScreenPosition())/m_tileset.GetZoom();
                         m_tileset.UpdateSelectedTile(norm_screen_pos, m_selected_tileset, m_selected_tile);
                     }else{
                         m_is_replacing_tile = true;
@@ -224,7 +224,7 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
                     else
                         m_selected_tileset = (m_selected_tileset-1+tileset_size)%tileset_size;
                     m_tileset.SetDisplayedTileset(m_selected_tileset);
-                }else{ // If the tileset is not opened, the mouse wheel control the camera zoom
+                }else{ // If the tileset is not opened, the mouse wheel control the camera zoom (also )
                     const ScenePosition mouse_before_zoom = GetMouseScenePosition(camera);
                     if (event.wheel.y > 0)
                         camera.AddZoom(0.1f);

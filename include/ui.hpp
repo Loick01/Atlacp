@@ -7,8 +7,7 @@ class UiElement : public ScreenDrawable
     private:
 
     public:
-        UiElement(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position);
-        void DrawTexture() const override;
+        UiElement(TextureController& texture_controller, const std::string& texture_filepath);
 };
 
 class UiController
@@ -26,5 +25,5 @@ class GameplayUiController : public UiController
         UiElement m_dialog_box; // Will be in m_ui_elements
 
     public:
-        GameplayUiController(TextureController& texture_controller);
+        GameplayUiController(TextureController& texture_controller, const Camera& camera);
 };

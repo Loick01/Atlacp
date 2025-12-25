@@ -31,6 +31,11 @@ ScenePosition Camera::GetPosition() const
     return m_position;
 }
 
+ScenePosition Camera::GetViewport() const
+{
+    return m_viewport;
+}
+
 ScenePosition Camera::GetRangeTile() const
 {
     return m_range_tile;

@@ -47,14 +47,19 @@ class ScreenDrawable : public Drawable
 {
     protected:
         ScreenPosition m_position;
-        bool m_should_draw;
+        float m_zoom; // Don't use camera zoom, but this value instead. Could be private
+        bool m_should_draw; // Could be private
 
     public:
-        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw=false);
-        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position, const bool should_draw=false);
+        // Set should_draw to false
+        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position={0, 0}, const bool should_draw=true);
+        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=false);
 
         ScreenPosition GetScreenPosition() const;
+        ScreenPosition GetSize() const; // Remove ?
+        float GetZoom() const;
         bool GetShouldDraw() const;
+        void SetZoom(const float zoom);
         void DrawTexture() const override;
         void SetScreenPosition(const ScreenPosition position);
         void InvertShouldDraw();

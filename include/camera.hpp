@@ -24,6 +24,7 @@ class Camera
         ScreenPosition GetScreenOffset() const;
         ScenePosition GetPosition() const;
         ScenePosition GetRangeTile() const;
+        ScenePosition GetViewport() const;
         Pair<bool> GetIsOffScreen() const;
         float GetZoom() const;
         void AddZoom(const float z);

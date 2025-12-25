@@ -69,13 +69,13 @@ void SceneDrawable::LookMe()
 }
 
 ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):
-    Drawable(texture_controller, texture_filepath), m_position(position), m_should_draw(should_draw)
+    Drawable(texture_controller, texture_filepath), m_position(position), m_should_draw(should_draw), m_zoom(1.0f) // Default value for zoom must be 1.0
 {
     
 }
 
 ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const ScreenPosition position, const bool should_draw):
-    Drawable(texture_controller), m_position(position), m_should_draw(should_draw)
+    Drawable(texture_controller), m_position(position), m_should_draw(should_draw), m_zoom(1.0f) // Default value for zoom must be 1.0
 {
 
 }
@@ -85,16 +85,31 @@ ScreenPosition ScreenDrawable::GetScreenPosition() const
     return m_position;
 }
 
+ScreenPosition ScreenDrawable::GetSize() const
+{
+    return {GetTextureWidth(), GetTextureHeight()};
+}
+
+float ScreenDrawable::GetZoom() const
+{
+    return m_zoom;
+}
+
 bool ScreenDrawable::GetShouldDraw() const
 {
     return m_should_draw;
+}
+
+void ScreenDrawable::SetZoom(const float zoom)
+{
+    m_zoom = zoom;
 }
 
 void ScreenDrawable::DrawTexture() const
 {
     if (m_should_draw){
         const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
-        const SDL_Rect dst{m_position.x, m_position.y, m_texture_width, m_texture_height};
+        const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_texture_width*m_zoom), static_cast<int>(m_texture_height*m_zoom)};
         m_texture_controller.RenderTexture(m_texture_key, src, dst);
     }
 }
