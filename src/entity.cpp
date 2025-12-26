@@ -118,7 +118,11 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
 {
     const MapPosition current_position = GetMapPosition();
     MapPosition next_position = current_position + movement.GetMove();
-    if (m_tilemap.IsFreePosition(next_position, can_exit_map)){
+    const MapBound bound = m_tilemap.IsOutOfMap(next_position);
+
+    if (can_exit_map && bound != MapBound::Inside){
+        SetMapPosition(m_tilemap.GetProjectedPosition(next_position, bound));
+    }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(next_position)){
         m_current_movement = movement;
         m_state = EntityState::Moving;
 

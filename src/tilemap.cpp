@@ -78,7 +78,7 @@ std::vector<bool> Tilemap::GetOccupancyGrid() const
 
 MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
 {
-    LoadAdjacentMap(bound);
+    LoadAdjacentMap(bound); // Should not be here
 
     MapPosition projected_position = p;
     switch (bound){
@@ -113,23 +113,9 @@ int Tilemap::GetGridSize() const
     return m_map_data.width*m_map_data.height;
 }
 
-bool Tilemap::IsFreePosition(MapPosition& p, const bool can_exit_map)
+bool Tilemap::IsFreePosition(MapPosition& p)
 {
-    const MapBound bound = IsOutOfMap(p);
-    if (bound != MapBound::Inside)
-        if (can_exit_map)
-            p = GetProjectedPosition(p, bound);
-        else return false;
-    else
-        return m_map_data.occupancy_grid[GetTileIndex(p)];
-    return true;
-}
-
-bool Tilemap::CanMoveCamera(const int axis_position, const int axis_new_position) const
-{
-    const int m_min_limit = 5, m_max_limit = 15; // Should be member of a Camera class
-    return (axis_position > m_min_limit || axis_new_position == m_min_limit+1)
-        && (axis_position < m_max_limit || axis_new_position == m_max_limit-1);
+    return m_map_data.occupancy_grid[GetTileIndex(p)];
 }
 
 void Tilemap::LoadMap(const std::string& path)
