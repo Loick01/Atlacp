@@ -23,7 +23,7 @@ TilemapScene::TilemapScene():
 }
 
 GameplayTilemapScene::GameplayTilemapScene():
-    m_player(m_file_reader, m_tilemap, m_texture_controller, m_game_event_controller, "../assets/sprites/character16", m_camera, 3.0f),
+    m_player(m_file_reader, m_tilemap, m_texture_controller, m_game_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
     m_game_ui_controller(m_texture_controller, m_camera)
 {
     m_window.HideCursor();
@@ -39,8 +39,8 @@ GameplayTilemapScene::GameplayTilemapScene():
     // }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
     Entity* tracked_entity = &m_player;
-    for (unsigned int i = 0 ; i < 4 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 3.0f);
+    for (unsigned int i = 0 ; i < 0 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 5.0f);
         m_rendered_entities.push_back(npc);
         tracked_entity = npc;
     }

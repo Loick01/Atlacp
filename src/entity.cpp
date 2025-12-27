@@ -90,6 +90,7 @@ Entity::Entity(TextureController& texture_controller, const std::string& sprite_
     const Pair<int> sprite_size = m_animation.GetSpriteSize();
     m_texture_width = sprite_size.x;
     m_texture_height = sprite_size.y;
+    // Sprites could have a different size than tiles
     SetDisplayOffset(ScenePosition{(m_texture_width-tilemap.GetTileSize())/2, m_texture_height-tilemap.GetTileSize()});
 }
 
@@ -122,6 +123,9 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
 
     if (can_exit_map && bound != MapBound::Inside){
         SetMapPosition(m_tilemap.GetProjectedPosition(next_position, bound));
+        const ScenePosition new_position = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
+        m_position = GetFinalDrawingPosition(new_position);
+        // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
     }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(next_position)){
         m_current_movement = movement;
         m_state = EntityState::Moving;

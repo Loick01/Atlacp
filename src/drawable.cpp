@@ -63,9 +63,19 @@ SceneDrawable::SceneDrawable(TextureController& texture_controller, Camera& came
 
 }
 
+ScenePosition SceneDrawable::GetDisplayOffset() const
+{
+    return m_display_offset;
+}   
+
+void SceneDrawable::SetDisplayOffset(const ScenePosition offset)
+{
+    m_display_offset = offset;
+}
+
 void SceneDrawable::LookMe()
 {
-    m_camera.LookAt(m_position);
+    m_camera.LookAt(m_position+m_display_offset);
 }
 
 ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):

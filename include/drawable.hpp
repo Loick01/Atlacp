@@ -35,7 +35,11 @@ class SceneDrawable : public Drawable
 {
     protected:
         ScenePosition m_position;
+        ScenePosition m_display_offset; // Should be in Entity
         Camera& m_camera;
+
+        ScenePosition GetDisplayOffset() const;
+        void SetDisplayOffset(const ScenePosition offset);
     
     public:
         SceneDrawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position);
