@@ -55,9 +55,9 @@ class ScreenDrawable : public Drawable
         bool m_should_draw; // Could be private
 
     public:
-        // Set should_draw to false
+        // Set should_draw to false (for both constructor)
         ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position={0, 0}, const bool should_draw=true);
-        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=false);
+        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=true);
 
         ScreenPosition GetScreenPosition() const;
         ScreenPosition GetSize() const; // Remove ?

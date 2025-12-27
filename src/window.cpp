@@ -10,6 +10,8 @@ Window::Window(const std::string& title, const SDL_Color bg_color) :
 
 Window::~Window()
 {
+    IMG_Quit();
+    TTF_Quit();
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -20,6 +22,7 @@ void Window::InitSdl() const
     if(SDL_Init(SDL_INIT_VIDEO) < 0) std::cout << "Failed to initialize SDL library\n";
     int flags = IMG_INIT_PNG | IMG_INIT_JPG;
     if ((IMG_Init(flags) & flags) != flags) std::cout << "Failed to initialize SDL image library\n";
+    if (TTF_Init() < 0) std::cout << "Failed to initialize SDL font library\n"; // TTF_GetError()
 }
 
 void Window::CreateWindow()

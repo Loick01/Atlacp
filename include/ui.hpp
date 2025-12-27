@@ -8,6 +8,22 @@ class UiElement : public ScreenDrawable
 
     public:
         UiElement(TextureController& texture_controller, const std::string& texture_filepath);
+        UiElement(TextureController& texture_controller);
+};
+
+class TextArea : public UiElement
+{
+    private:
+        // TTF_Font in TextArea < UiElement < ScreenDrawable < Drawable (TextureController has a Map<TextureKey,TTF_Font)
+        SDL_Color m_text_color;
+        SDL_Texture* m_text_texture;
+        Pair<int> m_area_size;
+
+    public:
+        TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color=SDL_Color{0,0,0,255});
+        ~TextArea();
+        void SetText(const std::string& text);
+        void DrawTexture() const override;
 };
 
 class UiController
@@ -23,6 +39,7 @@ class GameplayUiController : public UiController
 {
     private:
         UiElement m_dialog_box; // Will be in m_ui_elements
+        TextArea m_text_area; // Will be in DialogBox
 
     public:
         GameplayUiController(TextureController& texture_controller, const Camera& camera);

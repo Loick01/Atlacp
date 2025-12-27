@@ -9,6 +9,7 @@ find_package(SDL2 REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL2IMAGE REQUIRED SDL2_image)
+pkg_check_modules(SDL2TTF REQUIRED SDL2_ttf)
 
 set(SOURCES
     src/player.cpp
@@ -32,5 +33,5 @@ set(SOURCES
 
 add_executable(atlacp src/main.cpp ${SOURCES})
 
-target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
-target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
+target_include_directories(atlacp PRIVATE include ${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
+target_link_libraries(atlacp PRIVATE ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
