@@ -16,26 +16,14 @@ TextArea::TextArea(TextureController& texture_controller, const std::string& fon
     UiElement(texture_controller), m_text_color(color)
 {
     const unsigned int text_size = 48;
-    m_texture_key = font_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    texture_controller.LoadFontFromFile(font_filepath, m_texture_key, text_size);
-}
-
-TextArea::~TextArea()
-{
-    m_texture_controller.DeleteFont(m_texture_key);
+    m_font_key = font_filepath; // Should use something else than filepath as texture key
+    texture_controller.LoadFontFromFile(font_filepath, m_font_key, text_size);
 }
 
 void TextArea::SetText(const std::string& text)
 {
-    m_text_texture = m_texture_controller.BuildTextureFromText(m_texture_key, text, m_area_size, m_text_color);
-}
-
-void TextArea::DrawTexture() const
-{
-    if (m_should_draw){
-        const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_area_size.x*m_zoom), static_cast<int>(m_area_size.y*m_zoom)};
-        m_texture_controller.RenderFont(m_text_texture, dst);
-    }
+    m_texture_key = text; // Will use something else than just text as texture key
+    m_texture_controller.LoadTextureFromText(m_font_key, m_texture_key, text, m_texture_width, m_texture_height, m_text_color);
 }
 
 void UiController::Draw() const
@@ -60,6 +48,6 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
 
     // Will be done for any TextArea
     m_text_area.SetText("Hello world !");
-    m_text_area.SetScreenPosition({50, 50});
+    m_text_area.SetScreenPosition(m_dialog_box.GetScreenPosition() + ScreenPosition{50, 50}); // m_text_area will be centered in m_dialog_box
     m_ui_elements.push_back(&m_text_area);
 }

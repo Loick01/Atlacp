@@ -9,6 +9,8 @@
 
 #include "type.hpp"
 
+// Should add a FontController instead of having TextureController::m_fonts ?
+
 class TextureController
 {
     private:
@@ -21,11 +23,10 @@ class TextureController
         ~TextureController();
 
         TTF_Font* GetFont(const TextureKey& texture_key) const;
-        SDL_Texture* BuildTextureFromText(const TextureKey& font_key, const std::string& text, Pair<int>& area_size, const SDL_Color text_color) const; // Will be removed
-        void LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int &texture_width, int& texture_height);
+        void LoadTextureFromText(const TextureKey& font_key, const TextureKey& texture_key, const std::string& text, 
+            int &texture_width, int& texture_height, const SDL_Color text_color);
+        void LoadImageFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int &texture_width, int& texture_height);
         void LoadFontFromFile(const std::string& font_filepath, const TextureKey& texture_key, const int font_size);
         void RenderTexture(const TextureKey& texture_key, const SDL_Rect& src, const SDL_Rect& dst) const;
-        void RenderFont(SDL_Texture* texture, const SDL_Rect& dst) const;
         void DeleteTexture(const TextureKey& texture_key);
-        void DeleteFont(const TextureKey& texture_key);
 };

@@ -21,7 +21,7 @@ void Tileset::LoadTileset(const std::string& path)
 
     m_texture_key = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     const std::string tileset_filepath = "../assets/tilesets/" + path + ".png"; // Create a function in File
-    m_texture_controller.LoadTextureFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
+    m_texture_controller.LoadImageFromFile(tileset_filepath, m_texture_key, m_texture_width, m_texture_height);
     data.tileset_key = m_texture_key;
     if (m_tilesets.empty()){
         m_index_tileset = 0; // This index was initialized with -1, it needs to be 0 once the first tileset is loaded

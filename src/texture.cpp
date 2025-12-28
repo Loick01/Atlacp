@@ -13,7 +13,7 @@ TextureController::~TextureController()
         SDL_DestroyTexture(p.second);
     }
     for (const std::pair<const TextureKey, TTF_Font*>& f : m_fonts){
-        std::cout << "TextArea should destroy their respective font in their own destructor. Try to avoid being here\n";
+        // std::cout << "TTF_Font should be destroyed by the last TextArea that uses it. Try to avoid being here\n";
         TTF_CloseFont(f.second);
     }
 }
@@ -23,7 +23,7 @@ TTF_Font* TextureController::GetFont(const TextureKey& texture_key) const
     return m_fonts.at(texture_key); // No verifications for the moment
 }
 
-void TextureController::LoadTextureFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int& texture_width, int& texture_height)
+void TextureController::LoadImageFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int& texture_width, int& texture_height)
 {
     SDL_Surface* surface = IMG_Load(texture_filepath.c_str());
     if (!surface) std::cout << "Failed to load this texture : " << texture_filepath << "\n";
@@ -49,12 +49,6 @@ void TextureController::RenderTexture(const TextureKey& texture_key, const SDL_R
     SDL_RenderCopy(m_window_renderer, m_textures.at(texture_key), &src, &dst);
 }
 
-// Will be deleted
-void TextureController::RenderFont(SDL_Texture* texture, const SDL_Rect& dst) const
-{
-    SDL_RenderCopy(m_window_renderer, texture, nullptr, &dst);
-}
-
 void TextureController::DeleteTexture(const TextureKey& texture_key)
 {
     std::map<TextureKey, SDL_Texture*>::iterator it = m_textures.find(texture_key);
@@ -64,22 +58,22 @@ void TextureController::DeleteTexture(const TextureKey& texture_key)
     }
 }
 
-void TextureController::DeleteFont(const TextureKey& texture_key)
-{
-    std::map<TextureKey, TTF_Font*>::iterator it = m_fonts.find(texture_key);
-    if (it != m_fonts.end()){
-        TTF_CloseFont(it->second);
-        m_fonts.erase(it);
-    }
-}
+// void TextureController::DeleteFont(const TextureKey& texture_key)
+// {
+//     std::map<TextureKey, TTF_Font*>::iterator it = m_fonts.find(texture_key);
+//     if (it != m_fonts.end()){
+//         TTF_CloseFont(it->second);
+//         m_fonts.erase(it);
+//     }
+// }
 
-SDL_Texture* TextureController::BuildTextureFromText(const TextureKey& font_key, const std::string& text, Pair<int>& area_size, const SDL_Color text_color) const
+void TextureController::LoadTextureFromText(const TextureKey& font_key, const TextureKey& texture_key, const std::string& text, 
+    int &texture_width, int& texture_height, const SDL_Color text_color)
 {
     SDL_Surface* surface = TTF_RenderUTF8_Blended(GetFont(font_key), text.c_str(), text_color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer, surface);
-    area_size.x = surface->w;
-    area_size.y = surface->h;
-    std::cout << "Text area size : " << area_size;
+    texture_width = surface->w, texture_height = surface->h;
     SDL_FreeSurface(surface);
-    return texture;
+    if (m_textures[texture_key]) SDL_DestroyTexture(m_textures[texture_key]);
+    m_textures[texture_key] = texture;
 }
