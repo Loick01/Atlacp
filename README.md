@@ -30,6 +30,15 @@ make
       <strong>Random NPC</strong>
     </td>
   </tr>
+  <tr>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
+        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Map Navigation</strong>
+    </td>
+  </tr>
 </table>
 
 ### Assets
