@@ -6,14 +6,18 @@ class UiElement : public ScreenDrawable
 {
     private:
         std::vector<UiElement*> m_childs;
+        ScreenPosition m_local_position; // In addition to ScreenDrawable::m_position, UiElement have a relative position to its parent
+        // For the root UiElement, local = global
+        // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
 
     public:
-        UiElement(TextureController& texture_controller, const std::string& texture_filepath);
-        UiElement(TextureController& texture_controller);
+        UiElement(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition local_position={0,0});
+        UiElement(TextureController& texture_controller, const ScreenPosition local_position={0,0});
 
         void AddChild(UiElement* child);
         void DrawTexture() const override; 
-        void UpdatePosition(const ScreenPosition sp); // Update position on current UiElement and each children
+        void UpdatePosition(const ScreenPosition parent_position={0,0}); // Update position on current UiElement and each children
+        void SetLocalPosition(const ScreenPosition local_position); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
 };
 
 class TextArea : public UiElement

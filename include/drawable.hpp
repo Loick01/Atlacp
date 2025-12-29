@@ -50,7 +50,7 @@ class SceneDrawable : public Drawable
 class ScreenDrawable : public Drawable
 {
     protected:
-        ScreenPosition m_position;
+        ScreenPosition m_position; // For class that inherit from ScreenDrawable and have a scene graph concept (ex: UiElement), this is the global position 
         float m_zoom; // Don't use camera zoom, but this value instead. Could be private
         bool m_should_draw; // Could be private
 

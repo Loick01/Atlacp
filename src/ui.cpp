@@ -1,15 +1,15 @@
 #include "ui.hpp"
 
-UiElement::UiElement(TextureController& texture_controller, const std::string& texture_filepath):
-    ScreenDrawable(texture_controller, texture_filepath)
+UiElement::UiElement(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition local_position):
+    ScreenDrawable(texture_controller, texture_filepath), m_local_position(local_position)
 {
-
+    
 }
 
-UiElement::UiElement(TextureController& texture_controller):
-    ScreenDrawable(texture_controller)
+UiElement::UiElement(TextureController& texture_controller, const ScreenPosition local_position):
+    ScreenDrawable(texture_controller), m_local_position(local_position)
 {
-
+    
 }
 
 void UiElement::AddChild(UiElement* child)
@@ -24,11 +24,16 @@ void UiElement::DrawTexture() const
         e->DrawTexture();
 }
 
-void UiElement::UpdatePosition(const ScreenPosition sp)
+void UiElement::UpdatePosition(const ScreenPosition parent_position)
 {
-    SetScreenPosition(sp);
+    SetScreenPosition(parent_position + m_local_position); // ScreenDrawable::m_position is the global position
     for (UiElement* e : m_childs)
-        e->UpdatePosition(GetScreenPosition()); // Make sure to update childs position after updating this->position
+        e->UpdatePosition(GetScreenPosition()); // Make sure to update childs position after updating m_position
+}
+
+void UiElement::SetLocalPosition(const ScreenPosition local_position)
+{
+    m_local_position = local_position;
 }
 
 TextArea::TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color):
@@ -57,6 +62,7 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
     m_dialog_box.AddChild(&m_text_area);
 
     m_text_area.SetText("Hello world !");
+    m_text_area.SetLocalPosition(ScreenPosition{50, 50});
 
     // Will be done to find zoom and position for each UiElement
     const ScenePosition viewport_size = camera.GetViewport();
@@ -66,6 +72,10 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
     const ScreenPosition padding = {50, 50};
     const ScreenPosition new_size = m_dialog_box.GetSize()*m_dialog_box.GetZoom(); 
     const ScreenPosition delta_size = viewport_size - new_size;
+    const ScreenPosition box_position = camera.GetScreenOffset() + ScreenPosition{delta_size.x/2, delta_size.y - padding.y};
+    m_dialog_box.SetLocalPosition(box_position);
+    m_dialog_box.UpdatePosition(); // For now, dialog box is the root of UiElement graph, with global position = local position
 
-    m_dialog_box.UpdatePosition(camera.GetScreenOffset() + ScreenPosition{delta_size.x/2, delta_size.y - padding.y});
+    // m_dialog_box.SetLocalPosition(ScreenPosition{1000,500}); // Every changes of position must update children, by calling UpdatePosition()
+    // m_dialog_box.UpdatePosition();
 }
