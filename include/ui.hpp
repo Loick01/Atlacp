@@ -5,10 +5,15 @@
 class UiElement : public ScreenDrawable
 {
     private:
+        std::vector<UiElement*> m_childs;
 
     public:
         UiElement(TextureController& texture_controller, const std::string& texture_filepath);
         UiElement(TextureController& texture_controller);
+
+        void AddChild(UiElement* child);
+        void DrawTexture() const override; 
+        void UpdatePosition(const ScreenPosition sp); // Update position on current UiElement and each children
 };
 
 class TextArea : public UiElement
@@ -27,7 +32,7 @@ class TextArea : public UiElement
 class UiController
 {
     protected:
-        std::vector<UiElement*> m_ui_elements; // Need dynamic dispatch
+        const UiElement* m_root; // Root will be a rendered UiElement, not just abstract 
 
     public:
         void Draw() const;
@@ -36,9 +41,9 @@ class UiController
 class GameplayUiController : public UiController
 {
     private:
-        UiElement m_dialog_box; // Will be in m_ui_elements
-        TextArea m_text_area; // Will be in DialogBox
+        UiElement m_dialog_box;
+        TextArea m_text_area; // Should create a DialogBox class ?
 
     public:
-        GameplayUiController(TextureController& texture_controller, const Camera& camera);
+        GameplayUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);
 };

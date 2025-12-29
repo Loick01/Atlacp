@@ -12,12 +12,31 @@ UiElement::UiElement(TextureController& texture_controller):
 
 }
 
+void UiElement::AddChild(UiElement* child)
+{
+    m_childs.push_back(child);
+}
+
+void UiElement::DrawTexture() const
+{
+    ScreenDrawable::DrawTexture();
+    for (const UiElement* e : m_childs)
+        e->DrawTexture();
+}
+
+void UiElement::UpdatePosition(const ScreenPosition sp)
+{
+    SetScreenPosition(sp);
+    for (UiElement* e : m_childs)
+        e->UpdatePosition(GetScreenPosition()); // Make sure to update childs position after updating this->position
+}
+
 TextArea::TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color):
     UiElement(texture_controller), m_text_color(color)
 {
     const unsigned int text_size = 48;
-    m_font_key = font_filepath; // Should use something else than filepath as texture key
-    texture_controller.LoadFontFromFile(font_filepath, m_font_key, text_size);
+    m_font_key = font_filepath; // font_filepath is not the full path, just the filename in the font directory
+    texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath, m_font_key, text_size);
 }
 
 void TextArea::SetText(const std::string& text)
@@ -28,13 +47,17 @@ void TextArea::SetText(const std::string& text)
 
 void UiController::Draw() const
 {
-    for (UiElement* e : m_ui_elements)
-        e->DrawTexture();
+    m_root->DrawTexture();
 }
 
-GameplayUiController::GameplayUiController(TextureController& texture_controller, const Camera& camera):
-    m_dialog_box(texture_controller, "../assets/ui/box.png"), m_text_area(texture_controller, "../assets/ui/fonts/NormalFont.ttf")
+GameplayUiController::GameplayUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath):
+    m_dialog_box(texture_controller, "../assets/ui/box.png"), m_text_area(texture_controller, font_filepath)
 {
+    m_root = &m_dialog_box;
+    m_dialog_box.AddChild(&m_text_area);
+
+    m_text_area.SetText("Hello world !");
+
     // Will be done to find zoom and position for each UiElement
     const ScenePosition viewport_size = camera.GetViewport();
     const float scale = 0.5; // Wanted scale value in [0, 1]
@@ -43,11 +66,6 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
     const ScreenPosition padding = {50, 50};
     const ScreenPosition new_size = m_dialog_box.GetSize()*m_dialog_box.GetZoom(); 
     const ScreenPosition delta_size = viewport_size - new_size;
-    m_dialog_box.SetScreenPosition(camera.GetScreenOffset() + ScreenPosition{delta_size.x/2, delta_size.y - padding.y});
-    m_ui_elements.push_back(&m_dialog_box);
 
-    // Will be done for any TextArea
-    m_text_area.SetText("Hello world !");
-    m_text_area.SetScreenPosition(m_dialog_box.GetScreenPosition() + ScreenPosition{50, 50}); // m_text_area will be centered in m_dialog_box
-    m_ui_elements.push_back(&m_text_area);
+    m_dialog_box.UpdatePosition(camera.GetScreenOffset() + ScreenPosition{delta_size.x/2, delta_size.y - padding.y});
 }

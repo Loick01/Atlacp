@@ -24,7 +24,7 @@ TilemapScene::TilemapScene():
 
 GameplayTilemapScene::GameplayTilemapScene():
     m_player(m_file_reader, m_tilemap, m_texture_controller, m_game_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_game_ui_controller(m_texture_controller, m_camera)
+    m_game_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
 {
     m_window.HideCursor();
     m_tilemap.SetShouldCulling(true);
