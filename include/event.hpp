@@ -54,10 +54,10 @@ class JoystickActionController : public ActionController
 class EventController
 {
     protected:
-        EventController();
         std::vector<SDL_Event> m_events;
         
     public:
+        EventController();
         bool HandleWindowEvents() const;
         void PollAllEvents();
 };

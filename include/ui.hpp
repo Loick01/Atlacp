@@ -30,7 +30,7 @@ class TextArea : public UiElement
 
     public:
         TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color=SDL_Color{0,0,0,255});
-        void SetText(const std::string& text);
+        void SetText(const std::string& text, const int max_width);
 };
 
 class UiController
@@ -46,7 +46,7 @@ class GameplayUiController : public UiController
 {
     private:
         UiElement m_dialog_box;
-        TextArea m_text_area; // Should create a DialogBox class ?
+        TextArea m_text_area;
 
     public:
         GameplayUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);

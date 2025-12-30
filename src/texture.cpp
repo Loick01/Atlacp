@@ -68,9 +68,9 @@ void TextureController::DeleteTexture(const TextureKey& texture_key)
 // }
 
 void TextureController::LoadTextureFromText(const TextureKey& font_key, const TextureKey& texture_key, const std::string& text, 
-    int &texture_width, int& texture_height, const SDL_Color text_color)
+    int &texture_width, int& texture_height, const SDL_Color text_color, const int max_width)
 {
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(GetFont(font_key), text.c_str(), text_color);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(font_key), text.c_str(), text_color, max_width);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer, surface);
     texture_width = surface->w, texture_height = surface->h;
     SDL_FreeSurface(surface);

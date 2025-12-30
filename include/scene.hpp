@@ -23,7 +23,7 @@ class Scene
         Camera m_camera;
         bool m_gameloop;
         // Will use a drawable/layer controller 
-        std::vector<Drawable*> m_drawables; // Need dynamic dispatch
+        std::vector<Drawable*> m_drawables;
 
 
     public:
@@ -67,5 +67,15 @@ class EditorTilemapScene : public TilemapScene
 
     public:
         EditorTilemapScene();
+        void Gameloop() override;
+};
+
+class FightScene : public Scene
+{
+    private:
+        EventController m_event_controller;
+
+    public:
+        FightScene();
         void Gameloop() override;
 };

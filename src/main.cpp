@@ -23,6 +23,14 @@ int main(int argc, char* argv[]){
             }
             break;
         }
+        case 2:
+        {
+            FightScene fs;
+            while(fs.GetGameloop()){
+                fs.Gameloop();
+            }
+            break;
+        }
         default:
         {
             std::cout << "Undefined mode\n";

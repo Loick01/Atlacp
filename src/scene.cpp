@@ -99,3 +99,19 @@ void EditorTilemapScene::Gameloop()
     
     m_window.UpdateRender();    
 }
+
+FightScene::FightScene()
+{
+
+}
+
+void FightScene::Gameloop()
+{
+    m_window.ClearRenderer();
+    m_event_controller.PollAllEvents();
+    
+    m_gameloop = m_event_controller.HandleWindowEvents();
+    
+    m_window.DrawBoxing();
+    m_window.UpdateRender();
+}
