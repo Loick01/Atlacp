@@ -60,7 +60,7 @@ class ScreenDrawable : public Drawable
         ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=true);
 
         ScreenPosition GetScreenPosition() const;
-        ScreenPosition GetSize() const; // Remove ?
+        ScreenPosition GetSize() const;
         float GetZoom() const;
         bool GetShouldDraw() const;
         void SetZoom(const float zoom);
