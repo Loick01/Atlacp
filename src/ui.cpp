@@ -36,6 +36,11 @@ void UiElement::SetLocalPosition(const ScreenPosition local_position)
     m_local_position = local_position;
 }
 
+void UiElement::AddLocalPosition(const ScreenPosition padding)
+{
+    m_local_position += padding;
+}
+
 TextArea::TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color):
     UiElement(texture_controller), m_text_color(color)
 {
@@ -55,17 +60,17 @@ void UiController::Draw() const
     m_root->DrawTexture();
 }
 
-void UiElement::ComputeZoom(const ScreenPosition parent_size, const float scale, const ScaleAxis axis)
+void UiElement::ComputeZoom(const ScreenPosition parent_size, const float scale, const Axis axis)
 {
     switch(axis){
-        case ScaleAxis::Width:
+        case Axis::Width:
             SetZoom((parent_size.x*scale)/GetTextureWidth());
             break;
-        case ScaleAxis::Height:
+        case Axis::Height:
             SetZoom((parent_size.y*scale)/GetTextureHeight());
             break;
         default:
-            std::cout << "Unknown ScaleAxis value\n"; // Error
+            std::cout << "Unknown Axis value\n"; // Error
             break;
     }
 }
@@ -104,41 +109,54 @@ void UiElement::ComputePosition(const ScreenPosition parent_size, const Anchor x
     SetLocalPosition(final_position);
 }
 
+void UiElement::AddPadding(const Axis axis, const int ref_size, const float scale)
+{
+    ScreenPosition padding = {0,0};
+    switch(axis){
+        case Axis::Width:
+            padding.x = ref_size*scale;
+            break;
+        case Axis::Height:
+            padding.y = ref_size*scale;
+            break;
+        default:
+            std::cout << "Unknown Axis value\n"; // Error
+            break;
+    }
+    AddLocalPosition(padding);
+}
+
 GameplayUiController::GameplayUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath):
     m_dialog_box(texture_controller, "../assets/ui/box.png"), m_faceset(texture_controller, "../assets/ui/faceset.png"), 
-    m_text_area(texture_controller, font_filepath)
+    m_face(texture_controller, "../assets/ui/hunter_face.png"), m_text_area(texture_controller, font_filepath)
 {
     // For now, dialog box is the root of UiElement graph, with global position = local position
     // Technically, m_root sould be the camera viewport, but it's not a UiElement
     m_root = &m_dialog_box;
     m_dialog_box.AddChild(&m_faceset);
-    m_dialog_box.AddChild(&m_text_area);
+    m_faceset.AddChild(&m_text_area);
+    m_faceset.AddChild(&m_face);
 
     const ScreenPosition viewport_size = camera.GetViewport();
-    m_dialog_box.ComputeZoom(viewport_size, 0.5f, ScaleAxis::Width);
+    m_dialog_box.ComputeZoom(viewport_size, 0.5f, Axis::Width);
     m_dialog_box.ComputePosition(viewport_size, Anchor::Center, Anchor::Bottom);
+    m_dialog_box.AddPadding(Axis::Height, viewport_size.y, -0.05f);
     
     const ScreenPosition dialog_box_size = m_dialog_box.GetSize()*m_dialog_box.GetZoom(); // Drawing size including the zoom
-    m_faceset.ComputeZoom(dialog_box_size, 0.8f, ScaleAxis::Height);
+    m_faceset.ComputeZoom(dialog_box_size, 0.7f, Axis::Height);
     m_faceset.ComputePosition(dialog_box_size, Anchor::Left, Anchor::Center);
+    m_faceset.AddPadding(Axis::Width, dialog_box_size.y, 0.15f);
 
-    // Could be improve : GetTextureWidth/Height could use camera zoom for SceneDrawable and zoom for ScreenDrawable (few updates will be necessary in EventController)
-    //const ScreenPosition padding = {50, 50};
-    //const ScreenPosition box_position = camera.GetScreenOffset() + ScreenPosition{delta_size.x/2, delta_size.y - padding.y};
-    //m_dialog_box.SetLocalPosition(box_position);
+    const ScreenPosition faceset_size = m_faceset.GetSize()*m_faceset.GetZoom(); // Drawing size including the zoom
+    m_face.ComputeZoom(faceset_size, 0.8f, Axis::Width);
+    m_face.ComputePosition(faceset_size, Anchor::Center, Anchor::Center);
 
     // Do not use ComputeZoom for TextArea. Text size is controlled by the font
     // Be sure to call TextArea::ComputePosition after generating the texture with SetText
-    // Use parent_size.x-2*local_position.x as max text width
-    const int padding_x = dialog_box_size.x*0.04;
-    const int padding_y = dialog_box_size.y*0.15;
-    m_text_area.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...", dialog_box_size.x-2*padding_x);
-    m_text_area.ComputePosition(dialog_box_size, Anchor::Left, Anchor::Center);
+    const int max_text_width = dialog_box_size.x - dialog_box_size.x*0.15f - 2*dialog_box_size.y*0.15f; // Find another way to get this value
+    m_text_area.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...", max_text_width);
+    m_text_area.ComputePosition(faceset_size, Anchor::Left, Anchor::Center);
+    m_text_area.AddPadding(Axis::Width, dialog_box_size.x, 0.15f);
 
-    // Should use Pair<int>
-    // const int padding_x = dialog_box_size.x*0.04;
-    // const int padding_y = dialog_box_size.y*0.15;
-    // m_text_area.SetLocalPosition(ScreenPosition{padding_x, padding_y});
-
-    m_dialog_box.UpdatePosition(); // Call UpdatePosition on the root UiElement
+    m_dialog_box.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }

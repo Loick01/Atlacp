@@ -2,12 +2,12 @@
 
 #include "drawable.hpp"
 
-enum class ScaleAxis
+enum class Axis
 {
-    Width, Height
+    Width, Height // Should add Both ?
 };
 
-enum class Anchor // Should use Leading/Trailing ?
+enum class Anchor
 {
     Left, Right, Center, Top, Bottom
 };
@@ -25,11 +25,13 @@ class UiElement : public ScreenDrawable
         UiElement(TextureController& texture_controller, const ScreenPosition local_position={0,0});
 
         void AddChild(UiElement* child);
-        void ComputeZoom(const ScreenPosition parent_size, const float scale, const ScaleAxis axis); // scale in [0, +inf] (Do not use for TextArea)
+        void ComputeZoom(const ScreenPosition parent_size, const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
         void ComputePosition(const ScreenPosition parent_size, const Anchor x_anchor, const Anchor y_anchor); // Must be called after ComputeZoom
+        void AddPadding(const Axis axis, const int ref_size, const float scale);
         void DrawTexture() const override; 
         void UpdatePosition(const ScreenPosition parent_position={0,0}); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition local_position); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
+        void AddLocalPosition(const ScreenPosition padding);
 };
 
 class TextArea : public UiElement
@@ -59,6 +61,7 @@ class GameplayUiController : public UiController
     private:
         UiElement m_dialog_box;
         UiElement m_faceset;
+        UiElement m_face;
         TextArea m_text_area;
 
     public:
