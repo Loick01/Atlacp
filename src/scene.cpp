@@ -33,17 +33,19 @@ GameplayTilemapScene::GameplayTilemapScene():
     // Layer 2
     m_rendered_entities = {&m_player};
     // Testing my NPC, will be remove (they will be load from the tilemap header)
-    // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 5.0f);
-    //     m_rendered_entities.push_back(npc);
-    // }
+    for (unsigned int i = 0 ; i < 20 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+        m_rendered_entities.push_back(npc);
+    }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
+    /*
     Entity* tracked_entity = &m_player;
-    for (unsigned int i = 0 ; i < 0 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 5.0f);
+    for (unsigned int i = 0 ; i < 10 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
         tracked_entity = npc;
     }
+    */
     m_updated_entities = m_rendered_entities;
 }
 

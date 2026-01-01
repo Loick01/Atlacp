@@ -57,7 +57,6 @@ class Entity : public SceneDrawable, public MapElement
             Tilemap& tilemap, const float speed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
-        void SetState(const EntityState state);
     
     public:
         virtual void Update(const float delta_time) = 0;

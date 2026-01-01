@@ -104,11 +104,6 @@ EntityMovement Entity::GetCurrentMovement() const
     return m_current_movement;
 }
 
-void Entity::SetState(const EntityState state)
-{
-    m_state = state;
-}
-
 void Entity::Reset()
 {
     m_animation.Reset();

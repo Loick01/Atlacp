@@ -13,7 +13,7 @@ class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehav
         EntityBehaviour();
 
         // Must have one function for each value in Entity::EntityState
-        virtual void FreeCase(Entity& entity) = 0;
+        virtual void FreeCase(Entity& entity, const float delta_time) = 0;
         virtual void MovingCase(Entity& entity, const float delta_time) = 0;
         virtual void OnStopCase(Entity& entity) = 0;
 };
@@ -21,9 +21,11 @@ class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehav
 class RandomBehaviour : public EntityBehaviour // Always try to move in random direction 
 {
     private:
-    
+        float m_delay; // Remaining time before a new movement
+
     public:
-        void FreeCase(Entity& entity) override;
+        RandomBehaviour(); // Remove ?
+        void FreeCase(Entity& entity, const float delta_time) override;
         void MovingCase(Entity& entity, const float delta_time) override;
         void OnStopCase(Entity& entity) override;
 };
@@ -37,7 +39,7 @@ class FollowEntityBehaviour : public EntityBehaviour
     public:
         FollowEntityBehaviour(const Entity* tracked_entity, const float follower_speed);
 
-        void FreeCase(Entity& entity) override;
+        void FreeCase(Entity& entity, const float delta_time) override;
         void MovingCase(Entity& entity, const float delta_time) override;
         void OnStopCase(Entity& entity) override;
 };
@@ -52,7 +54,7 @@ class GoToBehaviour : public EntityBehaviour
     public:
         GoToBehaviour(const MapPosition start_position, const MapPosition end_position, const Tilemap& tilemap);
 
-        void FreeCase(Entity& entity) override;
+        void FreeCase(Entity& entity, const float delta_time) override;
         void MovingCase(Entity& entity, const float delta_time) override;
         void OnStopCase(Entity& entity) override;
 };

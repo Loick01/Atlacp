@@ -8,8 +8,8 @@ NPC::NPC(const FileReader& file_reader, Tilemap& tilemap, TextureController& tex
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in NPC constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
-    //m_behaviour = new RandomBehaviour();
-    m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
+    m_behaviour = new RandomBehaviour();
+    //m_behaviour = new FollowEntityBehaviour(tracked_entity, GetSpeed());
     //m_behaviour = new GoToBehaviour(GetMapPosition(), MapPosition{4, 1}, tilemap);
 }
 
@@ -18,7 +18,7 @@ void NPC::Update(const float delta_time)
     switch (GetState()){ // This code has the same structure than Player::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            m_behaviour->FreeCase(*this);
+            m_behaviour->FreeCase(*this, delta_time);
             break;
         }
 

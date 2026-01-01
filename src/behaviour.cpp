@@ -5,9 +5,19 @@ EntityBehaviour::EntityBehaviour()
 
 }
 
-void RandomBehaviour::FreeCase(Entity& entity)
+RandomBehaviour::RandomBehaviour()
 {
-    entity.OrderStartMovement(m_random.GetRandomDirection(), true);
+    m_delay = m_random.GetRandomFloat(0.5f, 5.f);
+}
+
+void RandomBehaviour::FreeCase(Entity& entity, const float delta_time)
+{
+    if (m_delay > 0.f) m_delay -= delta_time;
+    else{
+        entity.OrderStartMovement(m_random.GetRandomDirection(), true);
+        if (entity.GetState() != EntityState::Free) // Generate a new delay only if the movement is valid (no collision)
+            m_delay = m_random.GetRandomFloat(0.5f, 5.f);
+    }
 }
 
 void RandomBehaviour::MovingCase(Entity& entity, const float delta_time)
@@ -17,7 +27,7 @@ void RandomBehaviour::MovingCase(Entity& entity, const float delta_time)
 
 void RandomBehaviour::OnStopCase(Entity& entity)
 {
-    entity.OrderStartMovement(m_random.GetRandomDirection(), false);
+    entity.Reset(); // Set state to Free where a new delay will be generated
 }
 
 FollowEntityBehaviour::FollowEntityBehaviour(const Entity* tracked_entity, const float follower_speed):
@@ -28,7 +38,7 @@ FollowEntityBehaviour::FollowEntityBehaviour(const Entity* tracked_entity, const
         std::cout << "This behaviour should not be used here\n";
 }
 
-void FollowEntityBehaviour::FreeCase(Entity& entity)
+void FollowEntityBehaviour::FreeCase(Entity& entity, const float delta_time)
 {
     if (m_tracked_entity->GetState() != EntityState::Free){
         const EntityMovement movement = m_tracked_entity->GetCurrentMovement();
@@ -62,7 +72,7 @@ GoToBehaviour::GoToBehaviour(const MapPosition start_position, const MapPosition
     m_path = Pathfind::GetInstance().ComputePath(start_position, end_position, tilemap);
 }
 
-void GoToBehaviour::FreeCase(Entity& entity)
+void GoToBehaviour::FreeCase(Entity& entity, const float delta_time)
 {
     if (m_path_index < m_path.size()){
         const MapPosition next_position = m_path[m_path_index];

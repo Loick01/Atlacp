@@ -177,6 +177,11 @@ struct Random
         srand(time(NULL));
     }
 
+    float GetRandomFloat(float min, float max) const
+    {
+        return ((float)rand()/RAND_MAX)*(max-min)+min;
+    }
+
     MapDirection GetRandomDirection() const
     {
         return static_cast<MapDirection>(rand()%4);
