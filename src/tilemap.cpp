@@ -21,7 +21,7 @@ int Tilemap::GetTileSize() const
 
 unsigned int Tilemap::GetTileIndex(const MapPosition p) const
 {
-    return p.y*m_map_data.width+p.x;
+    return p.y*m_map_data.size.x+p.x;
 }
 
 void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
@@ -32,20 +32,20 @@ void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
 // Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
 int Tilemap::GetTextureWidth() const
 {
-    return m_map_data.width*m_tileset.GetTileSize();
+    return m_map_data.size.x*m_tileset.GetTileSize();
 }
 
 int Tilemap::GetTextureHeight() const
 {
-    return m_map_data.height*m_tileset.GetTileSize();
+    return m_map_data.size.y*m_tileset.GetTileSize();
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
 {
     if (p.x < 0) return MapBound::OutLeft;
-    if (p.x >= m_map_data.width) return MapBound::OutRight;
+    if (p.x >= m_map_data.size.x) return MapBound::OutRight;
     if (p.y < 0) return MapBound::OutUp;
-    if (p.y >= m_map_data.height) return MapBound::OutDown;
+    if (p.y >= m_map_data.size.y) return MapBound::OutDown;
     return MapBound::Inside;
 }
 
@@ -55,10 +55,10 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
     // Maps are supposed to be designed in such a way the player can't get out of the world.
     switch (bound){
         case MapBound::OutUp:
-            m_current_map -= m_world_data.width;
+            m_current_map -= m_world_data.size.x;
             break;
         case MapBound::OutDown:
-            m_current_map += m_world_data.width;
+            m_current_map += m_world_data.size.x;
             break;
         case MapBound::OutRight:
             m_current_map += 1;
@@ -83,7 +83,7 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
     MapPosition projected_position = p;
     switch (bound){
         case MapBound::OutUp:
-            projected_position.y = m_map_data.height-1;
+            projected_position.y = m_map_data.size.y-1;
             break;
         case MapBound::OutDown:
             projected_position.y = 0;
@@ -92,7 +92,7 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
             projected_position.x = 0;
             break;
         case MapBound::OutLeft:
-            projected_position.x = m_map_data.width-1;
+            projected_position.x = m_map_data.size.x-1;
             break;
     }
     return projected_position;
@@ -110,7 +110,7 @@ void Tilemap::FreePosition(const MapPosition p)
 
 int Tilemap::GetGridSize() const
 {
-    return m_map_data.width*m_map_data.height;
+    return m_map_data.size.x*m_map_data.size.y;
 }
 
 bool Tilemap::IsFreePosition(MapPosition& p)
@@ -137,16 +137,16 @@ void Tilemap::DrawTexture() const
 {
     std::vector<Tile> map = m_map_data.map;
     int tile_size = m_tileset.GetTileSize();
-    int map_width = m_map_data.width;
-    int map_height = m_map_data.height;
+    int map_width = m_map_data.size.x;
+    int map_height = m_map_data.size.y;
     ScenePosition camera_position = m_camera.GetPosition();
     const float zoom = m_camera.GetZoom();
 
     // Culling
     // While animating a movement, end_index could not be enough to fill the window with the map
     // So I add 1 to end_index, and check if it becomes greater than map size
-    Pair<int> start_index = Pair<int>{0, 0};
-    Pair<int> end_index = Pair<int>{map_width, map_height};
+    Pair<int> start_index = Pair<int>{0, 0}; // Should use something else than Pair<int>
+    Pair<int> end_index = Pair<int>{map_width, map_height}; // Same
 
     if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
@@ -166,7 +166,7 @@ void Tilemap::DrawTexture() const
             int tileset_width = m_tileset.GetTilesetWidth();
             const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
             const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
-            const Pair<int> dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
+            const ScreenPosition dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
             const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
             m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
         }

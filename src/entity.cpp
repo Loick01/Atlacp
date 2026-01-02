@@ -87,7 +87,7 @@ Entity::Entity(TextureController& texture_controller, const std::string& sprite_
     m_speed(speed), m_state(EntityState::Free), m_animation(file_reader, sprite_filepath)
     // Remove +".png" if I create RessourceFile struct ?
 {
-    const Pair<int> sprite_size = m_animation.GetSpriteSize();
+    const AreaSize sprite_size = m_animation.GetSpriteSize();
     m_texture_width = sprite_size.x;
     m_texture_height = sprite_size.y;
     // Sprites could have a different size than tiles
@@ -151,7 +151,7 @@ ScenePosition Entity::GetFinalDrawingPosition(const ScenePosition sp) const
 
 void Entity::DrawTexture() const
 {
-    const Pair<int> sprite = m_animation.GetCurrentSprite(); 
+    const Vec2 sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_texture_width, m_texture_height};
     const ScenePosition camera_position = m_camera.GetPosition()-m_camera.GetScreenOffset();
     const float zoom = m_camera.GetZoom();

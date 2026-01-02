@@ -7,11 +7,11 @@ WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
     WorldData data;
     
     int v;
-    input >> v; data.width = v;
-    input >> v; data.height = v;
+    input >> v; data.size.x = v;
+    input >> v; data.size.y = v;
     
     std::string s;
-    data.maps.reserve(data.width*data.height);
+    data.maps.reserve(data.size.x*data.size.y);
     while (input >> s)
         data.maps.push_back(s);
 
@@ -22,8 +22,8 @@ WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 {
     int v;
-    input >> v; data.width = v;
-    input >> v; data.height = v;
+    input >> v; data.size.x = v;
+    input >> v; data.size.y = v;
     input >> v; data.spawn_position.x = v;
     input >> v; data.spawn_position.y = v;
     std::string s;
@@ -39,7 +39,7 @@ MapData FileReader::GetMapFromFile(const std::string& path) const
     MapData data;
 
     ReadHeaderMapFile(input, data);
-    data.map.reserve(data.width*data.height);
+    data.map.reserve(data.size.x*data.size.y);
     
     Tile current_value;
     while (input >> current_value){
@@ -77,8 +77,8 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
     input.open(tileset_filepath);
     TilesetData data;
 
-    input >> data.width;
-    input >> data.height;
+    input >> data.size.x;
+    input >> data.size.y;
     input >> data.tile_size;
 
     int v;
@@ -92,8 +92,8 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const
 {
     std::ofstream map_file("../assets/maps/"+map_filepath); // Create a function in file
-    int width = map_data.width;
-    int height = map_data.height;
+    int width = map_data.size.x;
+    int height = map_data.size.y;
     MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile
     // Need to check if a file with the given name already exist
 

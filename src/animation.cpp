@@ -6,12 +6,12 @@ Animation::Animation(const FileReader& file_reader, const std::string& path):
     m_animation_data = file_reader.GetAnimationFromFile(path);
 }
 
-Pair<int> Animation::GetCurrentSprite() const
+Vec2 Animation::GetCurrentSprite() const
 {
     return m_animation_data.sprites[m_current_sprite_index];
 }
 
-Pair<int> Animation::GetSpriteSize() const
+AreaSize Animation::GetSpriteSize() const
 {
     return m_animation_data.sprite_size;
 }

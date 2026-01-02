@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-Camera::Camera(Window& window, const ScenePosition range_tile, const int tile_size):
+Camera::Camera(Window& window, const GridSize range_tile, const int tile_size):
     m_range_tile(range_tile)
 {
     m_position = ScenePosition{0,0};
@@ -31,12 +31,12 @@ ScenePosition Camera::GetPosition() const
     return m_position;
 }
 
-ScenePosition Camera::GetViewport() const
+AreaSize Camera::GetViewport() const
 {
     return m_viewport;
 }
 
-ScenePosition Camera::GetRangeTile() const
+GridSize Camera::GetRangeTile() const
 {
     return m_range_tile;
 }
@@ -56,7 +56,7 @@ void Camera::AddZoom(const float z)
     m_zoom += z;
 }   
 
-void Camera::SetTilemapInfo(const ScenePosition tilemap_size, const int tile_size)
+void Camera::SetTilemapInfo(const AreaSize tilemap_size, const int tile_size)
 {
     m_tilemap_size = tilemap_size*m_zoom;
     m_is_off_screen = m_tilemap_size > m_viewport;

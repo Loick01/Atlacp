@@ -15,8 +15,8 @@ class Animation // Must have sprites for 4 directions
     public:
         Animation(const FileReader& file_reader, const std::string& path);
 
-        Pair<int> GetCurrentSprite() const;
-        Pair<int> GetSpriteSize() const;
+        Vec2 GetCurrentSprite() const;
+        AreaSize GetSpriteSize() const;
         void Initialize(const MapDirection direction, const bool is_first_movement);
         void Reset();
         void ContinueAnimation(const float delta_time);

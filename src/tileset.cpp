@@ -26,7 +26,7 @@ void Tileset::LoadTileset(const std::string& path)
     if (m_tilesets.empty()){
         m_index_tileset = 0; // This index was initialized with -1, it needs to be 0 once the first tileset is loaded
         m_normalization_info.last_lower_bound = 0;
-        m_normalization_info.last_upper_bound = data.width*data.height-1;
+        m_normalization_info.last_upper_bound = data.size.x*data.size.y-1;
     }
     m_tilesets.push_back(data);
 }
@@ -40,8 +40,8 @@ void Tileset::SetDisplayedTileset(const int selected_tileset)
 {
     // Drawable::m_texture_key/m_texture_width/m_texture_height is not used in Tileset class, except in editor mode (when displaying the tileset) 
     m_texture_key = m_tilesets[selected_tileset].tileset_key;
-    m_texture_width = m_tilesets[selected_tileset].width*m_tile_size;
-    m_texture_height = m_tilesets[selected_tileset].height*m_tile_size;
+    m_texture_width = m_tilesets[selected_tileset].size.x*m_tile_size;
+    m_texture_height = m_tilesets[selected_tileset].size.y*m_tile_size;
 }
 
 int Tileset::GetTilesetsSize() const
@@ -56,17 +56,17 @@ int Tileset::GetTileSize() const
 
 int Tileset::GetTilesetWidth() const
 {
-    return m_tilesets[m_index_tileset].width;
+    return m_tilesets[m_index_tileset].size.x;
 }
 
 int Tileset::GetTilesetWidth(const int selected_tileset) const
 {
-    return m_tilesets[selected_tileset].width;
+    return m_tilesets[selected_tileset].size.x;
 }
 
 int Tileset::GetTilesetHeight() const
 {
-    return m_tilesets[m_index_tileset].height;
+    return m_tilesets[m_index_tileset].size.y;
 }
 
 bool Tileset::IsEmptyTile(const Tile tile)
@@ -83,7 +83,7 @@ void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selected_til
         int offset = 0;
         for (size_t i = 0 ; i < selected_tileset ; i++){ // Should store the offset for each tileset in TilesetData ?
             TilesetData t = m_tilesets[i];
-            offset += t.width*t.height;
+            offset += t.size.x*t.size.y;
         }
         tile = offset + l*GetTilesetWidth(selected_tileset)+c;
     }
@@ -104,7 +104,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
         t -= m_normalization_info.last_upper_bound+1;
         for (size_t i = m_index_tileset+1 ; i < m_tilesets.size() ; i++){
             const TilesetData data = m_tilesets[i];
-            int size = data.width*data.height;
+            int size = data.size.x*data.size.y;
             m_normalization_info.last_lower_bound = m_normalization_info.last_upper_bound+1;
             m_normalization_info.last_upper_bound = m_normalization_info.last_upper_bound+size;
             if (t-size < 0){
@@ -117,7 +117,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
     }else{ // t < m_normalization_info.last_lower_bound
         for (size_t i = m_index_tileset-1 ; i >= 0 ; i--){
             const TilesetData data = m_tilesets[i];
-            int size = data.width*data.height;
+            int size = data.size.x*data.size.y;
             m_normalization_info.last_upper_bound = m_normalization_info.last_lower_bound-1;
             m_normalization_info.last_lower_bound = m_normalization_info.last_lower_bound-size;
             if (t-m_normalization_info.last_lower_bound >= 0){

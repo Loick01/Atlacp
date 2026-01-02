@@ -12,8 +12,6 @@ using Tile = unsigned int; // Use a struct ?
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
-// Should create a Size struct ?
-
 template <typename T>
 struct Pair
 {
@@ -69,7 +67,15 @@ struct Vec2 : public Pair<int>
     {
         return {static_cast<int>(x/rhs), static_cast<int>(y/rhs)};
     }
+
+    Pair<bool> operator>(const Vec2 rhs) const
+    {
+        return {x>rhs.x, y>rhs.y};
+    }
 };
+
+using AreaSize = Vec2;
+using GridSize = Vec2;
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Pair<T>& v) {
@@ -82,11 +88,6 @@ struct ScenePosition : public Vec2
     ScenePosition() = default;
     ScenePosition(const int px, const int py) { x = px; y = py; }
     ScenePosition(const Vec2& v) { x = v.x; y = v.y; }
-
-    Pair<bool> operator>(const Vec2 rhs) const
-    {
-        return {x>rhs.x, y>rhs.y};
-    }
 };
 
 struct ScreenPosition : public Vec2
@@ -105,7 +106,7 @@ struct MapPosition : public Vec2
 
     ScenePosition ToScenePosition(const int tile_size) const
     {
-        return ScenePosition{x*tile_size, y*tile_size};
+        return ScenePosition{x, y}*tile_size;
     }
 };
 
@@ -132,8 +133,7 @@ enum class MapDirection
 struct WorldData
 {
     std::vector<std::string> maps;
-    int width;
-    int height;
+    GridSize size;
 };
 
 struct MapData
@@ -142,27 +142,26 @@ struct MapData
     std::vector<bool> occupancy_grid;
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     MapPosition spawn_position; // Position where the player will start when loading the associated map (-1 if no specific position)
-    int width;
-    int height;
+    GridSize size;
 };
 
 struct TilesetData
 {
     TextureKey tileset_key;
     std::set<Tile> solid_tiles; // Should use unordered set ?
-    int width;
-    int height;
+    GridSize size;
     int tile_size;
 };
 
 struct AnimationData
 {
-    std::vector<Vec2> sprites; // Position (column, line) of each sprites in spritesheet
-    Pair<int> sprite_size;
+    std::vector<Vec2> sprites; // Position of each sprites in spritesheet. Should use ScreenPosition (or something else) instead of Vec2 ?
+    AreaSize sprite_size;
     int step; // How many step for the animation
     float frame_duration;
 };
 
+// Remove ?
 struct TilesetNormalizationInfo
 {
     int last_lower_bound;

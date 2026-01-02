@@ -25,8 +25,8 @@ class UiElement : public ScreenDrawable
         UiElement(TextureController& texture_controller, const ScreenPosition local_position={0,0});
 
         void AddChild(UiElement* child);
-        void ComputeZoom(const ScreenPosition parent_size, const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
-        void ComputePosition(const ScreenPosition parent_size, const Anchor x_anchor, const Anchor y_anchor); // Must be called after ComputeZoom
+        void ComputeZoom(const AreaSize parent_size, const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
+        void ComputePosition(const AreaSize parent_size, const Anchor x_anchor, const Anchor y_anchor); // Must be called after ComputeZoom
         void AddPadding(const Axis axis, const int ref_size, const float scale);
         void DrawTexture() const override; 
         void UpdatePosition(const ScreenPosition parent_position={0,0}); // Update position on current UiElement and each children

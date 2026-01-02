@@ -39,15 +39,8 @@ int Drawable::GetTextureHeight() const
     return m_texture_height;
 }
 
-bool Drawable::IsPositionInTexture(const ScreenPosition sp) const // sp must be normalized (with screen position)
+bool Drawable::IsPositionInTexture(const Vec2 sp) const // sp must be normalized
 {
-    // Use GetTextureWidth()/GetTextureHeight() instead of m_texture_width/m_texture_height because of overrided functions
-    return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
-}
-
-bool Drawable::IsPositionInTexture(const ScenePosition sp) const // sp must be normalized (with scene position)
-{
-    // Use GetTextureWidth()/GetTextureHeight() instead of m_texture_width/m_texture_height because of overrided functions
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
@@ -97,7 +90,7 @@ ScreenPosition ScreenDrawable::GetScreenPosition() const
 
 ScreenPosition ScreenDrawable::GetSize() const
 {
-    return {GetTextureWidth(), GetTextureHeight()};
+    return ScreenPosition{GetTextureWidth(), GetTextureHeight()}*m_zoom;
 }
 
 float ScreenDrawable::GetZoom() const

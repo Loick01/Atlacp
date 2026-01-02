@@ -6,7 +6,7 @@
 #include "file.hpp"
 #include "type.hpp"
 
-class Tileset : public ScreenDrawable // Should be a UiElement ?
+class Tileset : public ScreenDrawable // Could be a UiElement
 {
     private:
         std::vector<TilesetData> m_tilesets;

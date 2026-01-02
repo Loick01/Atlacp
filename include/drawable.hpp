@@ -26,8 +26,7 @@ class Drawable
         virtual TextureKey GetTextureKey() const;
         virtual int GetTextureWidth() const;
         virtual int GetTextureHeight() const;
-        bool IsPositionInTexture(const ScreenPosition sp) const; 
-        bool IsPositionInTexture(const ScenePosition sp) const;
+        bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
         virtual void DrawTexture() const = 0;
 };
 
@@ -55,8 +54,8 @@ class ScreenDrawable : public Drawable
         bool m_should_draw; // Could be private
 
     public:
-        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position={0, 0}, const bool should_draw=false);
-        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=false);
+        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position={0, 0}, const bool should_draw=true);
+        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=true);
 
         ScreenPosition GetScreenPosition() const;
         ScreenPosition GetSize() const;

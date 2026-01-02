@@ -44,9 +44,9 @@ void UiElement::AddLocalPosition(const ScreenPosition padding)
 TextArea::TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color):
     UiElement(texture_controller), m_text_color(color)
 {
-    const unsigned int text_size = 24;
+    const unsigned int font_size = 24;
     m_font_key = font_filepath; // font_filepath is not the full path, just the filename in the font directory
-    texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath, m_font_key, text_size);
+    texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath, m_font_key, font_size);
 }
 
 void TextArea::SetText(const std::string& text, const int max_width)
@@ -60,7 +60,7 @@ void UiController::Draw() const
     m_root->DrawTexture();
 }
 
-void UiElement::ComputeZoom(const ScreenPosition parent_size, const float scale, const Axis axis)
+void UiElement::ComputeZoom(const AreaSize parent_size, const float scale, const Axis axis)
 {
     switch(axis){
         case Axis::Width:
@@ -75,11 +75,11 @@ void UiElement::ComputeZoom(const ScreenPosition parent_size, const float scale,
     }
 }
 
-void UiElement::ComputePosition(const ScreenPosition parent_size, const Anchor x_anchor, const Anchor y_anchor)
+void UiElement::ComputePosition(const AreaSize parent_size, const Anchor x_anchor, const Anchor y_anchor)
 {
     ScreenPosition final_position = {0,0};
     // If ComputePosition is called on a TextArea, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
-    const ScreenPosition new_size = GetSize()*GetZoom(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
+    const AreaSize new_size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(x_anchor){
         case Anchor::Left:
             final_position.x = 0;
@@ -137,17 +137,17 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
     m_faceset.AddChild(&m_text_area);
     m_faceset.AddChild(&m_face);
 
-    const ScreenPosition viewport_size = camera.GetViewport();
+    const AreaSize viewport_size = camera.GetViewport();
     m_dialog_box.ComputeZoom(viewport_size, 0.5f, Axis::Width);
     m_dialog_box.ComputePosition(viewport_size, Anchor::Center, Anchor::Bottom);
     m_dialog_box.AddPadding(Axis::Height, viewport_size.y, -0.05f);
     
-    const ScreenPosition dialog_box_size = m_dialog_box.GetSize()*m_dialog_box.GetZoom(); // Drawing size including the zoom
+    const AreaSize dialog_box_size = m_dialog_box.GetSize();
     m_faceset.ComputeZoom(dialog_box_size, 0.7f, Axis::Height);
     m_faceset.ComputePosition(dialog_box_size, Anchor::Left, Anchor::Center);
     m_faceset.AddPadding(Axis::Width, dialog_box_size.y, 0.15f);
 
-    const ScreenPosition faceset_size = m_faceset.GetSize()*m_faceset.GetZoom(); // Drawing size including the zoom
+    const AreaSize faceset_size = m_faceset.GetSize();
     m_face.ComputeZoom(faceset_size, 0.8f, Axis::Width);
     m_face.ComputePosition(faceset_size, Anchor::Center, Anchor::Center);
 

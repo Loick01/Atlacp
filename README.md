@@ -38,6 +38,13 @@ make
       <br>
       <strong>Map Navigation</strong>
     </td>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=gSUQSt18fMc">
+        <img src="https://img.youtube.com/vi/gSUQSt18fMc/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>NPC Behaviours</strong>
+    </td>
   </tr>
 </table>
 
