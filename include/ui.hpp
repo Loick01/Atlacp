@@ -67,3 +67,13 @@ class GameplayUiController : public UiController
     public:
         GameplayUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);
 };
+
+class EditorUiController : public UiController
+{
+    private:
+        UiElement m_dialog_box;
+        TextArea m_text_area;
+
+    public:
+        EditorUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);
+};

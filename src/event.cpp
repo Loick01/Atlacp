@@ -138,6 +138,7 @@ EditorEventController::EditorEventController(Tileset& tileset):
 {
     m_selected_tile = 0;
     m_selected_tileset = 0;
+    m_selected_layer = 0;
     m_tileset.SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
     m_is_replacing_tile = false;
@@ -180,10 +181,16 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
                         camera.Reset();
                         break;
                     case SDL_SCANCODE_UP:
-                        tilemap.LoadAdjacentMap(MapBound::OutUp);
+                        if (m_tileset.GetShouldDraw()) // Will be removed
+                            std::cout << "selected layer = " << ++m_selected_layer << "\n";
+                        else
+                            tilemap.LoadAdjacentMap(MapBound::OutUp);
                         break;
                     case SDL_SCANCODE_DOWN:
-                        tilemap.LoadAdjacentMap(MapBound::OutDown);
+                        if (m_tileset.GetShouldDraw()) // Will be removed
+                            std::cout << "selected layer = " << --m_selected_layer << "\n";
+                        else
+                            tilemap.LoadAdjacentMap(MapBound::OutDown);
                         break;
                     case SDL_SCANCODE_RIGHT:
                         tilemap.LoadAdjacentMap(MapBound::OutRight);
@@ -243,6 +250,6 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
         camera.SetCameraPosition(m_last_camera_origin-mouse_position);
     } else if (m_is_replacing_tile){
         const ScenePosition norm_scene_pos = GetMouseScenePosition(camera);
-        tilemap.ReplaceTileAt(norm_scene_pos, m_selected_tile);
+        tilemap.ReplaceTileAt(norm_scene_pos, m_selected_layer, m_selected_tile);
     }
 }

@@ -13,7 +13,7 @@ class Tileset : public ScreenDrawable // Could be a UiElement
         TilesetNormalizationInfo m_normalization_info;
         const FileReader& m_file_reader;
         int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
-        int m_index_tileset;
+        size_t m_index_tileset;
 
         TilesetData GetTilesetData() const;
         

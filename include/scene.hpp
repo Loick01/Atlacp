@@ -46,8 +46,8 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        GameplayEventController m_game_event_controller; // Will be in Scene as a EventController 
-        GameplayUiController m_game_ui_controller; // Will be in Scene as a UiController
+        GameplayEventController m_event_controller; // Will be in Scene as a EventController 
+        GameplayUiController m_ui_controller; // Will be in Scene as a UiController
         Player m_player;
         std::vector<Entity*> m_rendered_entities; // Need dynamic dispatch
         // For now, m_rendered_entities is sorted by y position. Because a specific order could be necessary for Entity updating 
@@ -63,7 +63,8 @@ class GameplayTilemapScene : public TilemapScene
 class EditorTilemapScene : public TilemapScene
 {
     private:
-        EditorEventController m_editor_event_controller; // Should be in Scene as a EventController ?
+        EditorEventController m_event_controller; // Should be in Scene as a EventController ?
+        EditorUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
         EditorTilemapScene();

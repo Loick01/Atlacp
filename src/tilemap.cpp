@@ -24,9 +24,9 @@ unsigned int Tilemap::GetTileIndex(const MapPosition p) const
     return p.y*m_map_data.size.x+p.x;
 }
 
-void Tilemap::SetTileAt(const Tile new_tile, const MapPosition p)
+void Tilemap::SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p)
 {
-    m_map_data.map[GetTileIndex(p)] = new_tile;
+    m_map_data.map[layer].tiles[GetTileIndex(p)] = new_tile;
 }
 
 // Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
@@ -127,18 +127,26 @@ void Tilemap::LoadMap(const std::string& path)
     for (const std::string& p : m_map_data.tilesets)
         m_tileset.LoadTileset(p);
 
-    for (Tile t : m_map_data.map)
-        m_map_data.occupancy_grid.push_back(m_tileset.IsEmptyTile(t));
-
+    const GridSize map_size = m_map_data.size;
+    for (size_t j=0 ; j<map_size.y ; j++){
+        for (size_t i=0 ; i<map_size.x ; i++){
+            bool is_free = true;
+            for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){
+                const Tile t = m_map_data.map[layer].tiles[j*map_size.x+i];
+                is_free = m_tileset.IsEmptyTile(t);
+                if (!is_free) break;
+            }
+            m_map_data.occupancy_grid.push_back(is_free);
+        }
+    }
+    
     m_camera.SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset.GetTileSize());
 }
 
 void Tilemap::DrawTexture() const
 {
-    std::vector<Tile> map = m_map_data.map;
     int tile_size = m_tileset.GetTileSize();
-    int map_width = m_map_data.size.x;
-    int map_height = m_map_data.size.y;
+    const GridSize map_size = m_map_data.size;
     ScenePosition camera_position = m_camera.GetPosition();
     const float zoom = m_camera.GetZoom();
 
@@ -146,7 +154,7 @@ void Tilemap::DrawTexture() const
     // While animating a movement, end_index could not be enough to fill the window with the map
     // So I add 1 to end_index, and check if it becomes greater than map size
     Pair<int> start_index = Pair<int>{0, 0}; // Should use something else than Pair<int>
-    Pair<int> end_index = Pair<int>{map_width, map_height}; // Same
+    Pair<int> end_index = map_size; // Same
 
     if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
@@ -160,26 +168,30 @@ void Tilemap::DrawTexture() const
         }
     }
     camera_position = camera_position-m_camera.GetScreenOffset();
-    for (int j = start_index.y ; j < end_index.y ; j++){
-        for (int i = start_index.x ; i < end_index.x ; i++){
-            int tile = m_tileset.GetNormalizedTile(map[j*map_width+i]); // Should use Tile type ?
-            int tileset_width = m_tileset.GetTilesetWidth();
-            const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
-            const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
-            const ScreenPosition dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
-            const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
-            m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
+
+    for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){
+        std::vector<Tile> tiles = m_map_data.map[layer].tiles;
+        for (int j = start_index.y ; j < end_index.y ; j++){
+            for (int i = start_index.x ; i < end_index.x ; i++){
+                int tile = m_tileset.GetNormalizedTile(tiles[j*map_size.x+i]); // Should use Tile type ?
+                int tileset_width = m_tileset.GetTilesetWidth();
+                const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
+                const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
+                const ScreenPosition dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
+                const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
+                m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
+            }
         }
     }
 }
 
-void Tilemap::ReplaceTileAt(const ScenePosition sp, const Tile new_tile)
+void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile new_tile)
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
         const int tile_size = m_tileset.GetTileSize();
         int c = sp.x/tile_size;
         int l = sp.y/tile_size;
-        SetTileAt(new_tile,{c,l});
+        SetTileAt(layer,new_tile,{c,l});
     }
 }
 

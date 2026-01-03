@@ -22,6 +22,7 @@ WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 {
     int v;
+    input >> v; data.layer_count = v;
     input >> v; data.size.x = v;
     input >> v; data.size.y = v;
     input >> v; data.spawn_position.x = v;
@@ -39,13 +40,16 @@ MapData FileReader::GetMapFromFile(const std::string& path) const
     MapData data;
 
     ReadHeaderMapFile(input, data);
-    data.map.reserve(data.size.x*data.size.y);
-    
-    Tile current_value;
-    while (input >> current_value){
-        data.map.push_back(current_value);
+    Tile current;
+    const int layer_size = data.size.x*data.size.y;
+    for (unsigned int i=0 ; i < data.layer_count ; i++){
+        TileLayer layer;
+        layer.tiles.reserve(layer_size); // Currently, all layers have the same size
+        for (unsigned int c=0 ; c < layer_size ; c++){
+            input >> current; layer.tiles.push_back(current);
+        }
+        data.map.push_back(layer);
     }
-
     input.close();
     return data;
 }
@@ -92,25 +96,28 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map_data) const
 {
     std::ofstream map_file("../assets/maps/"+map_filepath); // Create a function in file
-    int width = map_data.size.x;
-    int height = map_data.size.y;
+    const int width = map_data.size.x;
+    const int height = map_data.size.y;
+    const int layer_count = map_data.layer_count; 
     MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile
     // Need to check if a file with the given name already exist
 
     // Header
-    map_file << width << " " << height << " " << spawn.x << " " << spawn.y << std::endl;
+    map_file << layer_count << " " << width << " " << height << " " << spawn.x << " " << spawn.y << "\n";
     for (const TextureKey& k : map_data.tilesets){ // Tileset filepath must be write in order
-        map_file << k << std::endl; // TilesetKey need definition for operator<<
+        map_file << k << "\n"; // TilesetKey need definition for operator<<
     }
-    map_file << MAP_HEADER_END << std::endl;
+    map_file << MAP_HEADER_END << "\n";
     
-    // Map
-    for (size_t j = 0 ; j < height ; j++){
-        for (size_t i = 0 ; i < width ; i++){
-            map_file << map_data.map[j*width+i] << " ";
+    // Map layers
+    for (unsigned int layer=0 ; layer < layer_count ; layer++){
+        for (size_t j = 0 ; j < height ; j++){
+            for (size_t i = 0 ; i < width ; i++){
+                map_file << map_data.map[layer].tiles[j*width+i] << " ";
+            }
+            map_file << "\n";
         }
-        map_file << std::endl;
+        map_file << "\n";
     }
-
     map_file.close();
 }

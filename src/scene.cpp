@@ -23,8 +23,8 @@ TilemapScene::TilemapScene():
 }
 
 GameplayTilemapScene::GameplayTilemapScene():
-    m_player(m_file_reader, m_tilemap, m_texture_controller, m_game_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_game_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
+    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
+    m_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
 {
     m_window.HideCursor();
     m_tilemap.SetShouldCulling(true);
@@ -60,9 +60,9 @@ void GameplayTilemapScene::Gameloop()
 {
     m_time.Update();
     m_window.ClearRenderer();
-    m_game_event_controller.PollAllEvents();
+    m_event_controller.PollAllEvents();
     
-    m_gameloop = m_game_event_controller.HandleWindowEvents();
+    m_gameloop = m_event_controller.HandleWindowEvents();
     
     // Remove (should sort only at the end of any movement, or even better --> remove then insert the moving npc at the correct index)
     std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
@@ -76,14 +76,14 @@ void GameplayTilemapScene::Gameloop()
     for (Entity* e : m_updated_entities)
         e->Update(delta_time);
 
-    m_game_ui_controller.Draw();
+    m_ui_controller.Draw();
     
     m_window.DrawBoxing();
     m_window.UpdateRender();
 }
 
 EditorTilemapScene::EditorTilemapScene():
-    m_editor_event_controller(m_tileset)
+    m_event_controller(m_tileset), m_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
 {
     m_tilemap.SetShouldCulling(false);
     m_drawables = {&m_tilemap, &m_tileset};
@@ -92,13 +92,14 @@ EditorTilemapScene::EditorTilemapScene():
 void EditorTilemapScene::Gameloop()
 {
     m_window.ClearRenderer();
-    m_editor_event_controller.PollAllEvents();
+    m_event_controller.PollAllEvents();
     
-    m_gameloop = m_editor_event_controller.HandleWindowEvents();
-    m_editor_event_controller.HandleEditorEvent(m_tilemap, m_camera);
+    m_gameloop = m_event_controller.HandleWindowEvents();
+    m_event_controller.HandleEditorEvent(m_tilemap, m_camera);
 
     for (const Drawable* d : m_drawables) d->DrawTexture();
     
+    m_ui_controller.Draw();
     m_window.UpdateRender();    
 }
 

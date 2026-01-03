@@ -38,9 +38,9 @@ class Tilemap : public SceneDrawable
         void FreePosition(const MapPosition p);
         bool IsFreePosition(MapPosition& p);
         void LoadAdjacentMap(const MapBound bound);
-        void SetTileAt(const Tile new_tile, const MapPosition p);
+        void SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p);
         void DrawTexture() const override;
-        void ReplaceTileAt(const ScenePosition position, const Tile new_tile);
+        void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
         void SetShouldCulling(const bool should_culling);
 };

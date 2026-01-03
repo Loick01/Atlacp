@@ -160,3 +160,24 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
 
     m_dialog_box.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }
+
+EditorUiController::EditorUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath):
+    m_dialog_box(texture_controller, "../assets/ui/box.png"), m_text_area(texture_controller, font_filepath)
+{
+    m_root = &m_dialog_box;
+    m_dialog_box.AddChild(&m_text_area);
+
+    const AreaSize viewport_size = camera.GetViewport();
+    m_dialog_box.ComputeZoom(viewport_size, 0.3f, Axis::Width);
+    m_dialog_box.ComputePosition(viewport_size, Anchor::Left, Anchor::Top);
+    m_dialog_box.AddPadding(Axis::Width, viewport_size.x, 0.02f);
+    m_dialog_box.AddPadding(Axis::Height, viewport_size.x, 0.02f);
+    
+    const AreaSize dialog_box_size = m_dialog_box.GetSize();
+    const int max_text_width = dialog_box_size.x - dialog_box_size.x*0.1f;
+    m_text_area.SetText("Infos", max_text_width);
+    m_text_area.ComputePosition(dialog_box_size, Anchor::Left, Anchor::Center);
+    m_text_area.AddPadding(Axis::Width, dialog_box_size.x, 0.1f);
+
+    m_dialog_box.UpdatePosition(camera.GetScreenOffset());
+}

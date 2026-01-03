@@ -84,6 +84,7 @@ class EditorEventController : public EventController
 
         Tile m_selected_tile;
         int m_selected_tileset;
+        int m_selected_layer;
         bool m_is_camera_moving;
         bool m_is_replacing_tile;
 
