@@ -45,8 +45,8 @@ TextArea::TextArea(TextureController& texture_controller, const std::string& fon
     UiElement(texture_controller), m_text_color(color)
 {
     const unsigned int font_size = 24;
-    m_font_key = font_filepath; // font_filepath is not the full path, just the filename in the font directory
-    texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath, m_font_key, font_size);
+    m_font_key = font_filepath + std::to_string(font_size); // font_filepath is not the full path, just the filename in the font directory
+    texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath+".ttf", m_font_key, font_size);
 }
 
 void TextArea::SetText(const std::string& text, const int max_width)

@@ -9,7 +9,7 @@
 #include "tileset.hpp"
 #include "type.hpp"
 
-class Tilemap : public SceneDrawable
+class Tilemap : public SceneDrawable // Because Tilemap is a Drawable, its destructor try to DeleteTexture with texture key = "" (nothing happen)
 {
     private:
         const FileReader& m_file_reader;
@@ -19,7 +19,7 @@ class Tilemap : public SceneDrawable
         bool m_should_culling; // Const ?
 
         void LoadMap(const std::string& path);
-        int m_current_map;
+        size_t m_current_map;
 
     public:
         Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 

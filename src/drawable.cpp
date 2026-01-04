@@ -19,7 +19,6 @@ Drawable::~Drawable()
 
 void Drawable::LoadTexture(const std::string& texture_filepath)
 {
-    m_texture_controller.DeleteTexture(m_texture_key);
     m_texture_key = texture_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     m_texture_controller.LoadImageFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
 }

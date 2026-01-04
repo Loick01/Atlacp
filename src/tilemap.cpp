@@ -5,7 +5,7 @@ Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_r
     SceneDrawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset)
 {
     m_world_data = m_file_reader.ReadWorldFile(world_filepath);
-    m_current_map = 4; // Load the first map write in the world file (will be specified in the world file)
+    m_current_map = m_world_data.start_map; // The first loaded map is specified in the world file
     LoadMap(m_world_data.maps[m_current_map]); 
 }
 
@@ -120,6 +120,8 @@ bool Tilemap::IsFreePosition(MapPosition& p)
 
 void Tilemap::LoadMap(const std::string& path)
 {
+    // I don't think I should delete all tilesets when loading a new map
+    // Instead, I could only delete the unused one
     m_tileset.CleanTilesets(); // Delete tilesets used for the previous map
     m_map_data = m_file_reader.GetMapFromFile(path);
 

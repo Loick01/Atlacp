@@ -2,7 +2,7 @@
 
 Scene::Scene():
     m_window("Atlacp", {25,25,25}),
-    m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to update tile_size parameter if necessary
+    m_camera(m_window, GridSize{16, 9}, 32), // Don't forget to update tile_size parameter if necessary
     m_texture_controller(m_window.GetRenderer()),
     m_gameloop(true)
 {
@@ -17,14 +17,14 @@ bool Scene::GetGameloop() const
 
 TilemapScene::TilemapScene():
     m_tileset(m_texture_controller, m_file_reader),
-    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera)
+    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/tx_world", m_camera)
 {
     
 }
 
 GameplayTilemapScene::GameplayTilemapScene():
-    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
+    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character", m_camera, 4.0f),
+    m_ui_controller(m_texture_controller, m_camera, "NormalFont")
 {
     m_window.HideCursor();
     m_tilemap.SetShouldCulling(true);
@@ -33,8 +33,8 @@ GameplayTilemapScene::GameplayTilemapScene():
     // Layer 2
     m_rendered_entities = {&m_player};
     // Testing my NPC, will be remove (they will be load from the tilemap header)
-    for (unsigned int i = 0 ; i < 0 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+    for (unsigned int i = 0 ; i < 1 ; i++){
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
     }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
@@ -83,7 +83,7 @@ void GameplayTilemapScene::Gameloop()
 }
 
 EditorTilemapScene::EditorTilemapScene():
-    m_event_controller(m_tileset), m_ui_controller(m_texture_controller, m_camera, "NormalFont.ttf")
+    m_event_controller(m_tileset), m_ui_controller(m_texture_controller, m_camera, "NormalFont")
 {
     m_tilemap.SetShouldCulling(false);
     m_drawables = {&m_tilemap, &m_tileset};

@@ -7,6 +7,7 @@ WorldData FileReader::ReadWorldFile(const std::string& world_filepath) const
     WorldData data;
     
     int v;
+    input >> v; data.start_map = v;
     input >> v; data.size.x = v;
     input >> v; data.size.y = v;
     

@@ -134,6 +134,7 @@ struct WorldData
 {
     std::vector<std::string> maps;
     GridSize size;
+    size_t start_map;
 };
 
 struct TileLayer

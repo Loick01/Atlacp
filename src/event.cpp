@@ -138,7 +138,7 @@ EditorEventController::EditorEventController(Tileset& tileset):
 {
     m_selected_tile = 0;
     m_selected_tileset = 0;
-    m_selected_layer = 0;
+    m_selected_layer = 1; // Will be controled in the editor
     m_tileset.SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
     m_is_replacing_tile = false;
@@ -181,16 +181,10 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
                         camera.Reset();
                         break;
                     case SDL_SCANCODE_UP:
-                        if (m_tileset.GetShouldDraw()) // Will be removed
-                            std::cout << "selected layer = " << ++m_selected_layer << "\n";
-                        else
-                            tilemap.LoadAdjacentMap(MapBound::OutUp);
+                        tilemap.LoadAdjacentMap(MapBound::OutUp);
                         break;
                     case SDL_SCANCODE_DOWN:
-                        if (m_tileset.GetShouldDraw()) // Will be removed
-                            std::cout << "selected layer = " << --m_selected_layer << "\n";
-                        else
-                            tilemap.LoadAdjacentMap(MapBound::OutDown);
+                        tilemap.LoadAdjacentMap(MapBound::OutDown);
                         break;
                     case SDL_SCANCODE_RIGHT:
                         tilemap.LoadAdjacentMap(MapBound::OutRight);
