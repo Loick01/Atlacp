@@ -23,7 +23,7 @@ class Scene
         Camera m_camera;
         bool m_gameloop;
         // Will use a drawable/layer controller 
-        std::vector<Drawable*> m_drawables;
+        std::vector<const Drawable*> m_drawables;
 
 
     public:

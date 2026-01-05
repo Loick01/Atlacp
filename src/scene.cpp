@@ -16,7 +16,7 @@ bool Scene::GetGameloop() const
 }
 
 TilemapScene::TilemapScene():
-    m_tileset(m_texture_controller, m_file_reader),
+    m_tileset(m_texture_controller),
     m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/tx_world", m_camera)
 {
     
@@ -28,10 +28,13 @@ GameplayTilemapScene::GameplayTilemapScene():
 {
     m_window.HideCursor();
     m_tilemap.SetShouldCulling(true);
-    // Layer 1
-    m_drawables = {&m_tilemap};
-    // Layer 2
-    m_rendered_entities = {&m_player};
+
+    const std::vector<TileLayer>& layers = m_tilemap.GetLayers();
+    for (const TileLayer& l : layers)
+        m_drawables.push_back(&l);
+
+    m_rendered_entities = {&m_player}; // Will be merge in m_drawable
+
     // Testing my NPC, will be remove (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 1 ; i++){
         NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 4.0f);
@@ -46,7 +49,7 @@ GameplayTilemapScene::GameplayTilemapScene():
         tracked_entity = npc;
     }
     */
-    m_updated_entities = m_rendered_entities;
+    m_updated_entities = m_rendered_entities; // Once m_rendered_entities will be merged in m_drawable, be sure to build m_updated_entities correctly
 }
 
 GameplayTilemapScene::~GameplayTilemapScene()
@@ -86,7 +89,12 @@ EditorTilemapScene::EditorTilemapScene():
     m_event_controller(m_tileset), m_ui_controller(m_texture_controller, m_camera, "NormalFont")
 {
     m_tilemap.SetShouldCulling(false);
-    m_drawables = {&m_tilemap, &m_tileset};
+    
+    const std::vector<TileLayer>& layers = m_tilemap.GetLayers();
+    for (const TileLayer& l : layers)
+        m_drawables.push_back(&l);
+
+    m_drawables.push_back(&m_tileset);
 }
 
 void EditorTilemapScene::Gameloop()

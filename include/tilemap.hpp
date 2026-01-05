@@ -26,6 +26,7 @@ class Tilemap : public SceneDrawable // Because Tilemap is a Drawable, its destr
         Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
             const std::string& world_filepath, Camera& camera);
         
+        const std::vector<TileLayer>& GetLayers() const;
         MapPosition GetSpawnPosition() const;
         std::vector<bool> GetOccupancyGrid() const;
         int GetTextureWidth() const override;
@@ -40,7 +41,7 @@ class Tilemap : public SceneDrawable // Because Tilemap is a Drawable, its destr
         bool IsFreePosition(MapPosition& p);
         void LoadAdjacentMap(const MapBound bound);
         void SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p);
-        void DrawTexture() const override;
+        void DrawTexture() const override; // Will be removed ?
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
         void SetShouldCulling(const bool should_culling);

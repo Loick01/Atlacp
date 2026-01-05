@@ -1,7 +1,11 @@
 #include "tileset.hpp"
 
-Tileset::Tileset(TextureController& texture_controller, const FileReader& file_reader):
-    ScreenDrawable(texture_controller, ScreenPosition{0,0}), m_file_reader(file_reader)
+// I had : tileset.hpp > file.hpp > layer.hpp > tileset.hpp > ... 
+// Because I need a FileReader in Tileset::LoadTileset, I use a forward declaration in tileset.hpp, and I include file.hpp here
+#include "file.hpp"
+
+Tileset::Tileset(TextureController& texture_controller):
+    ScreenDrawable(texture_controller, ScreenPosition{0,0})
 {
     m_index_tileset = -1; // No tileset is loaded
 }
@@ -12,9 +16,9 @@ Tileset::~Tileset()
 }
 
 // Should be an override of Drawable::LoadTexture ?
-void Tileset::LoadTileset(const std::string& path)
+void Tileset::LoadTileset(const FileReader& file_reader, const std::string& path)
 {
-    TilesetData data = m_file_reader.GetTilesetFromFile(path);
+    TilesetData data = file_reader.GetTilesetFromFile(path);
 
     if (m_tilesets.empty()) m_tile_size = data.tile_size; // Use data.tile_size for m_tile_size only when loading the first tileset
     else if (data.tile_size != m_tile_size) std::cout << "Try to load a tileset with a different tile_size, this should not happen\n"; // Will throw an error

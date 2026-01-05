@@ -9,6 +9,11 @@ Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_r
     LoadMap(m_world_data.maps[m_current_map]); 
 }
 
+const std::vector<TileLayer>& Tilemap::GetLayers() const
+{
+    return m_map_data.map;
+}
+
 MapPosition Tilemap::GetSpawnPosition() const
 {
     return m_map_data.spawn_position; // Return the spawn position of the loaded map (could be -1 if undefined)
@@ -125,11 +130,12 @@ void Tilemap::LoadMap(const std::string& path)
     m_tileset.CleanTilesets(); // Delete tilesets used for the previous map
 
     // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
-    m_map_data = m_file_reader.GetMapFromFile(path, m_camera, m_texture_controller);
+    // TileLayer also need a Tileset to be rendered
+    m_map_data = m_file_reader.GetMapFromFile(path, m_camera, m_texture_controller, m_tileset);
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
-        m_tileset.LoadTileset(p);
+        m_tileset.LoadTileset(m_file_reader, p);
 
     const GridSize map_size = m_map_data.size;
     for (size_t j=0 ; j<map_size.y ; j++){
@@ -147,46 +153,9 @@ void Tilemap::LoadMap(const std::string& path)
     m_camera.SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset.GetTileSize());
 }
 
-void Tilemap::DrawTexture() const
+void Tilemap::DrawTexture() const // Will be removed ?
 {
-    int tile_size = m_tileset.GetTileSize();
-    const GridSize map_size = m_map_data.size;
-    ScenePosition camera_position = m_camera.GetPosition();
-    const float zoom = m_camera.GetZoom();
 
-    // Culling
-    // While animating a movement, end_index could not be enough to fill the window with the map
-    // So I add 1 to end_index, and check if it becomes greater than map size
-    Pair<int> start_index = Pair<int>{0, 0}; // Should use something else than Pair<int>
-    Pair<int> end_index = map_size; // Same
-
-    if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
-        // Should be in a function in Camera ?
-        if (m_camera.GetIsOffScreen().x){
-            start_index.x = camera_position.x/(tile_size*zoom);
-            end_index.x = std::min(end_index.x, start_index.x + m_camera.GetRangeTile().x + 1);
-        }
-        if (m_camera.GetIsOffScreen().y){
-            start_index.y = camera_position.y/(tile_size*zoom);
-            end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
-        }
-    }
-    camera_position = camera_position-m_camera.GetScreenOffset();
-
-    for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){
-        std::vector<Tile> tiles = m_map_data.map[layer].GetTiles();
-        for (int j = start_index.y ; j < end_index.y ; j++){
-            for (int i = start_index.x ; i < end_index.x ; i++){
-                int tile = m_tileset.GetNormalizedTile(tiles[j*map_size.x+i]); // Should use Tile type ?
-                int tileset_width = m_tileset.GetTilesetWidth();
-                const SDL_Rect src{(tile%tileset_width)*tile_size, (tile/tileset_width)*tile_size, tile_size, tile_size};
-                const int tile_screen_size = static_cast<int>(tile_size*zoom+1);
-                const ScreenPosition dst_position = (Vec2{i,j}*tile_size)*zoom-camera_position;
-                const SDL_Rect dst{dst_position.x, dst_position.y, tile_screen_size, tile_screen_size};
-                m_texture_controller.RenderTexture(m_tileset.GetTextureKey(), src, dst);
-            }
-        }
-    }
 }
 
 void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile new_tile)
