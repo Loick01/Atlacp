@@ -26,7 +26,7 @@ unsigned int Tilemap::GetTileIndex(const MapPosition p) const
 
 void Tilemap::SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p)
 {
-    m_map_data.map[layer].tiles[GetTileIndex(p)] = new_tile;
+    m_map_data.map[layer].SetTile(GetTileIndex(p), new_tile);
 }
 
 // Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
@@ -123,8 +123,10 @@ void Tilemap::LoadMap(const std::string& path)
     // I don't think I should delete all tilesets when loading a new map
     // Instead, I could only delete the unused one
     m_tileset.CleanTilesets(); // Delete tilesets used for the previous map
-    m_map_data = m_file_reader.GetMapFromFile(path);
 
+    // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
+    m_map_data = m_file_reader.GetMapFromFile(path, m_camera, m_texture_controller);
+    
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
         m_tileset.LoadTileset(p);
@@ -133,8 +135,8 @@ void Tilemap::LoadMap(const std::string& path)
     for (size_t j=0 ; j<map_size.y ; j++){
         for (size_t i=0 ; i<map_size.x ; i++){
             bool is_free = true;
-            for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){
-                const Tile t = m_map_data.map[layer].tiles[j*map_size.x+i];
+            for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){ // I think it would better if this loop was before for(i)/for(j)
+                const Tile t = m_map_data.map[layer].GetTile(j*map_size.x+i);
                 is_free = m_tileset.IsEmptyTile(t);
                 if (!is_free) break;
             }
@@ -172,7 +174,7 @@ void Tilemap::DrawTexture() const
     camera_position = camera_position-m_camera.GetScreenOffset();
 
     for (size_t layer=0 ; layer<m_map_data.layer_count ; layer++){
-        std::vector<Tile> tiles = m_map_data.map[layer].tiles;
+        std::vector<Tile> tiles = m_map_data.map[layer].GetTiles();
         for (int j = start_index.y ; j < end_index.y ; j++){
             for (int i = start_index.x ; i < end_index.x ; i++){
                 int tile = m_tileset.GetNormalizedTile(tiles[j*map_size.x+i]); // Should use Tile type ?

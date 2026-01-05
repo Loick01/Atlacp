@@ -33,7 +33,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         data.tilesets.push_back(s);
 }
 
-MapData FileReader::GetMapFromFile(const std::string& path) const
+MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, TextureController& texture_controller) const
 {
     std::ifstream input;
     const std::string map_filepath = "../assets/maps/" + path; // Create a function in File
@@ -41,15 +41,14 @@ MapData FileReader::GetMapFromFile(const std::string& path) const
     MapData data;
 
     ReadHeaderMapFile(input, data);
-    Tile current;
-    const int layer_size = data.size.x*data.size.y;
+    Tile t;
+    const size_t layer_size = data.size.x*data.size.y;
     for (unsigned int i=0 ; i < data.layer_count ; i++){
-        TileLayer layer;
-        layer.tiles.reserve(layer_size); // Currently, all layers have the same size
-        for (unsigned int c=0 ; c < layer_size ; c++){
-            input >> current; layer.tiles.push_back(current);
+        TileLayer current_layer(layer_size, camera, texture_controller); // Currently, all layers have the same size
+        for (size_t c=0 ; c<layer_size ; c++){
+            input >> t; current_layer.AddTile(t);
         }
-        data.map.push_back(layer);
+        data.map.push_back(current_layer);
     }
     input.close();
     return data;
@@ -112,9 +111,10 @@ void FileReader::SaveMapFile(const std::string& map_filepath, const MapData& map
     
     // Map layers
     for (unsigned int layer=0 ; layer < layer_count ; layer++){
+        const std::vector<Tile> layer_tiles = map_data.map[layer].GetTiles();
         for (size_t j = 0 ; j < height ; j++){
             for (size_t i = 0 ; i < width ; i++){
-                map_file << map_data.map[layer].tiles[j*width+i] << " ";
+                map_file << layer_tiles[j*width+i] << " ";
             }
             map_file << "\n";
         }

@@ -137,21 +137,6 @@ struct WorldData
     size_t start_map;
 };
 
-struct TileLayer
-{
-    std::vector<Tile> tiles;
-};
-
-struct MapData
-{
-    size_t layer_count;
-    std::vector<TileLayer> map;
-    std::vector<bool> occupancy_grid; // Could be a TileLayer ?
-    std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
-    MapPosition spawn_position; // Position where the player will start when loading the associated map (-1 if no specific position)
-    GridSize size;
-};
-
 struct TilesetData
 {
     TextureKey tileset_key;

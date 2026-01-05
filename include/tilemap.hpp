@@ -6,6 +6,7 @@
 
 #include "drawable.hpp"
 #include "file.hpp"
+#include "layer.hpp"
 #include "tileset.hpp"
 #include "type.hpp"
 
