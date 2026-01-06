@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <functional> // Should not be here
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,6 +14,11 @@
 class Tilemap
 {
     private:
+        // Should not be here ? (For now it's only used by Tilemap, to notify Scene when TileLayer in Scene::m_drawables must be updated)
+        using Callback = std::function<void()>;
+        std::vector<Callback> m_listeners;
+        void Notify();
+
         const FileReader& m_file_reader;
         Tileset& m_tileset;
         TextureController& m_texture_controller;
@@ -45,4 +51,6 @@ class Tilemap
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
         void SetShouldCulling(const bool should_culling);
+
+        void AddListener(Callback c); // Should not be here ? (Same for Tilemap::Notify)
 };

@@ -138,7 +138,7 @@ EditorEventController::EditorEventController(Tileset& tileset):
 {
     m_selected_tile = 0;
     m_selected_tileset = 0;
-    m_selected_layer = 1; // Will be controled in the editor
+    m_selected_layer = 0; // Will be controled in the editor
     m_tileset.SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
     m_is_replacing_tile = false;

@@ -38,6 +38,8 @@ class TilemapScene : public Scene
         Tileset m_tileset;
         Tilemap m_tilemap;
 
+        void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
+
     public:
         TilemapScene();
 };

@@ -9,6 +9,16 @@ Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_r
     LoadMap(m_world_data.maps[m_current_map]); 
 }
 
+void Tilemap::Notify(){
+    for (Callback& c : m_listeners)
+        c();
+}
+
+void Tilemap::AddListener(Callback c)
+{
+    m_listeners.push_back(c);
+}
+
 const std::vector<TileLayer>& Tilemap::GetLayers() const
 {
     return m_map_data.map;
@@ -121,6 +131,7 @@ void Tilemap::LoadMap(const std::string& path)
     // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered
     m_map_data = m_file_reader.GetMapFromFile(path, m_camera, m_texture_controller, m_tileset);
+    Notify(); // Update TileLayer used in TilemapScene
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_map_data.tilesets)
