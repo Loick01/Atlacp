@@ -28,7 +28,7 @@ class Camera
         Pair<bool> GetIsOffScreen() const;
         float GetZoom() const;
         void AddZoom(const float z);
-        void SetTilemapInfo(const AreaSize tilemap_size, const int tile_size);
+        void SetTilemapInfo(const AreaSize tilemap_size);
         void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
         void MoveCameraPosition(const ScenePosition sp); // Add sp to m_position
         void Reset();

@@ -56,7 +56,7 @@ void Camera::AddZoom(const float z)
     m_zoom += z;
 }   
 
-void Camera::SetTilemapInfo(const AreaSize tilemap_size, const int tile_size)
+void Camera::SetTilemapInfo(const AreaSize tilemap_size)
 {
     m_tilemap_size = tilemap_size*m_zoom;
     m_is_off_screen = m_tilemap_size > m_viewport;

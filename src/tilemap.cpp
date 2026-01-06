@@ -2,7 +2,7 @@
 
 Tilemap::Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
     const std::string& world_filepath, Camera& camera) :
-    SceneDrawable(texture_controller, camera, ScenePosition{0,0}), m_file_reader(file_reader), m_tileset(tileset)
+    m_camera(camera), m_texture_controller(texture_controller), m_file_reader(file_reader), m_tileset(tileset)
 {
     m_world_data = m_file_reader.ReadWorldFile(world_filepath);
     m_current_map = m_world_data.start_map; // The first loaded map is specified in the world file
@@ -32,17 +32,6 @@ unsigned int Tilemap::GetTileIndex(const MapPosition p) const
 void Tilemap::SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p)
 {
     m_map_data.map[layer].SetTile(GetTileIndex(p), new_tile);
-}
-
-// Because of EditorEventController::GetMouseScenePosition, Tilemap::GetTextureWidth should not use camera zoom
-int Tilemap::GetTextureWidth() const
-{
-    return m_map_data.size.x*m_tileset.GetTileSize();
-}
-
-int Tilemap::GetTextureHeight() const
-{
-    return m_map_data.size.y*m_tileset.GetTileSize();
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
@@ -150,12 +139,13 @@ void Tilemap::LoadMap(const std::string& path)
         }
     }
     
-    m_camera.SetTilemapInfo(ScenePosition{GetTextureWidth(),GetTextureHeight()}, m_tileset.GetTileSize());
+    m_camera.SetTilemapInfo(m_map_data.size*m_tileset.GetTileSize());
 }
 
-void Tilemap::DrawTexture() const // Will be removed ?
+bool Tilemap::IsPositionInTexture(const Vec2 sp) const
 {
-
+    const AreaSize as = m_map_data.size*m_tileset.GetTileSize();
+    return sp.x >= 0 && sp.y >= 0 && sp.x <= as.x && sp.y <= as.y;
 }
 
 void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile new_tile)

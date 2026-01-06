@@ -24,8 +24,8 @@ class Drawable
     public:
         ~Drawable();
         virtual TextureKey GetTextureKey() const;
-        virtual int GetTextureWidth() const;
-        virtual int GetTextureHeight() const;
+        virtual int GetTextureWidth() const; // Remove virtual ?
+        virtual int GetTextureHeight() const; // Remove virtual ?
         bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
         virtual void DrawTexture() const = 0;
 };
