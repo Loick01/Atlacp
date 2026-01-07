@@ -49,10 +49,15 @@ TextArea::TextArea(TextureController& texture_controller, const std::string& fon
     texture_controller.LoadFontFromFile("../assets/ui/fonts/"+font_filepath+".ttf", m_font_key, font_size);
 }
 
-void TextArea::SetText(const std::string& text, const int max_width)
+void TextArea::SetText(const std::string& text)
 {
     m_texture_key = text; // Will use something else than just text as texture key
-    m_texture_controller.LoadTextureFromText(m_font_key, m_texture_key, text, m_texture_width, m_texture_height, m_text_color, max_width);
+    m_texture_controller.LoadTextureFromText(m_font_key, m_texture_key, text, m_texture_width, m_texture_height, m_text_color, m_max_width);
+}
+
+void TextArea::SetMaxWidth(const int max_width)
+{
+    m_max_width = max_width;
 }
 
 void UiController::Draw() const
@@ -153,16 +158,16 @@ GameplayUiController::GameplayUiController(TextureController& texture_controller
 
     // Do not use ComputeZoom for TextArea. Text size is controlled by the font
     // Be sure to call TextArea::ComputePosition after generating the texture with SetText
-    const int max_text_width = dialog_box_size.x - dialog_box_size.x*0.15f - 2*dialog_box_size.y*0.15f; // Find another way to get this value
-    m_text_area.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...", max_text_width);
+    m_text_area.SetMaxWidth(dialog_box_size.x - dialog_box_size.x*0.15f - 2*dialog_box_size.y*0.15f); // Find another way to get this value
+    m_text_area.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
     m_text_area.ComputePosition(faceset_size, Anchor::Left, Anchor::Center);
     m_text_area.AddPadding(Axis::Width, dialog_box_size.x, 0.15f);
 
     m_dialog_box.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }
 
-EditorUiController::EditorUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath):
-    m_dialog_box(texture_controller, "../assets/ui/box.png"), m_text_area(texture_controller, font_filepath)
+EditorUiController::EditorUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath, const int selected_layer):
+    m_dialog_box(texture_controller, "../assets/ui/box.png"), m_text_area(texture_controller, font_filepath), m_last_layer(selected_layer)
 {
     m_root = &m_dialog_box;
     m_dialog_box.AddChild(&m_text_area);
@@ -174,10 +179,18 @@ EditorUiController::EditorUiController(TextureController& texture_controller, co
     m_dialog_box.AddPadding(Axis::Height, viewport_size.x, 0.02f);
     
     const AreaSize dialog_box_size = m_dialog_box.GetSize();
-    const int max_text_width = dialog_box_size.x - dialog_box_size.x*0.1f;
-    m_text_area.SetText("Infos", max_text_width);
+    m_text_area.SetMaxWidth(dialog_box_size.x - dialog_box_size.x*0.1f);
+    m_text_area.SetText("Selected layer : " + std::to_string(m_last_layer));
     m_text_area.ComputePosition(dialog_box_size, Anchor::Left, Anchor::Center);
     m_text_area.AddPadding(Axis::Width, dialog_box_size.x, 0.1f);
 
     m_dialog_box.UpdatePosition(camera.GetScreenOffset());
+}
+
+void EditorUiController::UpdateState(const int selected_layer)
+{
+    if (selected_layer != m_last_layer){
+        m_last_layer = selected_layer;
+        m_text_area.SetText("Selected layer : " + std::to_string(m_last_layer));
+    }
 }

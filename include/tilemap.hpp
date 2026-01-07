@@ -42,6 +42,7 @@ class Tilemap
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound);
         MapBound IsOutOfMap(const MapPosition p) const;
         unsigned int GetTileIndex(const MapPosition p) const;
+        size_t GetLayerCount() const;
         bool IsPositionInTexture(const Vec2 sp) const; // This function was in Drawable, but Tilemap is not anymore a SceneDrawable
         void TakePosition(const MapPosition p);
         void FreePosition(const MapPosition p);

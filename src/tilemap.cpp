@@ -122,6 +122,11 @@ bool Tilemap::IsFreePosition(MapPosition& p)
     return m_map_data.occupancy_grid[GetTileIndex(p)];
 }
 
+size_t Tilemap::GetLayerCount() const
+{
+    return m_map_data.layer_count;
+}
+
 void Tilemap::LoadMap(const std::string& path)
 {
     // I don't think I should delete all tilesets when loading a new map

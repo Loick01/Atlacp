@@ -133,12 +133,12 @@ MapDirection GameplayEventController::HandlePlayerEvent() const
     return MapDirection::None;
 }
 
-EditorEventController::EditorEventController(Tileset& tileset):
-    EventController(), m_tileset(tileset)
+EditorEventController::EditorEventController(Tileset& tileset, const size_t layer_count):
+    EventController(), m_tileset(tileset), m_layer_count(layer_count)
 {
     m_selected_tile = 0;
     m_selected_tileset = 0;
-    m_selected_layer = 0; // Will be controled in the editor
+    m_selected_layer = 0;
     m_tileset.SetDisplayedTileset(m_selected_tileset);
     m_is_camera_moving = false;
     m_is_replacing_tile = false;
@@ -154,6 +154,11 @@ ScreenPosition EditorEventController::GetMouseScreenPosition() const
 ScenePosition EditorEventController::GetMouseScenePosition(const Camera& camera) const
 {
     return (camera.GetPosition()-camera.GetScreenOffset()+GetMouseScreenPosition())/camera.GetZoom();
+}
+
+int EditorEventController::GetSelectedLayer() const
+{
+    return m_selected_layer;
 }
 
 void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
@@ -177,6 +182,12 @@ void EditorEventController::HandleEditorEvent(Tilemap& tilemap, Camera& camera)
                         std::cout << "Map saved in assets/maps/" << savefile << "\n";
                         break;
                     }
+                    case SDL_SCANCODE_W:
+                        m_selected_layer = (m_selected_layer+1)%m_layer_count;
+                        break;
+                    case SDL_SCANCODE_S:
+                        m_selected_layer = (m_selected_layer-1+m_layer_count)%m_layer_count;
+                        break;
                     case SDL_SCANCODE_R:
                         camera.Reset();
                         break;

@@ -81,6 +81,7 @@ class EditorEventController : public EventController
         Tileset& m_tileset; // Should be a UiElement ?
         // Should have a Camera& instead of a extra paremeter in HandleEditorEvent ?
         ScenePosition m_last_camera_origin;
+        const size_t m_layer_count; // Remove ?
 
         Tile m_selected_tile;
         int m_selected_tileset;
@@ -89,7 +90,8 @@ class EditorEventController : public EventController
         bool m_is_replacing_tile;
 
     public:
-        EditorEventController(Tileset& tileset);
+        EditorEventController(Tileset& tileset, const size_t layer_count);
 
+        int GetSelectedLayer() const;
         void HandleEditorEvent(Tilemap& tilemap, Camera& camera); 
 };
