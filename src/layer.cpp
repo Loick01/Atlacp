@@ -40,8 +40,8 @@ void TileLayer::DrawTexture() const
             end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
         }
     }
-    camera_position = camera_position-m_camera.GetScreenOffset();
     */
+    camera_position = camera_position-m_camera.GetScreenOffset(); // Do not forget, even if the culling is disabled
 
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
