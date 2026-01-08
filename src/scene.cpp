@@ -33,10 +33,10 @@ void TilemapScene::UpdateTilemapLayer()
 
 GameplayTilemapScene::GameplayTilemapScene():
     m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_ui_controller(m_texture_controller, m_camera, "NormalFont")
+    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
 {
     m_window.HideCursor();
-    m_tilemap.SetShouldCulling(true);
+    m_tilemap.SetLayerCulling(true);
 
     m_rendered_entities = {&m_player}; // Will be merged in m_drawable
 
@@ -93,7 +93,7 @@ void GameplayTilemapScene::Gameloop()
 EditorTilemapScene::EditorTilemapScene():
     m_event_controller(m_tileset, m_tilemap.GetLayerCount()), m_ui_controller(m_texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
 {
-    m_tilemap.SetShouldCulling(false);
+    m_tilemap.SetLayerCulling(false);
     m_drawables.push_back(&m_tileset);
 }
 

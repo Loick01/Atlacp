@@ -28,7 +28,6 @@ void TileLayer::DrawTexture() const
     // So I add 1 to end_index, and check if it becomes greater than map size
     Pair<int> start_index = GridSize{0, 0};
     Pair<int> end_index = m_size; // Same
-    /*
     if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
         // Should be in a function in Camera ?
         if (m_camera.GetIsOffScreen().x){
@@ -40,7 +39,7 @@ void TileLayer::DrawTexture() const
             end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
         }
     }
-    */
+    
     camera_position = camera_position-m_camera.GetScreenOffset(); // Do not forget, even if the culling is disabled
 
     for (int j = start_index.y ; j < end_index.y ; j++){
@@ -64,4 +63,9 @@ void TileLayer::AddTile(const Tile t)
 void TileLayer::SetTile(const size_t index, const Tile t)
 {
     m_tiles[index] = t;
+}
+
+void TileLayer::SetShouldCulling(const bool should_culling)
+{
+    m_should_culling = should_culling;
 }

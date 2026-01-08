@@ -25,7 +25,6 @@ class Tilemap
         Camera& m_camera;
         WorldData m_world_data;
         MapData m_map_data;
-        bool m_should_culling; // Const ?
 
         void LoadMap(const std::string& path);
         size_t m_current_map;
@@ -51,7 +50,7 @@ class Tilemap
         void SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p);
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
-        void SetShouldCulling(const bool should_culling);
+        void SetLayerCulling(const bool culling);
 
         void AddListener(Callback c); // Should not be here ? (Same for Tilemap::Notify)
 };

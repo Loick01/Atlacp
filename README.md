@@ -46,6 +46,15 @@ make
       <strong>NPC Behaviours</strong>
     </td>
   </tr>
+  <tr>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=6ae6qKwDAPM">
+        <img src="https://img.youtube.com/vi/6ae6qKwDAPM/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Camera Viewport</strong>
+    </td>
+  </tr>
 </table>
 
 ### Assets
@@ -54,3 +63,4 @@ make
 - https://opengameart.org/content/zoria-tileset
 - https://pixel-boy.itch.io/ninja-adventure-asset-pack
 - https://cainos.itch.io/pixel-art-top-down-basic
+- https://brackeysgames.itch.io/brackeys-platformer-bundle

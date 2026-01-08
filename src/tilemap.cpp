@@ -179,7 +179,8 @@ void Tilemap::SaveMap(const std::string &map_filepath) const
     m_file_reader.SaveMapFile(map_filepath, m_map_data);
 }
 
-void Tilemap::SetShouldCulling(const bool should_culling)
+void Tilemap::SetLayerCulling(const bool culling)
 {
-    m_should_culling = should_culling;
+    for(TileLayer& tl : m_map_data.map)
+        tl.SetShouldCulling(culling);
 }
