@@ -14,7 +14,7 @@
 class Tilemap
 {
     private:
-        // Should not be here ? (For now it's only used by Tilemap, to notify Scene when TileLayer in Scene::m_drawables must be updated)
+        // Should not be here ? (For now it's only used by Tilemap, to notify Scene when TileLayer in Scene::m_layers must be updated)
         using Callback = std::function<void()>;
         std::vector<Callback> m_listeners;
         void Notify();

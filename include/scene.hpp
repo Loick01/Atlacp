@@ -22,9 +22,8 @@ class Scene
         TextureController m_texture_controller;
         Camera m_camera;
         bool m_gameloop;
-        // Will use a drawable/layer controller 
-        std::vector<const Drawable*> m_drawables;
 
+        std::vector<const Drawable*> m_drawables; // Will be removed ?
 
     public:
         Scene();
@@ -35,6 +34,7 @@ class Scene
 class TilemapScene : public Scene
 {
     protected:
+        std::vector<const TileLayer*> m_layers;
         Tileset m_tileset;
         Tilemap m_tilemap;
 
@@ -51,10 +51,13 @@ class GameplayTilemapScene : public TilemapScene
         GameplayEventController m_event_controller; // Will be in Scene as a EventController 
         GameplayUiController m_ui_controller; // Will be in Scene as a UiController
         Player m_player;
-        std::vector<Entity*> m_rendered_entities; // Need dynamic dispatch
-        // For now, m_rendered_entities is sorted by y position. Because a specific order could be necessary for Entity updating 
-        // (for example with FollowEntityBehaviour), I use a second vector of Entity*
+        std::vector<Entity*> m_rendered_entities; // Sorted by y position
+        // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
         std::vector<Entity*> m_updated_entities;
+
+        // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
+        // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
+        const size_t m_layers_split_index; // Should not be const ?
         
     public:
         GameplayTilemapScene();

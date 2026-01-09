@@ -2,7 +2,7 @@
 
 Scene::Scene():
     m_window("Atlacp", {25,25,25}),
-    m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to update tile_size parameter if necessary
+    m_camera(m_window, GridSize{16, 9}, 32), // Don't forget to adapt tile_size when using a new world 
     m_texture_controller(m_window.GetRenderer()),
     m_gameloop(true)
 {
@@ -17,7 +17,7 @@ bool Scene::GetGameloop() const
 
 TilemapScene::TilemapScene():
     m_tileset(m_texture_controller),
-    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera)
+    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/tx_world", m_camera)
 {
     UpdateTilemapLayer();
     m_tilemap.AddListener([this](){UpdateTilemapLayer();});
@@ -25,24 +25,24 @@ TilemapScene::TilemapScene():
 
 void TilemapScene::UpdateTilemapLayer()
 {
-    m_drawables.clear(); // Forget the previous TileLayer
+    m_layers.clear(); // Forget the previous TileLayer
     const std::vector<TileLayer>& layers = m_tilemap.GetLayers();
     for (const TileLayer& l : layers)
-        m_drawables.push_back(&l);
+        m_layers.push_back(&l);
 }
 
 GameplayTilemapScene::GameplayTilemapScene():
-    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
+    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character", m_camera, 4.0f),
+    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
     m_window.HideCursor();
     m_tilemap.SetLayerCulling(true);
 
-    m_rendered_entities = {&m_player}; // Will be merged in m_drawable
+    m_rendered_entities = {&m_player};
 
     // Testing my NPC, will be remove (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 0 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
     }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
@@ -54,7 +54,7 @@ GameplayTilemapScene::GameplayTilemapScene():
         tracked_entity = npc;
     }
     */
-    m_updated_entities = m_rendered_entities; // Once m_rendered_entities will be merged in m_drawable, be sure to build m_updated_entities correctly
+    m_updated_entities = m_rendered_entities;
 }
 
 GameplayTilemapScene::~GameplayTilemapScene()
@@ -78,9 +78,14 @@ void GameplayTilemapScene::Gameloop()
             return a->GetMapPosition().y < b->GetMapPosition().y; 
         });
     const float delta_time = m_time.GetDeltaTime();
-    for (const Drawable* d : m_drawables) d->DrawTexture();
+    
+    for (size_t i=0 ; i<m_layers_split_index ; i++)
+        m_layers[i]->DrawTexture();
     for (Entity* e : m_rendered_entities)
         e->DrawTexture();
+    for (size_t i=m_layers_split_index ; i<m_layers.size() ; i++)
+        m_layers[i]->DrawTexture();
+
     for (Entity* e : m_updated_entities)
         e->Update(delta_time);
 
@@ -105,7 +110,8 @@ void EditorTilemapScene::Gameloop()
     m_gameloop = m_event_controller.HandleWindowEvents();
     m_event_controller.HandleEditorEvent(m_tilemap, m_camera);
 
-    for (const Drawable* d : m_drawables) d->DrawTexture();
+    for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
+    for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
     m_ui_controller.UpdateState(m_event_controller.GetSelectedLayer());
     m_ui_controller.Draw();
