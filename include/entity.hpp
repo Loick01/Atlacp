@@ -68,5 +68,5 @@ class Entity : public SceneDrawable, public MapElement
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;
         float GetSpeed() const;
-        void Reset();
+        void Reset(const MapDirection direction=MapDirection::None);
 };

@@ -15,6 +15,8 @@ void RandomBehaviour::FreeCase(Entity& entity, const float delta_time)
     if (m_delay > 0.f) m_delay -= delta_time;
     else{
         entity.OrderStartMovement(m_random.GetRandomDirection(), true);
+        // When I made the sprite orientation update even if the movement isn't valid, if the NPC is blocked in the 4 directions,
+        // it will be updated every frame. I would need something else to handle that case
         if (entity.GetState() != EntityState::Free) // Generate a new delay only if the movement is valid (no collision)
             m_delay = m_random.GetRandomFloat(0.5f, 5.f);
     }

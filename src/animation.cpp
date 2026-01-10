@@ -29,8 +29,11 @@ void Animation::Initialize(const MapDirection direction, const bool is_first_mov
     }
 }
 
-void Animation::Reset()
+void Animation::Reset(const MapDirection direction)
 {
+    // Even if the entity movement isn't valid, the sprite must be updated to face the correct direction
+    if (direction != MapDirection::None) // If direction is None, static_cast<int>(direction) would be 4
+        m_index_offset = static_cast<int>(direction)*m_animation_data.step; 
     m_current_sprite_index = m_index_offset; // Set to idle sprite (index offset+0)
 }
 

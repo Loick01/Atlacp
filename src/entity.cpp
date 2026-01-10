@@ -104,9 +104,9 @@ EntityMovement Entity::GetCurrentMovement() const
     return m_current_movement;
 }
 
-void Entity::Reset()
+void Entity::Reset(const MapDirection direction)
 {
-    m_animation.Reset();
+    m_animation.Reset(direction);
     m_state = EntityState::Free;
 }
 
@@ -133,7 +133,7 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool is_first
         m_tilemap.TakePosition(next_position);
         SetMapPosition(next_position);
     }else{
-        Reset(); // Reset animation to idle + state to Free
+        Reset(movement.GetDirection()); // Reset animation to idle + state to Free
     }
 }
 
