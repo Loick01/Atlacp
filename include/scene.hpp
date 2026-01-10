@@ -76,12 +76,13 @@ class EditorTilemapScene : public TilemapScene
         void Gameloop() override;
 };
 
-class FightScene : public Scene
+class BattleScene : public Scene
 {
     private:
         EventController m_event_controller;
+        BattleUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
-        FightScene();
+        BattleScene();
         void Gameloop() override;
 };

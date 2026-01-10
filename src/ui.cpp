@@ -194,3 +194,54 @@ void EditorUiController::UpdateState(const int selected_layer)
         m_text_area.SetText("Selected layer : " + std::to_string(m_last_layer));
     }
 }
+
+BattleUiController::BattleUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath):
+    m_background(texture_controller, "../assets/battle/backgrounds/cavern.png"),
+    m_player(texture_controller, "../assets/battle/werewolf.png"), m_enemy(texture_controller, "../assets/battle/bone_appetit.png"),
+    m_player_box(texture_controller, "../assets/ui/box.png"), m_enemy_box(texture_controller, "../assets/ui/box.png"),
+    m_player_info(texture_controller, font_filepath), m_enemy_info(texture_controller, font_filepath)
+{
+    const float size = 0.2f; // Will be removed
+    m_root = &m_background;
+    m_background.AddChild(&m_player);
+    m_background.AddChild(&m_enemy);
+    m_player.AddChild(&m_player_box);
+    m_enemy.AddChild(&m_enemy_box);
+    m_player_box.AddChild(&m_player_info);
+    m_enemy_box.AddChild(&m_enemy_info);
+
+    const AreaSize viewport_size = camera.GetViewport();
+    m_background.ComputeZoom(viewport_size, 1.0f, Axis::Width);
+    m_background.ComputePosition(viewport_size, Anchor::Left, Anchor::Top);
+
+    const AreaSize background_size = m_background.GetSize();
+    m_player.ComputeZoom(background_size, size, Axis::Width);
+    m_player.ComputePosition(background_size, Anchor::Right, Anchor::Center);
+    m_player.AddPadding(Axis::Width, background_size.x, -size);
+    
+    m_enemy.ComputeZoom(background_size, size, Axis::Width);
+    m_enemy.ComputePosition(background_size, Anchor::Left, Anchor::Center);
+    m_enemy.AddPadding(Axis::Width, background_size.x, size);
+
+    const AreaSize player_size = m_player.GetSize();
+    m_player_box.ComputeZoom(player_size, 0.8f, Axis::Width);
+    m_player_box.ComputePosition(player_size, Anchor::Right, Anchor::Bottom);
+    m_player_box.AddPadding(Axis::Width, player_size.x, size*2);
+
+    m_enemy_box.ComputeZoom(player_size, 0.8f, Axis::Width);
+    m_enemy_box.ComputePosition(player_size, Anchor::Right, Anchor::Bottom);
+    m_enemy_box.AddPadding(Axis::Width, player_size.x, size*2);
+    
+    const AreaSize box_size = m_player_box.GetSize();
+    m_player_info.SetMaxWidth(box_size.x);
+    m_player_info.SetText("Howler");
+    m_player_info.ComputePosition(box_size, Anchor::Left, Anchor::Center);
+    m_player_info.AddPadding(Axis::Width, box_size.x, 0.1f);
+
+    m_enemy_info.SetMaxWidth(box_size.x);
+    m_enemy_info.SetText("Bone Appetit");
+    m_enemy_info.ComputePosition(box_size, Anchor::Left, Anchor::Center);
+    m_enemy_info.AddPadding(Axis::Width, box_size.x, 0.1f);
+
+    m_background.UpdatePosition(camera.GetScreenOffset());
+}

@@ -58,6 +58,8 @@ class UiController
         void Draw() const;
 };
 
+// UI configuration will not stay in constructor
+
 class GameplayUiController : public UiController
 {
     private:
@@ -81,4 +83,20 @@ class EditorUiController : public UiController
     public:
         EditorUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath, const int selected_layer);
         void UpdateState(const int selected_layer); // Could use EditorEventState, and call UpdateState (private) in UiController::Draw ?
+};
+
+class BattleUiController : public UiController
+{
+    private:
+        // Will not stay here
+        UiElement m_background;
+        UiElement m_player;
+        UiElement m_enemy;
+        UiElement m_player_box;
+        UiElement m_enemy_box;
+        TextArea m_player_info;
+        TextArea m_enemy_info;
+
+    public:
+        BattleUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);
 };

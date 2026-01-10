@@ -41,7 +41,7 @@ GameplayTilemapScene::GameplayTilemapScene():
     m_rendered_entities = {&m_player};
 
     // Testing my NPC, will be remove (they will be load from the tilemap header)
-    for (unsigned int i = 0 ; i < 1 ; i++){
+    for (unsigned int i = 0 ; i < 2 ; i++){
         NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
     }
@@ -118,18 +118,20 @@ void EditorTilemapScene::Gameloop()
     m_window.UpdateRender();    
 }
 
-FightScene::FightScene()
+BattleScene::BattleScene():
+    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
 {
 
 }
 
-void FightScene::Gameloop()
+void BattleScene::Gameloop()
 {
     m_window.ClearRenderer();
     m_event_controller.PollAllEvents();
     
     m_gameloop = m_event_controller.HandleWindowEvents();
     
+    m_ui_controller.Draw();
     m_window.DrawBoxing();
     m_window.UpdateRender();
 }

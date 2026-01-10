@@ -34,9 +34,9 @@ void TextureController::LoadImageFromFile(const std::string& texture_filepath, c
         texture_width = surface->w, texture_height = surface->h;
         SDL_FreeSurface(surface);
         m_textures[texture_key] = texture;
-    }/*else{ // Will be removed (for example, different NPC could use the same sprite)
-        std::cout << "This file has already been loaded as a texture : " << texture_key << "\n";
-    }*/
+    }else{ // This file has already been loaded as a texture (SDL_Texture already exists in m_textures)
+        SDL_QueryTexture(m_textures[texture_key], nullptr, nullptr, &texture_width, &texture_height); // LoadImageFromFile could return texture size instead of using extra parameters ?
+    }
 }
 
 void TextureController::LoadFontFromFile(const std::string& font_filepath, const TextureKey& texture_key, const int font_size)

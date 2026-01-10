@@ -71,3 +71,5 @@ make
 - https://pixel-boy.itch.io/ninja-adventure-asset-pack
 - https://cainos.itch.io/pixel-art-top-down-basic
 - https://brackeysgames.itch.io/brackeys-platformer-bundle
+- https://willibab.itch.io/willibabs-free-pixel-battle-backgrounds
+- https://themightypalm.itch.io/mighty-battle-pack-addon

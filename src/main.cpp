@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
         }
         case 2:
         {
-            FightScene fs;
+            BattleScene fs;
             while(fs.GetGameloop()){
                 fs.Gameloop();
             }
