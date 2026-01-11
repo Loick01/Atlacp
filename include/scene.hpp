@@ -15,7 +15,7 @@
 #include "ui.hpp"
 #include "window.hpp"
 
-class Scene
+class Scene : public Notifier
 {
     protected:
         Window& m_window; // The Window instance comes from SceneController
@@ -26,16 +26,10 @@ class Scene
 
         std::vector<const Drawable*> m_drawables; // Will be removed ?
 
-        using Callback = std::function<void()>;
-        std::vector<Callback> m_listeners;
-        void Notify();
-
     public:
         Scene(Window& window);
         virtual void Gameloop() = 0;
         bool GetGameloop() const;
-
-        void AddListener(Callback c); // Should not be here ? (Same for Tilemap::Notify)
 };
 
 class TilemapScene : public Scene
@@ -48,7 +42,7 @@ class TilemapScene : public Scene
         void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
 
     public:
-        TilemapScene(Window& window);
+        TilemapScene(Window& window, const bool should_culling);
 };
 
 class GameplayTilemapScene : public TilemapScene

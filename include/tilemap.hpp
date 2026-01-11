@@ -8,17 +8,13 @@
 #include "drawable.hpp"
 #include "file.hpp"
 #include "layer.hpp"
+#include "notifier.hpp"
 #include "tileset.hpp"
 #include "type.hpp"
 
-class Tilemap
+class Tilemap : public Notifier
 {
     private:
-        // Should not be here ? (For now it's only used by Tilemap, to notify Scene when TileLayer in Scene::m_layers must be updated)
-        using Callback = std::function<void()>;
-        std::vector<Callback> m_listeners;
-        void Notify();
-
         const FileReader& m_file_reader;
         Tileset& m_tileset;
         TextureController& m_texture_controller;
@@ -28,10 +24,11 @@ class Tilemap
 
         void LoadMap(const std::string& path);
         size_t m_current_map;
+        const bool m_should_culling;
 
     public:
         Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
-            const std::string& world_filepath, Camera& camera);
+            const std::string& world_filepath, Camera& camera, const bool should_culling);
         
         const std::vector<TileLayer>& GetLayers() const;
         MapPosition GetSpawnPosition() const;
@@ -50,7 +47,4 @@ class Tilemap
         void SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p);
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
         void SaveMap(const std::string &map_filepath) const;
-        void SetLayerCulling(const bool culling);
-
-        void AddListener(Callback c); // Should not be here ? (Same for Tilemap::Notify)
 };

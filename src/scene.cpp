@@ -8,7 +8,7 @@ SceneController::SceneController(const int mode):
         case 0:
         {
             m_current_scene = std::make_unique<GameplayTilemapScene>(m_window);
-            m_current_scene->AddListener([this](){SwitchToScene();});
+            m_current_scene->AddCallback([this](){SwitchToScene();});
             break;
         }
         case 1:
@@ -56,22 +56,12 @@ bool Scene::GetGameloop() const
     return m_gameloop;
 }
 
-void Scene::AddListener(Callback c)
-{
-    m_listeners.push_back(c);
-}
-
-void Scene::Notify(){
-    for (Callback& c : m_listeners)
-        c();
-}
-
-TilemapScene::TilemapScene(Window& window):
+TilemapScene::TilemapScene(Window& window, const bool should_culling):
     Scene(window), m_tileset(m_texture_controller),
-    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera)
+    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera, should_culling)
 {
     UpdateTilemapLayer();
-    m_tilemap.AddListener([this](){UpdateTilemapLayer();});
+    m_tilemap.AddCallback([this](){UpdateTilemapLayer();});
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -83,12 +73,11 @@ void TilemapScene::UpdateTilemapLayer()
 }
 
 GameplayTilemapScene::GameplayTilemapScene(Window& window):
-    TilemapScene(window),
+    TilemapScene(window, true),
     m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
     m_ui_controller(m_texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
     m_window.HideCursor();
-    m_tilemap.SetLayerCulling(true);
 
     m_rendered_entities = {&m_player};
 
@@ -148,10 +137,9 @@ void GameplayTilemapScene::Gameloop()
 }
 
 EditorTilemapScene::EditorTilemapScene(Window& window):
-    TilemapScene(window), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
+    TilemapScene(window, false), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
     m_ui_controller(m_texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
 {
-    m_tilemap.SetLayerCulling(false);
     m_drawables.push_back(&m_tileset);
 }
 
