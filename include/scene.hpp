@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include "camera.hpp"
@@ -17,18 +18,24 @@
 class Scene
 {
     protected:
-        Window m_window;
-        FileReader m_file_reader;
-        TextureController m_texture_controller;
+        Window& m_window; // The Window instance comes from SceneController
+        FileReader m_file_reader; // Should be in SceneController ?
+        TextureController m_texture_controller; // Should be in SceneController ?
         Camera m_camera;
         bool m_gameloop;
 
         std::vector<const Drawable*> m_drawables; // Will be removed ?
 
+        using Callback = std::function<void()>;
+        std::vector<Callback> m_listeners;
+        void Notify();
+
     public:
-        Scene();
+        Scene(Window& window);
         virtual void Gameloop() = 0;
         bool GetGameloop() const;
+
+        void AddListener(Callback c); // Should not be here ? (Same for Tilemap::Notify)
 };
 
 class TilemapScene : public Scene
@@ -41,7 +48,7 @@ class TilemapScene : public Scene
         void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
 
     public:
-        TilemapScene();
+        TilemapScene(Window& window);
 };
 
 class GameplayTilemapScene : public TilemapScene
@@ -60,7 +67,7 @@ class GameplayTilemapScene : public TilemapScene
         const size_t m_layers_split_index; // Should not be const ?
         
     public:
-        GameplayTilemapScene();
+        GameplayTilemapScene(Window& window);
         ~GameplayTilemapScene();
         void Gameloop() override;
 };
@@ -72,7 +79,7 @@ class EditorTilemapScene : public TilemapScene
         EditorUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
-        EditorTilemapScene();
+        EditorTilemapScene(Window& window);
         void Gameloop() override;
 };
 
@@ -83,6 +90,19 @@ class BattleScene : public Scene
         BattleUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
-        BattleScene();
+        BattleScene(Window& window);
         void Gameloop() override;
+};
+
+class SceneController
+{
+    private:
+        Window m_window;
+        // TextureController and FileReader could be here ?
+        std::unique_ptr<Scene> m_current_scene;
+
+    public:
+        SceneController(const int mode);
+        void SwitchToScene(); 
+        void StartGameloop(); 
 };

@@ -1,42 +1,13 @@
 #include <iostream>
+#include <memory> // Remove
 
 #include "scene.hpp"
 
 int main(int argc, char* argv[]){
 
     const int mode = argc == 1 ? 0 : std::stoi(argv[1]);
-
-    switch (mode){
-        case 0:
-        {
-            GameplayTilemapScene gts;
-            while(gts.GetGameloop()){
-                gts.Gameloop();
-            }
-            break;
-        }
-        case 1:
-        {
-            EditorTilemapScene ets;
-            while(ets.GetGameloop()){
-                ets.Gameloop();
-            }
-            break;
-        }
-        case 2:
-        {
-            BattleScene fs;
-            while(fs.GetGameloop()){
-                fs.Gameloop();
-            }
-            break;
-        }
-        default:
-        {
-            std::cout << "Undefined mode\n";
-            break;
-        }
-    }
+    SceneController scenes(mode);
+    scenes.StartGameloop();
 
     // Because texture_controller is created before every Drawable, its destructor is called after every Drawable destructor
     // It means that there should no longer be any textures to SDL_Destroy. 

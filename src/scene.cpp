@@ -1,8 +1,49 @@
 #include "scene.hpp"
 
-Scene::Scene():
-    m_window("Atlacp", {25,25,25}),
-    m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
+// This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
+SceneController::SceneController(const int mode):
+    m_window("Atlacp", {25,25,25})
+{
+    switch (mode){
+        case 0:
+        {
+            m_current_scene = std::make_unique<GameplayTilemapScene>(m_window);
+            m_current_scene->AddListener([this](){SwitchToScene();});
+            break;
+        }
+        case 1:
+        {
+            m_current_scene = std::make_unique<EditorTilemapScene>(m_window);
+            break;
+        }
+        case 2:
+        {
+            m_current_scene = std::make_unique<BattleScene>(m_window);
+            break;
+        }
+        default:
+        {
+            std::cout << "Undefined mode\n"; // Will throw an error
+            break;
+        }
+    }
+}
+
+void SceneController::SwitchToScene() // Will take a parameter
+{
+    // current_scene.reset(); Delete the previous Scene before creating a new one
+    m_current_scene = std::make_unique<BattleScene>(m_window);
+}
+
+void SceneController::StartGameloop()
+{
+    while(m_current_scene->GetGameloop()){
+        m_current_scene->Gameloop();
+    }
+} 
+
+Scene::Scene(Window& window):
+    m_window(window), m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
     m_texture_controller(m_window.GetRenderer()),
     m_gameloop(true)
 {
@@ -15,8 +56,18 @@ bool Scene::GetGameloop() const
     return m_gameloop;
 }
 
-TilemapScene::TilemapScene():
-    m_tileset(m_texture_controller),
+void Scene::AddListener(Callback c)
+{
+    m_listeners.push_back(c);
+}
+
+void Scene::Notify(){
+    for (Callback& c : m_listeners)
+        c();
+}
+
+TilemapScene::TilemapScene(Window& window):
+    Scene(window), m_tileset(m_texture_controller),
     m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera)
 {
     UpdateTilemapLayer();
@@ -31,7 +82,8 @@ void TilemapScene::UpdateTilemapLayer()
         m_layers.push_back(&l);
 }
 
-GameplayTilemapScene::GameplayTilemapScene():
+GameplayTilemapScene::GameplayTilemapScene(Window& window):
+    TilemapScene(window),
     m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
     m_ui_controller(m_texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
@@ -95,8 +147,9 @@ void GameplayTilemapScene::Gameloop()
     m_window.UpdateRender();
 }
 
-EditorTilemapScene::EditorTilemapScene():
-    m_event_controller(m_tileset, m_tilemap.GetLayerCount()), m_ui_controller(m_texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
+EditorTilemapScene::EditorTilemapScene(Window& window):
+    TilemapScene(window), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
+    m_ui_controller(m_texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
 {
     m_tilemap.SetLayerCulling(false);
     m_drawables.push_back(&m_tileset);
@@ -118,8 +171,8 @@ void EditorTilemapScene::Gameloop()
     m_window.UpdateRender();    
 }
 
-BattleScene::BattleScene():
-    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
+BattleScene::BattleScene(Window& window):
+    Scene(window), m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
 {
 
 }

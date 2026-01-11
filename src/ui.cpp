@@ -211,7 +211,7 @@ BattleUiController::BattleUiController(TextureController& texture_controller, co
     m_enemy_box.AddChild(&m_enemy_info);
 
     const AreaSize viewport_size = camera.GetViewport();
-    m_background.ComputeZoom(viewport_size, 1.0f, Axis::Width);
+    m_background.ComputeZoom(viewport_size, 1.0f, Axis::Height);
     m_background.ComputePosition(viewport_size, Anchor::Left, Anchor::Top);
 
     const AreaSize background_size = m_background.GetSize();
