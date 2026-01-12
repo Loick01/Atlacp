@@ -9,6 +9,7 @@
 #include "file.hpp"
 #include "npc.hpp"
 #include "player.hpp"
+#include "sound.hpp"
 #include "texture.hpp"
 #include "tilemap.hpp"
 #include "time.hpp"
@@ -19,8 +20,9 @@ class Scene : public Notifier
 {
     protected:
         Window& m_window; // The Window instance comes from SceneController
-        FileReader m_file_reader; // Should be in SceneController ?
-        TextureController m_texture_controller; // Should be in SceneController ?
+        FileReader m_file_reader; // Will be in SceneController 
+        TextureController m_texture_controller; // Will be in SceneController 
+        SoundController m_sound_controller; // Will be in SceneController
         Camera m_camera;
         bool m_gameloop;
 

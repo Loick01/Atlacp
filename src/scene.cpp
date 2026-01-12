@@ -44,8 +44,7 @@ void SceneController::StartGameloop()
 
 Scene::Scene(Window& window):
     m_window(window), m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
-    m_texture_controller(m_window.GetRenderer()),
-    m_gameloop(true)
+    m_texture_controller(m_window.GetRenderer()), m_gameloop(true)
 {
     if (m_window.HasError())
         std::cout << "SDL window was not initialized\n"; // Will throw an error
@@ -62,6 +61,8 @@ TilemapScene::TilemapScene(Window& window, const bool should_culling):
 {
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](){UpdateTilemapLayer();});
+
+    m_sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -162,7 +163,7 @@ void EditorTilemapScene::Gameloop()
 BattleScene::BattleScene(Window& window):
     Scene(window), m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
 {
-
+    m_sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
 }
 
 void BattleScene::Gameloop()

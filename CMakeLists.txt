@@ -31,6 +31,7 @@ set(SOURCES
     src/pathfind.cpp
     src/ui.cpp
     src/layer.cpp
+    src/sound.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

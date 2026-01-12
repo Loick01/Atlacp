@@ -1,7 +1,5 @@
 #include "window.hpp"
 
-Mix_Music* m_music; // Will be removed
-
 Window::Window(const std::string& title, const SDL_Color bg_color) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
@@ -12,15 +10,10 @@ Window::Window(const std::string& title, const SDL_Color bg_color) :
 
 Window::~Window()
 {
-    // Will be removed
-    Mix_HaltMusic(); // Need to stop the music before use Mix_FreeMusic
-    Mix_FreeMusic(m_music);
-    // m_music = nullptr; // When I will use a MusicController, be sure to not play music that has been deleted 
-
-    IMG_Quit();
-    TTF_Quit();
-    Mix_CloseAudio();
-    Mix_Quit(); // Optionnal if use only Mix_OpenAudio, but required if use Mix_Init()
+    IMG_Quit(); // In TextureController
+    TTF_Quit(); // In TextureController
+    Mix_CloseAudio(); // In SoundController
+    Mix_Quit(); // InSoundController (Optionnal if use only Mix_OpenAudio, but required if use Mix_Init())
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -30,20 +23,17 @@ void Window::InitSdl() const
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) std::cout << "Failed to initialize SDL library\n";
     int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
+    // SDL_image initialization will be in TextureController
     if ((IMG_Init(img_flags) & img_flags) != img_flags) std::cout << "Failed to initialize SDL image library\n";
     if (TTF_Init() < 0) std::cout << "Failed to initialize SDL font library\n"; // Will use TTF_GetError()
 
-    // Will be removed
+    // SDL_mixer initialization will be in SoundController
     // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
     int mix_flags = MIX_INIT_OGG;
     if ((Mix_Init(mix_flags) & mix_flags) != mix_flags) std::cout << "Can't initialize SDL_mixer\n"; // Mix_GetError()
 
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
         std::cout << "Failed to initialize SDL2_mixer library\n";
-
-    m_music = Mix_LoadMUS("../assets/musics/music.ogg"); // Use Mix_Chunk for sound effects
-    if (Mix_PlayMusic(m_music, -1) < 0) std::cout << "Can't play music\n";
-    // Mix_FadeOutMusic(int ms), Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 }
 
 void Window::CreateWindow()
