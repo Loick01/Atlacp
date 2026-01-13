@@ -4,9 +4,6 @@
 #include <string>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
 
 struct Boxing
 {
@@ -17,7 +14,6 @@ struct Boxing
 class Window
 {
     private:
-        void InitSdl() const;
         void CreateWindow();
 
         SDL_Window* m_window;

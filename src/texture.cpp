@@ -3,7 +3,10 @@
 TextureController::TextureController(SDL_Renderer* window_renderer) :
     m_window_renderer(window_renderer)
 {
-
+    // SDL_image initialization
+    int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if ((IMG_Init(img_flags) & img_flags) != img_flags) std::cout << "Failed to initialize SDL image library\n";
+    if (TTF_Init() < 0) std::cout << "Failed to initialize SDL font library\n"; // Will use TTF_GetError()
 }
 
 TextureController::~TextureController()
@@ -17,6 +20,8 @@ TextureController::~TextureController()
         std::cout << "TTF_Font should be destroyed by the last TextArea that uses it. Try to avoid being here\n";
         TTF_CloseFont(f.second);
     }
+    IMG_Quit();
+    TTF_Quit();
 }
 
 TTF_Font* TextureController::GetFont(const TextureKey& texture_key) const

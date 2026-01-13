@@ -16,20 +16,25 @@
 #include "ui.hpp"
 #include "window.hpp"
 
+struct GameContext
+{
+    Window& window;
+    TextureController& texture_controller;
+    SoundController& sound_controller;
+    FileReader& file_reader; 
+};
+
 class Scene : public Notifier
 {
     protected:
-        Window& m_window; // The Window instance comes from SceneController
-        FileReader m_file_reader; // Will be in SceneController 
-        TextureController m_texture_controller; // Will be in SceneController 
-        SoundController m_sound_controller; // Will be in SceneController
+        GameContext& m_context;
         Camera m_camera;
         bool m_gameloop;
 
         std::vector<const Drawable*> m_drawables; // Will be removed ?
 
     public:
-        Scene(Window& window);
+        Scene(GameContext& context);
         virtual void Gameloop() = 0;
         bool GetGameloop() const;
 };
@@ -44,15 +49,15 @@ class TilemapScene : public Scene
         void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
 
     public:
-        TilemapScene(Window& window, const bool should_culling);
+        TilemapScene(GameContext& context, const bool should_culling);
 };
 
 class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        GameplayEventController m_event_controller; // Will be in Scene as a EventController 
-        GameplayUiController m_ui_controller; // Will be in Scene as a UiController
+        GameplayEventController m_event_controller; // Will be in GameContext ?
+        GameplayUiController m_ui_controller; // Will be in GameContext ?
         Player m_player;
         std::vector<Entity*> m_rendered_entities; // Sorted by y position
         // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
@@ -63,7 +68,7 @@ class GameplayTilemapScene : public TilemapScene
         const size_t m_layers_split_index; // Should not be const ?
         
     public:
-        GameplayTilemapScene(Window& window);
+        GameplayTilemapScene(GameContext& context);
         ~GameplayTilemapScene();
         void Gameloop() override;
 };
@@ -75,7 +80,7 @@ class EditorTilemapScene : public TilemapScene
         EditorUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
-        EditorTilemapScene(Window& window);
+        EditorTilemapScene(GameContext& context);
         void Gameloop() override;
 };
 
@@ -86,7 +91,7 @@ class BattleScene : public Scene
         BattleUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
-        BattleScene(Window& window);
+        BattleScene(GameContext& context);
         void Gameloop() override;
 };
 
@@ -94,7 +99,11 @@ class SceneController
 {
     private:
         Window m_window;
-        // TextureController and FileReader could be here ?
+        SoundController m_sound_controller;
+        TextureController m_texture_controller;
+        FileReader m_file_reader;
+
+        GameContext m_context;
         std::unique_ptr<Scene> m_current_scene;
 
     public:

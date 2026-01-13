@@ -2,23 +2,24 @@
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
-    m_window("Atlacp", {25,25,25})
+    m_window("Atlacp", {25,25,25}), m_texture_controller(m_window.GetRenderer()),
+    m_context{m_window, m_texture_controller, m_sound_controller, m_file_reader}
 {
     switch (mode){
         case 0:
         {
-            m_current_scene = std::make_unique<GameplayTilemapScene>(m_window);
+            m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
             m_current_scene->AddCallback([this](){SwitchToScene();});
             break;
         }
         case 1:
         {
-            m_current_scene = std::make_unique<EditorTilemapScene>(m_window);
+            m_current_scene = std::make_unique<EditorTilemapScene>(m_context);
             break;
         }
         case 2:
         {
-            m_current_scene = std::make_unique<BattleScene>(m_window);
+            m_current_scene = std::make_unique<BattleScene>(m_context);
             break;
         }
         default:
@@ -32,7 +33,7 @@ SceneController::SceneController(const int mode):
 void SceneController::SwitchToScene() // Will take a parameter
 {
     // current_scene.reset(); Delete the previous Scene before creating a new one
-    m_current_scene = std::make_unique<BattleScene>(m_window);
+    m_current_scene = std::make_unique<BattleScene>(m_context);
 }
 
 void SceneController::StartGameloop()
@@ -42,12 +43,11 @@ void SceneController::StartGameloop()
     }
 } 
 
-Scene::Scene(Window& window):
-    m_window(window), m_camera(m_window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
-    m_texture_controller(m_window.GetRenderer()), m_gameloop(true)
+Scene::Scene(GameContext& context):
+    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
+    m_gameloop(true)
 {
-    if (m_window.HasError())
-        std::cout << "SDL window was not initialized\n"; // Will throw an error
+    if (m_context.window.HasError()) std::cout << "SDL window was not initialized\n"; // Will throw an error
 }
 
 bool Scene::GetGameloop() const
@@ -55,14 +55,14 @@ bool Scene::GetGameloop() const
     return m_gameloop;
 }
 
-TilemapScene::TilemapScene(Window& window, const bool should_culling):
-    Scene(window), m_tileset(m_texture_controller),
-    m_tilemap(m_texture_controller, m_file_reader, m_tileset, "../assets/worlds/z_world", m_camera, should_culling)
+TilemapScene::TilemapScene(GameContext& context, const bool should_culling):
+    Scene(context), m_tileset(m_context.texture_controller),
+    m_tilemap(m_context.texture_controller, m_context.file_reader, m_tileset, "../assets/worlds/z_world", m_camera, should_culling)
 {
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](){UpdateTilemapLayer();});
 
-    m_sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
+    m_context.sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -73,25 +73,25 @@ void TilemapScene::UpdateTilemapLayer()
         m_layers.push_back(&l);
 }
 
-GameplayTilemapScene::GameplayTilemapScene(Window& window):
-    TilemapScene(window, true),
-    m_player(m_file_reader, m_tilemap, m_texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_ui_controller(m_texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
+GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
+    TilemapScene(context, true),
+    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
+    m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
-    m_window.HideCursor();
+    m_context.window.HideCursor();
 
     m_rendered_entities = {&m_player};
 
     // Testing my NPC, will be remove (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 2 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+        NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
     }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
     /*
     Entity* tracked_entity = &m_player;
     for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_file_reader, m_tilemap, m_texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 4.0f);
+        NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 4.0f);
         m_rendered_entities.push_back(npc);
         tracked_entity = npc;
     }
@@ -109,7 +109,7 @@ GameplayTilemapScene::~GameplayTilemapScene()
 void GameplayTilemapScene::Gameloop()
 {
     m_time.Update();
-    m_window.ClearRenderer();
+    m_context.window.ClearRenderer();
     m_event_controller.PollAllEvents();
     
     m_gameloop = m_event_controller.HandleWindowEvents();
@@ -133,20 +133,20 @@ void GameplayTilemapScene::Gameloop()
 
     m_ui_controller.Draw();
     
-    m_window.DrawBoxing();
-    m_window.UpdateRender();
+    m_context.window.DrawBoxing();
+    m_context.window.UpdateRender();
 }
 
-EditorTilemapScene::EditorTilemapScene(Window& window):
-    TilemapScene(window, false), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
-    m_ui_controller(m_texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
+EditorTilemapScene::EditorTilemapScene(GameContext& context):
+    TilemapScene(context, false), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
+    m_ui_controller(m_context.texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
 {
     m_drawables.push_back(&m_tileset);
 }
 
 void EditorTilemapScene::Gameloop()
 {
-    m_window.ClearRenderer();
+    m_context.window.ClearRenderer();
     m_event_controller.PollAllEvents();
     
     m_gameloop = m_event_controller.HandleWindowEvents();
@@ -157,23 +157,23 @@ void EditorTilemapScene::Gameloop()
     
     m_ui_controller.UpdateState(m_event_controller.GetSelectedLayer());
     m_ui_controller.Draw();
-    m_window.UpdateRender();    
+    m_context.window.UpdateRender();    
 }
 
-BattleScene::BattleScene(Window& window):
-    Scene(window), m_ui_controller(m_texture_controller, m_camera, "PixelOperator8")
+BattleScene::BattleScene(GameContext& context):
+    Scene(context), m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8")
 {
-    m_sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
+    m_context.sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
 }
 
 void BattleScene::Gameloop()
 {
-    m_window.ClearRenderer();
+    m_context.window.ClearRenderer();
     m_event_controller.PollAllEvents();
     
     m_gameloop = m_event_controller.HandleWindowEvents();
     
     m_ui_controller.Draw();
-    m_window.DrawBoxing();
-    m_window.UpdateRender();
+    m_context.window.DrawBoxing();
+    m_context.window.UpdateRender();
 }

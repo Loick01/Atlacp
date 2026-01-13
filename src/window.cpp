@@ -3,37 +3,16 @@
 Window::Window(const std::string& title, const SDL_Color bg_color) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
 {
-    InitSdl();
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) std::cout << "Failed to initialize SDL library\n";
     CreateWindow();
     SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
 }
 
 Window::~Window()
 {
-    IMG_Quit(); // In TextureController
-    TTF_Quit(); // In TextureController
-    Mix_CloseAudio(); // In SoundController
-    Mix_Quit(); // InSoundController (Optionnal if use only Mix_OpenAudio, but required if use Mix_Init())
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
-}
-
-void Window::InitSdl() const
-{
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) std::cout << "Failed to initialize SDL library\n";
-    int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
-    // SDL_image initialization will be in TextureController
-    if ((IMG_Init(img_flags) & img_flags) != img_flags) std::cout << "Failed to initialize SDL image library\n";
-    if (TTF_Init() < 0) std::cout << "Failed to initialize SDL font library\n"; // Will use TTF_GetError()
-
-    // SDL_mixer initialization will be in SoundController
-    // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
-    int mix_flags = MIX_INIT_OGG;
-    if ((Mix_Init(mix_flags) & mix_flags) != mix_flags) std::cout << "Can't initialize SDL_mixer\n"; // Mix_GetError()
-
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-        std::cout << "Failed to initialize SDL2_mixer library\n";
 }
 
 void Window::CreateWindow()

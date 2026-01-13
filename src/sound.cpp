@@ -2,13 +2,22 @@
 
 SoundController::SoundController()
 {
-    // SDL_mixer initialization will be here
+    // SDL_mixer initialization
+    // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
+    int mix_flags = MIX_INIT_OGG;
+    if ((Mix_Init(mix_flags) & mix_flags) != mix_flags) std::cout << "Can't initialize SDL_mixer\n"; // Mix_GetError()
+
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+        std::cout << "Failed to initialize SDL2_mixer library\n";
+
     m_background_music = nullptr;
 }
 
 SoundController::~SoundController()
 {
     DeleteBackgroundMusic();
+    Mix_CloseAudio();
+    Mix_Quit(); // Optionnal if use only Mix_OpenAudio, but required if use Mix_Init()
 }
 
 void SoundController::DeleteBackgroundMusic()
