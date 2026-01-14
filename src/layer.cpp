@@ -23,7 +23,7 @@ void TileLayer::DrawTexture() const
     ScenePosition camera_position = m_camera.GetPosition();
     const float zoom = m_camera.GetZoom();
 
-    // Culling
+    // Culling (could be done in Tilemap instead ?)
     // While animating a movement, end_index could not be enough to fill the window with the map
     // So I add 1 to end_index, and check if it becomes greater than map size
     Pair<int> start_index = GridSize{0, 0};

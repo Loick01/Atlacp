@@ -12,13 +12,18 @@
 #include "tileset.hpp"
 #include "type.hpp"
 
-class Tilemap : public Notifier
+enum class TilemapEvent
+{
+    TileLayerUpdate
+};
+
+class Tilemap : public Notifier<TilemapEvent>
 {
     private:
         const FileReader& m_file_reader;
         Tileset& m_tileset;
         TextureController& m_texture_controller;
-        Camera& m_camera;
+        Camera& m_camera; // Could be removed and use a parameter in LoadMap ?
         WorldData m_world_data;
         MapData m_map_data;
 

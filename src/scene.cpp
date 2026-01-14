@@ -5,35 +5,47 @@ SceneController::SceneController(const int mode):
     m_window("Atlacp", {25,25,25}), m_texture_controller(m_window.GetRenderer()),
     m_context{m_window, m_texture_controller, m_sound_controller, m_file_reader}
 {
+    const SwitchEvent e = GetSwitchEventFromMode(mode);
+    SetCurrentScene(e);
+}
+
+SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
+{
     switch (mode){
         case 0:
-        {
-            m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
-            m_current_scene->AddCallback([this](){SwitchToScene();});
-            break;
-        }
+            return SwitchEvent::ToGameplay;
         case 1:
-        {
+            return SwitchEvent::ToEditor;
+        case 2:
+            return SwitchEvent::ToBattle;
+        default:
+            std::cout << "Unknown mode\n";
+    };
+    return SwitchEvent::ToGameplay; // Default initial Scene
+}
+
+void SceneController::SetCurrentScene(const SwitchEvent e)
+{
+    // current_scene.reset(); Delete the previous Scene before creating a new one
+    switch(e){
+        case SwitchEvent::ToGameplay: {
+            m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
+            break;
+        } 
+        case SwitchEvent::ToEditor: {
             m_current_scene = std::make_unique<EditorTilemapScene>(m_context);
             break;
         }
-        case 2:
-        {
+        case SwitchEvent::ToBattle: {
             m_current_scene = std::make_unique<BattleScene>(m_context);
             break;
         }
-        default:
-        {
+        default:{
             std::cout << "Undefined mode\n"; // Will throw an error
             break;
         }
     }
-}
-
-void SceneController::SwitchToScene() // Will take a parameter
-{
-    // current_scene.reset(); Delete the previous Scene before creating a new one
-    m_current_scene = std::make_unique<BattleScene>(m_context);
+    m_current_scene->AddCallback([this](SwitchEvent e){SetCurrentScene(e);});
 }
 
 void SceneController::StartGameloop()
@@ -60,7 +72,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool should_culling):
     m_tilemap(m_context.texture_controller, m_context.file_reader, m_tileset, "../assets/worlds/z_world", m_camera, should_culling)
 {
     UpdateTilemapLayer();
-    m_tilemap.AddCallback([this](){UpdateTilemapLayer();});
+    m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
 
     m_context.sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
 }

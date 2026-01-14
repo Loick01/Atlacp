@@ -24,7 +24,12 @@ struct GameContext
     FileReader& file_reader; 
 };
 
-class Scene : public Notifier
+enum class SwitchEvent
+{
+    ToGameplay, ToEditor, ToBattle
+};
+
+class Scene : public Notifier<SwitchEvent>
 {
     protected:
         GameContext& m_context;
@@ -106,8 +111,10 @@ class SceneController
         GameContext m_context;
         std::unique_ptr<Scene> m_current_scene;
 
+        void SetCurrentScene(const SwitchEvent e);
+        SwitchEvent GetSwitchEventFromMode(const int mode) const;
+
     public:
         SceneController(const int mode);
-        void SwitchToScene(); 
         void StartGameloop(); 
 };
