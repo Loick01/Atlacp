@@ -71,6 +71,8 @@ class GameplayTilemapScene : public TilemapScene
         // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
         const size_t m_layers_split_index; // Should not be const ?
+
+        void SortRenderedEntities(); // Rename ?
         
     public:
         GameplayTilemapScene(GameContext& context);

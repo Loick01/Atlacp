@@ -41,7 +41,13 @@ class EntityMovement
         void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
 };
 
-class Entity : public SceneDrawable, public MapElement
+enum class EntityEvent
+{
+    SortEntity
+};
+
+// Rename MapEntity ?
+class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>
 {
     private:
         EntityMovement m_current_movement;

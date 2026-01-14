@@ -30,6 +30,7 @@ void NPC::Update(const float delta_time)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
+            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
             m_behaviour->OnStopCase(*this);
             break;
         }

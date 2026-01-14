@@ -19,7 +19,7 @@ Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureControlle
 
 void Player::Update(const float delta_time)
 {
-    switch (GetState()){
+    switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
             const MapDirection direction = m_event_controller.HandlePlayerEvent();
@@ -43,6 +43,7 @@ void Player::Update(const float delta_time)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
+            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene 
             const MapDirection direction = m_event_controller.HandlePlayerEvent();
             switch(direction){
                 case MapDirection::None:

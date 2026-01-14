@@ -74,7 +74,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool should_culling):
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
 
-    m_context.sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
+    // m_context.sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -91,12 +91,14 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
     m_context.window.HideCursor();
+    m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
 
     m_rendered_entities = {&m_player};
 
     // Testing my NPC, will be remove (they will be load from the tilemap header)
-    for (unsigned int i = 0 ; i < 2 ; i++){
+    for (unsigned int i = 0 ; i < 10 ; i++){
         NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+        npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
         m_rendered_entities.push_back(npc);
     }
     // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
@@ -104,6 +106,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     Entity* tracked_entity = &m_player;
     for (unsigned int i = 0 ; i < 10 ; i++){
         NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 4.0f);
+        npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
         m_rendered_entities.push_back(npc);
         tracked_entity = npc;
     }
@@ -118,19 +121,23 @@ GameplayTilemapScene::~GameplayTilemapScene()
         delete m_updated_entities[i];
 }
 
+void GameplayTilemapScene::SortRenderedEntities()
+{
+    // m_rendered_entities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
+    // It would be even better to sort only once when several entities end their movement in the same frame
+    std::cout << "Sort Entity\n";
+    std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
+        [](Entity* a, Entity* b){
+            return a->GetMapPosition().y < b->GetMapPosition().y; 
+        });
+}
+
 void GameplayTilemapScene::Gameloop()
 {
     m_time.Update();
     m_context.window.ClearRenderer();
     m_event_controller.PollAllEvents();
-    
     m_gameloop = m_event_controller.HandleWindowEvents();
-    
-    // Remove (should sort only at the end of any movement, or even better --> remove then insert the moving npc at the correct index)
-    std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
-        [](Entity* a, Entity* b){
-            return a->GetMapPosition().y < b->GetMapPosition().y; 
-        });
     const float delta_time = m_time.GetDeltaTime();
     
     for (size_t i=0 ; i<m_layers_split_index ; i++)
