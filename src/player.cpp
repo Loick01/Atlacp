@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller, const GameplayEventController& event_controller,
+Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller, GameplayEventController* event_controller,
     const std::string& sprite_filepath, Camera& camera, const float speed):
     Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed), m_event_controller(event_controller)
 {
@@ -22,7 +22,8 @@ void Player::Update(const float delta_time)
     switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            const MapDirection direction = m_event_controller.HandlePlayerEvent();
+            m_event_controller->HandleEvents();
+            const MapDirection direction = m_event_controller->m_event_direction;
             switch(direction){
                 case MapDirection::None:
                     break;
@@ -43,8 +44,9 @@ void Player::Update(const float delta_time)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene 
-            const MapDirection direction = m_event_controller.HandlePlayerEvent();
+            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
+            m_event_controller->HandleEvents(); 
+            const MapDirection direction = m_event_controller->m_event_direction;
             switch(direction){
                 case MapDirection::None:
                 {

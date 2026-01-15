@@ -29,14 +29,17 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
     // current_scene.reset(); Delete the previous Scene before creating a new one
     switch(e){
         case SwitchEvent::ToGameplay: {
+            m_context.event_controller = std::make_unique<GameplayEventController>();
             m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
             break;
         } 
         case SwitchEvent::ToEditor: {
+            m_context.event_controller = std::make_unique<EditorEventController>();
             m_current_scene = std::make_unique<EditorTilemapScene>(m_context);
             break;
         }
         case SwitchEvent::ToBattle: {
+            m_context.event_controller = std::make_unique<EventController>(); // Will use BattleEventController
             m_current_scene = std::make_unique<BattleScene>(m_context);
             break;
         }
@@ -86,8 +89,9 @@ void TilemapScene::UpdateTilemapLayer()
 }
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
-    TilemapScene(context, true),
-    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, m_event_controller, "../assets/sprites/character16", m_camera, 4.0f),
+    TilemapScene(context, true), // For now, I don't know how to do without using a dynamic_cast for Player construction
+    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, dynamic_cast<GameplayEventController*>(m_context.event_controller.get()),
+    "../assets/sprites/character16", m_camera, 4.0f),
     m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
     m_context.window.HideCursor();
@@ -125,7 +129,6 @@ void GameplayTilemapScene::SortRenderedEntities()
 {
     // m_rendered_entities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
     // It would be even better to sort only once when several entities end their movement in the same frame
-    std::cout << "Sort Entity\n";
     std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
         [](Entity* a, Entity* b){
             return a->GetMapPosition().y < b->GetMapPosition().y; 
@@ -136,8 +139,8 @@ void GameplayTilemapScene::Gameloop()
 {
     m_time.Update();
     m_context.window.ClearRenderer();
-    m_event_controller.PollAllEvents();
-    m_gameloop = m_event_controller.HandleWindowEvents();
+    m_context.event_controller->PollAllEvents();
+    m_gameloop = m_context.event_controller->HandleWindowEvents();
     const float delta_time = m_time.GetDeltaTime();
     
     for (size_t i=0 ; i<m_layers_split_index ; i++)
@@ -157,24 +160,29 @@ void GameplayTilemapScene::Gameloop()
 }
 
 EditorTilemapScene::EditorTilemapScene(GameContext& context):
-    TilemapScene(context, false), m_event_controller(m_tileset, m_tilemap.GetLayerCount()),
-    m_ui_controller(m_context.texture_controller, m_camera, "NormalFont", m_event_controller.GetSelectedLayer())
+    TilemapScene(context, false), m_ui_controller(m_context.texture_controller, m_camera, "NormalFont", 0/*m_context.event_controller->GetSelectedLayer()*/)
 {
+    // These values must be set here because they don't exist when the EditorEventController is created
+    // For now, I don't know how to do without using a dynamic_cast
+    EditorEventController* eec = dynamic_cast<EditorEventController*>(m_context.event_controller.get()); 
+    eec->SetValues(m_tileset, m_tilemap.GetLayerCount(), m_camera, m_tilemap);
+    
     m_drawables.push_back(&m_tileset);
 }
 
 void EditorTilemapScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_event_controller.PollAllEvents();
+    m_context.event_controller->PollAllEvents();
     
-    m_gameloop = m_event_controller.HandleWindowEvents();
-    m_event_controller.HandleEditorEvent(m_tilemap, m_camera);
+    m_gameloop = m_context.event_controller->HandleWindowEvents();
+    m_context.event_controller->HandleEvents();
 
     for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    m_ui_controller.UpdateState(m_event_controller.GetSelectedLayer());
+    // Will use Notifier to know selected layer from UiController
+    // m_ui_controller.UpdateState(m_context.event_controller->GetSelectedLayer());
     m_ui_controller.Draw();
     m_context.window.UpdateRender();    
 }
@@ -188,9 +196,9 @@ BattleScene::BattleScene(GameContext& context):
 void BattleScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_event_controller.PollAllEvents();
+    m_context.event_controller->PollAllEvents();
     
-    m_gameloop = m_event_controller.HandleWindowEvents();
+    m_gameloop = m_context.event_controller->HandleWindowEvents();
     
     m_ui_controller.Draw();
     m_context.window.DrawBoxing();

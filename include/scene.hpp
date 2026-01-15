@@ -22,6 +22,9 @@ struct GameContext
     TextureController& texture_controller;
     SoundController& sound_controller;
     FileReader& file_reader; 
+
+    std::unique_ptr<EventController> event_controller; // Will be in GameContext ?
+    // UiController will be here
 };
 
 enum class SwitchEvent
@@ -61,7 +64,6 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        GameplayEventController m_event_controller; // Will be in GameContext ?
         GameplayUiController m_ui_controller; // Will be in GameContext ?
         Player m_player;
         std::vector<Entity*> m_rendered_entities; // Sorted by y position
@@ -83,7 +85,6 @@ class GameplayTilemapScene : public TilemapScene
 class EditorTilemapScene : public TilemapScene
 {
     private:
-        EditorEventController m_event_controller; // Should be in Scene as a EventController ?
         EditorUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:
@@ -94,7 +95,6 @@ class EditorTilemapScene : public TilemapScene
 class BattleScene : public Scene
 {
     private:
-        EventController m_event_controller;
         BattleUiController m_ui_controller; // Will be in Scene as a UiController
 
     public:

@@ -59,6 +59,7 @@ class EventController
     public:
         EventController();
         bool HandleWindowEvents() const;
+        virtual void HandleEvents(); // = 0; Will be pure virtual when I have created BattleEventController 
         void PollAllEvents();
 };
 
@@ -69,19 +70,20 @@ class GameplayEventController : public EventController
 
     public:
         GameplayEventController();
-        MapDirection HandlePlayerEvent() const;
+        void HandleEvents() override;
+
+        MapDirection m_event_direction; // Should be private ?
 };
 
 class EditorEventController : public EventController
 {
     private:
         ScreenPosition GetMouseScreenPosition() const;
-        ScenePosition GetMouseScenePosition(const Camera& camera) const;
+        ScenePosition GetMouseScenePosition() const;
         
-        Tileset& m_tileset; // Should be a UiElement ?
-        // Should have a Camera& instead of a extra paremeter in HandleEditorEvent ?
+        Tileset* m_tileset; // Should be a UiElement ?
         ScenePosition m_last_camera_origin;
-        const size_t m_layer_count; // Remove ?
+        size_t m_layer_count; // Remove ?
 
         Tile m_selected_tile;
         int m_selected_tileset;
@@ -89,9 +91,16 @@ class EditorEventController : public EventController
         bool m_is_camera_moving;
         bool m_is_replacing_tile;
 
+        // Will be removed ?
+        Tilemap* m_tilemap;
+        Camera* m_camera;
+
     public:
-        EditorEventController(Tileset& tileset, const size_t layer_count);
+        EditorEventController();
 
         int GetSelectedLayer() const;
-        void HandleEditorEvent(Tilemap& tilemap, Camera& camera); 
+        void HandleEvents() override;
+
+        // Will be removed/renamed
+        void SetValues(Tileset& tileset, const size_t layer_count, Camera& camera, Tilemap& tilemap);
 };

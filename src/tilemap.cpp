@@ -150,7 +150,7 @@ void Tilemap::LoadMap(const std::string& path)
 
 bool Tilemap::IsPositionInTexture(const Vec2 sp) const
 {
-    const AreaSize as = m_map_data.size*m_tileset.GetTileSize();
+    const AreaSize as = m_map_data.size*m_tileset.GetTileSize(); // Do not use zoom here
     return sp.x >= 0 && sp.y >= 0 && sp.x <= as.x && sp.y <= as.y;
 }
 
