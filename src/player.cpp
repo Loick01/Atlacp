@@ -1,8 +1,8 @@
 #include "player.hpp"
 
-Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller, GameplayEventController* event_controller,
+Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller,
     const std::string& sprite_filepath, Camera& camera, const float speed):
-    Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed), m_event_controller(event_controller)
+    Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed), m_event_controller(nullptr)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -15,6 +15,11 @@ Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureControlle
     tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in Player constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     LookMe();
+}
+
+void Player::SetEventController(GameplayEventController* event_controller)
+{
+    m_event_controller = event_controller;
 }
 
 void Player::Update(const float delta_time)

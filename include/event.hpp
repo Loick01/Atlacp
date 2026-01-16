@@ -81,10 +81,9 @@ class EditorEventController : public EventController
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
-        Tileset* m_tileset; // Should be a UiElement ?
         ScenePosition m_last_camera_origin;
-        size_t m_layer_count; // Remove ?
 
+        // Should be in a struct EventContext ?
         Tile m_selected_tile;
         int m_selected_tileset;
         int m_selected_layer;
@@ -92,15 +91,14 @@ class EditorEventController : public EventController
         bool m_is_replacing_tile;
 
         // Will be removed ?
-        Tilemap* m_tilemap;
-        Camera* m_camera;
+        Tileset& m_tileset; // Should be a UiElement ?
+        Tilemap& m_tilemap;
+        Camera& m_camera;
+        size_t m_layer_count; // Remove ?
 
     public:
-        EditorEventController();
+        EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
         int GetSelectedLayer() const;
         void HandleEvents() override;
-
-        // Will be removed/renamed
-        void SetValues(Tileset& tileset, const size_t layer_count, Camera& camera, Tilemap& tilemap);
 };

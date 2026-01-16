@@ -23,7 +23,7 @@ struct GameContext
     SoundController& sound_controller;
     FileReader& file_reader; 
 
-    std::unique_ptr<EventController> event_controller; // Will be in GameContext ?
+    std::unique_ptr<EventController> event_controller;
     // UiController will be here
 };
 

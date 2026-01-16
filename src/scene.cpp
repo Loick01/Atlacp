@@ -29,17 +29,14 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
     // current_scene.reset(); Delete the previous Scene before creating a new one
     switch(e){
         case SwitchEvent::ToGameplay: {
-            m_context.event_controller = std::make_unique<GameplayEventController>();
             m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
             break;
         } 
         case SwitchEvent::ToEditor: {
-            m_context.event_controller = std::make_unique<EditorEventController>();
             m_current_scene = std::make_unique<EditorTilemapScene>(m_context);
             break;
         }
         case SwitchEvent::ToBattle: {
-            m_context.event_controller = std::make_unique<EventController>(); // Will use BattleEventController
             m_current_scene = std::make_unique<BattleScene>(m_context);
             break;
         }
@@ -89,11 +86,14 @@ void TilemapScene::UpdateTilemapLayer()
 }
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
-    TilemapScene(context, true), // For now, I don't know how to do without using a dynamic_cast for Player construction
-    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, dynamic_cast<GameplayEventController*>(m_context.event_controller.get()),
-    "../assets/sprites/character16", m_camera, 4.0f),
+    TilemapScene(context, true),
+    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, "../assets/sprites/character16", m_camera, 4.0f),
     m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
 {
+    m_context.event_controller = std::make_unique<GameplayEventController>();
+    // For now, I don't know how to do without use dynamic_cast
+    m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.event_controller.get()));
+    
     m_context.window.HideCursor();
     m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
 
@@ -162,11 +162,7 @@ void GameplayTilemapScene::Gameloop()
 EditorTilemapScene::EditorTilemapScene(GameContext& context):
     TilemapScene(context, false), m_ui_controller(m_context.texture_controller, m_camera, "NormalFont", 0/*m_context.event_controller->GetSelectedLayer()*/)
 {
-    // These values must be set here because they don't exist when the EditorEventController is created
-    // For now, I don't know how to do without using a dynamic_cast
-    EditorEventController* eec = dynamic_cast<EditorEventController*>(m_context.event_controller.get()); 
-    eec->SetValues(m_tileset, m_tilemap.GetLayerCount(), m_camera, m_tilemap);
-    
+    m_context.event_controller = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
     m_drawables.push_back(&m_tileset);
 }
 
@@ -190,6 +186,7 @@ void EditorTilemapScene::Gameloop()
 BattleScene::BattleScene(GameContext& context):
     Scene(context), m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8")
 {
+    m_context.event_controller = std::make_unique<EventController>(); // Will use BattleEventController
     m_context.sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
 }
 
