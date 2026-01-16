@@ -24,7 +24,7 @@ struct GameContext
     FileReader& file_reader; 
 
     std::unique_ptr<EventController> event_controller;
-    // UiController will be here
+    std::unique_ptr<UiController> ui_controller;
 };
 
 enum class SwitchEvent
@@ -64,7 +64,6 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        GameplayUiController m_ui_controller; // Will be in GameContext ?
         Player m_player;
         std::vector<Entity*> m_rendered_entities; // Sorted by y position
         // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
@@ -84,9 +83,6 @@ class GameplayTilemapScene : public TilemapScene
 
 class EditorTilemapScene : public TilemapScene
 {
-    private:
-        EditorUiController m_ui_controller; // Will be in Scene as a UiController
-
     public:
         EditorTilemapScene(GameContext& context);
         void Gameloop() override;
@@ -94,9 +90,6 @@ class EditorTilemapScene : public TilemapScene
 
 class BattleScene : public Scene
 {
-    private:
-        BattleUiController m_ui_controller; // Will be in Scene as a UiController
-
     public:
         BattleScene(GameContext& context);
         void Gameloop() override;

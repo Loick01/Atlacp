@@ -88,14 +88,15 @@ void TilemapScene::UpdateTilemapLayer()
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     TilemapScene(context, true),
     m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8"), m_layers_split_index(1) 
+    m_layers_split_index(1) 
 {
     m_context.event_controller = std::make_unique<GameplayEventController>();
+    m_context.ui_controller = std::make_unique<GameplayUiController>(m_context.texture_controller, m_camera, "PixelOperator8");
+
     // For now, I don't know how to do without use dynamic_cast
     m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.event_controller.get()));
-    
-    m_context.window.HideCursor();
     m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
+    m_context.window.HideCursor();
 
     m_rendered_entities = {&m_player};
 
@@ -153,16 +154,17 @@ void GameplayTilemapScene::Gameloop()
     for (Entity* e : m_updated_entities)
         e->Update(delta_time);
 
-    m_ui_controller.Draw();
+    m_context.ui_controller->Draw();
     
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
 }
 
 EditorTilemapScene::EditorTilemapScene(GameContext& context):
-    TilemapScene(context, false), m_ui_controller(m_context.texture_controller, m_camera, "NormalFont", 0/*m_context.event_controller->GetSelectedLayer()*/)
+    TilemapScene(context, false)
 {
     m_context.event_controller = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
+    m_context.ui_controller = std::make_unique<EditorUiController>(m_context.texture_controller, m_camera, "NormalFont", 0/*m_context.event_controller->GetSelectedLayer()*/);
     m_drawables.push_back(&m_tileset);
 }
 
@@ -178,15 +180,16 @@ void EditorTilemapScene::Gameloop()
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
     // Will use Notifier to know selected layer from UiController
-    // m_ui_controller.UpdateState(m_context.event_controller->GetSelectedLayer());
-    m_ui_controller.Draw();
+    // m_context.ui_controller->UpdateState(m_context.event_controller->GetSelectedLayer());
+    m_context.ui_controller->Draw();
     m_context.window.UpdateRender();    
 }
 
 BattleScene::BattleScene(GameContext& context):
-    Scene(context), m_ui_controller(m_context.texture_controller, m_camera, "PixelOperator8")
+    Scene(context)
 {
     m_context.event_controller = std::make_unique<EventController>(); // Will use BattleEventController
+    m_context.ui_controller = std::make_unique<BattleUiController>(m_context.texture_controller, m_camera, "PixelOperator8");
     m_context.sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
 }
 
@@ -197,7 +200,7 @@ void BattleScene::Gameloop()
     
     m_gameloop = m_context.event_controller->HandleWindowEvents();
     
-    m_ui_controller.Draw();
+    m_context.ui_controller->Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
 }
