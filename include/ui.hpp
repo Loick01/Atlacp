@@ -14,20 +14,23 @@ enum class Anchor
 
 class UiElement : public ScreenDrawable
 {
-    private:
+    protected:
         std::vector<UiElement*> m_childs;
         ScreenPosition m_local_position; // In addition to ScreenDrawable::m_position, UiElement have a relative position to its parent
+        AreaSize m_parent_size;
         // For the root UiElement, local = global
         // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
 
     public:
         UiElement(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition local_position={0,0});
         UiElement(TextureController& texture_controller, const ScreenPosition local_position={0,0});
-
-        void AddChild(UiElement* child);
-        void ComputeZoom(const AreaSize parent_size, const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
-        void ComputePosition(const AreaSize parent_size, const Anchor x_anchor, const Anchor y_anchor); // Must be called after ComputeZoom
-        void AddPadding(const Axis axis, const int ref_size, const float scale);
+        
+        void SetParentSize(const AreaSize parent_size);
+        void AddChild(UiElement* child); // Warning : AddChild must be used only once UiElement configuration has been done
+        void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
+        void ComputePosition(const Anchor x_anchor, const Anchor y_anchor); // Must be called after ComputeZoom
+        void AddPadding(const Axis source_axis, const Axis padding_axis, const float scale);
+        void AddPadding(const Axis padding_axis, const float scale);
         void DrawTexture() const override; 
         void UpdatePosition(const ScreenPosition parent_position={0,0}); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition local_position); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
@@ -46,13 +49,14 @@ class TextArea : public UiElement
     public:
         TextArea(TextureController& texture_controller, const std::string& font_filepath, const SDL_Color color=SDL_Color{0,0,0,255});
         void SetText(const std::string& text);
-        void SetMaxWidth(const int max_width);
+        void SetMaxWidth(const float scale);
 };
 
 class UiController
 {
     protected:
-        const UiElement* m_root; // Root will be a rendered UiElement, not just abstract 
+        UiElement* m_root; // Root will be a rendered UiElement, not just abstract
+        void SetRoot(UiElement* ui_root, const AreaSize initial_size); // Because the root has no parent, we must specified its initial size
 
     public:
         void Draw() const;
@@ -88,7 +92,7 @@ class EditorUiController : public UiController
 class BattleUiController : public UiController
 {
     private:
-        // Will not stay here
+        // Will be removed
         UiElement m_background;
         UiElement m_player;
         UiElement m_enemy;
@@ -96,6 +100,7 @@ class BattleUiController : public UiController
         UiElement m_enemy_box;
         TextArea m_player_info;
         TextArea m_enemy_info;
+        UiElement m_main_box;
 
     public:
         BattleUiController(TextureController& texture_controller, const Camera& camera, const std::string& font_filepath);
