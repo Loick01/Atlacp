@@ -33,8 +33,8 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         data.tilesets.push_back(s);
 }
 
-MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, TextureController& texture_controller,
-    Tileset& tileset, const bool layer_culling) const
+MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, TextureController& texture_controller, 
+    Tileset& tileset) const
 {
     std::ifstream input;
     const std::string map_filepath = "../assets/maps/" + path; // Create a function in File
@@ -49,7 +49,6 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
         for (size_t c=0 ; c<layer_size ; c++){
             input >> t; current_layer.AddTile(t);
         }
-        current_layer.SetShouldCulling(layer_culling);
         data.map.push_back(current_layer);
     }
     input.close();

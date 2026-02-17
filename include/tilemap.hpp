@@ -38,8 +38,9 @@ class Tilemap : public Notifier<TilemapEvent>
         const std::vector<TileLayer>& GetLayers() const;
         MapPosition GetSpawnPosition() const;
         std::vector<bool> GetOccupancyGrid() const;
+        GridSize GetLayerSize() const;
         int GetTileSize() const;
-        int GetGridSize() const;
+        int GetGridSize() const; // Should be removed and use instead GetLayerSize()
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound);
         MapBound IsOutOfMap(const MapPosition p) const;
         unsigned int GetTileIndex(const MapPosition p) const;

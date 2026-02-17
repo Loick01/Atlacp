@@ -11,8 +11,7 @@ class TileLayer : public SceneDrawable
     private:
         std::vector<Tile> m_tiles;
         Tileset& m_tileset;
-        GridSize m_size;
-        bool m_should_culling; // Const ?
+        const GridSize m_size;
     
     public:
         TileLayer(const GridSize layer_size, Camera& camera, TextureController& texture_controller, Tileset& tileset);
@@ -21,7 +20,6 @@ class TileLayer : public SceneDrawable
         void DrawTexture() const override;
         void AddTile(const Tile t);
         void SetTile(const size_t index, const Tile t);
-        void SetShouldCulling(const bool should_culling);
 };
 
 struct MapData

@@ -144,6 +144,7 @@ void GameplayTilemapScene::Gameloop()
     m_gameloop = m_context.event_controller->HandleWindowEvents();
     const float delta_time = m_time.GetDeltaTime();
     
+    m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layers_split_index ; i++)
         m_layers[i]->DrawTexture();
     for (Entity* e : m_rendered_entities)
@@ -175,7 +176,8 @@ void EditorTilemapScene::Gameloop()
     
     m_gameloop = m_context.event_controller->HandleWindowEvents();
     m_context.event_controller->HandleEvents();
-
+    
+    m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     

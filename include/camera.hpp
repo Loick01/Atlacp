@@ -17,6 +17,10 @@ class Camera
         AreaSize m_tilemap_size; // Could change when loading a new map
         Pair<bool> m_is_off_screen;
         float m_zoom;
+        
+        bool m_should_culling;
+        Pair<int> m_start_index;
+        Pair<int> m_end_index;
 
     public:
         Camera(Window& window, const GridSize range_tile, const int tile_size);
@@ -26,6 +30,8 @@ class Camera
         GridSize GetRangeTile() const;
         AreaSize GetViewport() const;
         Pair<bool> GetIsOffScreen() const;
+        Pair<int> GetStartIndex() const;
+        Pair<int> GetEndIndex() const;
         float GetZoom() const;
         void AddZoom(const float z);
         void SetTilemapInfo(const AreaSize tilemap_size);
@@ -33,4 +39,7 @@ class Camera
         void MoveCameraPosition(const ScenePosition sp); // Add sp to m_position
         void Reset();
         void LookAt(const ScenePosition sp);
+
+        void SetShouldCulling(const bool should_culling);
+        void ComputeMapCulling(const GridSize layer_size, const int tile_size);
 };

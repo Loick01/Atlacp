@@ -41,6 +41,16 @@ GridSize Camera::GetRangeTile() const
     return m_range_tile;
 }
 
+Pair<int> Camera::GetStartIndex() const
+{
+    return m_start_index;
+}
+
+Pair<int> Camera::GetEndIndex() const
+{
+    return m_end_index;
+}
+
 Pair<bool> Camera::GetIsOffScreen() const
 {
     return m_is_off_screen;
@@ -87,4 +97,27 @@ void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene posi
     if (m_is_off_screen.y) camera_position.y = std::clamp(camera_position.y, 0, m_tilemap_size.y - m_viewport.y); // Map must be render at ScenePosition{0,0}
     else camera_position.y = m_tilemap_size.y/2 - m_viewport.y/2;
     SetCameraPosition(camera_position);
+}
+
+void Camera::SetShouldCulling(const bool should_culling)
+{
+    m_should_culling = should_culling;
+}
+
+void Camera::ComputeMapCulling(const GridSize layer_size, const int tile_size)
+{
+    m_start_index = GridSize{0, 0};
+    m_end_index = layer_size;
+    if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
+        if (m_is_off_screen.x){
+            m_start_index.x = m_position.x/(tile_size*m_zoom);
+            // While animating a movement, m_end_index could not be enough to fill the window with the map
+            // So I add 1 to m_end_index, and check if it becomes greater than map size
+            m_end_index.x = std::min(m_end_index.x, m_start_index.x + m_range_tile.x + 1);
+        }
+        if (m_is_off_screen.y){
+            m_start_index.y = m_position.y/(tile_size*m_zoom);
+            m_end_index.y = std::min(m_end_index.y, m_start_index.y + m_range_tile.y + 1);
+        }
+    }
 }

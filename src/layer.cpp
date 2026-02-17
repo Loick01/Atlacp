@@ -20,27 +20,12 @@ Tile TileLayer::GetTile(const size_t index) const
 void TileLayer::DrawTexture() const
 {
     int tile_size = m_tileset.GetTileSize();
-    ScenePosition camera_position = m_camera.GetPosition();
     const float zoom = m_camera.GetZoom();
 
-    // Culling (could be done in Tilemap instead ?)
-    // While animating a movement, end_index could not be enough to fill the window with the map
-    // So I add 1 to end_index, and check if it becomes greater than map size
-    Pair<int> start_index = GridSize{0, 0};
-    Pair<int> end_index = m_size; // Same
-    if (m_should_culling){ // No map culling in editor (find better way than just use a bool ?)
-        // Should be in a function in Camera ?
-        if (m_camera.GetIsOffScreen().x){
-            start_index.x = camera_position.x/(tile_size*zoom);
-            end_index.x = std::min(end_index.x, start_index.x + m_camera.GetRangeTile().x + 1);
-        }
-        if (m_camera.GetIsOffScreen().y){
-            start_index.y = camera_position.y/(tile_size*zoom);
-            end_index.y = std::min(end_index.y, start_index.y + m_camera.GetRangeTile().y + 1);
-        }
-    }
-    
-    camera_position = camera_position-m_camera.GetScreenOffset(); // Do not forget, even if the culling is disabled
+    Pair<int> start_index = m_camera.GetStartIndex();
+    Pair<int> end_index = m_camera.GetEndIndex();
+
+    ScenePosition camera_position = m_camera.GetPosition()-m_camera.GetScreenOffset(); // Do not forget, even if the culling is disabled
 
     for (int j = start_index.y ; j < end_index.y ; j++){
         for (int i = start_index.x ; i < end_index.x ; i++){
@@ -63,9 +48,4 @@ void TileLayer::AddTile(const Tile t)
 void TileLayer::SetTile(const size_t index, const Tile t)
 {
     m_tiles[index] = t;
-}
-
-void TileLayer::SetShouldCulling(const bool should_culling)
-{
-    m_should_culling = should_culling;
 }

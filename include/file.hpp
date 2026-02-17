@@ -20,7 +20,7 @@ class FileReader
 
         WorldData ReadWorldFile(const std::string& world_filepath) const;
         MapData GetMapFromFile(const std::string& path, Camera& camera, TextureController& texture_controller,
-            Tileset& tileset, const bool layer_culling) const;
+            Tileset& tileset) const;
         TilesetData GetTilesetFromFile(const std::string& path) const;
         AnimationData GetAnimationFromFile(const std::string& path) const;
         void SaveMapFile(const std::string& map_filepath, const MapData& map_data) const;
