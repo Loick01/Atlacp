@@ -1,11 +1,11 @@
 #include "window.hpp"
 
-Window::Window(const std::string& title, const SDL_Color bg_color) :
-    m_title(title), m_window(nullptr), m_renderer(nullptr), m_bg_color(bg_color)
+Window::Window(const std::string& title, const SDL_Color bgColor) :
+    m_title(title), m_window(nullptr), m_renderer(nullptr), m_bgColor(bgColor)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) std::cout << "Failed to initialize SDL library\n";
     CreateWindow();
-    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+    SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
 }
 
 Window::~Window()
@@ -46,16 +46,16 @@ bool Window::HasError() const
 
 void Window::SetBoxing(const int x_b, const int y_b, const int w, const int h)
 {
-    m_box.rect_a = SDL_Rect{0, 0, w, h};
-    m_box.rect_b = SDL_Rect{x_b, y_b, w, h};
+    m_box.rectF = SDL_Rect{0, 0, w, h};
+    m_box.rectS = SDL_Rect{x_b, y_b, w, h};
 }
 
 void Window::DrawBoxing()
 {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(m_renderer, &m_box.rect_a);
-    SDL_RenderFillRect(m_renderer, &m_box.rect_b);
-    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+    SDL_RenderFillRect(m_renderer, &m_box.rectF);
+    SDL_RenderFillRect(m_renderer, &m_box.rectS);
+    SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
 }
 
 void Window::ClearRenderer() const
@@ -68,10 +68,10 @@ void Window::UpdateRender() const
     SDL_RenderPresent(m_renderer);
 }
 
-void Window::SetBackgroundColor(const SDL_Color bg_color)
+void Window::SetBackgroundColor(const SDL_Color bgColor)
 {
-    m_bg_color = bg_color;
-    SDL_SetRenderDrawColor(m_renderer, m_bg_color.r, m_bg_color.g, m_bg_color.b, 255);
+    m_bgColor = bgColor;
+    SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
 }
 
 void Window::HideCursor()

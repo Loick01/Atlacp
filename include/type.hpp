@@ -104,9 +104,9 @@ struct MapPosition : public Vec2
     MapPosition(const int px, const int py) { x = px; y = py; }
     MapPosition(const Vec2& v) { x = v.x; y = v.y; }
 
-    ScenePosition ToScenePosition(const int tile_size) const
+    ScenePosition ToScenePosition(const int tileSize) const
     {
-        return ScenePosition{x, y}*tile_size;
+        return ScenePosition{x, y}*tileSize;
     }
 };
 
@@ -134,30 +134,30 @@ struct WorldData
 {
     std::vector<std::string> maps;
     GridSize size;
-    size_t start_map;
+    size_t startMap;
 };
 
 struct TilesetData
 {
-    TextureKey tileset_key;
-    std::set<Tile> solid_tiles; // Should use unordered set ?
+    TextureKey tilesetKey;
+    std::set<Tile> solidTiles; // Should use unordered set ?
     GridSize size;
-    int tile_size;
+    int tileSize;
 };
 
 struct AnimationData
 {
     std::vector<Vec2> sprites; // Position of each sprites in spritesheet. Should use ScreenPosition (or something else) instead of Vec2 ?
-    AreaSize sprite_size;
+    AreaSize spriteSize;
     int step; // How many step for the animation
-    float frame_duration;
+    float frameDuration;
 };
 
 // Remove ?
 struct TilesetNormalizationInfo
 {
-    int last_lower_bound;
-    int last_upper_bound;
+    int lastLowerBound;
+    int lastUpperBound;
 };
 
 // Should not be here ?

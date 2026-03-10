@@ -39,8 +39,8 @@ class JoystickActionController : public ActionController
 {
     private:
         SDL_Joystick* m_joystick;
-        int m_axis_x;
-        int m_axis_y;
+        int m_axisX;
+        int m_axisY;
 
     public:
         JoystickActionController();
@@ -57,7 +57,7 @@ class EventController
         std::vector<SDL_Event> m_events;
         
     public:
-        EventController();
+        EventController() = default;
         bool HandleWindowEvents() const;
         virtual void HandleEvents(); // = 0; Will be pure virtual when I have created BattleEventController 
         void PollAllEvents();
@@ -66,13 +66,13 @@ class EventController
 class GameplayEventController : public EventController
 {
     private:
-        ActionController* m_action_controller;
+        ActionController* m_actionController;
 
     public:
         GameplayEventController();
         void HandleEvents() override;
 
-        MapDirection m_event_direction; // Should be private ?
+        MapDirection m_eventDirection; // Should be private ?
 };
 
 class EditorEventController : public EventController
@@ -81,20 +81,20 @@ class EditorEventController : public EventController
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
-        ScenePosition m_last_camera_origin;
+        ScenePosition m_lastCameraOrigin;
 
         // Should be in a struct EventContext ?
-        Tile m_selected_tile;
-        int m_selected_tileset;
-        int m_selected_layer;
-        bool m_is_camera_moving;
-        bool m_is_replacing_tile;
+        Tile m_selectedTile;
+        int m_selectedTileset;
+        int m_selectedLayer;
+        bool m_isCameraMoving;
+        bool m_isReplacingTile;
 
         // Will be removed ?
         Tileset& m_tileset; // Should be a UiElement ?
         Tilemap& m_tilemap;
         Camera& m_camera;
-        size_t m_layer_count; // Remove ?
+        size_t m_layerCount; // Remove ?
 
     public:
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);

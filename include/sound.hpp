@@ -9,7 +9,7 @@
 class SoundController
 {
     private:
-        Mix_Music* m_background_music;
+        Mix_Music* m_backgroundMusic;
         void DeleteBackgroundMusic();
 
     public:

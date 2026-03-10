@@ -16,17 +16,17 @@ class TextureController
     private:
         std::map<TextureKey,SDL_Texture*> m_textures;
         std::map<TextureKey,TTF_Font*> m_fonts;
-        SDL_Renderer* m_window_renderer;
+        SDL_Renderer* m_windowRenderer;
 
     public:
-        TextureController(SDL_Renderer* window_renderer);
+        TextureController(SDL_Renderer* windowRenderer);
         ~TextureController();
 
-        TTF_Font* GetFont(const TextureKey& texture_key) const;
-        void LoadTextureFromText(const TextureKey& font_key, const TextureKey& texture_key, const std::string& text, 
-            int &texture_width, int& texture_height, const SDL_Color text_color, const int max_width);
-        void LoadImageFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int &texture_width, int& texture_height);
-        void LoadFontFromFile(const std::string& font_filepath, const TextureKey& texture_key, const int font_size);
-        void RenderTexture(const TextureKey& texture_key, const SDL_Rect& src, const SDL_Rect& dst) const;
-        void DeleteTexture(const TextureKey& texture_key);
+        TTF_Font* GetFont(const TextureKey& textureKey) const;
+        void LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
+            int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth);
+        void LoadImageFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int &textureWidth, int& textureHeight);
+        void LoadFontFromFile(const std::string& fontFilepath, const TextureKey& textureKey, const int fontSize);
+        void RenderTexture(const TextureKey& textureKey, const SDL_Rect& src, const SDL_Rect& dst) const;
+        void DeleteTexture(const TextureKey& textureKey);
 };

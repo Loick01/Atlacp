@@ -1,8 +1,8 @@
 #include "player.hpp"
 
-Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller,
-    const std::string& sprite_filepath, Camera& camera, const float speed):
-    Entity(texture_controller, sprite_filepath, camera, file_reader, tilemap, speed), m_event_controller(nullptr)
+Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
+    const std::string& spriteFilepath, Camera& camera, const float speed):
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, speed), m_eventController(nullptr)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -17,18 +17,18 @@ Player::Player(const FileReader& file_reader, Tilemap& tilemap, TextureControlle
     LookMe();
 }
 
-void Player::SetEventController(GameplayEventController* event_controller)
+void Player::SetEventController(GameplayEventController* eventController)
 {
-    m_event_controller = event_controller;
+    m_eventController = eventController;
 }
 
-void Player::Update(const float delta_time)
+void Player::Update(const float deltaTime)
 {
     switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            m_event_controller->HandleEvents();
-            const MapDirection direction = m_event_controller->m_event_direction;
+            m_eventController->HandleEvents();
+            const MapDirection direction = m_eventController->m_eventDirection;
             switch(direction){
                 case MapDirection::None:
                     break;
@@ -42,7 +42,7 @@ void Player::Update(const float delta_time)
 
         case EntityState::Moving:
         {
-            OrderUpdateMovement(delta_time);
+            OrderUpdateMovement(deltaTime);
             LookMe();
             break;
         }
@@ -50,8 +50,8 @@ void Player::Update(const float delta_time)
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
             Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
-            m_event_controller->HandleEvents(); 
-            const MapDirection direction = m_event_controller->m_event_direction;
+            m_eventController->HandleEvents(); 
+            const MapDirection direction = m_eventController->m_eventDirection;
             switch(direction){
                 case MapDirection::None:
                 {

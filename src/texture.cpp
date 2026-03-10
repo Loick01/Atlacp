@@ -1,11 +1,11 @@
 #include "texture.hpp"
 
-TextureController::TextureController(SDL_Renderer* window_renderer) :
-    m_window_renderer(window_renderer)
+TextureController::TextureController(SDL_Renderer* windowRenderer) :
+    m_windowRenderer(windowRenderer)
 {
     // SDL_image initialization
-    int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
-    if ((IMG_Init(img_flags) & img_flags) != img_flags) std::cout << "Failed to initialize SDL image library\n";
+    int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if ((IMG_Init(imgFlags) & imgFlags) != imgFlags) std::cout << "Failed to initialize SDL image library\n";
     if (TTF_Init() < 0) std::cout << "Failed to initialize SDL font library\n"; // Will use TTF_GetError()
 }
 
@@ -24,71 +24,71 @@ TextureController::~TextureController()
     TTF_Quit();
 }
 
-TTF_Font* TextureController::GetFont(const TextureKey& texture_key) const
+TTF_Font* TextureController::GetFont(const TextureKey& textureKey) const
 {
-    return m_fonts.at(texture_key); // No verifications for the moment
+    return m_fonts.at(textureKey); // No verifications for the moment
 }
 
-void TextureController::LoadImageFromFile(const std::string& texture_filepath, const TextureKey& texture_key, int& texture_width, int& texture_height)
+void TextureController::LoadImageFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int& textureWidth, int& textureHeight)
 {
-    if (m_textures.find(texture_key) == m_textures.end()){
-        SDL_Surface* surface = IMG_Load(texture_filepath.c_str());
-        if (!surface) std::cout << "Failed to load this texture : " << texture_filepath << "\n";
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer,surface);
-        if (!texture) std::cout << "Failed to convert this surface into a texture : " << texture_filepath << "\n";
-        texture_width = surface->w, texture_height = surface->h;
+    if (m_textures.find(textureKey) == m_textures.end()){
+        SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
+        if (!surface) std::cout << "Failed to load this texture : " << textureFilepath << "\n";
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer,surface);
+        if (!texture) std::cout << "Failed to convert this surface into a texture : " << textureFilepath << "\n";
+        textureWidth = surface->w, textureHeight = surface->h;
         SDL_FreeSurface(surface);
-        m_textures[texture_key] = texture;
+        m_textures[textureKey] = texture;
     }else{ // This file has already been loaded as a texture (SDL_Texture already exists in m_textures)
-        SDL_QueryTexture(m_textures[texture_key], nullptr, nullptr, &texture_width, &texture_height); // LoadImageFromFile could return texture size instead of using extra parameters ?
+        SDL_QueryTexture(m_textures[textureKey], nullptr, nullptr, &textureWidth, &textureHeight); // LoadImageFromFile could return texture size instead of using extra parameters ?
     }
 }
 
-void TextureController::LoadFontFromFile(const std::string& font_filepath, const TextureKey& texture_key, const int font_size)
+void TextureController::LoadFontFromFile(const std::string& fontFilepath, const TextureKey& textureKey, const int fontSize)
 {
-    if (m_fonts.find(texture_key) == m_fonts.end()){
-        TTF_Font* font = TTF_OpenFont(font_filepath.c_str(), font_size);
-        if (!font) std::cout << "Failed to load this font : " << font_filepath << "\n";
-        m_fonts[texture_key] = font;
+    if (m_fonts.find(textureKey) == m_fonts.end()){
+        TTF_Font* font = TTF_OpenFont(fontFilepath.c_str(), fontSize);
+        if (!font) std::cout << "Failed to load this font : " << fontFilepath << "\n";
+        m_fonts[textureKey] = font;
     }/*else{ // Will be removed (different TextArea could use the same font)
-        // std::cout << "This font has already been loaded as a font : " << texture_key << "\n";
+        // std::cout << "This font has already been loaded as a font : " << textureKey << "\n";
     }*/
 }
 
-void TextureController::RenderTexture(const TextureKey& texture_key, const SDL_Rect& src, const SDL_Rect& dst) const
+void TextureController::RenderTexture(const TextureKey& textureKey, const SDL_Rect& src, const SDL_Rect& dst) const
 {
-    // A texture with key=texture_key must already be in the map, otherwise std::out_of_range
-    SDL_RenderCopy(m_window_renderer, m_textures.at(texture_key), &src, &dst);
+    // A texture with key=textureKey must already be in the map, otherwise std::out_of_range
+    SDL_RenderCopy(m_windowRenderer, m_textures.at(textureKey), &src, &dst);
 }
 
-void TextureController::DeleteTexture(const TextureKey& texture_key)
+void TextureController::DeleteTexture(const TextureKey& textureKey)
 {
     // Same as for the text fonts, I should implement a counter to know how many Drawable use a texture (they could be shared)
-    std::map<TextureKey, SDL_Texture*>::iterator it = m_textures.find(texture_key);
+    std::map<TextureKey, SDL_Texture*>::iterator it = m_textures.find(textureKey);
     if (it != m_textures.end()){
         SDL_DestroyTexture(it->second);
         m_textures.erase(it);
     }/*else{
-        std::cout << "Try to delete a texture that don't exist : " << texture_key << "\n"; // Will throw an error (is this case possible ?)
+        std::cout << "Try to delete a texture that don't exist : " << textureKey << "\n"; // Will throw an error (is this case possible ?)
     }*/
 }
 
-// void TextureController::DeleteFont(const TextureKey& texture_key)
+// void TextureController::DeleteFont(const TextureKey& textureKey)
 // {
-//     std::map<TextureKey, TTF_Font*>::iterator it = m_fonts.find(texture_key);
+//     std::map<TextureKey, TTF_Font*>::iterator it = m_fonts.find(textureKey);
 //     if (it != m_fonts.end()){
 //         TTF_CloseFont(it->second);
 //         m_fonts.erase(it);
 //     }
 // }
 
-void TextureController::LoadTextureFromText(const TextureKey& font_key, const TextureKey& texture_key, const std::string& text, 
-    int &texture_width, int& texture_height, const SDL_Color text_color, const int max_width)
+void TextureController::LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
+    int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
-    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(font_key), text.c_str(), text_color, max_width);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window_renderer, surface);
-    texture_width = surface->w, texture_height = surface->h;
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(fontKey), text.c_str(), textColor, maxWidth);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
+    textureWidth = surface->w, textureHeight = surface->h;
     SDL_FreeSurface(surface);
-    if (m_textures[texture_key]) SDL_DestroyTexture(m_textures[texture_key]);
-    m_textures[texture_key] = texture;
+    if (m_textures[textureKey]) SDL_DestroyTexture(m_textures[textureKey]);
+    m_textures[textureKey] = texture;
 }

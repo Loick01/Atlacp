@@ -1,41 +1,41 @@
 #include "drawable.hpp"
 
-Drawable::Drawable(TextureController& texture_controller, const std::string& texture_filepath):
-    m_texture_controller(texture_controller)
+Drawable::Drawable(TextureController& textureController, const std::string& textureFilepath):
+    m_textureController(textureController)
 {
-    LoadTexture(texture_filepath);
+    LoadTexture(textureFilepath);
 }
 
-Drawable::Drawable(TextureController& texture_controller):
-    m_texture_controller(texture_controller)
+Drawable::Drawable(TextureController& textureController):
+    m_textureController(textureController)
 {
 
 }
 
 Drawable::~Drawable()
 {
-    m_texture_controller.DeleteTexture(m_texture_key);
+    m_textureController.DeleteTexture(m_textureKey);
 }
 
-void Drawable::LoadTexture(const std::string& texture_filepath)
+void Drawable::LoadTexture(const std::string& textureFilepath)
 {
-    m_texture_key = texture_filepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    m_texture_controller.LoadImageFromFile(texture_filepath, m_texture_key, m_texture_width, m_texture_height); 
+    m_textureKey = textureFilepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
+    m_textureController.LoadImageFromFile(textureFilepath, m_textureKey, m_textureWidth, m_textureHeight); 
 }
 
 TextureKey Drawable::GetTextureKey() const
 {
-    return m_texture_key;
+    return m_textureKey;
 }
 
 int Drawable::GetTextureWidth() const
 {
-    return m_texture_width;
+    return m_textureWidth;
 }
 
 int Drawable::GetTextureHeight() const
 {
-    return m_texture_height;
+    return m_textureHeight;
 }
 
 bool Drawable::IsPositionInTexture(const Vec2 sp) const // sp must be normalized
@@ -43,41 +43,41 @@ bool Drawable::IsPositionInTexture(const Vec2 sp) const // sp must be normalized
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
-SceneDrawable::SceneDrawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position):
-    Drawable(texture_controller, texture_filepath), m_camera(camera), m_position(position)
+SceneDrawable::SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position):
+    Drawable(textureController, textureFilepath), m_camera(camera), m_position(position)
 {
 
 }
 
-SceneDrawable::SceneDrawable(TextureController& texture_controller, Camera& camera, const ScenePosition position):
-    Drawable(texture_controller), m_camera(camera), m_position(position)
+SceneDrawable::SceneDrawable(TextureController& textureController, Camera& camera, const ScenePosition position):
+    Drawable(textureController), m_camera(camera), m_position(position)
 {
 
 }
 
 ScenePosition SceneDrawable::GetDisplayOffset() const
 {
-    return m_display_offset;
+    return m_displayOffset;
 }   
 
 void SceneDrawable::SetDisplayOffset(const ScenePosition offset)
 {
-    m_display_offset = offset;
+    m_displayOffset = offset;
 }
 
 void SceneDrawable::LookMe()
 {
-    m_camera.LookAt(m_position+m_display_offset);
+    m_camera.LookAt(m_position+m_displayOffset);
 }
 
-ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position, const bool should_draw):
-    Drawable(texture_controller, texture_filepath), m_position(position), m_should_draw(should_draw), m_zoom(1.0f) // Default value for zoom must be 1.0
+ScreenDrawable::ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position, const bool shouldDraw):
+    Drawable(textureController, textureFilepath), m_position(position), m_shouldDraw(shouldDraw), m_zoom(1.0f) // Default value for zoom must be 1.0
 {
     
 }
 
-ScreenDrawable::ScreenDrawable(TextureController& texture_controller, const ScreenPosition position, const bool should_draw):
-    Drawable(texture_controller), m_position(position), m_should_draw(should_draw), m_zoom(1.0f) // Default value for zoom must be 1.0
+ScreenDrawable::ScreenDrawable(TextureController& textureController, const ScreenPosition position, const bool shouldDraw):
+    Drawable(textureController), m_position(position), m_shouldDraw(shouldDraw), m_zoom(1.0f) // Default value for zoom must be 1.0
 {
 
 }
@@ -99,7 +99,7 @@ float ScreenDrawable::GetZoom() const
 
 bool ScreenDrawable::GetShouldDraw() const
 {
-    return m_should_draw;
+    return m_shouldDraw;
 }
 
 void ScreenDrawable::SetZoom(const float zoom)
@@ -109,10 +109,10 @@ void ScreenDrawable::SetZoom(const float zoom)
 
 void ScreenDrawable::DrawTexture() const
 {
-    if (m_should_draw){
-        const SDL_Rect src{0, 0, m_texture_width, m_texture_height};
-        const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_texture_width*m_zoom), static_cast<int>(m_texture_height*m_zoom)};
-        m_texture_controller.RenderTexture(m_texture_key, src, dst);
+    if (m_shouldDraw){
+        const SDL_Rect src{0, 0, m_textureWidth, m_textureHeight};
+        const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_textureWidth*m_zoom), static_cast<int>(m_textureHeight*m_zoom)};
+        m_textureController.RenderTexture(m_textureKey, src, dst);
     }
 }
 
@@ -123,5 +123,5 @@ void ScreenDrawable::SetScreenPosition(const ScreenPosition position)
 
 void ScreenDrawable::InvertShouldDraw()
 {
-    m_should_draw = !m_should_draw;
+    m_shouldDraw = !m_shouldDraw;
 }

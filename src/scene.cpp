@@ -2,8 +2,8 @@
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
-    m_window("Atlacp", {25,25,25}), m_texture_controller(m_window.GetRenderer()),
-    m_context{m_window, m_texture_controller, m_sound_controller, m_file_reader}
+    m_window("Atlacp", {25,25,25}), m_textureController(m_window.GetRenderer()),
+    m_context{m_window, m_textureController, m_soundController, m_fileReader}
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
     SetCurrentScene(e);
@@ -29,15 +29,15 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
     // current_scene.reset(); Delete the previous Scene before creating a new one
     switch(e){
         case SwitchEvent::ToGameplay: {
-            m_current_scene = std::make_unique<GameplayTilemapScene>(m_context);
+            m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);
             break;
         } 
         case SwitchEvent::ToEditor: {
-            m_current_scene = std::make_unique<EditorTilemapScene>(m_context);
+            m_currentScene = std::make_unique<EditorTilemapScene>(m_context);
             break;
         }
         case SwitchEvent::ToBattle: {
-            m_current_scene = std::make_unique<BattleScene>(m_context);
+            m_currentScene = std::make_unique<BattleScene>(m_context);
             break;
         }
         default:{
@@ -45,18 +45,18 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             break;
         }
     }
-    m_current_scene->AddCallback([this](SwitchEvent e){SetCurrentScene(e);});
+    m_currentScene->AddCallback([this](SwitchEvent e){SetCurrentScene(e);});
 }
 
 void SceneController::StartGameloop()
 {
-    while(m_current_scene->GetGameloop()){
-        m_current_scene->Gameloop();
+    while(m_currentScene->GetGameloop()){
+        m_currentScene->Gameloop();
     }
 } 
 
 Scene::Scene(GameContext& context):
-    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tile_size when using a new world 
+    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tileSize when using a new world 
     m_gameloop(true)
 {
     if (m_context.window.HasError()) std::cout << "SDL window was not initialized\n"; // Will throw an error
@@ -67,14 +67,14 @@ bool Scene::GetGameloop() const
     return m_gameloop;
 }
 
-TilemapScene::TilemapScene(GameContext& context, const bool should_culling):
-    Scene(context), m_tileset(m_context.texture_controller),
-    m_tilemap(m_context.texture_controller, m_context.file_reader, m_tileset, "../assets/worlds/z_world", m_camera, should_culling)
+TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
+    Scene(context), m_tileset(m_context.textureController),
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "../assets/worlds/z_world", m_camera, shouldCulling)
 {
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
 
-    // m_context.sound_controller.SetBackgroundMusic("forest.ogg"); // Will be removed
+    // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -87,50 +87,50 @@ void TilemapScene::UpdateTilemapLayer()
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     TilemapScene(context, true),
-    m_player(m_context.file_reader, m_tilemap, m_context.texture_controller, "../assets/sprites/character16", m_camera, 4.0f),
-    m_layers_split_index(1) 
+    m_player(m_context.fileReader, m_tilemap, m_context.textureController, "../assets/sprites/character16", m_camera, 4.0f),
+    m_layersSplitIndex(1) 
 {
-    m_context.event_controller = std::make_unique<GameplayEventController>();
-    m_context.ui_controller = std::make_unique<GameplayUiController>(m_context.texture_controller, m_camera, "PixelOperator8");
+    m_context.eventController = std::make_unique<GameplayEventController>();
+    m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
 
     // For now, I don't know how to do without use dynamic_cast
-    m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.event_controller.get()));
+    m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.eventController.get()));
     m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
     m_context.window.HideCursor();
 
-    m_rendered_entities = {&m_player};
+    m_renderedEntities = {&m_player};
 
     // Testing my NPC, will be remove (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
+        NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, nullptr, "../assets/sprites/npc16", m_camera, 4.0f);
         npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
-        m_rendered_entities.push_back(npc);
+        m_renderedEntities.push_back(npc);
     }
-    // Testing follow behaviour (tracked_entity parameter will be remove from NPC constructor)
+    // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
     /*
-    Entity* tracked_entity = &m_player;
+    Entity* trackedEntity = &m_player;
     for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_context.file_reader, m_tilemap, m_context.texture_controller, tracked_entity, "../assets/sprites/npc16", m_camera, 4.0f);
+        NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", m_camera, 4.0f);
         npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
-        m_rendered_entities.push_back(npc);
-        tracked_entity = npc;
+        m_renderedEntities.push_back(npc);
+        trackedEntity = npc;
     }
     */
-    m_updated_entities = m_rendered_entities;
+    m_updatedEntities = m_renderedEntities;
 }
 
 GameplayTilemapScene::~GameplayTilemapScene()
 {
-    // Do not try to delete the player (first element in m_updated_entities, be sure to don't modify the order)
-    for (unsigned int i = 1 ; i < m_updated_entities.size() ; i++)
-        delete m_updated_entities[i];
+    // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order)
+    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
+        delete m_updatedEntities[i];
 }
 
 void GameplayTilemapScene::SortRenderedEntities()
 {
-    // m_rendered_entities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
+    // m_renderedEntities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
     // It would be even better to sort only once when several entities end their movement in the same frame
-    std::sort(m_rendered_entities.begin(), m_rendered_entities.end(),
+    std::sort(m_renderedEntities.begin(), m_renderedEntities.end(),
         [](Entity* a, Entity* b){
             return a->GetMapPosition().y < b->GetMapPosition().y; 
         });
@@ -140,22 +140,22 @@ void GameplayTilemapScene::Gameloop()
 {
     m_time.Update();
     m_context.window.ClearRenderer();
-    m_context.event_controller->PollAllEvents();
-    m_gameloop = m_context.event_controller->HandleWindowEvents();
-    const float delta_time = m_time.GetDeltaTime();
+    m_context.eventController->PollAllEvents();
+    m_gameloop = m_context.eventController->HandleWindowEvents();
+    const float deltaTime = m_time.GetDeltaTime();
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
-    for (size_t i=0 ; i<m_layers_split_index ; i++)
+    for (size_t i=0 ; i<m_layersSplitIndex ; i++)
         m_layers[i]->DrawTexture();
-    for (Entity* e : m_rendered_entities)
+    for (Entity* e : m_renderedEntities)
         e->DrawTexture();
-    for (size_t i=m_layers_split_index ; i<m_layers.size() ; i++)
+    for (size_t i=m_layersSplitIndex ; i<m_layers.size() ; i++)
         m_layers[i]->DrawTexture();
 
-    for (Entity* e : m_updated_entities)
-        e->Update(delta_time);
+    for (Entity* e : m_updatedEntities)
+        e->Update(deltaTime);
 
-    m_context.ui_controller->Draw();
+    m_context.uiController->Draw();
     
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
@@ -164,45 +164,45 @@ void GameplayTilemapScene::Gameloop()
 EditorTilemapScene::EditorTilemapScene(GameContext& context):
     TilemapScene(context, false)
 {
-    m_context.event_controller = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
-    m_context.ui_controller = std::make_unique<EditorUiController>(m_context.texture_controller, m_camera, "NormalFont", 0/*m_context.event_controller->GetSelectedLayer()*/);
+    m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
+    m_context.uiController = std::make_unique<EditorUiController>(m_context.textureController, m_camera, "NormalFont", 0/*m_context.eventController->GetSelectedLayer()*/);
     m_drawables.push_back(&m_tileset);
 }
 
 void EditorTilemapScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_context.event_controller->PollAllEvents();
+    m_context.eventController->PollAllEvents();
     
-    m_gameloop = m_context.event_controller->HandleWindowEvents();
-    m_context.event_controller->HandleEvents();
+    m_gameloop = m_context.eventController->HandleWindowEvents();
+    m_context.eventController->HandleEvents();
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
     // Will use Notifier to know selected layer from UiController
-    // m_context.ui_controller->UpdateState(m_context.event_controller->GetSelectedLayer());
-    m_context.ui_controller->Draw();
+    // m_context.uiController->UpdateState(m_context.eventController->GetSelectedLayer());
+    m_context.uiController->Draw();
     m_context.window.UpdateRender();    
 }
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context)
 {
-    m_context.event_controller = std::make_unique<EventController>(); // Will use BattleEventController
-    m_context.ui_controller = std::make_unique<BattleUiController>(m_context.texture_controller, m_camera, "PixelOperator8");
-    m_context.sound_controller.SetBackgroundMusic("battle.ogg"); // Will be removed
+    m_context.eventController = std::make_unique<EventController>(); // Will use BattleEventController
+    m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
+    m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed
 }
 
 void BattleScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_context.event_controller->PollAllEvents();
+    m_context.eventController->PollAllEvents();
     
-    m_gameloop = m_context.event_controller->HandleWindowEvents();
+    m_gameloop = m_context.eventController->HandleWindowEvents();
     
-    m_context.ui_controller->Draw();
+    m_context.uiController->Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
 }

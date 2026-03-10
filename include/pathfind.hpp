@@ -13,5 +13,5 @@ class Pathfind // Singleton
 
     public:
         static Pathfind& GetInstance();
-        std::vector<MapPosition> ComputePath(const MapPosition start_position, const MapPosition end_position, const Tilemap& tilemap) const;
+        std::vector<MapPosition> ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap) const;
 };

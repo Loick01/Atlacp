@@ -19,12 +19,12 @@
 struct GameContext
 {
     Window& window;
-    TextureController& texture_controller;
-    SoundController& sound_controller;
-    FileReader& file_reader; 
+    TextureController& textureController;
+    SoundController& soundController;
+    FileReader& fileReader; 
 
-    std::unique_ptr<EventController> event_controller;
-    std::unique_ptr<UiController> ui_controller;
+    std::unique_ptr<EventController> eventController;
+    std::unique_ptr<UiController> uiController;
 };
 
 enum class SwitchEvent
@@ -57,7 +57,7 @@ class TilemapScene : public Scene
         void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
 
     public:
-        TilemapScene(GameContext& context, const bool should_culling);
+        TilemapScene(GameContext& context, const bool shouldCulling);
 };
 
 class GameplayTilemapScene : public TilemapScene
@@ -65,13 +65,13 @@ class GameplayTilemapScene : public TilemapScene
     private:
         Time m_time;
         Player m_player;
-        std::vector<Entity*> m_rendered_entities; // Sorted by y position
+        std::vector<Entity*> m_renderedEntities; // Sorted by y position
         // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
-        std::vector<Entity*> m_updated_entities;
+        std::vector<Entity*> m_updatedEntities;
 
         // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
-        const size_t m_layers_split_index; // Should not be const ?
+        const size_t m_layersSplitIndex; // Should not be const ?
 
         void SortRenderedEntities(); // Rename ?
         
@@ -99,12 +99,12 @@ class SceneController
 {
     private:
         Window m_window;
-        SoundController m_sound_controller;
-        TextureController m_texture_controller;
-        FileReader m_file_reader;
+        SoundController m_soundController;
+        TextureController m_textureController;
+        FileReader m_fileReader;
 
         GameContext m_context;
-        std::unique_ptr<Scene> m_current_scene;
+        std::unique_ptr<Scene> m_currentScene;
 
         void SetCurrentScene(const SwitchEvent e);
         SwitchEvent GetSwitchEventFromMode(const int mode) const;

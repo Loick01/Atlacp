@@ -18,9 +18,9 @@ class EntityMovement
         MapPosition m_move;
         MapDirection m_direction;
 
-        MapPosition m_start_map_position;
-        ScenePosition m_start_position;
-        ScenePosition m_end_position;
+        MapPosition m_startMapPosition;
+        ScenePosition m_startPosition;
+        ScenePosition m_endPosition;
         float m_progress;
 
     public:
@@ -31,14 +31,14 @@ class EntityMovement
         MapDirection GetDirection() const;
         MapPosition GetStartPosition() const;
         ScenePosition GetScenePosition() const;
-        EntityState UpdateProgress(const float speed, const float delta_time); // Return the new state the entity should have
+        EntityState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
         
         // Not sure to keep these 2 functions
         MapPosition GetMoveFromDirection(const MapDirection direction) const;
         MapDirection GetDirectionFromMove(const MapPosition move) const;
 
         void DefineMovement(const MapDirection direction);
-        void Initialize(const int tile_size, const MapPosition start_position, const MapPosition end_position);
+        void Initialize(const int tileSize, const MapPosition startPosition, const MapPosition endPosition);
 };
 
 enum class EntityEvent
@@ -50,26 +50,26 @@ enum class EntityEvent
 class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>
 {
     private:
-        EntityMovement m_current_movement;
+        EntityMovement m_currentMovement;
         Animation m_animation;
         EntityState m_state;
         float m_speed;
 
-        ScenePosition ContinueMovement(const float delta_time);
-        void TryStartMovement(const EntityMovement movement, const bool is_first_movement, const bool can_exit_map);
+        ScenePosition ContinueMovement(const float deltaTime);
+        void TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap);
 
     protected:
-        Entity(TextureController& texture_controller, const std::string& sprite_filepath, Camera& camera, const FileReader& file_reader,
+        Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
             Tilemap& tilemap, const float speed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
     public:
-        virtual void Update(const float delta_time) = 0;
+        virtual void Update(const float deltaTime) = 0;
         void DrawTexture() const override;
 
-        void OrderStartMovement(const MapDirection direction, const bool is_first_movement, const bool can_exit_map=false); 
-        void OrderUpdateMovement(const float delta_time);
+        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false); 
+        void OrderUpdateMovement(const float deltaTime);
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;

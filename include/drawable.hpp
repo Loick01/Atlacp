@@ -8,18 +8,18 @@
 class Drawable
 {
     protected:
-        // string texture_filepath could be replace by a RessourceFile struct, which contains the path without its extension
-        Drawable(TextureController& texture_controller, const std::string& texture_filepath);
-        Drawable(TextureController& texture_controller);
-        // If this class doesn't stay abstract, will need to delete m_texture_key in its destructor (texture_controller->DeleteTexture(texture_key))
+        // textureFilepath could be replace by a RessourceFile struct, which contains the path without its extension
+        Drawable(TextureController& textureController, const std::string& textureFilepath);
+        Drawable(TextureController& textureController);
+        // If this class doesn't stay abstract, will need to delete m_textureKey in its destructor (textureController->DeleteTexture(textureKey))
         // If that happens, beware of every destructor of derivated class from Drawable
         
-        void LoadTexture(const std::string& texture_filepath);
+        void LoadTexture(const std::string& textureFilepath);
 
-        TextureController& m_texture_controller;
-        TextureKey m_texture_key;
-        int m_texture_width;
-        int m_texture_height;
+        TextureController& m_textureController;
+        TextureKey m_textureKey;
+        int m_textureWidth;
+        int m_textureHeight;
     
     public:
         ~Drawable();
@@ -34,15 +34,15 @@ class SceneDrawable : public Drawable
 {
     protected:
         ScenePosition m_position;
-        ScenePosition m_display_offset; // Should be in Entity
+        ScenePosition m_displayOffset; // Should be in Entity
         Camera& m_camera;
 
         ScenePosition GetDisplayOffset() const;
         void SetDisplayOffset(const ScenePosition offset);
     
     public:
-        SceneDrawable(TextureController& texture_controller, const std::string& texture_filepath, Camera& camera, const ScenePosition position);
-        SceneDrawable(TextureController& texture_controller, Camera& camera, const ScenePosition position);
+        SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position);
+        SceneDrawable(TextureController& textureController, Camera& camera, const ScenePosition position);
         void LookMe();
 };
 
@@ -53,11 +53,11 @@ class ScreenDrawable : public Drawable
         float m_zoom; // Don't use camera zoom, but this value instead. Could be private
 
         // Will be removed ?
-        bool m_should_draw; // Could be private
+        bool m_shouldDraw; // Could be private
 
     public:
-        ScreenDrawable(TextureController& texture_controller, const std::string& texture_filepath, const ScreenPosition position={0, 0}, const bool should_draw=true);
-        ScreenDrawable(TextureController& texture_controller, const ScreenPosition position={0, 0}, const bool should_draw=true);
+        ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position={0, 0}, const bool shouldDraw=true);
+        ScreenDrawable(TextureController& textureController, const ScreenPosition position={0, 0}, const bool shouldDraw=true);
 
         ScreenPosition GetScreenPosition() const;
         ScreenPosition GetSize() const;

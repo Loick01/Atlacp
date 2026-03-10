@@ -7,7 +7,7 @@
 class MapElement
 {
     private:
-        MapPosition m_map_position;
+        MapPosition m_mapPosition;
 
     protected:
         Tilemap& m_tilemap;

@@ -7,8 +7,8 @@
 
 struct Boxing
 {
-    SDL_Rect rect_a; // Left or Top rectangle
-    SDL_Rect rect_b; // Right or Bottom rectangle
+    SDL_Rect rectF; // First rectangle : Left or Top 
+    SDL_Rect rectS; // Second rectangle : Right or Bottom
 };
 
 class Window
@@ -18,14 +18,14 @@ class Window
 
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
-        SDL_Color m_bg_color;
+        SDL_Color m_bgColor;
         Boxing m_box;
         int m_width;
         int m_height;
         const std::string m_title;
 
     public:
-        Window(const std::string& title, const SDL_Color bg_color);
+        Window(const std::string& title, const SDL_Color bgColor);
         ~Window();
 
         SDL_Renderer* GetRenderer() const;
@@ -35,7 +35,7 @@ class Window
         void SetBoxing(const int x_b, const int y_b, const int w, const int h);
         void ClearRenderer() const;
         void UpdateRender() const;
-        void SetBackgroundColor(const SDL_Color bg_color);
+        void SetBackgroundColor(const SDL_Color bgColor);
         void DrawBoxing();
         void HideCursor();
 };

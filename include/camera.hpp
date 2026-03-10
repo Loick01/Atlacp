@@ -10,20 +10,20 @@ class Camera
 {
     private:
         ScenePosition m_position;
-        GridSize m_range_tile; // How many tiles (width and height) will be rendered in the window. Should not be a ScenePosition
+        GridSize m_rangeTile; // How many tiles (width and height) will be rendered in the window. Should not be a ScenePosition
         AreaSize m_viewport; // Size of rendering area
         
-        ScreenPosition m_screen_offset;
-        AreaSize m_tilemap_size; // Could change when loading a new map
-        Pair<bool> m_is_off_screen;
+        ScreenPosition m_screenOffset;
+        AreaSize m_tilemapSize; // Could change when loading a new map
+        Pair<bool> m_isOffScreen;
         float m_zoom;
         
-        bool m_should_culling;
-        Pair<int> m_start_index;
-        Pair<int> m_end_index;
+        bool m_shouldCulling;
+        Pair<int> m_startIndex;
+        Pair<int> m_endIndex;
 
     public:
-        Camera(Window& window, const GridSize range_tile, const int tile_size);
+        Camera(Window& window, const GridSize rangeTile, const int tileSize);
 
         ScreenPosition GetScreenOffset() const;
         ScenePosition GetPosition() const;
@@ -34,12 +34,12 @@ class Camera
         Pair<int> GetEndIndex() const;
         float GetZoom() const;
         void AddZoom(const float z);
-        void SetTilemapInfo(const AreaSize tilemap_size);
+        void SetTilemapInfo(const AreaSize tilemapSize);
         void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
         void MoveCameraPosition(const ScenePosition sp); // Add sp to m_position
         void Reset();
         void LookAt(const ScenePosition sp);
 
-        void SetShouldCulling(const bool should_culling);
-        void ComputeMapCulling(const GridSize layer_size, const int tile_size);
+        void SetShouldCulling(const bool shouldCulling);
+        void ComputeMapCulling(const GridSize layerSize, const int tileSize);
 };

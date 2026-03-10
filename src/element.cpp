@@ -8,10 +8,10 @@ MapElement::MapElement(Tilemap& tilemap):
 
 MapPosition MapElement::GetMapPosition() const
 {
-    return m_map_position;
+    return m_mapPosition;
 } 
 
 void MapElement::SetMapPosition(const MapPosition mp)
 {
-    m_map_position = mp;
+    m_mapPosition = mp;
 }

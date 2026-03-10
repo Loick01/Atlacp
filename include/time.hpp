@@ -4,25 +4,25 @@
 
 struct Time
 {
-    uint32_t m_last_time;
-    uint32_t m_current_time;
-    float m_delta_time;
+    uint32_t m_lastTime;
+    uint32_t m_currentTime;
+    float m_deltaTime;
 
     Time():
-        m_last_time(SDL_GetTicks()) 
+        m_lastTime(SDL_GetTicks()) 
     {
 
     }
 
     void Update()
     {
-        m_current_time = SDL_GetTicks();
-        m_delta_time = (m_current_time-m_last_time)/1000.f;
-        m_last_time = m_current_time;
+        m_currentTime = SDL_GetTicks();
+        m_deltaTime = (m_currentTime-m_lastTime)/1000.f;
+        m_lastTime = m_currentTime;
     }
 
     float GetDeltaTime() const
     {
-        return m_delta_time;
+        return m_deltaTime;
     }
 };

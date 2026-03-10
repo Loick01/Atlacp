@@ -20,20 +20,20 @@ enum class TilemapEvent
 class Tilemap : public Notifier<TilemapEvent>
 {
     private:
-        const FileReader& m_file_reader;
+        const FileReader& m_fileReader;
         Tileset& m_tileset;
-        TextureController& m_texture_controller;
+        TextureController& m_textureController;
         Camera& m_camera; // Could be removed and use a parameter in LoadMap ?
-        WorldData m_world_data;
-        MapData m_map_data;
+        WorldData m_worldData;
+        MapData m_mapData;
 
         void LoadMap(const std::string& path);
-        size_t m_current_map;
-        const bool m_should_culling;
+        size_t m_currentMap;
+        const bool m_shouldCulling;
 
     public:
-        Tilemap(TextureController& texture_controller, const FileReader& file_reader, Tileset& tileset, 
-            const std::string& world_filepath, Camera& camera, const bool should_culling);
+        Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 
+            const std::string& worldFilepath, Camera& camera, const bool shouldCulling);
         
         const std::vector<TileLayer>& GetLayers() const;
         MapPosition GetSpawnPosition() const;
@@ -50,7 +50,7 @@ class Tilemap : public Notifier<TilemapEvent>
         void FreePosition(const MapPosition p);
         bool IsFreePosition(MapPosition& p);
         void LoadAdjacentMap(const MapBound bound);
-        void SetTileAt(const size_t layer, const Tile new_tile, const MapPosition p);
-        void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile new_tile);
-        void SaveMap(const std::string &map_filepath) const;
+        void SetTileAt(const size_t layer, const Tile newTile, const MapPosition p);
+        void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile newTile);
+        void SaveMap(const std::string &mapFilepath) const;
 };

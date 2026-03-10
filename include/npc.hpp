@@ -11,8 +11,8 @@ class NPC : public Entity
         EntityBehaviour* m_behaviour;
 
     public:
-        NPC(const FileReader& file_reader, Tilemap& tilemap, TextureController& texture_controller, const Entity* tracked_entity, // Remove tracked entity
-            const std::string& sprite_filepath, Camera& camera, const float speed);
+        NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const Entity* trackedEntity, // Remove tracked entity
+            const std::string& spriteFilepath, Camera& camera, const float speed);
 
-        void Update(const float delta_time) override;
+        void Update(const float deltaTime) override;
 };

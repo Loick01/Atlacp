@@ -4,13 +4,13 @@ SoundController::SoundController()
 {
     // SDL_mixer initialization
     // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
-    int mix_flags = MIX_INIT_OGG;
-    if ((Mix_Init(mix_flags) & mix_flags) != mix_flags) std::cout << "Can't initialize SDL_mixer\n"; // Mix_GetError()
+    int mixFlags = MIX_INIT_OGG;
+    if ((Mix_Init(mixFlags) & mixFlags) != mixFlags) std::cout << "Can't initialize SDL_mixer\n"; // Mix_GetError()
 
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
         std::cout << "Failed to initialize SDL2_mixer library\n";
 
-    m_background_music = nullptr;
+    m_backgroundMusic = nullptr;
 }
 
 SoundController::~SoundController()
@@ -23,15 +23,15 @@ SoundController::~SoundController()
 void SoundController::DeleteBackgroundMusic()
 {
     Mix_HaltMusic();
-    Mix_FreeMusic(m_background_music);
-    m_background_music = nullptr; // Be sure to not play music that has been freed
+    Mix_FreeMusic(m_backgroundMusic);
+    m_backgroundMusic = nullptr; // Be sure to not play music that has been freed
 }
 
 void SoundController::SetBackgroundMusic(const std::string& filepath)
 {
-    if (m_background_music != nullptr)
+    if (m_backgroundMusic != nullptr)
         DeleteBackgroundMusic();
     
-    m_background_music = Mix_LoadMUS(("../assets/musics/"+filepath).c_str()); // Use Mix_Chunk for sound effects
-    if (Mix_PlayMusic(m_background_music, -1) < 0) std::cout << "Can't play music\n"; // Will throw error
+    m_backgroundMusic = Mix_LoadMUS(("../assets/musics/"+filepath).c_str()); // Use Mix_Chunk for sound effects
+    if (Mix_PlayMusic(m_backgroundMusic, -1) < 0) std::cout << "Can't play music\n"; // Will throw error
 }

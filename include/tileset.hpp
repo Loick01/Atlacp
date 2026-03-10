@@ -11,26 +11,26 @@ class Tileset : public ScreenDrawable // Could be a UiElement
 {
     private:
         std::vector<TilesetData> m_tilesets;
-        TilesetNormalizationInfo m_normalization_info;
-        int m_tile_size; // All loaded file in a Tileset instance must have the same tile_size
-        size_t m_index_tileset;
+        TilesetNormalizationInfo m_normalizationInfo;
+        int m_tileSize; // All loaded file in a Tileset instance must have the same tileSize
+        size_t m_indexTileset;
 
         TilesetData GetTilesetData() const;
         
     public:
-        Tileset(TextureController& texture_controller);
+        Tileset(TextureController& textureController);
         ~Tileset();
         
         TextureKey GetTextureKey() const override;
         int GetTilesetsSize() const;
         int GetTileSize() const;
         int GetTilesetWidth() const;
-        int GetTilesetWidth(const int selected_tileset) const;
+        int GetTilesetWidth(const int selectedTileset) const;
         int GetTilesetHeight() const;
         Tile GetNormalizedTile(const Tile tile);
         bool IsEmptyTile(const Tile tile);
-        void UpdateSelectedTile(const ScreenPosition sp, const int selected_tileset, Tile& tile) const;
-        void LoadTileset(const FileReader& file_reader, const std::string& path);
-        void SetDisplayedTileset(const int selected_tileset);
+        void UpdateSelectedTile(const ScreenPosition sp, const int selectedTileset, Tile& tile) const;
+        void LoadTileset(const FileReader& fileReader, const std::string& path);
+        void SetDisplayedTileset(const int selectedTileset);
         void CleanTilesets();
 };
