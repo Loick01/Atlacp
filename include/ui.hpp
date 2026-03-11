@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 #include "drawable.hpp"
 
 enum class Axis

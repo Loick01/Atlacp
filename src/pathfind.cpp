@@ -36,7 +36,7 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
         }
     }
     std::vector<MapPosition> path;
-    if (!found) return path; // Will throw an error, no path can be found from startPosition to endPosition
+    if (!found) return path; // Will throw an error when no path can be found from startPosition to endPosition ?
     MapPosition currentPosition = endPosition;
     while (currentPosition != startPosition){
         path.push_back(currentPosition);

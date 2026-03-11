@@ -81,8 +81,7 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
             SetZoom((m_parentSize.y*scale)/GetTextureHeight());
             break;
         default:
-            std::cout << "Unknown Axis value\n"; // Error
-            break;
+            throw std::invalid_argument("Unknown axis value\n");
     }
 }
 
@@ -102,7 +101,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             final_position.x = m_parentSize.x-new_size.x;
             break;
         default:
-            std::cout << "Incorrect Anchor value for x axis\n"; // Error
+            throw std::invalid_argument("Incorrect anchor value for x axis\n");
     }
     switch(yAnchor){
         case Anchor::Top:
@@ -115,7 +114,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             final_position.y = m_parentSize.y-new_size.y;
             break;
         default:
-            std::cout << "Incorrect Anchor value for y axis\n"; // Error
+            throw std::invalid_argument("Incorrect anchor value for y axis\n");
     }
     SetLocalPosition(final_position);
 }
@@ -142,7 +141,7 @@ void UiElement::AddPadding(const Axis sourceAxis, const Axis paddingAxis, const 
             padding.y = v;
             break;
         default:
-            std::cout << "Unknown Axis value\n"; // Will throw error
+            throw std::invalid_argument("Unknown axis value\n");
             break;
     }
 

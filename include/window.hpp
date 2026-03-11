@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include <SDL2/SDL.h>
@@ -31,7 +31,6 @@ class Window
         SDL_Renderer* GetRenderer() const;
         int GetWidth() const;
         int GetHeight() const;
-        bool HasError() const;
         void SetBoxing(const int x_b, const int y_b, const int w, const int h);
         void ClearRenderer() const;
         void UpdateRender() const;

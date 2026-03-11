@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include "camera.hpp"
@@ -16,6 +16,11 @@
 #include "ui.hpp"
 #include "window.hpp"
 
+enum class SwitchEvent
+{
+    ToGameplay, ToEditor, ToBattle
+};
+
 struct GameContext
 {
     Window& window;
@@ -25,11 +30,6 @@ struct GameContext
 
     std::unique_ptr<EventController> eventController;
     std::unique_ptr<UiController> uiController;
-};
-
-enum class SwitchEvent
-{
-    ToGameplay, ToEditor, ToBattle
 };
 
 class Scene : public Notifier<SwitchEvent>

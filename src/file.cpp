@@ -46,8 +46,10 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
     const size_t layerSize = data.size.x*data.size.y;
     for (unsigned int i = 0 ; i < data.layerCount ; i++){
         TileLayer currentLayer(data.size, camera, textureController, tileset); // Currently, all layers have the same size
-        for (size_t c = 0 ; c < layerSize ; c++)
-            input >> t; currentLayer.AddTile(t);
+        for (size_t c = 0 ; c < layerSize ; c++){
+            input >> t; 
+            currentLayer.AddTile(t);
+        }
         data.map.push_back(currentLayer);
     }
     input.close();

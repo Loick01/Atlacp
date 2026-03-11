@@ -19,14 +19,12 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
         case 2:
             return SwitchEvent::ToBattle;
         default:
-            std::cout << "Unknown mode\n";
+            throw std::invalid_argument("Unknown mode\n");
     };
-    return SwitchEvent::ToGameplay; // Default initial Scene
 }
 
 void SceneController::SetCurrentScene(const SwitchEvent e)
 {
-    // current_scene.reset(); Delete the previous Scene before creating a new one
     switch(e){
         case SwitchEvent::ToGameplay: {
             m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);
@@ -41,8 +39,7 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             break;
         }
         default:{
-            std::cout << "Undefined mode\n"; // Will throw an error
-            break;
+            throw std::invalid_argument("Unknown value\n");
         }
     }
     m_currentScene->AddCallback([this](SwitchEvent e){SetCurrentScene(e);});
@@ -56,10 +53,10 @@ void SceneController::StartGameloop()
 } 
 
 Scene::Scene(GameContext& context):
-    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tileSize when using a new world 
+    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tileSize when using a new world (will be removed)
     m_gameloop(true)
 {
-    if (m_context.window.HasError()) std::cout << "SDL window was not initialized\n"; // Will throw an error
+    
 }
 
 bool Scene::GetGameloop() const
@@ -74,7 +71,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
 
-    // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed
+    m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -93,7 +90,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameplayEventController>();
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
 
-    // For now, I don't know how to do without use dynamic_cast
+    // Try to remove dynamic_cast ?
     m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.eventController.get()));
     m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
     m_context.window.HideCursor();

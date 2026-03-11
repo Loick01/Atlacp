@@ -30,9 +30,7 @@ JoystickActionController::JoystickActionController() :
 {
     m_joystick = SDL_JoystickOpen(0);
     if (m_joystick == nullptr)
-        std::cout << "Error while opening the joystick: " << SDL_GetError() << "\n"; // Will throw error
-    else
-        std::cout << "Joystick connected\n";
+        throw std::runtime_error("Failed to open joystick\n" + std::string(SDL_GetError()));
 }
 
 /* If I need to know when the joystick is removed
@@ -41,7 +39,7 @@ for (SDL_Event event : m_events){
     switch (event.type){
         case SDL_JOYDEVICEREMOVED: {
             //m_joystick = nullptr;
-            std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n";
+            std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n"; // Throw an error
             break;
         }
     }
@@ -116,8 +114,8 @@ GameplayEventController::GameplayEventController():
         else 
             m_actionController = new KeyboardActionController();
     }else{
-        std::cout << "Unable to initialize joystick system\n"; // Throw error ? or use KeyboardActionController
-    }   
+        throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
+    } 
 }
 
 void GameplayEventController::HandleEvents()
@@ -181,7 +179,7 @@ void EditorEventController::HandleEvents()
                         std::string savefile;
                         std::cin >> savefile;
                         m_tilemap.SaveMap(savefile);
-                        std::cout << "Map saved in assets/maps/" << savefile << "\n";
+                        std::cout << "Map saved in assets/maps/" << savefile << "\n"; // Will be removed
                         break;
                     }
                     case SDL_SCANCODE_W:

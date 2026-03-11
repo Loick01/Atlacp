@@ -21,7 +21,8 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
     TilesetData data = fileReader.GetTilesetFromFile(path);
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
-    else if (data.tileSize != m_tileSize) std::cout << "Try to load a tileset with a different tileSize, this should not happen\n"; // Will throw an error
+    else if (data.tileSize != m_tileSize) 
+        throw std::runtime_error("Try to load a tileset with a different tileSize\n"); // Will not be a runtime_error
 
     m_textureKey = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     const std::string tilesetFilepath = "../assets/tilesets/" + path + ".png"; // Create a function in File
@@ -100,7 +101,7 @@ TilesetData Tileset::GetTilesetData() const // Use this function everytime I try
 
 Tile Tileset::GetNormalizedTile(const Tile tile)
 {
-    int t = tile;
+    int t = tile; // Should be Tile instead of int
     if (t >= m_normalizationInfo.lastLowerBound && t <= m_normalizationInfo.lastUpperBound)
         return t-m_normalizationInfo.lastLowerBound;
 
@@ -117,7 +118,6 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
             }
             t -= size;
         }
-        std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
     }else{ // t < m_normalizationInfo.lastLowerBound
         for (size_t i = m_indexTileset-1 ; i >= 0 ; i--){
             const TilesetData data = m_tilesets[i];
@@ -129,11 +129,8 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
                 return t-m_normalizationInfo.lastLowerBound;
             }
         }
-        std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
     }
-
-    std::cout << "No tileset can be find to draw this tile, this should not happen (tile = " << tile << ")\n";
-    return 0;
+    throw std::runtime_error("No tileset can be found to draw this tile (" + std::to_string(tile) + ")\n"); // Will not be a runtime_error
 }
 
 void Tileset::CleanTilesets()

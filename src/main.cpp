@@ -1,10 +1,9 @@
-#include <iostream>
-#include <memory> // Remove
-
 #include "scene.hpp"
 
 int main(int argc, char* argv[]){
 
+    // Run with ./atlacp n 
+    // n = 0 : Game mode, n = 1 : Editor mode, n = 2 : Battle mode
     const int mode = argc == 1 ? 0 : std::stoi(argv[1]);
     SceneController scenes(mode);
     scenes.StartGameloop();

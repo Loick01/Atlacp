@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "drawable.hpp"
 #include "type.hpp"
 
