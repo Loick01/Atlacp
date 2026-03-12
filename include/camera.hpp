@@ -23,11 +23,11 @@ class Camera
         Pair<int> m_endIndex;
 
     public:
-        Camera(Window& window, const GridSize rangeTile, const int tileSize);
+        Camera();
 
+        void ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize);
         ScreenPosition GetScreenOffset() const;
         ScenePosition GetPosition() const;
-        GridSize GetRangeTile() const;
         AreaSize GetViewport() const;
         Pair<bool> GetIsOffScreen() const;
         Pair<int> GetStartIndex() const;

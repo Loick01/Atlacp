@@ -1,9 +1,12 @@
 #pragma once
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 
 #include <SDL2/SDL.h>
+
+#include "type.hpp"
 
 struct Boxing
 {
@@ -20,8 +23,7 @@ class Window
         SDL_Renderer* m_renderer;
         SDL_Color m_bgColor;
         Boxing m_box;
-        int m_width;
-        int m_height;
+        AreaSize m_size;
         const std::string m_title;
 
     public:
@@ -29,8 +31,7 @@ class Window
         ~Window();
 
         SDL_Renderer* GetRenderer() const;
-        int GetWidth() const;
-        int GetHeight() const;
+        AreaSize GetSize() const;
         void SetBoxing(const int x_b, const int y_b, const int w, const int h);
         void ClearRenderer() const;
         void UpdateRender() const;

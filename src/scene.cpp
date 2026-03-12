@@ -53,10 +53,9 @@ void SceneController::StartGameloop()
 } 
 
 Scene::Scene(GameContext& context):
-    m_context(context), m_camera(m_context.window, GridSize{16, 9}, 16), // Don't forget to adapt tileSize when using a new world (will be removed)
-    m_gameloop(true)
+    m_context(context), m_gameloop(true)
 {
-    
+
 }
 
 bool Scene::GetGameloop() const
@@ -68,10 +67,12 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
     m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "../assets/worlds/z_world", m_camera, shouldCulling)
 {
+    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
+    m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
 
-    m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
+    // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -187,6 +188,7 @@ void EditorTilemapScene::Gameloop()
 BattleScene::BattleScene(GameContext& context):
     Scene(context)
 {
+    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     m_context.eventController = std::make_unique<EventController>(); // Will use BattleEventController
     m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
     m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed

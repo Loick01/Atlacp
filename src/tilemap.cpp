@@ -69,6 +69,7 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
     }
     // Error if out of range for world ?
     LoadMap(m_worldData.maps[m_currentMap]);
+    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 
 std::vector<bool> Tilemap::GetOccupancyGrid() const
@@ -150,8 +151,6 @@ void Tilemap::LoadMap(const std::string& path)
             m_mapData.occupancyGrid.push_back(is_free);
         }
     }
-    
-    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 
 bool Tilemap::IsPositionInTexture(const Vec2 sp) const

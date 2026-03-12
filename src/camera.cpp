@@ -1,22 +1,25 @@
 #include "camera.hpp"
 
-Camera::Camera(Window& window, const GridSize rangeTile, const int tileSize):
-    m_rangeTile(rangeTile)
+Camera::Camera():
+    m_position(ScenePosition{0,0})
 {
-    m_position = ScenePosition{0,0};
-    const int windowWidth = window.GetWidth();
-    const int windowHeight = window.GetHeight();
-    const Pair<float> bestPossibleZoom = {(windowWidth/rangeTile.x)/static_cast<float>(tileSize),
-                                            (windowHeight/rangeTile.y)/static_cast<float>(tileSize)};
+
+}
+
+void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)
+{
+    m_rangeTile = rangeTile;
+    const AreaSize windowSize = window.GetSize();
+    const Pair<float> bestPossibleZoom = {(windowSize.x/m_rangeTile.x)/static_cast<float>(tileSize),
+                                            (windowSize.y/m_rangeTile.y)/static_cast<float>(tileSize)};
     m_zoom = std::min(bestPossibleZoom.x, bestPossibleZoom.y);
     m_viewport = m_rangeTile*tileSize*m_zoom;
-
-    const ScenePosition outsideViewport = ScenePosition{windowWidth, windowHeight} - m_viewport; // Should rename ?
+    const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport; // Should rename ?
     if (bestPossibleZoom.x < bestPossibleZoom.y){ // Letterboxing
-        window.SetBoxing(0, windowHeight-outsideViewport.y/2, windowWidth, outsideViewport.y/2);
+        window.SetBoxing(0, windowSize.y-outsideViewport.y/2, windowSize.x, outsideViewport.y/2);
         m_screenOffset = ScenePosition{0, outsideViewport.y/2};
     }else{ // Pillarboxing
-        window.SetBoxing(windowWidth-outsideViewport.x/2, 0, outsideViewport.x/2, windowHeight);
+        window.SetBoxing(windowSize.x-outsideViewport.x/2, 0, outsideViewport.x/2, windowSize.y);
         m_screenOffset = ScenePosition{outsideViewport.x/2, 0};
     }
 }
@@ -34,11 +37,6 @@ ScenePosition Camera::GetPosition() const
 AreaSize Camera::GetViewport() const
 {
     return m_viewport;
-}
-
-GridSize Camera::GetRangeTile() const
-{
-    return m_rangeTile;
 }
 
 Pair<int> Camera::GetStartIndex() const

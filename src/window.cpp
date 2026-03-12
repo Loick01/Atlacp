@@ -21,7 +21,7 @@ void Window::CreateWindow()
     m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if(!m_window)
         throw std::runtime_error("Failed to create SDL window\n" + std::string(SDL_GetError()));
-    SDL_GetWindowSize(m_window, &m_width, &m_height);
+    SDL_GetWindowSize(m_window, &m_size.x, &m_size.y);
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
     if(!m_renderer) 
         throw std::runtime_error("Failed to create a SDL renderer\n" + std::string(SDL_GetError()));
@@ -32,14 +32,9 @@ SDL_Renderer* Window::GetRenderer() const
     return m_renderer;
 }
 
-int Window::GetWidth() const
+AreaSize Window::GetSize() const
 {
-    return m_width;
-}
-
-int Window::GetHeight() const
-{
-    return m_height;
+    return m_size;
 }
 
 void Window::SetBoxing(const int x_b, const int y_b, const int w, const int h)
