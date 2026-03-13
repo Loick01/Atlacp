@@ -17,12 +17,6 @@ void UiElement::SetParentSize(const AreaSize parentSize)
     m_parentSize = parentSize;
 }
 
-void UiElement::AddChild(UiElement* child)
-{
-    child->SetParentSize(this->GetSize());
-    m_childs.push_back(child);
-}
-
 void UiElement::DrawTexture() const
 {
     ScreenDrawable::DrawTexture();
@@ -57,8 +51,13 @@ TextArea::TextArea(TextureController& textureController, const std::string& font
 
 void TextArea::SetText(const std::string& text)
 {
-    m_textureKey = text; // Will use something else than just text as texture key
-    m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
+    m_text = text;
+}
+
+void TextArea::GenerateText()
+{
+    m_textureKey = m_text; // Will use something else than just text as texture key
+    m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
 }
 
 void TextArea::SetMaxWidth(const float scale)
@@ -119,7 +118,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
     SetLocalPosition(final_position);
 }
 
-void UiElement::AddPadding(const Axis sourceAxis, const Axis paddingAxis, const float scale)
+void UiElement::AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis)
 {
     ScreenPosition padding = {0,0};
     float v = 0.f;
@@ -131,6 +130,9 @@ void UiElement::AddPadding(const Axis sourceAxis, const Axis paddingAxis, const 
         case Axis::Height:
             v = m_parentSize.y*scale;
             break;
+        default:
+            throw std::invalid_argument("Unknown source axis value\n");
+            break;
     }
 
     switch(paddingAxis){
@@ -141,22 +143,60 @@ void UiElement::AddPadding(const Axis sourceAxis, const Axis paddingAxis, const 
             padding.y = v;
             break;
         default:
-            throw std::invalid_argument("Unknown axis value\n");
+            throw std::invalid_argument("Unknown padding axis value\n");
             break;
     }
 
     AddLocalPosition(padding);
 }
 
-void UiElement::AddPadding(const Axis paddingAxis, const float scale)
+void UiElement::AddPadding(const float scale, const Axis paddingAxis)
 {
-    AddPadding(paddingAxis, paddingAxis, scale);
+    AddPadding(scale, paddingAxis, paddingAxis);
 }
 
-void UiController::SetRoot(UiElement* ui_root, const AreaSize initialSize)
+void UiController::SetRoot(UiElement* ui_root, const AreaSize parentSize,
+    const float zoomScale, const Axis zoomAxis, // ComputeZoom
+    const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
+    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis) // AddPadding
 {
     m_root = ui_root;
-    m_root->SetParentSize(initialSize);
+    m_root->SetParentSize(parentSize);
+    m_root->ComputeZoom(zoomScale, zoomAxis);
+    m_root->ComputePosition(xAnchor, yAnchor);
+    m_root->AddPadding(paddingScale, sourceAxis, paddingAxis);
+}
+
+void UiElement::AddChild(UiElement* child)
+{
+    m_childs.push_back(child);
+}
+
+void UiElement::MakeChild(UiElement* parent,
+    const float zoomScale, const Axis zoomAxis,
+    const Anchor xAnchor, const Anchor yAnchor,
+    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+{
+    SetParentSize(parent->GetSize());
+    ComputeZoom(zoomScale, zoomAxis);
+    ComputePosition(xAnchor, yAnchor);
+    AddPadding(paddingScale, sourceAxis, paddingAxis);
+    parent->AddChild(this);
+}
+
+void TextArea::MakeChild(UiElement* parent,
+    const float scaleWidth, const Axis zoomAxis,
+    const Anchor xAnchor, const Anchor yAnchor,
+    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+{
+    // Do not use ComputeZoom for TextArea. Text size is controlled by the font
+    // Be sure to call TextArea::ComputePosition after generating the texture with GenerateText
+    SetParentSize(parent->GetSize());
+    SetMaxWidth(scaleWidth);
+    GenerateText();
+    ComputePosition(xAnchor, yAnchor);
+    AddPadding(paddingScale, sourceAxis, paddingAxis);
+    parent->AddChild(this);
 }
 
 GameplayUiController::GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
@@ -166,27 +206,11 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     // For now, dialog box is the root of UiElement graph, with global position = local position
     // Technically, m_root sould be the camera viewport, but it's not a UiElement
     const AreaSize viewport_size = camera.GetViewport();
-    SetRoot(&m_dialogBox, viewport_size);
-    m_dialogBox.ComputeZoom(0.5f, Axis::Width);
-    m_dialogBox.ComputePosition(Anchor::Center, Anchor::Bottom);
-    m_dialogBox.AddPadding(Axis::Height, -0.05f);
-    m_dialogBox.AddChild(&m_faceset);
-    m_dialogBox.AddChild(&m_textArea);
-    
-    m_faceset.ComputeZoom(0.7f, Axis::Height);
-    m_faceset.ComputePosition(Anchor::Left, Anchor::Center);
-    m_faceset.AddPadding(Axis::Height, Axis::Width, 0.15f);
-    m_faceset.AddChild(&m_face);
-
-    m_face.ComputeZoom(0.8f, Axis::Width);
-    m_face.ComputePosition(Anchor::Center, Anchor::Center);
-
-    // Do not use ComputeZoom for TextArea. Text size is controlled by the font
-    // Be sure to call TextArea::ComputePosition after generating the texture with SetText
-    m_textArea.SetMaxWidth(0.75f); // Find another way to get this value
+    SetRoot(&m_dialogBox, viewport_size, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
+    m_faceset.MakeChild(&m_dialogBox, 0.7f, Axis::Height, Anchor::Left, Anchor::Center, 0.15f, Axis::Height, Axis::Width);
     m_textArea.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
-    m_textArea.ComputePosition(Anchor::Left, Anchor::Center);
-    m_textArea.AddPadding(Axis::Width, 0.18f);
+    m_textArea.MakeChild(&m_dialogBox, 0.75f, Axis::Width, Anchor::Left, Anchor::Center, 0.18f, Axis::Width, Axis::Width);
+    m_face.MakeChild(&m_faceset, 0.8f, Axis::Width, Anchor::Center, Anchor::Center, 0., Axis::Width, Axis::Width); // Axis::None ?
 
     m_dialogBox.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }
@@ -195,26 +219,19 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     m_dialogBox(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(selectedLayer)
 {
     const AreaSize viewport_size = camera.GetViewport();
-    SetRoot(&m_dialogBox, viewport_size);
-    m_dialogBox.ComputeZoom(0.3f, Axis::Width);
-    m_dialogBox.ComputePosition(Anchor::Left, Anchor::Top);
-    m_dialogBox.AddPadding(Axis::Width, 0.02f);
-    m_dialogBox.AddPadding(Axis::Width, Axis::Height, 0.02f);
-    m_dialogBox.AddChild(&m_textArea);
-    
-    m_textArea.SetMaxWidth(0.9f);
+    SetRoot(&m_dialogBox, viewport_size, 0.3f, Axis::Width, Anchor::Left, Anchor::Top, 0.02f, Axis::Width, Axis::Height);
     m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
-    m_textArea.ComputePosition(Anchor::Left, Anchor::Center);
-    m_textArea.AddPadding(Axis::Width, 0.1f);
+    m_textArea.MakeChild(&m_dialogBox, 0.9f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
     m_dialogBox.UpdatePosition(camera.GetScreenOffset());
 }
 
-void EditorUiController::UpdateState(const int selectedLayer)
+void EditorUiController::UpdateState(const int selectedLayer) // Not sure if this function works 
 {
     if (selectedLayer != m_lastLayer){
         m_lastLayer = selectedLayer;
         m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
+        m_textArea.GenerateText();
     }
 }
 
@@ -226,48 +243,22 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_mainBox(textureController, "../assets/ui/box.png")
 {
     const float size = 0.2f; // Will be removed
-    
+
     const AreaSize viewport_size = camera.GetViewport();
-    SetRoot(&m_background, viewport_size);
-    m_background.ComputeZoom(1.0f, Axis::Height);
-    m_background.ComputePosition(Anchor::Left, Anchor::Top);
-    m_background.AddChild(&m_player);
-    m_background.AddChild(&m_enemy);
-    m_background.AddChild(&m_mainBox);
+    SetRoot(&m_background, viewport_size, 1.0f, Axis::Height, Anchor::Left, Anchor::Top, 0.f, Axis::Width, Axis::Width); // Axis::None for sourceAxis and paddingAxis ?
 
-    m_player.ComputeZoom(size, Axis::Width);
-    m_player.ComputePosition(Anchor::Right, Anchor::Center);
-    m_player.AddPadding(Axis::Width, -size);
-    m_player.AddChild(&m_playerBox);
-    
-    m_enemy.ComputeZoom(size, Axis::Width);
-    m_enemy.ComputePosition(Anchor::Left, Anchor::Center);
-    m_enemy.AddPadding(Axis::Width, size);
-    m_enemy.AddChild(&m_enemyBox);
+    m_player.MakeChild(&m_background, size, Axis::Width, Anchor::Right, Anchor::Center, -size, Axis::Width, Axis::Width);
+    m_enemy.MakeChild(&m_background, size, Axis::Width, Anchor::Left, Anchor::Center, size, Axis::Width, Axis::Width);
+    m_mainBox.MakeChild(&m_background, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
 
-    m_playerBox.ComputeZoom(0.8f, Axis::Width);
-    m_playerBox.ComputePosition(Anchor::Right, Anchor::Bottom);
-    m_playerBox.AddPadding(Axis::Width, size*2);
-    m_playerBox.AddChild(&m_playerInfo);
+    m_playerBox.MakeChild(&m_player, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
+    m_enemyBox.MakeChild(&m_enemy, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
 
-    m_enemyBox.ComputeZoom(0.8f, Axis::Width);
-    m_enemyBox.ComputePosition(Anchor::Right, Anchor::Bottom);
-    m_enemyBox.AddPadding(Axis::Width, size*2);
-    m_enemyBox.AddChild(&m_enemyInfo);
-
-    m_playerInfo.SetMaxWidth(1.f);
     m_playerInfo.SetText("Howler");
-    m_playerInfo.ComputePosition(Anchor::Left, Anchor::Center);
-    m_playerInfo.AddPadding(Axis::Width, 0.1f);
+    m_playerInfo.MakeChild(&m_playerBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
-    m_enemyInfo.SetMaxWidth(1.f);
     m_enemyInfo.SetText("Bone Appetit");
-    m_enemyInfo.ComputePosition(Anchor::Left, Anchor::Center);
-    m_enemyInfo.AddPadding(Axis::Width, 0.1f);
-
-    m_mainBox.ComputeZoom(0.5f, Axis::Width);
-    m_mainBox.ComputePosition(Anchor::Center, Anchor::Bottom);
-    m_mainBox.AddPadding(Axis::Height, -0.05f);
+    m_enemyInfo.MakeChild(&m_enemyBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
     m_background.UpdatePosition(camera.GetScreenOffset());
 }

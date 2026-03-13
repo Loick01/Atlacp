@@ -143,7 +143,7 @@ void Tilemap::LoadMap(const std::string& path)
     for (size_t j=0 ; j<map_size.y ; j++){
         for (size_t i=0 ; i<map_size.x ; i++){
             bool is_free = true;
-            for (size_t layer=0 ; layer<m_mapData.layerCount ; layer++){ // I think it would better if this loop was before for(i)/for(j)
+            for (size_t layer=0 ; layer<m_mapData.layerCount ; layer++){
                 const Tile t = m_mapData.map[layer].GetTile(j*map_size.x+i);
                 is_free = m_tileset.IsEmptyTile(t);
                 if (!is_free) break;
