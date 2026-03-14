@@ -19,6 +19,8 @@ class ActionController
         virtual bool IsRightAction() = 0;
         virtual bool IsUpAction() = 0;
         virtual bool IsDownAction() = 0;
+        virtual bool IsPrimaryAction() = 0; // Rename ?
+        virtual bool IsSecondaryAction() = 0; // Rename ?
         virtual void GetActions() = 0;
 };
 
@@ -32,6 +34,8 @@ class KeyboardActionController : public ActionController
         bool IsRightAction() override;
         bool IsUpAction() override;
         bool IsDownAction() override;
+        bool IsPrimaryAction() override;
+        bool IsSecondaryAction() override;
         void GetActions() override;
 };
 
@@ -48,6 +52,8 @@ class JoystickActionController : public ActionController
         bool IsRightAction() override;
         bool IsUpAction() override;
         bool IsDownAction() override;
+        bool IsPrimaryAction() override;
+        bool IsSecondaryAction() override;
         void GetActions() override;
 };
 
@@ -66,13 +72,15 @@ class EventController
 class GameplayEventController : public EventController
 {
     private:
-        ActionController* m_actionController;
+        ActionController* m_actionController; // Move in EventController ? (but EditorEventController should not have it)
 
     public:
         GameplayEventController();
         void HandleEvents() override;
 
-        MapDirection m_eventDirection; // Should be private ?
+        MapDirection m_eventDirection;
+        bool m_isPlayerInteract;
+        bool m_isPlayerRunnning;
 };
 
 class EditorEventController : public EventController

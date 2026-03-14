@@ -160,8 +160,12 @@ void Entity::DrawTexture() const
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 
-void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap)
+void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap, const bool isRunning)
 {
+    if (isRunning)
+        m_speed = 8.f; // I will add m_walkSpeed & m_runSpeed
+    else
+        m_speed = 4.f;
     EntityMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);

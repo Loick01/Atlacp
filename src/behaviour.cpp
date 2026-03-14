@@ -32,7 +32,7 @@ FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const 
 {
     // Will need to check if entity != nullptr
     if (trackedEntity->GetSpeed() > followerSpeed) // Tracked entity should not be faster than the entity who own this behaviour
-        std::cout << "This behaviour should not be used here\n";
+        std::cout << "This behaviour should not be used here\n"; // Will throw error
 }
 
 void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)

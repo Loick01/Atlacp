@@ -5,7 +5,7 @@
 #include "drawable.hpp"
 #include "element.hpp"
 
-enum class EntityState
+enum class EntityState // Should be called MovementState, and I should add AnimationState
 {
     Free,
     Moving,
@@ -68,7 +68,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         virtual void Update(const float deltaTime) = 0;
         void DrawTexture() const override;
 
-        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false); 
+        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false, const bool isRunning=false); 
         void OrderUpdateMovement(const float deltaTime);
 
         EntityState GetState() const;

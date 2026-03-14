@@ -25,6 +25,16 @@ bool KeyboardActionController::IsDownAction()
     return m_state[SDL_SCANCODE_S];
 }
 
+bool KeyboardActionController::IsPrimaryAction()
+{
+    return m_state[SDL_SCANCODE_SPACE];
+}
+
+bool KeyboardActionController::IsSecondaryAction()
+{
+    return m_state[SDL_SCANCODE_LSHIFT];
+}
+
 JoystickActionController::JoystickActionController() :
     m_joystick(nullptr)
 {
@@ -42,6 +52,20 @@ for (SDL_Event event : m_events){
             std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n"; // Throw an error
             break;
         }
+    }
+}
+*/
+
+/*
+When I need to know joystick button id (move this in JoystickActionController::GetActions)
+
+int buttonCount = SDL_JoystickNumButtons(m_joystick);
+
+for (int i = 0; i < buttonCount; i++) {
+    Uint8 state = SDL_JoystickGetButton(m_joystick, i);
+
+    if (state){
+        std::cout << "Button " << i << " pressed\n";
     }
 }
 */
@@ -70,6 +94,16 @@ bool JoystickActionController::IsUpAction()
 bool JoystickActionController::IsDownAction()
 {
     return m_axisY > JOYSTICK_DEAD_ZONE;
+}
+
+bool JoystickActionController::IsPrimaryAction()
+{
+    return SDL_JoystickGetButton(m_joystick, 1); // Should be done in JoystickController:: GetActions() ?
+}
+
+bool JoystickActionController::IsSecondaryAction()
+{
+    return SDL_JoystickGetButton(m_joystick, 2); // Should be done in JoystickController:: GetActions() ?
 }
 
 bool EventController::HandleWindowEvents() const
@@ -121,16 +155,25 @@ GameplayEventController::GameplayEventController():
 void GameplayEventController::HandleEvents()
 {
     m_actionController->GetActions();
-    if (m_actionController->IsLeftAction())
-        m_eventDirection = MapDirection::Left;
-    else if (m_actionController->IsRightAction())
-        m_eventDirection = MapDirection::Right;
-    else if (m_actionController->IsUpAction())
-        m_eventDirection = MapDirection::Up;
-    else if (m_actionController->IsDownAction())
-        m_eventDirection = MapDirection::Down;
-    else
-        m_eventDirection = MapDirection::None;
+    
+    m_isPlayerRunnning = m_actionController->IsSecondaryAction();
+    
+    if (m_actionController->IsPrimaryAction()) {
+        m_eventDirection = MapDirection::None; // Be sure to stop player's movement
+        m_isPlayerInteract = true;
+    } else {
+        m_isPlayerInteract = false;
+        if (m_actionController->IsLeftAction())
+            m_eventDirection = MapDirection::Left;
+        else if (m_actionController->IsRightAction())
+            m_eventDirection = MapDirection::Right;
+        else if (m_actionController->IsUpAction())
+            m_eventDirection = MapDirection::Up;
+        else if (m_actionController->IsDownAction())
+            m_eventDirection = MapDirection::Down;
+        else
+            m_eventDirection = MapDirection::None;
+    }
 }
 
 EditorEventController::EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):

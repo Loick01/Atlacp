@@ -27,13 +27,12 @@ void Player::Update(const float deltaTime)
     switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            m_eventController->HandleEvents();
             const MapDirection direction = m_eventController->m_eventDirection;
             switch(direction){
                 case MapDirection::None:
                     break;
                 default:
-                    OrderStartMovement(direction, true, true);
+                    OrderStartMovement(direction, true, true, m_eventController->m_isPlayerRunnning);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
@@ -50,7 +49,6 @@ void Player::Update(const float deltaTime)
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
             Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
-            m_eventController->HandleEvents(); 
             const MapDirection direction = m_eventController->m_eventDirection;
             switch(direction){
                 case MapDirection::None:
@@ -59,7 +57,7 @@ void Player::Update(const float deltaTime)
                     break;
                 }
                 default:
-                    OrderStartMovement(direction, false, true);
+                    OrderStartMovement(direction, false, true, m_eventController->m_isPlayerRunnning);
                     LookMe(); // Same reason than case EntityState::Free
                     break;
             }
