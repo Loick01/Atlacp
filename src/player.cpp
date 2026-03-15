@@ -1,8 +1,8 @@
 #include "player.hpp"
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
-    const std::string& spriteFilepath, Camera& camera, const float speed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, speed), m_eventController(nullptr)
+    const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, walkSpeed, runSpeed), m_eventController(nullptr)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -32,7 +32,8 @@ void Player::Update(const float deltaTime)
                 case MapDirection::None:
                     break;
                 default:
-                    OrderStartMovement(direction, true, true, m_eventController->m_isPlayerRunnning);
+                    SetIsRunning(m_eventController->m_isPlayerRunnning);
+                    OrderStartMovement(direction, true, true);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
@@ -57,7 +58,8 @@ void Player::Update(const float deltaTime)
                     break;
                 }
                 default:
-                    OrderStartMovement(direction, false, true, m_eventController->m_isPlayerRunnning);
+                    SetIsRunning(m_eventController->m_isPlayerRunnning);
+                    OrderStartMovement(direction, false, true);
                     LookMe(); // Same reason than case EntityState::Free
                     break;
             }

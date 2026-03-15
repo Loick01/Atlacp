@@ -27,11 +27,12 @@ void RandomBehaviour::OnStopCase(Entity& entity)
     entity.Reset(); // Set state to Free where a new delay will be generated
 }
 
-FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const float followerSpeed):
+FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed):
     m_trackedEntity(trackedEntity)
 {
     // Will need to check if entity != nullptr
-    if (trackedEntity->GetSpeed() > followerSpeed) // Tracked entity should not be faster than the entity who own this behaviour
+    // Should also test m_runSpeed
+    if (trackedEntity->GetWalkSpeed() > followerWalkSpeed) // Tracked entity should not be faster than the entity who own this behaviour
         std::cout << "This behaviour should not be used here\n"; // Will throw error
 }
 
@@ -41,6 +42,7 @@ void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)
         const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const MapDirection direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, true);
     }
 }
@@ -56,6 +58,7 @@ void FollowEntityBehaviour::OnStopCase(Entity& entity)
         const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const MapDirection direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, false);
     }else{
         entity.Reset();
@@ -74,6 +77,7 @@ void GoToBehaviour::FreeCase(Entity& entity, const float deltaTime)
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
         const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, true);
     }
 }
@@ -90,6 +94,7 @@ void GoToBehaviour::OnStopCase(Entity& entity)
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
         const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        // Use entity.SetIsRunning if the NPC need to 
         entity.OrderStartMovement(direction, false);
     }else{
         entity.Reset();

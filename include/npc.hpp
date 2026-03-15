@@ -12,7 +12,7 @@ class NPC : public Entity
 
     public:
         NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const Entity* trackedEntity, // Remove tracked entity
-            const std::string& spriteFilepath, Camera& camera, const float speed);
+            const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed);
 
         void Update(const float deltaTime) override;
 };

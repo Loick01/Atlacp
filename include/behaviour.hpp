@@ -37,7 +37,7 @@ class FollowEntityBehaviour : public EntityBehaviour
         const Entity* m_trackedEntity;
 
     public:
-        FollowEntityBehaviour(const Entity* trackedEntity, const float followerSpeed);
+        FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed);
 
         void FreeCase(Entity& entity, const float deltaTime) override;
         void MovingCase(Entity& entity, const float deltaTime) override;

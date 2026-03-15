@@ -53,14 +53,16 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         EntityMovement m_currentMovement;
         Animation m_animation;
         EntityState m_state;
-        float m_speed;
+        float m_walkSpeed;
+        float m_runSpeed;
+        bool m_isRunning;
 
         ScenePosition ContinueMovement(const float deltaTime);
         void TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap);
 
     protected:
         Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-            Tilemap& tilemap, const float speed);
+            Tilemap& tilemap, const float walkSpeed, const float runSpeed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
@@ -68,11 +70,16 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         virtual void Update(const float deltaTime) = 0;
         void DrawTexture() const override;
 
-        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false, const bool isRunning=false); 
+        // Default parameters are used when this function is called by NPC behaviours
+        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false); 
         void OrderUpdateMovement(const float deltaTime);
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;
-        float GetSpeed() const;
+        float GetWalkSpeed() const;
+        float GetRunSpeed() const;
+        float GetCurrentSpeed() const;
+        bool GetIsRunning() const;
+        void SetIsRunning(const bool isRunning);
         void Reset(const MapDirection direction=MapDirection::None);
 };

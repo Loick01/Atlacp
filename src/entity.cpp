@@ -82,9 +82,9 @@ void EntityMovement::Initialize(const int tileSize, const MapPosition startPosit
 }
 
 Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-    Tilemap& tilemap, const float speed):
+    Tilemap& tilemap, const float walkSpeed, const float runSpeed):
     SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
-    m_speed(speed), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
+    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
     // Remove +".png" if I create RessourceFile struct ?
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
@@ -139,7 +139,7 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstM
 
 ScenePosition Entity::ContinueMovement(const float deltaTime)
 {
-    m_state = m_currentMovement.UpdateProgress(m_speed, deltaTime);
+    m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
     m_animation.ContinueAnimation(deltaTime);
     return m_currentMovement.GetScenePosition();
 }
@@ -160,12 +160,8 @@ void Entity::DrawTexture() const
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 
-void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap, const bool isRunning)
+void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap)
 {
-    if (isRunning)
-        m_speed = 8.f; // I will add m_walkSpeed & m_runSpeed
-    else
-        m_speed = 4.f;
     EntityMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);
@@ -176,7 +172,27 @@ void Entity::OrderUpdateMovement(const float deltaTime)
     m_position = GetFinalDrawingPosition(ContinueMovement(deltaTime));
 }
 
-float Entity::GetSpeed() const
+float Entity::GetWalkSpeed() const
 {
-    return m_speed;
+    return m_walkSpeed;
+}
+
+float Entity::GetRunSpeed() const
+{
+    return m_runSpeed;
+}
+
+float Entity::GetCurrentSpeed() const
+{
+    return m_isRunning ? m_runSpeed : m_walkSpeed;
+}
+
+bool Entity::GetIsRunning() const
+{
+    return m_isRunning;
+}
+
+void Entity::SetIsRunning(const bool isRunning)
+{
+    m_isRunning = isRunning;
 }
