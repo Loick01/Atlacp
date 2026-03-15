@@ -94,7 +94,7 @@ void GoToBehaviour::OnStopCase(Entity& entity)
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
         const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
-        // Use entity.SetIsRunning if the NPC need to 
+        // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, false);
     }else{
         entity.Reset();

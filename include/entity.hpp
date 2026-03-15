@@ -7,9 +7,7 @@
 
 enum class EntityState // Should be called MovementState, and I should add AnimationState
 {
-    Free,
-    Moving,
-    OnStop
+    Free, Moving, OnStop, Interacting
 };
 
 class EntityMovement
@@ -59,6 +57,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
 
         ScenePosition ContinueMovement(const float deltaTime);
         void TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap);
+        void TryStartInteraction(const MapPosition targetPosition);
 
     protected:
         Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
@@ -73,6 +72,8 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         // Default parameters are used when this function is called by NPC behaviours
         void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false); 
         void OrderUpdateMovement(const float deltaTime);
+
+        void OrderInteraction(const MapDirection direction);
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;

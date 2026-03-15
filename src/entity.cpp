@@ -50,7 +50,7 @@ MapPosition EntityMovement::GetMoveFromDirection(const MapDirection direction) c
             return MapPosition{-1, 0};
         case MapDirection::Right:
             return MapPosition{1, 0};
-        default: // Should not happen ? (Maybe for MapDirection::None)
+        default: // Will throw error ? (for MapDirection::None)
             return MapPosition{0, 0}; 
     }
 }
@@ -64,7 +64,7 @@ MapDirection EntityMovement::GetDirectionFromMove(const MapPosition move) const
         if (move.x==-1) return MapDirection::Left;
         else if (move.x==1) return MapDirection::Right;
     }
-    return MapDirection::None; // Should not happen ?
+    return MapDirection::None; // Will throw error ?
 }
 
 void EntityMovement::DefineMovement(const MapDirection direction)
@@ -113,27 +113,36 @@ void Entity::Reset(const MapDirection direction)
 void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap)
 {
     const MapPosition currentPosition = GetMapPosition();
-    MapPosition next_position = currentPosition + movement.GetMove();
-    const MapBound bound = m_tilemap.IsOutOfMap(next_position);
+    MapPosition targetPosition = currentPosition + movement.GetMove();
+    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
 
     if (canExitMap && bound != MapBound::Inside){
-        SetMapPosition(m_tilemap.GetProjectedPosition(next_position, bound));
+        SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
         const ScenePosition new_position = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
         m_position = GetFinalDrawingPosition(new_position);
         // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
-    }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(next_position)){
+    }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(targetPosition)){
         m_currentMovement = movement;
         m_state = EntityState::Moving;
 
         int tileSize = m_tilemap.GetTileSize();
         m_animation.Initialize(movement.GetDirection(), isFirstMovement);
-        m_currentMovement.Initialize(tileSize, currentPosition, next_position);
+        m_currentMovement.Initialize(tileSize, currentPosition, targetPosition);
         
         m_tilemap.FreePosition(currentPosition);
-        m_tilemap.TakePosition(next_position);
-        SetMapPosition(next_position);
+        m_tilemap.TakePosition(targetPosition);
+        SetMapPosition(targetPosition);
     }else{
         Reset(movement.GetDirection()); // Reset animation to idle + state to Free
+    }
+}
+
+void Entity::TryStartInteraction(const MapPosition targetPosition)
+{
+    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
+    if (bound == MapBound::Inside/* && m_tilemap.IsFreePosition(targetPosition)*/){
+        m_state = EntityState::Interacting;
+        // TODO
     }
 }
 
@@ -162,6 +171,7 @@ void Entity::DrawTexture() const
 
 void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap)
 {
+    // Should berify if direction != MapDirection::None ?
     EntityMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);
@@ -170,6 +180,14 @@ void Entity::OrderStartMovement(const MapDirection direction, const bool isFirst
 void Entity::OrderUpdateMovement(const float deltaTime)
 {
     m_position = GetFinalDrawingPosition(ContinueMovement(deltaTime));
+}
+
+void Entity::OrderInteraction(const MapDirection direction)
+{
+    EntityMovement movement; // To get targeted position, I need to initialize a EntityMovement (to use GetMoveFromDirection)
+    movement.DefineMovement(direction);
+    const MapPosition targetPosition = GetMapPosition() + movement.GetMove();
+    TryStartInteraction(targetPosition);
 }
 
 float Entity::GetWalkSpeed() const

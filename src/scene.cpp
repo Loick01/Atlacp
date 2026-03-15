@@ -141,7 +141,6 @@ void GameplayTilemapScene::Gameloop()
     m_context.window.ClearRenderer();
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
-    m_context.eventController->HandleEvents(); 
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)

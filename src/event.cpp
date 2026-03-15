@@ -158,8 +158,8 @@ void GameplayEventController::HandleEvents()
     
     m_isPlayerRunnning = m_actionController->IsSecondaryAction();
     
-    if (m_actionController->IsPrimaryAction()) {
-        m_eventDirection = MapDirection::None; // Be sure to stop player's movement
+    if (m_actionController->IsPrimaryAction()) { // Should not be here ?
+        // m_eventDirection = MapDirection::None; // Stop player's movement (maybe already done) ?
         m_isPlayerInteract = true;
     } else {
         m_isPlayerInteract = false;
