@@ -132,7 +132,7 @@ void EventController::PollAllEvents()
     }
 }
 
-// Will be remove
+// Will be removed
 void EventController::HandleEvents()
 {
 
@@ -144,9 +144,9 @@ GameplayEventController::GameplayEventController():
     const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
     if (joystick==0){
         if (SDL_NumJoysticks() != 0)
-            m_actionController = new JoystickActionController();
+            m_actionController = std::make_unique<JoystickActionController>();
         else 
-            m_actionController = new KeyboardActionController();
+            m_actionController = std::make_unique<KeyboardActionController>();
     }else{
         throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
     } 

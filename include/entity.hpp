@@ -23,7 +23,6 @@ class EntityMovement
 
     public:
         EntityMovement();
-        ~EntityMovement();
 
         MapPosition GetMove() const;
         MapDirection GetDirection() const;

@@ -30,10 +30,11 @@ void RandomBehaviour::OnStopCase(Entity& entity)
 FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed):
     m_trackedEntity(trackedEntity)
 {
-    // Will need to check if entity != nullptr
+    if (trackedEntity == nullptr)
+        throw std::invalid_argument("Tracked entity is nullptr\n");
     // Should also test m_runSpeed
     if (trackedEntity->GetWalkSpeed() > followerWalkSpeed) // Tracked entity should not be faster than the entity who own this behaviour
-        std::cout << "This behaviour should not be used here\n"; // Will throw error
+        throw std::invalid_argument("FollowEntityBehaviour should not be used if tracked entity is faster than follower\n");
 }
 
 void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)

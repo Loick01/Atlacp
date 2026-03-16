@@ -88,16 +88,16 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
     ScreenPosition final_position = {0,0};
     // If ComputePosition is called on a TextArea, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
-    const AreaSize new_size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
+    const AreaSize newSize = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
         case Anchor::Left:
             final_position.x = 0;
             break;
         case Anchor::Center:
-            final_position.x = (m_parentSize.x-new_size.x)/2;
+            final_position.x = (m_parentSize.x-newSize.x)/2;
             break;
         case Anchor::Right:
-            final_position.x = m_parentSize.x-new_size.x;
+            final_position.x = m_parentSize.x-newSize.x;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for x axis\n");
@@ -107,10 +107,10 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             final_position.y = 0;
             break;
         case Anchor::Center:
-            final_position.y = (m_parentSize.y-new_size.y)/2;
+            final_position.y = (m_parentSize.y-newSize.y)/2;
             break;
         case Anchor::Bottom:
-            final_position.y = m_parentSize.y-new_size.y;
+            final_position.y = m_parentSize.y-newSize.y;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for y axis\n");

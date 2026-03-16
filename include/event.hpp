@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -15,6 +16,7 @@
 class ActionController
 {
     public:
+        virtual ~ActionController() = default;
         virtual bool IsLeftAction() = 0;
         virtual bool IsRightAction() = 0;
         virtual bool IsUpAction() = 0;
@@ -64,6 +66,7 @@ class EventController
         
     public:
         EventController() = default;
+        virtual ~EventController() = default;
         bool HandleWindowEvents() const;
         virtual void HandleEvents(); // = 0; Will be pure virtual when I have created BattleEventController 
         void PollAllEvents();
@@ -72,7 +75,7 @@ class EventController
 class GameplayEventController : public EventController
 {
     private:
-        ActionController* m_actionController; // Move in EventController ? (but EditorEventController should not have it)
+        std::unique_ptr<ActionController> m_actionController;
 
     public:
         GameplayEventController();

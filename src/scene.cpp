@@ -98,22 +98,22 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
 
     m_renderedEntities = {&m_player};
 
-    // Testing my NPC, will be remove (they will be load from the tilemap header)
-    /*
+    // Testing my NPC, will be removed (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 10 ; i++){
         NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, nullptr, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
         npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
         m_renderedEntities.push_back(npc);
     }
-    */
+    
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
-    Entity* trackedEntity = &m_player;
-    for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
-        npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
-        m_renderedEntities.push_back(npc);
-        trackedEntity = npc;
-    }
+    // Entity* trackedEntity = &m_player;
+    // for (unsigned int i = 0 ; i < 10 ; i++){
+    //     NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
+    //     npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
+    //     m_renderedEntities.push_back(npc);
+    //     trackedEntity = npc;
+    // }
+    
     m_updatedEntities = m_renderedEntities;
 }
 

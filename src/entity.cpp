@@ -6,11 +6,6 @@ EntityMovement::EntityMovement():
 
 }
 
-EntityMovement::~EntityMovement()
-{
-
-}
-
 MapPosition EntityMovement::GetMove() const
 {
     return m_move;
@@ -35,8 +30,8 @@ EntityState EntityMovement::UpdateProgress(const float speed, const float deltaT
 {
     m_progress += speed * deltaTime;
     m_progress = std::min(1.0f, m_progress); 
-    EntityState new_state = m_progress == 1.f ? EntityState::OnStop : EntityState::Moving;
-    return new_state;
+    EntityState newState = m_progress == 1.f ? EntityState::OnStop : EntityState::Moving;
+    return newState;
 }
 
 MapPosition EntityMovement::GetMoveFromDirection(const MapDirection direction) const
@@ -118,8 +113,8 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstM
 
     if (canExitMap && bound != MapBound::Inside){
         SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
-        const ScenePosition new_position = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
-        m_position = GetFinalDrawingPosition(new_position);
+        const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
+        m_position = GetFinalDrawingPosition(newPosition);
         // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
     }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(targetPosition)){
         m_currentMovement = movement;

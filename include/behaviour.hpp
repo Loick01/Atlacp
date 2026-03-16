@@ -11,8 +11,9 @@ class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehav
 
     public:
         EntityBehaviour() = default;
-
-        // Must have one function for each value in Entity::EntityState
+        virtual ~EntityBehaviour() = default;
+        
+        // One function for each value in Entity::EntityState
         virtual void FreeCase(Entity& entity, const float deltaTime) = 0;
         virtual void MovingCase(Entity& entity, const float deltaTime) = 0;
         virtual void OnStopCase(Entity& entity) = 0;
@@ -24,7 +25,7 @@ class RandomBehaviour : public EntityBehaviour // Always try to move in random d
         float m_delay; // Remaining time before a new movement
 
     public:
-        RandomBehaviour(); // Remove ?
+        RandomBehaviour();
         void FreeCase(Entity& entity, const float deltaTime) override;
         void MovingCase(Entity& entity, const float deltaTime) override;
         void OnStopCase(Entity& entity) override;
@@ -34,7 +35,7 @@ class FollowEntityBehaviour : public EntityBehaviour
 {
     // Assume the tracked entity is one tile away from the follower. Later I will make a follow behaviour with pathfiding
     private:
-        const Entity* m_trackedEntity;
+        const Entity* m_trackedEntity; // Could be Entity& when I remove trackedEntity from NPC constructor ?
 
     public:
         FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed);
