@@ -152,27 +152,31 @@ GameplayEventController::GameplayEventController():
     } 
 }
 
+PlayerEventInfo GameplayEventController::GetEventInfo() const
+{
+    return m_eventInfo;
+}
+
 void GameplayEventController::HandleEvents()
 {
     m_actionController->GetActions();
     
-    m_isPlayerRunnning = m_actionController->IsSecondaryAction();
-    
     if (m_actionController->IsPrimaryAction()) { // Should not be here ?
-        // m_eventDirection = MapDirection::None; // Stop player's movement (maybe already done) ?
-        m_isPlayerInteract = true;
+        // m_eventInfo.direction = MapDirection::None; // Stop player's movement (maybe already done) ?
+        m_eventInfo.isInteracting = true;
     } else {
-        m_isPlayerInteract = false;
+        m_eventInfo.isInteracting = false;
+        m_eventInfo.isRunning = m_actionController->IsSecondaryAction();
         if (m_actionController->IsLeftAction())
-            m_eventDirection = MapDirection::Left;
+            m_eventInfo.direction = MapDirection::Left;
         else if (m_actionController->IsRightAction())
-            m_eventDirection = MapDirection::Right;
+            m_eventInfo.direction = MapDirection::Right;
         else if (m_actionController->IsUpAction())
-            m_eventDirection = MapDirection::Up;
+            m_eventInfo.direction = MapDirection::Up;
         else if (m_actionController->IsDownAction())
-            m_eventDirection = MapDirection::Down;
+            m_eventInfo.direction = MapDirection::Down;
         else
-            m_eventDirection = MapDirection::None;
+            m_eventInfo.direction = MapDirection::None;
     }
 }
 

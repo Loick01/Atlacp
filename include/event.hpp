@@ -7,7 +7,6 @@
 #include <SDL2/SDL.h>
 
 #include "drawable.hpp"
-#include "entity.hpp"
 #include "tilemap.hpp"
 #include "type.hpp"
 
@@ -76,14 +75,13 @@ class GameplayEventController : public EventController
 {
     private:
         std::unique_ptr<ActionController> m_actionController;
+        PlayerEventInfo m_eventInfo;
 
     public:
         GameplayEventController();
-        void HandleEvents() override;
 
-        MapDirection m_eventDirection;
-        bool m_isPlayerInteract;
-        bool m_isPlayerRunnning;
+        PlayerEventInfo GetEventInfo() const;
+        void HandleEvents() override;
 };
 
 class EditorEventController : public EventController

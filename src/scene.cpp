@@ -91,8 +91,6 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameplayEventController>();
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
 
-    // Try to remove dynamic_cast ?
-    m_player.SetEventController(dynamic_cast<GameplayEventController*>(m_context.eventController.get()));
     m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
     m_context.window.HideCursor();
 
@@ -141,6 +139,9 @@ void GameplayTilemapScene::Gameloop()
     m_context.window.ClearRenderer();
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
+    
+    m_context.eventController->HandleEvents(); 
+    m_player.SetEventInfo(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo());
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)

@@ -178,3 +178,17 @@ struct Random
         return static_cast<MapDirection>(rand()%4);
     }
 };
+
+struct PlayerEventInfo
+{
+    MapDirection direction;
+    bool isInteracting;
+    bool isRunning;
+
+    PlayerEventInfo() // Default values (used by Player constructor)
+    {
+        direction = MapDirection::None;
+        isInteracting = false;
+        isRunning = false;
+    }
+};

@@ -2,7 +2,7 @@
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, walkSpeed, runSpeed), m_eventController(nullptr)
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, walkSpeed, runSpeed)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -17,9 +17,9 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     LookMe();
 }
 
-void Player::SetEventController(GameplayEventController* eventController)
+void Player::SetEventInfo(const PlayerEventInfo eventInfo)
 {
-    m_eventController = eventController;
+    m_eventInfo = eventInfo;
 }
 
 void Player::Update(const float deltaTime)
@@ -27,19 +27,18 @@ void Player::Update(const float deltaTime)
     switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
         case EntityState::Free:
         {
-            m_eventController->HandleEvents(); 
-            if (m_eventController->m_isPlayerInteract){
+            if (m_eventInfo.isInteracting){
                 // Warning : If the player has not moved once, direction is None by default (should initialize it in Entity constructor) 
-                const MapDirection direction = GetCurrentMovement().GetDirection(); // Previous movement direction (can't use m_eventDirection which is reset to None)
+                const MapDirection direction = GetCurrentMovement().GetDirection(); // Previous movement direction (can't use m_eventInfo.direction which is reset to None)
                 OrderInteraction(direction);
                 break;
             }
-            const MapDirection direction = m_eventController->m_eventDirection;
+            const MapDirection direction = m_eventInfo.direction;
             switch(direction){
                 case MapDirection::None:
                     break;
                 default:
-                    SetIsRunning(m_eventController->m_isPlayerRunnning);
+                    SetIsRunning(m_eventInfo.isRunning);
                     OrderStartMovement(direction, true, true);
                     LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
@@ -57,8 +56,7 @@ void Player::Update(const float deltaTime)
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
             Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
-            m_eventController->HandleEvents(); 
-            const MapDirection direction = m_eventController->m_eventDirection;
+            const MapDirection direction = m_eventInfo.direction;
             switch(direction){
                 case MapDirection::None:
                 {
@@ -66,7 +64,7 @@ void Player::Update(const float deltaTime)
                     break;
                 }
                 default:
-                    SetIsRunning(m_eventController->m_isPlayerRunnning);
+                    SetIsRunning(m_eventInfo.isRunning);
                     OrderStartMovement(direction, false, true);
                     LookMe(); // Same reason than case EntityState::Free
                     break;
