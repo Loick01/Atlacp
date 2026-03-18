@@ -179,16 +179,28 @@ struct Random
     }
 };
 
-struct PlayerEventInfo
+struct GameplayEventInfo
 {
     MapDirection direction;
     bool isInteracting;
     bool isRunning;
 
-    PlayerEventInfo() // Default values (used by Player constructor)
-    {
+    GameplayEventInfo() {
         direction = MapDirection::None;
         isInteracting = false;
         isRunning = false;
+    }
+};
+
+struct EditorEventInfo
+{
+    // Tile m_selectedTile;
+    // int m_selectedTileset;
+    int selectedLayer; // Should not be higher than m_layerCount
+    // bool m_isCameraMoving;
+    // bool m_isReplacingTile;
+
+    EditorEventInfo() {
+        selectedLayer = 0;
     }
 };

@@ -215,8 +215,13 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     m_dialogBox.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }
 
-EditorUiController::EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath, const int selectedLayer):
-    m_dialogBox(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(selectedLayer)
+void GameplayUiController::Update()
+{
+
+}
+
+EditorUiController::EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
+    m_dialogBox(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(0) // lastLayer should be initialized with EditorEventInfo::selectedLayer ?
 {
     const AreaSize viewport_size = camera.GetViewport();
     SetRoot(&m_dialogBox, viewport_size, 0.3f, Axis::Width, Anchor::Left, Anchor::Top, 0.02f, Axis::Width, Axis::Height);
@@ -226,13 +231,19 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     m_dialogBox.UpdatePosition(camera.GetScreenOffset());
 }
 
-void EditorUiController::UpdateState(const int selectedLayer) // Not sure if this function works 
+void EditorUiController::SetEventInfo(const EditorEventInfo eventInfo)
 {
-    if (selectedLayer != m_lastLayer){
-        m_lastLayer = selectedLayer;
+    m_eventInfo = eventInfo;
+}
+
+void EditorUiController::Update()
+{
+    if (m_eventInfo.selectedLayer != m_lastLayer){
+        m_lastLayer = m_eventInfo.selectedLayer;
+        // Should merge the 2 lines below (with maybe calling ComputePosition) ?
         m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
         m_textArea.GenerateText();
-    }
+    } 
 }
 
 BattleUiController::BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
@@ -261,4 +272,9 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_enemyInfo.MakeChild(&m_enemyBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
     m_background.UpdatePosition(camera.GetScreenOffset());
+}
+
+void BattleUiController::Update()
+{
+
 }

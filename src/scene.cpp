@@ -141,7 +141,7 @@ void GameplayTilemapScene::Gameloop()
     m_gameloop = m_context.eventController->HandleWindowEvents();
     
     m_context.eventController->HandleEvents(); 
-    m_player.SetEventInfo(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo());
+    m_player.SetEventInfo(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo()); // Need dynamic_cast ?
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)
@@ -164,7 +164,7 @@ EditorTilemapScene::EditorTilemapScene(GameContext& context):
     TilemapScene(context, false)
 {
     m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
-    m_context.uiController = std::make_unique<EditorUiController>(m_context.textureController, m_camera, "NormalFont", 0/*m_context.eventController->GetSelectedLayer()*/);
+    m_context.uiController = std::make_unique<EditorUiController>(m_context.textureController, m_camera, "NormalFont");
     m_drawables.push_back(&m_tileset);
 }
 
@@ -180,8 +180,10 @@ void EditorTilemapScene::Gameloop()
     for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    // Will use Notifier to know selected layer from UiController
-    // m_context.uiController->UpdateState(m_context.eventController->GetSelectedLayer());
+    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo( // Need dynamic_cast ?
+        static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo() // Need dynamic_cast ?
+    );
+    m_context.uiController->Update();
     m_context.uiController->Draw();
     m_context.window.UpdateRender();    
 }

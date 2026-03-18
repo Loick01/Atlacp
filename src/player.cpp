@@ -17,7 +17,7 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     LookMe();
 }
 
-void Player::SetEventInfo(const PlayerEventInfo eventInfo)
+void Player::SetEventInfo(const GameplayEventInfo eventInfo)
 {
     m_eventInfo = eventInfo;
 }

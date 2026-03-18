@@ -75,12 +75,12 @@ class GameplayEventController : public EventController
 {
     private:
         std::unique_ptr<ActionController> m_actionController;
-        PlayerEventInfo m_eventInfo;
+        GameplayEventInfo m_eventInfo;
 
     public:
         GameplayEventController();
 
-        PlayerEventInfo GetEventInfo() const;
+        GameplayEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };
 
@@ -92,10 +92,12 @@ class EditorEventController : public EventController
         
         ScenePosition m_lastCameraOrigin;
 
-        // Should be in a struct EventContext ?
+        EditorEventInfo m_eventInfo;
+
+        // Will be in EditorEventInfo
+        std::vector<bool> m_showLayer;
         Tile m_selectedTile;
         int m_selectedTileset;
-        int m_selectedLayer;
         bool m_isCameraMoving;
         bool m_isReplacingTile;
 
@@ -108,6 +110,6 @@ class EditorEventController : public EventController
     public:
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
-        int GetSelectedLayer() const;
+        EditorEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };

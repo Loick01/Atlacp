@@ -81,6 +81,7 @@ class UiController
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
 
     public:
+        virtual void Update() = 0;
         void Draw() const;
 };
 
@@ -96,19 +97,22 @@ class GameplayUiController : public UiController
 
     public:
         GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        void Update() override;
 };
 
 class EditorUiController : public UiController
 {
     private:
+        EditorEventInfo m_eventInfo;
         UiElement m_dialogBox;
         TextArea m_textArea;
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
         // GameplayUiController will also need a (Gameplay)EventState 
 
     public:
-        EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath, const int selectedLayer);
-        void UpdateState(const int selectedLayer); // Could use EditorEventState, and call UpdateState (private) in UiController::Draw ?
+        EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        void SetEventInfo(const EditorEventInfo eventInfo);
+        void Update() override;
 };
 
 class BattleUiController : public UiController
@@ -126,4 +130,5 @@ class BattleUiController : public UiController
 
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        void Update() override;
 };

@@ -152,7 +152,7 @@ GameplayEventController::GameplayEventController():
     } 
 }
 
-PlayerEventInfo GameplayEventController::GetEventInfo() const
+GameplayEventInfo GameplayEventController::GetEventInfo() const
 {
     return m_eventInfo;
 }
@@ -181,11 +181,11 @@ void GameplayEventController::HandleEvents()
 }
 
 EditorEventController::EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
-    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
+    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount()), 
+    m_showLayer(m_layerCount, true)
 {
     m_selectedTile = 0;
     m_selectedTileset = 0;
-    m_selectedLayer = 0;
     m_tileset.SetDisplayedTileset(m_selectedTileset);
     m_isCameraMoving = false;
     m_isReplacingTile = false;
@@ -203,9 +203,9 @@ ScenePosition EditorEventController::GetMouseScenePosition() const
     return (m_camera.GetPosition()-m_camera.GetScreenOffset()+GetMouseScreenPosition())/m_camera.GetZoom();
 }
 
-int EditorEventController::GetSelectedLayer() const
+EditorEventInfo EditorEventController::GetEventInfo() const
 {
-    return m_selectedLayer;
+    return m_eventInfo;
 }
 
 void EditorEventController::HandleEvents()
@@ -230,10 +230,10 @@ void EditorEventController::HandleEvents()
                         break;
                     }
                     case SDL_SCANCODE_W:
-                        m_selectedLayer = (m_selectedLayer+1)%m_layerCount;
+                        m_eventInfo.selectedLayer = (m_eventInfo.selectedLayer+1)%m_layerCount;
                         break;
                     case SDL_SCANCODE_S:
-                        m_selectedLayer = (m_selectedLayer-1+m_layerCount)%m_layerCount;
+                        m_eventInfo.selectedLayer = (m_eventInfo.selectedLayer-1+m_layerCount)%m_layerCount;
                         break;
                     case SDL_SCANCODE_R:
                         m_camera.Reset();
@@ -302,6 +302,6 @@ void EditorEventController::HandleEvents()
         m_camera.SetCameraPosition(m_lastCameraOrigin-mousePosition);
     } else if (m_isReplacingTile){
         const ScenePosition normScenePos = GetMouseScenePosition();
-        m_tilemap.ReplaceTileAt(normScenePos, m_selectedLayer, m_selectedTile);
+        m_tilemap.ReplaceTileAt(normScenePos, m_eventInfo.selectedLayer, m_selectedTile);
     }
 }
