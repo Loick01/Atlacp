@@ -94,13 +94,6 @@ class EditorEventController : public EventController
 
         EditorEventInfo m_eventInfo;
 
-        // Will be in EditorEventInfo
-        std::vector<bool> m_showLayer;
-        Tile m_selectedTile;
-        int m_selectedTileset;
-        bool m_isCameraMoving;
-        bool m_isReplacingTile;
-
         // Will be removed ?
         Tileset& m_tileset; // Should be a UiElement ?
         Tilemap& m_tilemap;

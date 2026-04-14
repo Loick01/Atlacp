@@ -194,13 +194,22 @@ struct GameplayEventInfo
 
 struct EditorEventInfo
 {
-    // Tile m_selectedTile;
-    // int m_selectedTileset;
+    Tile selectedTile;
+    int selectedTileset;
+    std::vector<bool> isLayerRendered;
     int selectedLayer; // Should not be higher than m_layerCount
-    // bool m_isCameraMoving;
-    // bool m_isReplacingTile;
+    bool isCameraMoving;
+    bool isReplacingTile;
 
     EditorEventInfo() {
         selectedLayer = 0;
+        isCameraMoving = false;
+        selectedTile = 0;
+        selectedTileset = 0;
+        isReplacingTile = false;
+    }
+
+    void SetLayerSize(const unsigned int layerCount) {
+        isLayerRendered.assign(layerCount, true);
     }
 };

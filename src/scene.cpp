@@ -175,14 +175,17 @@ void EditorTilemapScene::Gameloop()
     
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandleEvents();
-    
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
-    for (const TileLayer* l : m_layers) l->DrawTexture(); // Unlike GameplayTilemapScene, TileLayer are rendered all at once
+    
+    const EditorEventInfo eventInfo = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo(); // Need dynamic_cast ?
+    
+    for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameplayTilemapScene, TileLayer are rendered all at once
+        if (eventInfo.isLayerRendered[i])
+            m_layers[i]->DrawTexture();
+    }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo( // Need dynamic_cast ?
-        static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo() // Need dynamic_cast ?
-    );
+    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo); // Need dynamic_cast ?
     m_context.uiController->Update();
     m_context.uiController->Draw();
     m_context.window.UpdateRender();    

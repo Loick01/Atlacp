@@ -181,14 +181,10 @@ void GameplayEventController::HandleEvents()
 }
 
 EditorEventController::EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
-    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount()), 
-    m_showLayer(m_layerCount, true)
+    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
 {
-    m_selectedTile = 0;
-    m_selectedTileset = 0;
-    m_tileset.SetDisplayedTileset(m_selectedTileset);
-    m_isCameraMoving = false;
-    m_isReplacingTile = false;
+    m_eventInfo.SetLayerSize(m_layerCount);
+    m_tileset.SetDisplayedTileset(m_eventInfo.selectedTileset);
 }
 
 ScreenPosition EditorEventController::GetMouseScreenPosition() const
@@ -253,36 +249,36 @@ void EditorEventController::HandleEvents()
                     default:
                         break;
                 }
-                m_tileset.SetDisplayedTileset(m_selectedTileset);
+                m_tileset.SetDisplayedTileset(m_eventInfo.selectedTileset);
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT){
                     if (m_tileset.GetShouldDraw()){
                         const ScreenPosition normScreenPos = (GetMouseScreenPosition()-m_tileset.GetScreenPosition())/m_tileset.GetZoom();
-                        m_tileset.UpdateSelectedTile(normScreenPos, m_selectedTileset, m_selectedTile);
+                        m_tileset.UpdateSelectedTile(normScreenPos, m_eventInfo.selectedTileset, m_eventInfo.selectedTile);
                     }else{
-                        m_isReplacingTile = true;
+                        m_eventInfo.isReplacingTile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
                     m_lastCameraOrigin = m_camera.GetPosition() + GetMouseScreenPosition(); // Do not use the zoom here
-                    m_isCameraMoving = true;
+                    m_eventInfo.isCameraMoving = true;
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_MIDDLE)
-                    m_isCameraMoving = false;
+                    m_eventInfo.isCameraMoving = false;
                 else if (event.button.button == SDL_BUTTON_LEFT)
-                    m_isReplacingTile = false;
+                    m_eventInfo.isReplacingTile = false;
                 break;
             case SDL_MOUSEWHEEL:
                 if (m_tileset.GetShouldDraw()){
                     const int tilesetSize = m_tileset.GetTilesetsSize();
                     if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
-                        m_selectedTileset = (m_selectedTileset+1)%tilesetSize;
+                        m_eventInfo.selectedTileset = (m_eventInfo.selectedTileset+1)%tilesetSize;
                     else
-                        m_selectedTileset = (m_selectedTileset-1+tilesetSize)%tilesetSize;
-                    m_tileset.SetDisplayedTileset(m_selectedTileset);
+                        m_eventInfo.selectedTileset = (m_eventInfo.selectedTileset-1+tilesetSize)%tilesetSize;
+                    m_tileset.SetDisplayedTileset(m_eventInfo.selectedTileset);
                 }else{ // If the tileset is not opened, the mouse wheel control the camera zoom (also )
                     const ScenePosition mouseBeforeZoom = GetMouseScenePosition();
                     if (event.wheel.y > 0)
@@ -297,11 +293,11 @@ void EditorEventController::HandleEvents()
         }
     }
 
-    if (m_isCameraMoving){
+    if (m_eventInfo.isCameraMoving){
         const ScreenPosition mousePosition = GetMouseScreenPosition();
         m_camera.SetCameraPosition(m_lastCameraOrigin-mousePosition);
-    } else if (m_isReplacingTile){
+    } else if (m_eventInfo.isReplacingTile){
         const ScenePosition normScenePos = GetMouseScenePosition();
-        m_tilemap.ReplaceTileAt(normScenePos, m_eventInfo.selectedLayer, m_selectedTile);
+        m_tilemap.ReplaceTileAt(normScenePos, m_eventInfo.selectedLayer, m_eventInfo.selectedTile);
     }
 }
