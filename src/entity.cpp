@@ -134,10 +134,15 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstM
 
 void Entity::TryStartInteraction(const MapPosition targetPosition)
 {
-    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
-    if (bound == MapBound::Inside/* && m_tilemap.IsFreePosition(targetPosition)*/){
+    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition);
+    if (bound == MapBound::Inside){
+        // std::vector<std::unique_ptr<NPC>> m_npcs; ?
+        // if (m_tilemap.IsElementOnTarget(targetPosition)) {
+            
+        // }
         m_state = EntityState::Interacting;
         // TODO
+        Notify(EntityEvent::Interaction);
     }
 }
 

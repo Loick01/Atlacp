@@ -91,7 +91,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameplayEventController>();
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
 
-    m_player.AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
+    m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     m_context.window.HideCursor();
 
     m_renderedEntities = {&m_player};
@@ -99,7 +99,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     // Testing my NPC, will be removed (they will be load from the tilemap header)
     for (unsigned int i = 0 ; i < 10 ; i++){
         NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, nullptr, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
-        npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
+        npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
         m_renderedEntities.push_back(npc);
     }
     
@@ -107,12 +107,13 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     // Entity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
     //     NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
-    //     npc->AddCallback([this](EntityEvent e){SortRenderedEntities();}); // EntityEvent is unused for now
+    //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     //     m_renderedEntities.push_back(npc);
     //     trackedEntity = npc;
     // }
     
     m_updatedEntities = m_renderedEntities;
+    SortRenderedEntities(); // ?
 }
 
 GameplayTilemapScene::~GameplayTilemapScene()
@@ -120,6 +121,22 @@ GameplayTilemapScene::~GameplayTilemapScene()
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order)
     for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
         delete m_updatedEntities[i];
+}
+
+void GameplayTilemapScene::HandleEntityEvent(const EntityEvent e)
+{
+    switch(e) {
+        case EntityEvent::SortEntity : {
+            SortRenderedEntities();
+            break;
+        }
+        case EntityEvent::Interaction : {
+            // Use UIController to open a window, ...
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 void GameplayTilemapScene::SortRenderedEntities()

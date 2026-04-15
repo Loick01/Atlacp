@@ -73,6 +73,7 @@ class GameplayTilemapScene : public TilemapScene
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
         const size_t m_layersSplitIndex; // Should not be const ?
 
+        void HandleEntityEvent(const EntityEvent e);
         void SortRenderedEntities(); // Rename ?
         
     public:

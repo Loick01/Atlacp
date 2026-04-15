@@ -48,7 +48,7 @@ class Tilemap : public Notifier<TilemapEvent>
         bool IsPositionInTexture(const Vec2 sp) const; // This function was in Drawable, but Tilemap is not anymore a SceneDrawable
         void TakePosition(const MapPosition p);
         void FreePosition(const MapPosition p);
-        bool IsFreePosition(MapPosition& p);
+        bool IsFreePosition(const MapPosition p);
         void LoadAdjacentMap(const MapBound bound);
         void SetTileAt(const size_t layer, const Tile newTile, const MapPosition p);
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile newTile);

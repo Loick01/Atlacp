@@ -114,7 +114,7 @@ int Tilemap::GetGridSize() const
     return m_mapData.size.x*m_mapData.size.y;
 }
 
-bool Tilemap::IsFreePosition(MapPosition& p)
+bool Tilemap::IsFreePosition(const MapPosition p)
 {
     return m_mapData.occupancyGrid[GetTileIndex(p)];
 }

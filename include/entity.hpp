@@ -40,7 +40,7 @@ class EntityMovement
 
 enum class EntityEvent
 {
-    SortEntity
+    SortEntity, Interaction // Rename
 };
 
 // Rename MapEntity ?
