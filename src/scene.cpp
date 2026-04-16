@@ -131,7 +131,21 @@ void GameplayTilemapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::Interaction : {
-            // Use UIController to open a window, ...
+            MapPosition target; 
+            for (Entity* e : m_updatedEntities) { // e will be const once I removed SetState()
+                // Only one Entity at a time with EntityState::Interacting
+                if (e->GetState() == EntityState::Interacting) { // Player is the only that can interact (or NPC will use Interaction system for cinematics ?)
+                    target = e->GetTargetPosition();
+                    e->SetState(EntityState::Free); // Remove 
+                    break;
+                }
+            }
+            for (const Entity* e : m_updatedEntities) {
+                if (e->GetMapPosition() == target) {
+                    // Use UIController to open a window, ...
+                           
+                }
+            }
             break;
         }
         default:

@@ -80,6 +80,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         float GetRunSpeed() const;
         float GetCurrentSpeed() const;
         bool GetIsRunning() const;
+        void SetState(const EntityState state);
         void SetIsRunning(const bool isRunning);
         void Reset(const MapDirection direction=MapDirection::None);
 };

@@ -136,12 +136,8 @@ void Entity::TryStartInteraction(const MapPosition targetPosition)
 {
     const MapBound bound = m_tilemap.IsOutOfMap(targetPosition);
     if (bound == MapBound::Inside){
-        // std::vector<std::unique_ptr<NPC>> m_npcs; ?
-        // if (m_tilemap.IsElementOnTarget(targetPosition)) {
-            
-        // }
         m_state = EntityState::Interacting;
-        // TODO
+        SetTargetPosition(targetPosition);
         Notify(EntityEvent::Interaction);
     }
 }
@@ -208,6 +204,11 @@ float Entity::GetCurrentSpeed() const
 bool Entity::GetIsRunning() const
 {
     return m_isRunning;
+}
+
+void Entity::SetState(const EntityState state)
+{
+    m_state = state;
 }
 
 void Entity::SetIsRunning(const bool isRunning)

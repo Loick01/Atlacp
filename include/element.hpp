@@ -8,6 +8,7 @@ class MapElement
 {
     private:
         MapPosition m_mapPosition;
+        MapPosition m_targetPosition;
 
     protected:
         Tilemap& m_tilemap;
@@ -16,5 +17,7 @@ class MapElement
         void SetMapPosition(const MapPosition mp);
 
     public:
-        MapPosition GetMapPosition() const; // Should be protected (will not be called in main.cpp)
+        MapPosition GetMapPosition() const;
+        MapPosition GetTargetPosition() const;
+        void SetTargetPosition(const MapPosition target);
 };
