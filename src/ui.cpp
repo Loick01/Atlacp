@@ -167,6 +167,15 @@ void UiController::SetRoot(UiElement* ui_root, const AreaSize parentSize,
     m_root->AddPadding(paddingScale, sourceAxis, paddingAxis);
 }
 
+void UiController::OpenDialogBox()
+{
+    // SetRoot(&m_frame, viewport_size, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
+    // m_faceset.MakeChild(&m_frame, 0.7f, Axis::Height, Anchor::Left, Anchor::Center, 0.15f, Axis::Height, Axis::Width);
+    // m_textArea.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
+    // m_textArea.MakeChild(&m_frame, 0.75f, Axis::Width, Anchor::Left, Anchor::Center, 0.18f, Axis::Width, Axis::Width);
+    // m_face.MakeChild(&m_faceset, 0.8f, Axis::Width, Anchor::Center, Anchor::Center, 0., Axis::Width, Axis::Width); // Axis::None ?
+}
+
 void UiElement::AddChild(UiElement* child)
 {
     m_childs.push_back(child);
@@ -200,19 +209,19 @@ void TextArea::MakeChild(UiElement* parent,
 }
 
 GameplayUiController::GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
-    m_dialogBox(textureController, "../assets/ui/box.png"), m_faceset(textureController, "../assets/ui/faceset.png"), 
+    m_frame(textureController, "../assets/ui/box.png"), m_faceset(textureController, "../assets/ui/faceset.png"), 
     m_face(textureController, "../assets/ui/hunter_face.png"), m_textArea(textureController, fontFilepath)
 {
     // For now, dialog box is the root of UiElement graph, with global position = local position
     // Technically, m_root sould be the camera viewport, but it's not a UiElement
     const AreaSize viewport_size = camera.GetViewport();
-    SetRoot(&m_dialogBox, viewport_size, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
-    m_faceset.MakeChild(&m_dialogBox, 0.7f, Axis::Height, Anchor::Left, Anchor::Center, 0.15f, Axis::Height, Axis::Width);
+    SetRoot(&m_frame, viewport_size, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
+    m_faceset.MakeChild(&m_frame, 0.7f, Axis::Height, Anchor::Left, Anchor::Center, 0.15f, Axis::Height, Axis::Width);
     m_textArea.SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
-    m_textArea.MakeChild(&m_dialogBox, 0.75f, Axis::Width, Anchor::Left, Anchor::Center, 0.18f, Axis::Width, Axis::Width);
+    m_textArea.MakeChild(&m_frame, 0.75f, Axis::Width, Anchor::Left, Anchor::Center, 0.18f, Axis::Width, Axis::Width);
     m_face.MakeChild(&m_faceset, 0.8f, Axis::Width, Anchor::Center, Anchor::Center, 0., Axis::Width, Axis::Width); // Axis::None ?
 
-    m_dialogBox.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
+    m_frame.UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
 }
 
 void GameplayUiController::Update()
@@ -221,14 +230,14 @@ void GameplayUiController::Update()
 }
 
 EditorUiController::EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
-    m_dialogBox(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(0) // lastLayer should be initialized with EditorEventInfo::selectedLayer ?
+    m_frame(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(0) // lastLayer should be initialized with EditorEventInfo::selectedLayer ?
 {
     const AreaSize viewport_size = camera.GetViewport();
-    SetRoot(&m_dialogBox, viewport_size, 0.3f, Axis::Width, Anchor::Left, Anchor::Top, 0.02f, Axis::Width, Axis::Height);
+    SetRoot(&m_frame, viewport_size, 0.3f, Axis::Width, Anchor::Left, Anchor::Top, 0.02f, Axis::Width, Axis::Height);
     m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
-    m_textArea.MakeChild(&m_dialogBox, 0.9f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    m_textArea.MakeChild(&m_frame, 0.9f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
-    m_dialogBox.UpdatePosition(camera.GetScreenOffset());
+    m_frame.UpdatePosition(camera.GetScreenOffset());
 }
 
 void EditorUiController::SetEventInfo(const EditorEventInfo eventInfo)

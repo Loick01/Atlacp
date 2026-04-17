@@ -83,14 +83,16 @@ class UiController
     public:
         virtual void Update() = 0;
         void Draw() const;
+
+        void OpenDialogBox(); // Will be removed ?
 };
 
 // UI configuration will not stay in constructor
-
 class GameplayUiController : public UiController
 {
     private:
-        UiElement m_dialogBox;
+        // Will be removed
+        UiElement m_frame;
         UiElement m_faceset;
         UiElement m_face;
         TextArea m_textArea;
@@ -104,7 +106,7 @@ class EditorUiController : public UiController
 {
     private:
         EditorEventInfo m_eventInfo;
-        UiElement m_dialogBox;
+        UiElement m_frame;
         TextArea m_textArea;
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
         // GameplayUiController will also need a (Gameplay)EventState 

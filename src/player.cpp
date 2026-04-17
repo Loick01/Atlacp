@@ -72,7 +72,11 @@ void Player::Update(const float deltaTime)
             break;
         }
 
-        default: // Should not happen
+        case EntityState::Interacting: {
+            
+        }
+
+        default: // Should not happen ?
             break; 
     }
 }
