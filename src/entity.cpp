@@ -16,6 +16,11 @@ MapDirection EntityMovement::GetDirection() const
     return m_direction;
 }
 
+MapDirection EntityMovement::GetOppositeDirection() const
+{
+    return static_cast<MapDirection>(((int)m_direction+2)%4);
+}
+
 MapPosition EntityMovement::GetStartPosition() const
 {
     return m_startMapPosition;
@@ -77,7 +82,7 @@ void EntityMovement::Initialize(const int tileSize, const MapPosition startPosit
 }
 
 Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-    Tilemap& tilemap, const float walkSpeed, const float runSpeed):
+    Tilemap& tilemap, const MapDirection initialDirection, const float walkSpeed, const float runSpeed):
     SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
     m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
     // Remove +".png" if I create RessourceFile struct ?
@@ -87,6 +92,7 @@ Entity::Entity(TextureController& textureController, const std::string& spriteFi
     m_textureHeight = spriteSize.y;
     // Sprites could have a different size than tiles
     SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, m_textureHeight-tilemap.GetTileSize()});
+    Reset(initialDirection);
 }
 
 EntityState Entity::GetState() const
@@ -99,9 +105,15 @@ EntityMovement Entity::GetCurrentMovement() const
     return m_currentMovement;
 }
 
-void Entity::Reset(const MapDirection direction)
+void Entity::SetOrientation(const MapDirection direction)
 {
     m_animation.Reset(direction);
+}
+
+void Entity::Reset(const MapDirection direction)
+{
+    SetOrientation(direction);
+    m_currentMovement.DefineMovement(direction);
     m_state = EntityState::Free;
 }
 

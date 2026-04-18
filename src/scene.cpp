@@ -131,20 +131,23 @@ void GameplayTilemapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::Interaction : {
-            MapPosition target; 
-            for (const Entity* e : m_updatedEntities) { // e will be const once I removed SetState()
+            MapPosition target;
+            const Entity* srcEntity = nullptr; 
+            for (const Entity* e : m_updatedEntities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
                 // Only one interaction at a time
-                if (e->GetState() == EntityState::Interacting) { // Player is the only that can interact ? Or NPC will use Interaction system for cinematics ?
+                if (e->GetState() == EntityState::Interacting) {
                     target = e->GetTargetPosition();
+                    srcEntity = e;
                     break;
                 }
             }
             for (Entity* e : m_updatedEntities) {
-                if (e->GetMapPosition() == target) {
-                    e->SetState(EntityState::Interacting); // Targeted entity should not move
+                if (e->GetMapPosition() == target /* && e->GetState() == EntityState::Free */) { // Will interact only with EntityState::Free
+                    e->SetOrientation(srcEntity->GetCurrentMovement().GetOppositeDirection());
+                    e->SetState(EntityState::Interacting); // Targeted entity will not move
                     m_context.uiController->OpenDialogBox();
+                    break;
                 }
-                break;
             }
             break;
         }

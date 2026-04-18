@@ -26,6 +26,7 @@ class EntityMovement
 
         MapPosition GetMove() const;
         MapDirection GetDirection() const;
+        MapDirection GetOppositeDirection() const;
         MapPosition GetStartPosition() const;
         ScenePosition GetScenePosition() const;
         EntityState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
@@ -60,7 +61,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
 
     protected:
         Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-            Tilemap& tilemap, const float walkSpeed, const float runSpeed);
+            Tilemap& tilemap, const MapDirection initialDirection, const float walkSpeed, const float runSpeed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
@@ -82,5 +83,6 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         bool GetIsRunning() const;
         void SetState(const EntityState state);
         void SetIsRunning(const bool isRunning);
+        void SetOrientation(const MapDirection direction);
         void Reset(const MapDirection direction=MapDirection::None);
 };

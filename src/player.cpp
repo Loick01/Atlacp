@@ -2,7 +2,7 @@
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, walkSpeed, runSpeed)
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, MapDirection::Down, walkSpeed, runSpeed)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
