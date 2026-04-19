@@ -67,7 +67,6 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
             m_currentMap -= 1;
             break;
     }
-    // Error if out of range for world ?
     LoadMap(m_worldData.maps[m_currentMap]);
     m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
@@ -77,10 +76,8 @@ std::vector<bool> Tilemap::GetOccupancyGrid() const
     return m_mapData.occupancyGrid;
 }
 
-MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound)
+MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound) const
 {
-    LoadAdjacentMap(bound); // Should not be here
-
     MapPosition projectedPosition = p;
     switch (bound){
         case MapBound::OutUp:

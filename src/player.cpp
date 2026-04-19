@@ -60,7 +60,7 @@ void Player::Update(const float deltaTime)
             switch(direction){
                 case MapDirection::None:
                 {
-                    Reset();
+                    Reset(GetCurrentMovement().GetDirection()); // Previous movement direction (can't use m_eventInfo.direction which is reset to None)
                     break;
                 }
                 default:

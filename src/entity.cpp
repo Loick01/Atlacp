@@ -108,12 +108,14 @@ EntityMovement Entity::GetCurrentMovement() const
 void Entity::SetOrientation(const MapDirection direction)
 {
     m_animation.Reset(direction);
+    m_currentMovement.DefineMovement(direction);
 }
 
 void Entity::Reset(const MapDirection direction)
 {
+    if (direction == MapDirection::None) 
+        throw std::invalid_argument("Direction should not be None\n");
     SetOrientation(direction);
-    m_currentMovement.DefineMovement(direction);
     m_state = EntityState::Free;
 }
 
@@ -124,6 +126,7 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstM
     const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
 
     if (canExitMap && bound != MapBound::Inside){
+        m_tilemap.LoadAdjacentMap(bound);
         SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
         const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
         m_position = GetFinalDrawingPosition(newPosition);

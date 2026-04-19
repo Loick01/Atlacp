@@ -41,7 +41,7 @@ class Tilemap : public Notifier<TilemapEvent>
         GridSize GetLayerSize() const;
         int GetTileSize() const;
         int GetGridSize() const; // Should be removed and use instead GetLayerSize()
-        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound);
+        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound) const;
         MapBound IsOutOfMap(const MapPosition p) const;
         unsigned int GetTileIndex(const MapPosition p) const;
         size_t GetLayerCount() const;

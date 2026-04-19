@@ -84,5 +84,5 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         void SetState(const EntityState state);
         void SetIsRunning(const bool isRunning);
         void SetOrientation(const MapDirection direction);
-        void Reset(const MapDirection direction=MapDirection::None);
+        void Reset(const MapDirection direction);
 };

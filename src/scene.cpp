@@ -142,10 +142,10 @@ void GameplayTilemapScene::HandleEntityEvent(const EntityEvent e)
                 }
             }
             for (Entity* e : m_updatedEntities) {
-                if (e->GetMapPosition() == target /* && e->GetState() == EntityState::Free */) { // Will interact only with EntityState::Free
+                if (e->GetMapPosition() == target && e->GetState() == EntityState::Free) { // Will interact only with EntityState::Free
                     e->SetOrientation(srcEntity->GetCurrentMovement().GetOppositeDirection());
                     e->SetState(EntityState::Interacting); // Targeted entity will not move
-                    m_context.uiController->OpenDialogBox();
+                    // m_context.uiController->OpenDialogBox();
                     break;
                 }
             }

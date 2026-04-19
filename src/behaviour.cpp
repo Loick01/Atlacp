@@ -24,7 +24,7 @@ void RandomBehaviour::MovingCase(Entity& entity, const float deltaTime)
 
 void RandomBehaviour::OnStopCase(Entity& entity)
 {
-    entity.Reset(); // Set state to Free where a new delay will be generated
+    entity.Reset(entity.GetCurrentMovement().GetDirection()); // Set state to Free where a new delay will be generated
 }
 
 FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed):
@@ -62,7 +62,7 @@ void FollowEntityBehaviour::OnStopCase(Entity& entity)
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, false);
     }else{
-        entity.Reset();
+        entity.Reset(entity.GetCurrentMovement().GetDirection());
     }
 }
 
@@ -98,6 +98,6 @@ void GoToBehaviour::OnStopCase(Entity& entity)
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, false);
     }else{
-        entity.Reset();
+        entity.Reset(entity.GetCurrentMovement().GetDirection());
     }
 }
