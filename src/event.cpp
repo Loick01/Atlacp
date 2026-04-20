@@ -222,7 +222,7 @@ void EditorEventController::HandleEvents()
                         std::string savefile;
                         std::cin >> savefile;
                         m_tilemap.SaveMap(savefile);
-                        std::cout << "Map saved in assets/maps/" << savefile << "\n"; // Will be removed
+                        std::cout << "Map saved in assets/maps/" << savefile << "\n"; // Will be removed (avoid cout, should be displayed in the Ui frame)
                         break;
                     }
                     case SDL_SCANCODE_W:

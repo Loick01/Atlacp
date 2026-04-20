@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream> // Because operator<< in this file
 #include <set>
 #include <stdlib.h>
 #include <string>

@@ -32,6 +32,8 @@ set(SOURCES
     src/ui.cpp
     src/layer.cpp
     src/sound.cpp
+    src/interaction.cpp
+    src/movement.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

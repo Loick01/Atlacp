@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "entity.hpp"
 
 class Player : public Entity

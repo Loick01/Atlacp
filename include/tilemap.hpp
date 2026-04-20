@@ -1,7 +1,5 @@
 #pragma once 
 
-#include <functional> // Should not be here
-#include <iostream>
 #include <string>
 #include <vector>
 

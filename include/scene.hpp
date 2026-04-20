@@ -7,6 +7,7 @@
 #include "camera.hpp"
 #include "event.hpp"
 #include "file.hpp"
+#include "interaction.hpp"
 #include "npc.hpp"
 #include "player.hpp"
 #include "sound.hpp"
@@ -65,6 +66,8 @@ class GameplayTilemapScene : public TilemapScene
     private:
         Time m_time;
         Player m_player;
+        InteractionController m_interactionController;
+
         std::vector<Entity*> m_renderedEntities; // Sorted by y position
         // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
         std::vector<Entity*> m_updatedEntities;

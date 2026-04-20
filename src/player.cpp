@@ -7,9 +7,9 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
         SetMapPosition(spawn);
-    else { // This should not happen
-        SetMapPosition(MapPosition{0, 0});
-        std::cout << "A spawn position must be defined for the first loaded map (defined in world file)\n";
+    else {
+        // SetMapPosition(MapPosition{0, 0});
+        throw std::runtime_error("A spawn position must be defined for the first loaded map (defined in world file)");
     }
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in Player constructor)

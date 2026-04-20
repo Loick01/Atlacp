@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 #include "camera.hpp"
 #include "texture.hpp"
 
