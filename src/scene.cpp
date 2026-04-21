@@ -84,70 +84,13 @@ void TilemapScene::UpdateTilemapLayer()
 }
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
-    TilemapScene(context, true),
-    m_player(m_context.fileReader, m_tilemap, m_context.textureController, "../assets/sprites/character16", m_camera, 4.f, 6.f),
+    TilemapScene(context, true), m_entities(m_context.fileReader, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameplayEventController>();
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
-    m_interactionController.SetUiController(m_context.uiController.get());
 
-    m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     m_context.window.HideCursor();
-
-    m_renderedEntities = {&m_player};
-
-    // Testing my NPC, will be removed (they will be load from the tilemap header)
-    for (unsigned int i = 0 ; i < 10 ; i++){
-        NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, nullptr, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
-        npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-        m_renderedEntities.push_back(npc);
-    }
-    
-    // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
-    // Entity* trackedEntity = &m_player;
-    // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_context.fileReader, m_tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", m_camera, 4.f, 6.f);
-    //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-    //     m_renderedEntities.push_back(npc);
-    //     trackedEntity = npc;
-    // }
-    
-    m_updatedEntities = m_renderedEntities;
-    SortRenderedEntities(); // ?
-}
-
-GameplayTilemapScene::~GameplayTilemapScene()
-{
-    // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order)
-    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
-        delete m_updatedEntities[i];
-}
-
-void GameplayTilemapScene::HandleEntityEvent(const EntityEvent e)
-{
-    switch(e) {
-        case EntityEvent::SortEntity : {
-            SortRenderedEntities();
-            break;
-        }
-        case EntityEvent::Interaction : {
-            m_interactionController.StartInteraction(m_updatedEntities);
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-void GameplayTilemapScene::SortRenderedEntities()
-{
-    // m_renderedEntities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
-    // It would be even better to sort only once when several entities end their movement in the same frame
-    std::sort(m_renderedEntities.begin(), m_renderedEntities.end(),
-        [](Entity* a, Entity* b){
-            return a->GetMapPosition().y < b->GetMapPosition().y; 
-        });
 }
 
 void GameplayTilemapScene::Gameloop()
@@ -159,18 +102,17 @@ void GameplayTilemapScene::Gameloop()
     m_gameloop = m_context.eventController->HandleWindowEvents();
     
     m_context.eventController->HandleEvents(); 
-    m_player.SetEventInfo(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo()); // Need dynamic_cast ?
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)
         m_layers[i]->DrawTexture();
-    for (Entity* e : m_renderedEntities)
-        e->DrawTexture();
+    
+    m_entities.Draw();
+    
     for (size_t i=m_layersSplitIndex ; i<m_layers.size() ; i++)
         m_layers[i]->DrawTexture();
 
-    for (Entity* e : m_updatedEntities)
-        e->Update(deltaTime);
+    m_entities.Update(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo(), deltaTime);
 
     m_context.uiController->Draw();
     

@@ -5,11 +5,9 @@
 #include <vector>
 
 #include "camera.hpp"
+#include "entity_controller.hpp"
 #include "event.hpp"
 #include "file.hpp"
-#include "interaction.hpp"
-#include "npc.hpp"
-#include "player.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
 #include "tilemap.hpp"
@@ -65,23 +63,15 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        Player m_player;
-        InteractionController m_interactionController;
-
-        std::vector<Entity*> m_renderedEntities; // Sorted by y position
-        // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
-        std::vector<Entity*> m_updatedEntities;
+        EntityController m_entities;
 
         // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
         const size_t m_layersSplitIndex; // Should not be const ?
-
-        void HandleEntityEvent(const EntityEvent e);
-        void SortRenderedEntities(); // Rename ?
         
     public:
         GameplayTilemapScene(GameContext& context);
-        ~GameplayTilemapScene();
+        ~GameplayTilemapScene() = default;
         void Gameloop() override;
 };
 

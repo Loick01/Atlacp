@@ -1,0 +1,29 @@
+#pragma once
+
+#include "camera.hpp"
+#include "entity.hpp"
+#include "interaction.hpp"
+#include "npc.hpp"
+#include "player.hpp"
+#include "tilemap.hpp"
+
+class EntityController
+{
+    private:
+        Player m_player; // ?
+        
+        std::vector<Entity*> m_renderedEntities; // Sorted by y position
+        // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
+        std::vector<Entity*> m_updatedEntities;
+
+        InteractionController m_interactionController;
+    
+    public:
+        EntityController(const FileReader& fileReader, TextureController& textureController, Camera& camera, Tilemap& tilemap);
+        ~EntityController();
+
+        void Draw() const;
+        void Update(const GameplayEventInfo playerEventInfo, const float deltaTime); // GameplayEventInfo or call SetEventInfo in GameplayScene (before EntityController::Update()) 
+        void SortRenderedEntities();
+        void HandleEntityEvent(const EntityEvent e);
+};
