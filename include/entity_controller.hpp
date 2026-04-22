@@ -26,4 +26,7 @@ class EntityController
         void Update(const GameplayEventInfo playerEventInfo, const float deltaTime); // GameplayEventInfo or call SetEventInfo in GameplayScene (before EntityController::Update()) 
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
+
+        void DeleteNPCs(); // Rename
+        void LoadNPCs(); // Rename
 };

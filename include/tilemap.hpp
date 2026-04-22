@@ -12,7 +12,7 @@
 
 enum class TilemapEvent
 {
-    TileLayerUpdate
+    LoadingMap
 };
 
 class Tilemap : public Notifier<TilemapEvent>

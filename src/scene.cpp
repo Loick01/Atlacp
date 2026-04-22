@@ -70,7 +70,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
     UpdateTilemapLayer();
-    m_tilemap.AddCallback([this](TilemapEvent e){UpdateTilemapLayer();}); // TilemapEvent is unused for now
+    m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);}); // TilemapEvent is unused for now
 
     // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
@@ -82,6 +82,19 @@ void TilemapScene::UpdateTilemapLayer()
     for (const TileLayer& l : layers)
         m_layers.push_back(&l);
 }
+
+void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
+{
+    switch(e) {
+        case TilemapEvent::LoadingMap : {
+            UpdateTilemapLayer();
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     TilemapScene(context, true), m_entities(m_context.fileReader, m_context.textureController, m_camera, m_tilemap),
@@ -118,6 +131,19 @@ void GameplayTilemapScene::Gameloop()
     
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
+}
+
+void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
+{
+    switch(e) {
+        case TilemapEvent::LoadingMap : {
+            UpdateTilemapLayer();
+            m_entities.LoadNPCs();
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 EditorTilemapScene::EditorTilemapScene(GameContext& context):

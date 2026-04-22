@@ -30,9 +30,18 @@ EntityController::EntityController(const FileReader& fileReader, TextureControll
 
 EntityController::~EntityController()
 {
-    // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order) // Remove
-    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
+    DeleteNPCs();
+}
+
+void EntityController::DeleteNPCs()
+{
+    // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
+    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
         delete m_updatedEntities[i];
+        m_updatedEntities[i] = nullptr; // Fix segfault on Entity::Update() when loading a new map
+    }
+    
+    // Warning : NPC adress are still in m_updatedEntities and m_renderedEntities
 }
 
 void EntityController::Draw() const
@@ -45,8 +54,10 @@ void EntityController::Update(const GameplayEventInfo playerEventInfo, const flo
 {
     m_player.SetEventInfo(playerEventInfo);
     
-    for (Entity* e : m_updatedEntities)
+    for (Entity* e : m_updatedEntities) {
+        if (e == nullptr) break; // I don't like that
         e->Update(deltaTime);
+    }
 }
 
 void EntityController::SortRenderedEntities()
@@ -73,4 +84,16 @@ void EntityController::HandleEntityEvent(const EntityEvent e)
         default:
             break;
     }
+}
+
+void EntityController::LoadNPCs()
+{
+    DeleteNPCs();
+
+    // Same code in EntityController constructor, try to merge it
+    m_renderedEntities = {&m_player}; // Clear this vector and keep only the player
+
+    // Load NPCs from the map here
+    m_updatedEntities = m_renderedEntities;
+    SortRenderedEntities();
 }

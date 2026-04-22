@@ -42,6 +42,8 @@ class Scene : public Notifier<SwitchEvent>
 
     public:
         Scene(GameContext& context);
+        virtual ~Scene() = default;
+        
         virtual void Gameloop() = 0;
         bool GetGameloop() const;
 };
@@ -54,6 +56,7 @@ class TilemapScene : public Scene
         Tilemap m_tilemap;
 
         void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
+        virtual void HandleTilemapEvent(const TilemapEvent e);
 
     public:
         TilemapScene(GameContext& context, const bool shouldCulling);
@@ -63,7 +66,7 @@ class GameplayTilemapScene : public TilemapScene
 {
     private:
         Time m_time;
-        EntityController m_entities;
+        EntityController m_entities; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
 
         // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
@@ -73,6 +76,7 @@ class GameplayTilemapScene : public TilemapScene
         GameplayTilemapScene(GameContext& context);
         ~GameplayTilemapScene() = default;
         void Gameloop() override;
+        void HandleTilemapEvent(const TilemapEvent e) override;
 };
 
 class EditorTilemapScene : public TilemapScene

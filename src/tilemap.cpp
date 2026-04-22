@@ -130,7 +130,7 @@ void Tilemap::LoadMap(const std::string& path)
     // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered
     m_mapData = m_fileReader.GetMapFromFile(path, m_camera, m_textureController, m_tileset);
-    Notify(TilemapEvent::TileLayerUpdate); // Update TileLayer used for rendering in TilemapScene
+    Notify(TilemapEvent::LoadingMap); // Update TileLayer used for rendering in TilemapScene
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_mapData.tilesets)
