@@ -1,12 +1,12 @@
 #include "npc.hpp"
 
 NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const Entity* trackedEntity, // Entity parameter use for follow behaviour, should not be here
-    const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
+    const std::string& spriteFilepath, Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed):
     Entity(textureController, spriteFilepath, camera, fileReader, tilemap, MapDirection::Down, walkSpeed, runSpeed)
 {
-    SetMapPosition(MapPosition{8,5});
+    SetMapPosition(position);
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in NPC constructor)
+    tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position is defined in NPC constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     m_behaviour = std::make_unique<RandomBehaviour>();
     //m_behaviour = std::make_unique<FollowEntityBehaviour>(trackedEntity, GetWalkSpeed());

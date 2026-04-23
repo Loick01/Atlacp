@@ -121,6 +121,11 @@ size_t Tilemap::GetLayerCount() const
     return m_mapData.layerCount;
 }
 
+size_t Tilemap::GetCurrentMapIndex() const
+{
+    return m_currentMap;
+}
+
 void Tilemap::LoadMap(const std::string& path)
 {
     // I don't think I should delete all tilesets when loading a new map
@@ -130,7 +135,6 @@ void Tilemap::LoadMap(const std::string& path)
     // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered
     m_mapData = m_fileReader.GetMapFromFile(path, m_camera, m_textureController, m_tileset);
-    Notify(TilemapEvent::LoadingMap); // Update TileLayer used for rendering in TilemapScene
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_mapData.tilesets)
@@ -148,6 +152,7 @@ void Tilemap::LoadMap(const std::string& path)
             m_mapData.occupancyGrid.push_back(is_free);
         }
     }
+    Notify(TilemapEvent::LoadingMap); // Update TileLayer used for rendering in TilemapScene
 }
 
 bool Tilemap::IsPositionInTexture(const Vec2 sp) const

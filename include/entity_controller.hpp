@@ -2,6 +2,7 @@
 
 #include "camera.hpp"
 #include "entity.hpp"
+#include "file.hpp"
 #include "interaction.hpp"
 #include "npc.hpp"
 #include "player.hpp"
@@ -10,6 +11,7 @@
 class EntityController
 {
     private:
+        const FileReader& m_fileReader;
         Player m_player; // ?
         
         std::vector<Entity*> m_renderedEntities; // Sorted by y position
@@ -27,6 +29,7 @@ class EntityController
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
-        void DeleteNPCs(); // Rename
-        void LoadNPCs(); // Rename
+        void DeleteNPCs(); // Rename DeleteNPCs
+        void LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap, // These 3 paramaters should not be here ?
+            const std::string& filepath, const unsigned int mapIndex); // Rename LoadNPCs
 };

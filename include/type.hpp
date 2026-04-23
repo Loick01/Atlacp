@@ -154,6 +154,14 @@ struct AnimationData
     float frameDuration;
 };
 
+struct DataNPC
+{
+    MapPosition position;
+    std::string sprite;
+    float walkSpeed;
+    float runSpeed;
+};
+
 // Remove ?
 struct TilesetNormalizationInfo
 {

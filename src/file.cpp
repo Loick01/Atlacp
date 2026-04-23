@@ -1,5 +1,29 @@
 #include "file.hpp"
 
+std::vector<DataNPC> FileReader::ReadDataNPCs(const std::string& npcsFilepath, const unsigned int mapIndex) const
+{
+    std::ifstream input;
+    input.open(npcsFilepath);
+    std::vector<DataNPC> npcsData;
+    unsigned int currentIndex = 0;
+    std::string s;
+    while(currentIndex < mapIndex && input >> s) { // Skip to the data associated with the chosen map
+        if (s == MAP_HEADER_END) currentIndex++;
+    }
+    if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid");
+
+    while (input >> s && s != MAP_HEADER_END) {
+        DataNPC data;
+        // No verification yet on what is read 
+        data.sprite = s;
+        input >> data.position.x; input >> data.position.y;
+        input >> data.walkSpeed;
+        input >> data.runSpeed;
+        npcsData.push_back(data);
+    }
+    return npcsData;
+}
+
 WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
     std::ifstream input;

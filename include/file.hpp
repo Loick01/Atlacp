@@ -8,7 +8,7 @@
 #include "layer.hpp"
 #include "type.hpp"
 
-#define MAP_HEADER_END "###" // Will be removed ?
+#define MAP_HEADER_END "###" // Will be removed ? Rename (I also use it for NPC file)
 
 class FileReader
 {
@@ -18,6 +18,7 @@ class FileReader
     public:
         FileReader() = default;
 
+        std::vector<DataNPC> ReadDataNPCs(const std::string& npcsFilepath, const unsigned int mapIndex) const;
         WorldData ReadWorldFile(const std::string& worldFilepath) const;
         MapData GetMapFromFile(const std::string& path, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;

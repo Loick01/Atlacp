@@ -102,7 +102,8 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
 {
     m_context.eventController = std::make_unique<GameplayEventController>();
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
-
+    m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+                "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
 }
 
@@ -138,7 +139,8 @@ void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_entities.LoadNPCs();
+            m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+                "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
             break;
         }
         default:
