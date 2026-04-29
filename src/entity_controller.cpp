@@ -99,13 +99,17 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
 
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
         DataNPC currentData = npcsData[i];
+        const MapPosition npcPosition = currentData.position;
+        if (!tilemap.IsFreePosition(npcPosition))
+            throw std::runtime_error("NPC can only spawn on free position"); 
+        
         NPC* npc = new NPC(
             m_fileReader, 
             tilemap, 
             textureController, 
             nullptr,
             "../assets/sprites/" + currentData.sprite, // TODO
-            camera, currentData.position,
+            camera, npcPosition,
             currentData.walkSpeed, currentData.runSpeed
         );
         npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});

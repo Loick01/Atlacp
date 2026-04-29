@@ -183,9 +183,9 @@ BattleScene::BattleScene(GameContext& context):
     Scene(context)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
-    m_context.eventController = std::make_unique<EventController>(); // Will use BattleEventController
+    m_context.eventController = std::make_unique<BattleEventController>();
     m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
-    m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed
+    // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed ?
 }
 
 void BattleScene::Gameloop()

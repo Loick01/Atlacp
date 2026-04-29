@@ -43,6 +43,16 @@ JoystickActionController::JoystickActionController() :
         throw std::runtime_error("Failed to open joystick\n" + std::string(SDL_GetError()));
 }
 
+bool JoystickActionController::IsJoystickAvailable()
+{
+    const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
+    if (joystick==0){
+        return SDL_NumJoysticks() != 0;
+    }else{
+        throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
+    }
+}
+
 /* If I need to know when the joystick is removed
 
 for (SDL_Event event : m_events){
@@ -132,24 +142,14 @@ void EventController::PollAllEvents()
     }
 }
 
-// Will be removed
-void EventController::HandleEvents()
-{
-
-}
-
 GameplayEventController::GameplayEventController():
     EventController()
 {
-    const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
-    if (joystick==0){
-        if (SDL_NumJoysticks() != 0)
-            m_actionController = std::make_unique<JoystickActionController>();
-        else 
-            m_actionController = std::make_unique<KeyboardActionController>();
-    }else{
-        throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
-    } 
+    if (JoystickActionController::IsJoystickAvailable()) {
+        m_actionController = std::make_unique<JoystickActionController>();
+    } else {
+        m_actionController = std::make_unique<KeyboardActionController>();
+    }
 }
 
 GameplayEventInfo GameplayEventController::GetEventInfo() const
@@ -300,4 +300,18 @@ void EditorEventController::HandleEvents()
         const ScenePosition normScenePos = GetMouseScenePosition();
         m_tilemap.ReplaceTileAt(normScenePos, m_eventInfo.selectedLayer, m_eventInfo.selectedTile);
     }
+}
+
+BattleEventController::BattleEventController() 
+{
+    if (JoystickActionController::IsJoystickAvailable()) {
+        m_actionController = std::make_unique<JoystickActionController>();
+    } else {
+        m_actionController = std::make_unique<KeyboardActionController>();
+    }
+}
+
+void BattleEventController::HandleEvents()
+{
+    
 }

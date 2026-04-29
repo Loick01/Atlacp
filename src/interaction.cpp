@@ -29,8 +29,11 @@ void InteractionController::StartInteraction(std::vector<Entity*> entities)
             break;
         }
     }
-
-    m_dstEntity->SetOrientation(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
-    m_dstEntity->SetState(EntityState::Interacting); // Targeted entity will not move
-    // m_uiController->OpenDialogBox();
+    if (m_dstEntity != nullptr) { // If an Entity has been found
+        m_dstEntity->SetOrientation(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
+        m_dstEntity->SetState(EntityState::Interacting); // Targeted entity will not move
+        // m_uiController->OpenDialogBox();
+    } else { // Will be removed
+        m_srcEntity->SetState(EntityState::Free);
+    }
 }

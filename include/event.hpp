@@ -49,6 +49,8 @@ class JoystickActionController : public ActionController
 
     public:
         JoystickActionController();
+        static bool IsJoystickAvailable();
+        
         bool IsLeftAction() override;
         bool IsRightAction() override;
         bool IsUpAction() override;
@@ -67,14 +69,14 @@ class EventController
         EventController() = default;
         virtual ~EventController() = default;
         bool HandleWindowEvents() const;
-        virtual void HandleEvents(); // = 0; Will be pure virtual when I have created BattleEventController 
+        virtual void HandleEvents() = 0; 
         void PollAllEvents();
 };
 
 class GameplayEventController : public EventController
 {
     private:
-        std::unique_ptr<ActionController> m_actionController;
+        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ? (but EditorEventController should not have it)
         GameplayEventInfo m_eventInfo;
 
     public:
@@ -104,5 +106,16 @@ class EditorEventController : public EventController
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
         EditorEventInfo GetEventInfo() const;
+        void HandleEvents() override;
+};
+
+class BattleEventController : public EventController
+{
+    private:
+        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
+
+    public:
+        BattleEventController();
+
         void HandleEvents() override;
 };
