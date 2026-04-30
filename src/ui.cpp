@@ -283,6 +283,11 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_background.UpdatePosition(camera.GetScreenOffset());
 }
 
+void BattleUiController::SetEventInfo(const BattleEventInfo eventInfo)
+{
+    m_eventInfo = eventInfo;
+}
+
 void BattleUiController::Update()
 {
 

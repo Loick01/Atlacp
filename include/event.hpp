@@ -113,9 +113,11 @@ class BattleEventController : public EventController
 {
     private:
         std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
+        BattleEventInfo m_eventInfo;
 
     public:
         BattleEventController();
 
+        BattleEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };

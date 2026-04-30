@@ -1,7 +1,7 @@
 #include "entity.hpp"
 
 Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-    Tilemap& tilemap, const MapDirection initialDirection, const float walkSpeed, const float runSpeed):
+    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
     SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
     m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
     // Remove +".png" if I create RessourceFile struct ?
@@ -24,15 +24,15 @@ EntityMovement Entity::GetCurrentMovement() const
     return m_currentMovement;
 }
 
-void Entity::SetOrientation(const MapDirection direction)
+void Entity::SetOrientation(const Direction direction)
 {
     m_animation.Reset(direction);
     m_currentMovement.DefineMovement(direction);
 }
 
-void Entity::Reset(const MapDirection direction)
+void Entity::Reset(const Direction direction)
 {
-    if (direction == MapDirection::None) 
+    if (direction == Direction::None) 
         throw std::invalid_argument("Direction should not be None\n");
     SetOrientation(direction);
     m_state = EntityState::Free;
@@ -99,9 +99,9 @@ void Entity::DrawTexture() const
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 
-void Entity::OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap)
+void Entity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
 {
-    // Should berify if direction != MapDirection::None ?
+    // Should berify if direction != Direction::None ?
     EntityMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);
@@ -112,7 +112,7 @@ void Entity::OrderUpdateMovement(const float deltaTime)
     m_position = GetFinalDrawingPosition(ContinueMovement(deltaTime));
 }
 
-void Entity::OrderInteraction(const MapDirection direction)
+void Entity::OrderInteraction(const Direction direction)
 {
     EntityMovement movement; // To get targeted position, I need to initialize a EntityMovement (to use GetMoveFromDirection)
     movement.DefineMovement(direction);

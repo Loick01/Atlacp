@@ -17,7 +17,7 @@ class Animation // Must have sprites for 4 directions
 
         Vec2 GetCurrentSprite() const;
         AreaSize GetSpriteSize() const;
-        void Initialize(const MapDirection direction, const bool isFirstMovement);
-        void Reset(const MapDirection direction);
+        void Initialize(const Direction direction, const bool isFirstMovement);
+        void Reset(const Direction direction);
         void ContinueAnimation(const float deltaTime);
 };

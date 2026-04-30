@@ -42,7 +42,7 @@ void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)
     if (m_trackedEntity->GetState() != EntityState::Free){
         const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
-        const MapDirection direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, true);
     }
@@ -58,7 +58,7 @@ void FollowEntityBehaviour::OnStopCase(Entity& entity)
     if (m_trackedEntity->GetState() != EntityState::Free){
         const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
-        const MapDirection direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, false);
     }else{
@@ -77,7 +77,7 @@ void GoToBehaviour::FreeCase(Entity& entity, const float deltaTime)
     if (m_pathIndex < m_path.size()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
-        const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, true);
     }
@@ -94,7 +94,7 @@ void GoToBehaviour::OnStopCase(Entity& entity)
     if (m_pathIndex < m_path.size()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
-        const MapDirection direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, false);
     }else{

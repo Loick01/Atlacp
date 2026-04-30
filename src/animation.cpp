@@ -16,7 +16,7 @@ AreaSize Animation::GetSpriteSize() const
     return m_animationData.spriteSize;
 }
 
-void Animation::Initialize(const MapDirection direction, const bool isFirstMovement)
+void Animation::Initialize(const Direction direction, const bool isFirstMovement)
 {
     m_indexOffset = static_cast<int>(direction)*m_animationData.step; // Set the offset for sprite animation BEFORE initialize it
     if (isFirstMovement){
@@ -29,10 +29,10 @@ void Animation::Initialize(const MapDirection direction, const bool isFirstMovem
     }
 }
 
-void Animation::Reset(const MapDirection direction)
+void Animation::Reset(const Direction direction)
 {
     // Even if the entity movement isn't valid, the sprite must be updated to face the correct direction
-    if (direction != MapDirection::None) // If direction is None, static_cast<int>(direction) would be 4
+    if (direction != Direction::None) // If direction is None, static_cast<int>(direction) would be 4
         m_indexOffset = static_cast<int>(direction)*m_animationData.step; 
     m_currentSpriteIndex = m_indexOffset; // Set to idle sprite (index offset+0)
 }

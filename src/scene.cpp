@@ -165,7 +165,7 @@ void EditorTilemapScene::Gameloop()
     m_context.eventController->HandleEvents();
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
-    const EditorEventInfo eventInfo = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo(); // Need dynamic_cast ?
+    const EditorEventInfo eventInfo = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo(); 
     
     for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameplayTilemapScene, TileLayer are rendered all at once
         if (eventInfo.isLayerRendered[i])
@@ -173,7 +173,7 @@ void EditorTilemapScene::Gameloop()
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo); // Need dynamic_cast ?
+    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo);
     m_context.uiController->Update();
     m_context.uiController->Draw();
     m_context.window.UpdateRender();    
@@ -186,6 +186,8 @@ BattleScene::BattleScene(GameContext& context):
     m_context.eventController = std::make_unique<BattleEventController>();
     m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed ?
+
+    m_context.window.HideCursor(); // Mouse will not be used for events
 }
 
 void BattleScene::Gameloop()
@@ -194,7 +196,11 @@ void BattleScene::Gameloop()
     m_context.eventController->PollAllEvents();
     
     m_gameloop = m_context.eventController->HandleWindowEvents();
-    
+    m_context.eventController->HandleEvents();
+
+    const BattleEventInfo eventInfo = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventInfo(); 
+    // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo);
+
     m_context.uiController->Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();

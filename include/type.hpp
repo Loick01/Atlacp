@@ -120,7 +120,7 @@ enum class MapBound
     OutLeft
 };
 
-enum class MapDirection
+enum class Direction
 {
     // Do not change the order (sprite animation is based on implicit int defined in this enum)
     // Random::GetRandomDirection and EntityMovement::GetOppositeDirection also use this order
@@ -182,20 +182,20 @@ struct Random
         return ((float)rand()/RAND_MAX)*(max-min)+min;
     }
 
-    MapDirection GetRandomDirection() const
+    Direction GetRandomDirection() const
     {
-        return static_cast<MapDirection>(rand()%4);
+        return static_cast<Direction>(rand()%4);
     }
 };
 
 struct GameplayEventInfo
 {
-    MapDirection direction;
+    Direction mapDirection;
     bool isInteracting;
     bool isRunning;
 
     GameplayEventInfo() {
-        direction = MapDirection::None;
+        mapDirection = Direction::None;
         isInteracting = false;
         isRunning = false;
     }
@@ -220,5 +220,14 @@ struct EditorEventInfo
 
     void SetLayerSize(const unsigned int layerCount) {
         isLayerRendered.assign(layerCount, true);
+    }
+};
+
+struct BattleEventInfo
+{
+    Direction uiDirection; // Rename
+
+    BattleEventInfo() {
+        uiDirection = Direction::None;
     }
 };

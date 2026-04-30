@@ -162,21 +162,21 @@ void GameplayEventController::HandleEvents()
     m_actionController->GetActions();
     
     if (m_actionController->IsPrimaryAction()) { // Should not be here ?
-        // m_eventInfo.direction = MapDirection::None; // Stop player's movement (maybe already done) ?
+        // m_eventInfo.mapDirection = Direction::None; // Stop player's movement (maybe already done) ?
         m_eventInfo.isInteracting = true;
     } else {
         m_eventInfo.isInteracting = false;
         m_eventInfo.isRunning = m_actionController->IsSecondaryAction();
         if (m_actionController->IsLeftAction())
-            m_eventInfo.direction = MapDirection::Left;
+            m_eventInfo.mapDirection = Direction::Left;
         else if (m_actionController->IsRightAction())
-            m_eventInfo.direction = MapDirection::Right;
+            m_eventInfo.mapDirection = Direction::Right;
         else if (m_actionController->IsUpAction())
-            m_eventInfo.direction = MapDirection::Up;
+            m_eventInfo.mapDirection = Direction::Up;
         else if (m_actionController->IsDownAction())
-            m_eventInfo.direction = MapDirection::Down;
+            m_eventInfo.mapDirection = Direction::Down;
         else
-            m_eventInfo.direction = MapDirection::None;
+            m_eventInfo.mapDirection = Direction::None;
     }
 }
 
@@ -311,7 +311,23 @@ BattleEventController::BattleEventController()
     }
 }
 
+BattleEventInfo BattleEventController::GetEventInfo() const
+{
+    return m_eventInfo;
+}
+
 void BattleEventController::HandleEvents()
 {
-    
+    m_actionController->GetActions();
+
+    if (m_actionController->IsLeftAction())
+        m_eventInfo.uiDirection = Direction::Left;
+    else if (m_actionController->IsRightAction())
+        m_eventInfo.uiDirection = Direction::Right;
+    else if (m_actionController->IsUpAction())
+        m_eventInfo.uiDirection = Direction::Up;
+    else if (m_actionController->IsDownAction())
+        m_eventInfo.uiDirection = Direction::Down;
+    else
+        m_eventInfo.uiDirection = Direction::None;
 }

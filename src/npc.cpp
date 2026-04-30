@@ -2,7 +2,7 @@
 
 NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const Entity* trackedEntity, // Entity parameter use for follow behaviour, should not be here
     const std::string& spriteFilepath, Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, MapDirection::Down, walkSpeed, runSpeed)
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
 {
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();

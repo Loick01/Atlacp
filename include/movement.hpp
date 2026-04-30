@@ -11,7 +11,7 @@ class EntityMovement
 {
     private:
         MapPosition m_move;
-        MapDirection m_direction;
+        Direction m_direction;
 
         MapPosition m_startMapPosition;
         ScenePosition m_startPosition;
@@ -22,16 +22,16 @@ class EntityMovement
         EntityMovement();
 
         MapPosition GetMove() const;
-        MapDirection GetDirection() const;
-        MapDirection GetOppositeDirection() const;
+        Direction GetDirection() const;
+        Direction GetOppositeDirection() const;
         MapPosition GetStartPosition() const;
         ScenePosition GetScenePosition() const;
         EntityState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
         
         // Not sure to keep these 2 functions
-        MapPosition GetMoveFromDirection(const MapDirection direction) const;
-        MapDirection GetDirectionFromMove(const MapPosition move) const;
+        MapPosition GetMoveFromDirection(const Direction direction) const;
+        Direction GetDirectionFromMove(const MapPosition move) const;
 
-        void DefineMovement(const MapDirection direction);
+        void DefineMovement(const Direction direction);
         void Initialize(const int tileSize, const MapPosition startPosition, const MapPosition endPosition);
 };

@@ -1,7 +1,7 @@
 #include "movement.hpp"
 
 EntityMovement::EntityMovement():
-    m_direction(MapDirection::None), m_move(MapPosition{0, 0})
+    m_direction(Direction::None), m_move(MapPosition{0, 0})
 {
 
 }
@@ -11,14 +11,14 @@ MapPosition EntityMovement::GetMove() const
     return m_move;
 }
 
-MapDirection EntityMovement::GetDirection() const
+Direction EntityMovement::GetDirection() const
 {
     return m_direction;
 }
 
-MapDirection EntityMovement::GetOppositeDirection() const
+Direction EntityMovement::GetOppositeDirection() const
 {
-    return static_cast<MapDirection>(((int)m_direction+2)%4);
+    return static_cast<Direction>(((int)m_direction+2)%4);
 }
 
 MapPosition EntityMovement::GetStartPosition() const
@@ -39,35 +39,35 @@ EntityState EntityMovement::UpdateProgress(const float speed, const float deltaT
     return newState;
 }
 
-MapPosition EntityMovement::GetMoveFromDirection(const MapDirection direction) const
+MapPosition EntityMovement::GetMoveFromDirection(const Direction direction) const
 {
     switch(direction){
-        case MapDirection::Up:
+        case Direction::Up:
             return MapPosition{0, -1};
-        case MapDirection::Down:
+        case Direction::Down:
             return MapPosition{0, 1};
-        case MapDirection::Left:
+        case Direction::Left:
             return MapPosition{-1, 0};
-        case MapDirection::Right:
+        case Direction::Right:
             return MapPosition{1, 0};
-        default: // Will throw error ? (for MapDirection::None)
+        default: // Will throw error ? (for Direction::None)
             return MapPosition{0, 0}; 
     }
 }
 
-MapDirection EntityMovement::GetDirectionFromMove(const MapPosition move) const
+Direction EntityMovement::GetDirectionFromMove(const MapPosition move) const
 {
     if (move.x==0){
-        if (move.y==-1) return MapDirection::Up;
-        else if (move.y==1) return MapDirection::Down;
+        if (move.y==-1) return Direction::Up;
+        else if (move.y==1) return Direction::Down;
     }else{
-        if (move.x==-1) return MapDirection::Left;
-        else if (move.x==1) return MapDirection::Right;
+        if (move.x==-1) return Direction::Left;
+        else if (move.x==1) return Direction::Right;
     }
-    return MapDirection::None; // Will throw error ?
+    return Direction::None; // Will throw error ?
 }
 
-void EntityMovement::DefineMovement(const MapDirection direction)
+void EntityMovement::DefineMovement(const Direction direction)
 {
     m_direction = direction;
     m_move = GetMoveFromDirection(direction);

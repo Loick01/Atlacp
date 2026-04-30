@@ -2,7 +2,7 @@
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, MapDirection::Down, walkSpeed, runSpeed)
+    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -29,13 +29,13 @@ void Player::Update(const float deltaTime)
         {
             if (m_eventInfo.isInteracting){
                 // Warning : If the player has not moved once, direction is None by default (should initialize it in Entity constructor) 
-                const MapDirection direction = GetCurrentMovement().GetDirection(); // Previous movement direction (can't use m_eventInfo.direction which is reset to None)
+                const Direction direction = GetCurrentMovement().GetDirection(); // Previous movement direction (can't use m_eventInfo.mapDirection which is reset to None)
                 OrderInteraction(direction);
                 break;
             }
-            const MapDirection direction = m_eventInfo.direction;
+            const Direction direction = m_eventInfo.mapDirection;
             switch(direction){
-                case MapDirection::None:
+                case Direction::None:
                     break;
                 default:
                     SetIsRunning(m_eventInfo.isRunning);
@@ -56,11 +56,11 @@ void Player::Update(const float deltaTime)
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
             Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
-            const MapDirection direction = m_eventInfo.direction;
+            const Direction direction = m_eventInfo.mapDirection;
             switch(direction){
-                case MapDirection::None:
+                case Direction::None:
                 {
-                    Reset(GetCurrentMovement().GetDirection()); // Previous movement direction (can't use m_eventInfo.direction which is reset to None)
+                    Reset(GetCurrentMovement().GetDirection()); // Previous movement direction (can't use m_eventInfo.mapDirection which is reset to None)
                     break;
                 }
                 default:

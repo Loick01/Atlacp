@@ -26,7 +26,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
 
     protected:
         Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-            Tilemap& tilemap, const MapDirection initialDirection, const float walkSpeed, const float runSpeed);
+            Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
@@ -35,10 +35,10 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         void DrawTexture() const override;
 
         // Default parameters are used when this function is called by NPC behaviours
-        void OrderStartMovement(const MapDirection direction, const bool isFirstMovement, const bool canExitMap=false); 
+        void OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap=false); 
         void OrderUpdateMovement(const float deltaTime);
 
-        void OrderInteraction(const MapDirection direction);
+        void OrderInteraction(const Direction direction);
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;
@@ -48,6 +48,6 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         bool GetIsRunning() const;
         void SetState(const EntityState state);
         void SetIsRunning(const bool isRunning);
-        void SetOrientation(const MapDirection direction);
-        void Reset(const MapDirection direction);
+        void SetOrientation(const Direction direction);
+        void Reset(const Direction direction);
 };

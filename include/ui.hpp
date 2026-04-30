@@ -120,6 +120,8 @@ class EditorUiController : public UiController
 class BattleUiController : public UiController
 {
     private:
+        BattleEventInfo m_eventInfo; // ?
+
         // Will be removed
         UiElement m_background;
         UiElement m_player;
@@ -132,5 +134,6 @@ class BattleUiController : public UiController
 
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        void SetEventInfo(const BattleEventInfo eventInfo);
         void Update() override;
 };
