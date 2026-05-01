@@ -22,11 +22,11 @@ class BattleController
     private:
         BattleActor m_actorA;
         BattleActor m_actorB;
-        BattleEventInfo m_eventInfo;
+        BattleEventState m_eventState;
 
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
 
-        void SetEventInfo(const BattleEventInfo eventInfo);
+        void SetEventState(const BattleEventState eventState);
         void PlayTurn();
 };

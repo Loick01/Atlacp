@@ -188,20 +188,20 @@ struct Random
     }
 };
 
-struct GameplayEventInfo
+struct GameplayEventState
 {
     Direction mapDirection;
     bool isInteracting;
     bool isRunning;
 
-    GameplayEventInfo() {
+    GameplayEventState() {
         mapDirection = Direction::None;
         isInteracting = false;
         isRunning = false;
     }
 };
 
-struct EditorEventInfo
+struct EditorEventState
 {
     Tile selectedTile;
     int selectedTileset;
@@ -210,7 +210,7 @@ struct EditorEventInfo
     bool isCameraMoving;
     bool isReplacingTile;
 
-    EditorEventInfo() {
+    EditorEventState() {
         selectedLayer = 0;
         isCameraMoving = false;
         selectedTile = 0;
@@ -223,11 +223,31 @@ struct EditorEventInfo
     }
 };
 
-struct BattleEventInfo
+struct BattleEventState
 {
     Direction uiDirection; // Rename
 
-    BattleEventInfo() {
+    BattleEventState() {
         uiDirection = Direction::None;
     }
+};
+
+// I can't use a template on EventController, that's why I use for now this extra-class (besides I will be able to use it for other classes)
+// Should be in event.hpp ?
+template <typename EventState>
+class EventStateHolder
+{
+    protected:
+        EventState m_eventState;
+
+    public:
+        EventStateHolder() = default;
+
+        EventState GetEventState() const {
+            return m_eventState;
+        }
+
+        void SetEventState(EventState eventState) {
+            m_eventState = eventState;
+        }
 };

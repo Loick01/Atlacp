@@ -51,9 +51,9 @@ void EntityController::Draw() const
         e->DrawTexture();
 }
 
-void EntityController::Update(const GameplayEventInfo playerEventInfo, const float deltaTime)
+void EntityController::Update(const GameplayEventState playerEventState, const float deltaTime)
 {
-    m_player.SetEventInfo(playerEventInfo);
+    m_player.SetEventState(playerEventState);
     
     for (Entity* e : m_updatedEntities) {
         if (e == nullptr) break; // I don't like that

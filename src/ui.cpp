@@ -230,7 +230,7 @@ void GameplayUiController::Update()
 }
 
 EditorUiController::EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
-    m_frame(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(0) // lastLayer should be initialized with EditorEventInfo::selectedLayer ?
+    m_frame(textureController, "../assets/ui/box.png"), m_textArea(textureController, fontFilepath), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
     const AreaSize viewport_size = camera.GetViewport();
     SetRoot(&m_frame, viewport_size, 0.3f, Axis::Width, Anchor::Left, Anchor::Top, 0.02f, Axis::Width, Axis::Height);
@@ -240,15 +240,15 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     m_frame.UpdatePosition(camera.GetScreenOffset());
 }
 
-void EditorUiController::SetEventInfo(const EditorEventInfo eventInfo)
+void EditorUiController::SetEventState(const EditorEventState eventState)
 {
-    m_eventInfo = eventInfo;
+    m_eventState = eventState;
 }
 
 void EditorUiController::Update()
 {
-    if (m_eventInfo.selectedLayer != m_lastLayer){
-        m_lastLayer = m_eventInfo.selectedLayer;
+    if (m_eventState.selectedLayer != m_lastLayer){
+        m_lastLayer = m_eventState.selectedLayer;
         // Should merge the 2 lines below (with maybe calling ComputePosition) ?
         m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
         m_textArea.GenerateText();
@@ -283,9 +283,9 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_background.UpdatePosition(camera.GetScreenOffset());
 }
 
-void BattleUiController::SetEventInfo(const BattleEventInfo eventInfo)
+void BattleUiController::SetEventState(const BattleEventState eventState)
 {
-    m_eventInfo = eventInfo;
+    m_eventState = eventState;
 }
 
 void BattleUiController::SetActorAName(const std::string name)

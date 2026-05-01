@@ -22,9 +22,9 @@ BattleController::BattleController(const BattleActor actorA, const BattleActor a
 
 }
 
-void BattleController::SetEventInfo(const BattleEventInfo eventInfo)
+void BattleController::SetEventState(const BattleEventState eventState)
 {
-    m_eventInfo = eventInfo;
+    m_eventState = eventState;
 }
 
 void BattleController::PlayTurn()

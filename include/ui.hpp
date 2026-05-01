@@ -105,7 +105,7 @@ class GameplayUiController : public UiController
 class EditorUiController : public UiController
 {
     private:
-        EditorEventInfo m_eventInfo;
+        EditorEventState m_eventState;
         UiElement m_frame;
         TextArea m_textArea;
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
@@ -113,14 +113,14 @@ class EditorUiController : public UiController
 
     public:
         EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void SetEventInfo(const EditorEventInfo eventInfo);
+        void SetEventState(const EditorEventState eventState);
         void Update() override;
 };
 
 class BattleUiController : public UiController
 {
     private:
-        BattleEventInfo m_eventInfo;
+        BattleEventState m_eventState;
 
         // Will be removed (I will merge all UiController class in one)
         UiElement m_background;
@@ -134,7 +134,7 @@ class BattleUiController : public UiController
 
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void SetEventInfo(const BattleEventInfo eventInfo);
+        void SetEventState(const BattleEventState eventState);
         void Update() override;
 
         // Remove (I will merge all UiController class in one)

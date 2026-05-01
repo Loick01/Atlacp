@@ -126,7 +126,7 @@ void GameplayTilemapScene::Gameloop()
     for (size_t i=m_layersSplitIndex ; i<m_layers.size() ; i++)
         m_layers[i]->DrawTexture();
 
-    m_entities.Update(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventInfo(), deltaTime);
+    m_entities.Update(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
     m_context.uiController->Draw();
     
@@ -165,15 +165,15 @@ void EditorTilemapScene::Gameloop()
     m_context.eventController->HandleEvents();
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
-    const EditorEventInfo eventInfo = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventInfo(); 
+    const EditorEventState eventState = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventState(); 
     
     for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameplayTilemapScene, TileLayer are rendered all at once
-        if (eventInfo.isLayerRendered[i])
+        if (eventState.isLayerRendered[i])
             m_layers[i]->DrawTexture();
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo);
+    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventState(eventState);
     m_context.uiController->Update();
     m_context.uiController->Draw();
     m_context.window.UpdateRender();    
@@ -201,10 +201,10 @@ void BattleScene::Gameloop()
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandleEvents();
 
-    const BattleEventInfo eventInfo = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventInfo(); 
-    // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo);
+    const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState(); 
+    // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventState(eventState);
 
-    m_battleController.SetEventInfo(eventInfo);
+    m_battleController.SetEventState(eventState);
     // m_battleController.PlayTurn();
 
     m_context.uiController->Draw();

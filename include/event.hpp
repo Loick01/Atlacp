@@ -73,28 +73,24 @@ class EventController
         void PollAllEvents();
 };
 
-class GameplayEventController : public EventController
+class GameplayEventController : public EventController, public EventStateHolder<GameplayEventState>
 {
     private:
         std::unique_ptr<ActionController> m_actionController; // Should be in EventController ? (but EditorEventController should not have it)
-        GameplayEventInfo m_eventInfo;
 
     public:
         GameplayEventController();
 
-        GameplayEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };
 
-class EditorEventController : public EventController
+class EditorEventController : public EventController, public EventStateHolder<EditorEventState>
 {
     private:
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
         ScenePosition m_lastCameraOrigin;
-
-        EditorEventInfo m_eventInfo;
 
         // Will be removed ?
         Tileset& m_tileset; // Should be a UiElement ?
@@ -105,19 +101,16 @@ class EditorEventController : public EventController
     public:
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
-        EditorEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };
 
-class BattleEventController : public EventController
+class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
 {
     private:
         std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
-        BattleEventInfo m_eventInfo;
 
     public:
         BattleEventController();
 
-        BattleEventInfo GetEventInfo() const;
         void HandleEvents() override;
 };
