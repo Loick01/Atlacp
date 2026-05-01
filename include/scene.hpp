@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "battle.hpp"
 #include "camera.hpp"
 #include "entity_controller.hpp"
 #include "event.hpp"
@@ -88,6 +89,9 @@ class EditorTilemapScene : public TilemapScene
 
 class BattleScene : public Scene
 {
+    private:
+        BattleController m_battleController;
+
     public:
         BattleScene(GameContext& context);
         void Gameloop() override;

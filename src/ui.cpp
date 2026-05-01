@@ -257,9 +257,9 @@ void EditorUiController::Update()
 
 BattleUiController::BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
     m_background(textureController, "../assets/battle/backgrounds/cavern.png"),
-    m_player(textureController, "../assets/battle/werewolf.png"), m_enemy(textureController, "../assets/battle/bone_appetit.png"),
-    m_playerBox(textureController, "../assets/ui/box.png"), m_enemyBox(textureController, "../assets/ui/box.png"),
-    m_playerInfo(textureController, fontFilepath), m_enemyInfo(textureController, fontFilepath),
+    m_actorASprite(textureController, "../assets/battle/werewolf.png"), m_actorBSprite(textureController, "../assets/battle/bone_appetit.png"),
+    m_actorABox(textureController, "../assets/ui/box.png"), m_actorBBox(textureController, "../assets/ui/box.png"),
+    m_actorAInfo(textureController, fontFilepath), m_actorBInfo(textureController, fontFilepath),
     m_mainBox(textureController, "../assets/ui/box.png")
 {
     const float size = 0.2f; // Will be removed
@@ -267,18 +267,18 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     const AreaSize viewport_size = camera.GetViewport();
     SetRoot(&m_background, viewport_size, 1.0f, Axis::Height, Anchor::Left, Anchor::Top, 0.f, Axis::Width, Axis::Width); // Axis::None for sourceAxis and paddingAxis ?
 
-    m_player.MakeChild(&m_background, size, Axis::Width, Anchor::Right, Anchor::Center, -size, Axis::Width, Axis::Width);
-    m_enemy.MakeChild(&m_background, size, Axis::Width, Anchor::Left, Anchor::Center, size, Axis::Width, Axis::Width);
+    m_actorASprite.MakeChild(&m_background, size, Axis::Width, Anchor::Right, Anchor::Center, -size, Axis::Width, Axis::Width);
+    m_actorBSprite.MakeChild(&m_background, size, Axis::Width, Anchor::Left, Anchor::Center, size, Axis::Width, Axis::Width);
     m_mainBox.MakeChild(&m_background, 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
 
-    m_playerBox.MakeChild(&m_player, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
-    m_enemyBox.MakeChild(&m_enemy, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
+    m_actorABox.MakeChild(&m_actorASprite, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
+    m_actorBBox.MakeChild(&m_actorBSprite, 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
 
-    m_playerInfo.SetText("Howler");
-    m_playerInfo.MakeChild(&m_playerBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    // m_actorAInfo.SetText("Howler");
+    // m_actorAInfo.MakeChild(&m_actorABox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
-    m_enemyInfo.SetText("Bone Appetit");
-    m_enemyInfo.MakeChild(&m_enemyBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    // m_actorBInfo.SetText("Bone Appetit");
+    // m_actorBInfo.MakeChild(&m_actorBBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
     m_background.UpdatePosition(camera.GetScreenOffset());
 }
@@ -286,6 +286,20 @@ BattleUiController::BattleUiController(TextureController& textureController, con
 void BattleUiController::SetEventInfo(const BattleEventInfo eventInfo)
 {
     m_eventInfo = eventInfo;
+}
+
+void BattleUiController::SetActorAName(const std::string name)
+{
+    m_actorAInfo.SetText(name);
+    m_actorAInfo.MakeChild(&m_actorABox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    m_actorAInfo.UpdatePosition(m_actorABox.GetScreenPosition());
+}
+
+void BattleUiController::SetActorBName(const std::string name)
+{
+    m_actorBInfo.SetText(name);
+    m_actorBInfo.MakeChild(&m_actorBBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    m_actorBInfo.UpdatePosition(m_actorBBox.GetScreenPosition());
 }
 
 void BattleUiController::Update()

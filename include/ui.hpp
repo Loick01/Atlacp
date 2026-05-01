@@ -120,20 +120,24 @@ class EditorUiController : public UiController
 class BattleUiController : public UiController
 {
     private:
-        BattleEventInfo m_eventInfo; // ?
+        BattleEventInfo m_eventInfo;
 
-        // Will be removed
+        // Will be removed (I will merge all UiController class in one)
         UiElement m_background;
-        UiElement m_player;
-        UiElement m_enemy;
-        UiElement m_playerBox;
-        UiElement m_enemyBox;
-        TextArea m_playerInfo;
-        TextArea m_enemyInfo;
+        UiElement m_actorASprite;
+        UiElement m_actorBSprite;
+        UiElement m_actorABox;
+        UiElement m_actorBBox;
+        TextArea m_actorAInfo;
+        TextArea m_actorBInfo;
         UiElement m_mainBox;
 
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
         void SetEventInfo(const BattleEventInfo eventInfo);
         void Update() override;
+
+        // Remove (I will merge all UiController class in one)
+        void SetActorAName(const std::string name);
+        void SetActorBName(const std::string name);
 };

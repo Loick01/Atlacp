@@ -35,6 +35,7 @@ set(SOURCES
     src/interaction.cpp
     src/movement.cpp
     src/entity_controller.cpp
+    src/battle.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

@@ -180,12 +180,15 @@ void EditorTilemapScene::Gameloop()
 }
 
 BattleScene::BattleScene(GameContext& context):
-    Scene(context)
+    Scene(context), m_battleController(BattleActor("Howler", 100), BattleActor("Bone Appetit", 100)) // BattleActors will not be here
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     m_context.eventController = std::make_unique<BattleEventController>();
     m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed ?
+
+    static_cast<BattleUiController*>(m_context.uiController.get())->SetActorAName("Howler");
+    static_cast<BattleUiController*>(m_context.uiController.get())->SetActorBName("Bone Appetit");
 
     m_context.window.HideCursor(); // Mouse will not be used for events
 }
@@ -200,6 +203,9 @@ void BattleScene::Gameloop()
 
     const BattleEventInfo eventInfo = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventInfo(); 
     // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventInfo(eventInfo);
+
+    m_battleController.SetEventInfo(eventInfo);
+    // m_battleController.PlayTurn();
 
     m_context.uiController->Draw();
     m_context.window.DrawBoxing();
