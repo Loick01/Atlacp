@@ -22,11 +22,6 @@ BattleController::BattleController(const BattleActor actorA, const BattleActor a
 
 }
 
-void BattleController::SetEventState(const BattleEventState eventState)
-{
-    m_eventState = eventState;
-}
-
 void BattleController::PlayTurn()
 {
 

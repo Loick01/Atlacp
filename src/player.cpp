@@ -17,11 +17,6 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     LookMe();
 }
 
-void Player::SetEventState(const GameplayEventState eventState)
-{
-    m_eventState = eventState;
-}
-
 void Player::Update(const float deltaTime)
 {
     switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update

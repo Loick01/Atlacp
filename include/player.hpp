@@ -2,15 +2,11 @@
 
 #include "entity.hpp"
 
-class Player : public Entity
+class Player : public Entity, public EventStateHolder<GameplayEventState>
 {
-    private:
-        GameplayEventState m_eventState;
-
     public:
         Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
             const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed);
         
-        void SetEventState(const GameplayEventState eventState);
         void Update(const float deltaTime) override;
 };

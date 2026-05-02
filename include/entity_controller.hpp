@@ -25,7 +25,7 @@ class EntityController
         ~EntityController();
 
         void Draw() const;
-        void Update(const GameplayEventState playerEventState, const float deltaTime); // GameplayEventState or call SetEventState in GameplayScene (before EntityController::Update()) 
+        void Update(const GameplayEventState& playerEventState, const float deltaTime); // GameplayEventState or call SetEventState in GameplayScene (before EntityController::Update()) 
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 

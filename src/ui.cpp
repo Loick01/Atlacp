@@ -240,11 +240,6 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     m_frame.UpdatePosition(camera.GetScreenOffset());
 }
 
-void EditorUiController::SetEventState(const EditorEventState eventState)
-{
-    m_eventState = eventState;
-}
-
 void EditorUiController::Update()
 {
     if (m_eventState.selectedLayer != m_lastLayer){
@@ -281,11 +276,6 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     // m_actorBInfo.MakeChild(&m_actorBBox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
     m_background.UpdatePosition(camera.GetScreenOffset());
-}
-
-void BattleUiController::SetEventState(const BattleEventState eventState)
-{
-    m_eventState = eventState;
 }
 
 void BattleUiController::SetActorAName(const std::string name)

@@ -233,7 +233,6 @@ struct BattleEventState
 };
 
 // I can't use a template on EventController, that's why I use for now this extra-class (besides I will be able to use it for other classes)
-// Should be in event.hpp ?
 template <typename EventState>
 class EventStateHolder
 {
@@ -247,7 +246,7 @@ class EventStateHolder
             return m_eventState;
         }
 
-        void SetEventState(EventState eventState) {
+        void SetEventState(const EventState& eventState) {
             m_eventState = eventState;
         }
 };

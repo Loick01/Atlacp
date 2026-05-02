@@ -17,16 +17,14 @@ class BattleActor // Battler ?
         unsigned int GetHealth() const;
 };
 
-class BattleController
+class BattleController : public EventStateHolder<BattleEventState>
 {
     private:
         BattleActor m_actorA;
         BattleActor m_actorB;
-        BattleEventState m_eventState;
 
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
 
-        void SetEventState(const BattleEventState eventState);
         void PlayTurn();
 };

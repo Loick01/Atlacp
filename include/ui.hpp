@@ -88,7 +88,7 @@ class UiController
 };
 
 // UI configuration will not stay in constructor
-class GameplayUiController : public UiController
+class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
 {
     private:
         // Will be removed
@@ -102,10 +102,9 @@ class GameplayUiController : public UiController
         void Update() override;
 };
 
-class EditorUiController : public UiController
+class EditorUiController : public UiController, public EventStateHolder<EditorEventState>
 {
     private:
-        EditorEventState m_eventState;
         UiElement m_frame;
         TextArea m_textArea;
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
@@ -113,14 +112,12 @@ class EditorUiController : public UiController
 
     public:
         EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void SetEventState(const EditorEventState eventState);
         void Update() override;
 };
 
-class BattleUiController : public UiController
+class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
 {
     private:
-        BattleEventState m_eventState;
 
         // Will be removed (I will merge all UiController class in one)
         UiElement m_background;
@@ -134,7 +131,6 @@ class BattleUiController : public UiController
 
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void SetEventState(const BattleEventState eventState);
         void Update() override;
 
         // Remove (I will merge all UiController class in one)

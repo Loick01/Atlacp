@@ -51,7 +51,7 @@ void EntityController::Draw() const
         e->DrawTexture();
 }
 
-void EntityController::Update(const GameplayEventState playerEventState, const float deltaTime)
+void EntityController::Update(const GameplayEventState& playerEventState, const float deltaTime)
 {
     m_player.SetEventState(playerEventState);
     
