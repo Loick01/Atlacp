@@ -226,9 +226,11 @@ struct EditorEventState
 struct BattleEventState
 {
     Direction uiDirection; // Rename
+    bool isAction;
 
     BattleEventState() {
         uiDirection = Direction::None;
+        isAction = false;
     }
 };
 

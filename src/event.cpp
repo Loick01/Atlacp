@@ -305,14 +305,19 @@ void BattleEventController::HandleEvents()
 {
     m_actionController->GetActions();
 
-    if (m_actionController->IsLeftAction())
-        m_eventState.uiDirection = Direction::Left;
-    else if (m_actionController->IsRightAction())
-        m_eventState.uiDirection = Direction::Right;
-    else if (m_actionController->IsUpAction())
-        m_eventState.uiDirection = Direction::Up;
-    else if (m_actionController->IsDownAction())
-        m_eventState.uiDirection = Direction::Down;
-    else
-        m_eventState.uiDirection = Direction::None;
+    if (m_actionController->IsPrimaryAction()) {
+        m_eventState.isAction = true;
+    } else {
+        m_eventState.isAction = false;
+        if (m_actionController->IsLeftAction())
+            m_eventState.uiDirection = Direction::Left;
+        else if (m_actionController->IsRightAction())
+            m_eventState.uiDirection = Direction::Right;
+        else if (m_actionController->IsUpAction())
+            m_eventState.uiDirection = Direction::Up;
+        else if (m_actionController->IsDownAction())
+            m_eventState.uiDirection = Direction::Down;
+        else
+            m_eventState.uiDirection = Direction::None;
+    }
 }

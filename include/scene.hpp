@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <vector>
 
@@ -95,6 +96,7 @@ class BattleScene : public Scene
     public:
         BattleScene(GameContext& context);
         void Gameloop() override;
+        void Exit(const ExitEvent e);
 };
 
 class SceneController
@@ -107,9 +109,12 @@ class SceneController
 
         GameContext m_context;
         std::unique_ptr<Scene> m_currentScene;
+        std::optional<SwitchEvent> m_pendingSwitch; // std::optional allows to avoid having a default value in SwitchEvent enum
 
-        void SetCurrentScene(const SwitchEvent e);
         SwitchEvent GetSwitchEventFromMode(const int mode) const;
+        void SetCurrentScene(const SwitchEvent e);
+        void RequestSwitchScene(const SwitchEvent e);
+        void ApplySwitchScene();
 
     public:
         SceneController(const int mode);

@@ -3,7 +3,8 @@
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
     m_window("Atlacp", {25,25,25}), m_textureController(m_window.GetRenderer()),
-    m_context{m_window, m_textureController, m_soundController, m_fileReader}
+    m_context{m_window, m_textureController, m_soundController, m_fileReader},
+    m_pendingSwitch(std::nullopt)
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
     SetCurrentScene(e);
@@ -42,13 +43,26 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             throw std::invalid_argument("Unknown value\n");
         }
     }
-    m_currentScene->AddCallback([this](SwitchEvent e){SetCurrentScene(e);});
+    m_currentScene->AddCallback([this](SwitchEvent e){RequestSwitchScene(e);});
+}
+
+void SceneController::RequestSwitchScene(const SwitchEvent e)
+{
+    m_pendingSwitch = e;
+}
+
+void SceneController::ApplySwitchScene()
+{
+    if (!m_pendingSwitch) return;
+    SetCurrentScene(*m_pendingSwitch); // Use * to get SwitchEvent from std::optional<SwitchEvent>
+    m_pendingSwitch.reset();
 }
 
 void SceneController::StartGameloop()
 {
     while(m_currentScene->GetGameloop()){
         m_currentScene->Gameloop();
+        ApplySwitchScene();
     }
 } 
 
@@ -70,7 +84,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
     UpdateTilemapLayer();
-    m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);}); // TilemapEvent is unused for now
+    m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);});
 
     // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
@@ -190,6 +204,7 @@ BattleScene::BattleScene(GameContext& context):
     static_cast<BattleUiController*>(m_context.uiController.get())->SetActorAName("Howler");
     static_cast<BattleUiController*>(m_context.uiController.get())->SetActorBName("Bone Appetit");
 
+    m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events
 }
 
@@ -205,9 +220,23 @@ void BattleScene::Gameloop()
     // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventState(eventState);
 
     m_battleController.SetEventState(eventState);
-    // m_battleController.PlayTurn();
+    m_battleController.PlayTurn();
 
     m_context.uiController->Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
+}
+
+void BattleScene::Exit(const ExitEvent e) {
+    switch(e) {
+        case ExitEvent::ExitWin : {
+            Notify(SwitchEvent::ToGameplay);
+            break;
+        }
+        case ExitEvent::ExitLost : {
+            throw std::runtime_error("ExitEvent::ExitLost is undefined for now\n"); 
+            // Notify(SwitchEvent::ToMenu);
+            // break;
+        }
+    }
 }
