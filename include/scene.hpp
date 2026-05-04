@@ -14,7 +14,7 @@
 #include "texture.hpp"
 #include "tilemap.hpp"
 #include "time.hpp"
-#include "ui.hpp"
+#include "ui_controller.hpp"
 #include "window.hpp"
 
 enum class SwitchEvent

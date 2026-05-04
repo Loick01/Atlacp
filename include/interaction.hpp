@@ -2,7 +2,7 @@
 
 #include "entity.hpp"
 #include "type.hpp"
-#include "ui.hpp"
+#include "ui_controller.hpp"
 
 class InteractionController
 {

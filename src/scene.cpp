@@ -199,10 +199,12 @@ BattleScene::BattleScene(GameContext& context):
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     m_context.eventController = std::make_unique<BattleEventController>();
     m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
-    // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Will be removed ?
+    // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
-    static_cast<BattleUiController*>(m_context.uiController.get())->SetActorAName("Howler");
-    static_cast<BattleUiController*>(m_context.uiController.get())->SetActorBName("Bone Appetit");
+    BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
+    // Actor name will be defined here instead of BattleUiController (names will be retrivied from the BattleController)
+    uiController->UpdateText("actorAInfo", "Howler"); 
+    uiController->UpdateText("actorBInfo", "Bone Appetit");
 
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events

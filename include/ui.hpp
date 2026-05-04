@@ -3,7 +3,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 
 #include "drawable.hpp"
 
@@ -26,17 +25,19 @@ class UiElement : public ScreenDrawable
         // For the root UiElement, local = global
         // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
 
+        void AddChild(std::unique_ptr<UiElement>& child); // Do not use directly AddChild, use instead BuildChild
+
     public:
         UiElement(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
         UiElement(TextureController& textureController, const ScreenPosition localPosition={0,0});
         
-        virtual void Compute(const float scale, const Axis zoomAxis, // ComputeZoom
+        virtual void ComputeFinal(
+            const float scale, const Axis zoomAxis, // ComputeZoom
             const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis);
-            
-        void SetRelation(std::unique_ptr<UiElement>& child);
 
-        void AddChild(std::unique_ptr<UiElement> child, // Warning : AddChild must be used only once parent configuration has been done
+        // Warning : BuildChild must be used only once configuration of the current calling object has been done
+        void BuildChild(std::unique_ptr<UiElement> child,
             const float zoomScale, const Axis zoomAxis, // ComputeZoom
             const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
@@ -69,57 +70,9 @@ class TextArea : public UiElement
         void GenerateText();
         void SetMaxWidth(const float scale);
 
-        void Compute(const float zoomScale, const Axis zoomAxis, // ComputeZoom
+        void ComputeFinal(
+            const float zoomScale, const Axis zoomAxis, // ComputeZoom
             const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
         override;
-};
-
-class UiController
-{
-    protected:
-        std::unique_ptr<UiElement> m_root; 
-
-        // I should not use string as key ?
-        std::unordered_map<std::string, UiElement*> m_elements; // Instead of searching elements in the tree structure (from root)
-        
-        void SetRoot(std::unique_ptr<UiElement>& ui_root, const AreaSize parentSize, // Because the root has no parent, we must specified its initial size
-            const float zoomScale, const Axis zoomAxis, // ComputeZoom
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
-
-    public:
-        virtual void Update() = 0;
-        void Draw() const;
-
-        void OpenDialogBox(); // Will be removed ?
-};
-
-// UI configuration will not stay in constructor
-class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
-{
-    public:
-        GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void Update() override;
-};
-
-class EditorUiController : public UiController, public EventStateHolder<EditorEventState>
-{
-    private:
-        int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
-
-    public:
-        EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void Update() override;
-};
-
-class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
-{
-    public:
-        BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
-        void Update() override;
-
-        // Will be removed
-        void SetActorAName(const std::string name);
-        void SetActorBName(const std::string name);
 };
