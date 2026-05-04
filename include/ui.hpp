@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
 
 #include "drawable.hpp"
 
@@ -17,7 +20,7 @@ enum class Anchor
 class UiElement : public ScreenDrawable
 {
     protected:
-        std::vector<UiElement*> m_childs;
+        std::vector<std::unique_ptr<UiElement>> m_childs;
         ScreenPosition m_localPosition; // In addition to ScreenDrawable::m_position, UiElement have a relative position to its parent
         AreaSize m_parentSize;
         // For the root UiElement, local = global
@@ -27,14 +30,18 @@ class UiElement : public ScreenDrawable
         UiElement(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
         UiElement(TextureController& textureController, const ScreenPosition localPosition={0,0});
         
-        void SetParentSize(const AreaSize parentSize);
-        void AddChild(UiElement* child);
-        
-        virtual void MakeChild(UiElement* parent, // Warning : MakeChild must be used only once parent configuration has been done
+        virtual void Compute(const float scale, const Axis zoomAxis, // ComputeZoom
+            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
+            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis);
+            
+        void SetRelation(std::unique_ptr<UiElement>& child);
+
+        void AddChild(std::unique_ptr<UiElement> child, // Warning : AddChild must be used only once parent configuration has been done
             const float zoomScale, const Axis zoomAxis, // ComputeZoom
             const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
 
+        void SetParentSize(const AreaSize parentSize);
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
         void AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis);
@@ -57,25 +64,26 @@ class TextArea : public UiElement
 
     public:
         TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
-
-        // Find another way to get value used for the second parameter
-        void MakeChild(UiElement* parent, // Warning : MakeChild must be used only once parent configuration has been done
-            const float scaleWidth, const Axis zoomAxis, // zoomAxis is not used (Do not use ComputeZoom on TextArea !), should add Axis::None ?
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis) // AddPadding
-            override;
         
         void SetText(const std::string& text); // Must be called before GenerateText
         void GenerateText();
         void SetMaxWidth(const float scale);
+
+        void Compute(const float zoomScale, const Axis zoomAxis, // ComputeZoom
+            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
+            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+        override;
 };
 
 class UiController
 {
     protected:
-        UiElement* m_root; // Root will be a rendered UiElement, not just abstract
+        std::unique_ptr<UiElement> m_root; 
+
+        // I should not use string as key ?
+        std::unordered_map<std::string, UiElement*> m_elements; // Instead of searching elements in the tree structure (from root)
         
-        void SetRoot(UiElement* ui_root, const AreaSize parentSize, // Because the root has no parent, we must specified its initial size
+        void SetRoot(std::unique_ptr<UiElement>& ui_root, const AreaSize parentSize, // Because the root has no parent, we must specified its initial size
             const float zoomScale, const Axis zoomAxis, // ComputeZoom
             const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
@@ -90,13 +98,6 @@ class UiController
 // UI configuration will not stay in constructor
 class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
 {
-    private:
-        // Will be removed
-        UiElement m_frame;
-        UiElement m_faceset;
-        UiElement m_face;
-        TextArea m_textArea;
-
     public:
         GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
         void Update() override;
@@ -105,10 +106,7 @@ class GameplayUiController : public UiController // Not a EventStateHolder<Gamep
 class EditorUiController : public UiController, public EventStateHolder<EditorEventState>
 {
     private:
-        UiElement m_frame;
-        TextArea m_textArea;
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
-        // GameplayUiController will also need a (Gameplay)EventState 
 
     public:
         EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
@@ -117,23 +115,11 @@ class EditorUiController : public UiController, public EventStateHolder<EditorEv
 
 class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
 {
-    private:
-
-        // Will be removed (I will merge all UiController class in one)
-        UiElement m_background;
-        UiElement m_actorASprite;
-        UiElement m_actorBSprite;
-        UiElement m_actorABox;
-        UiElement m_actorBBox;
-        TextArea m_actorAInfo;
-        TextArea m_actorBInfo;
-        UiElement m_mainBox;
-
     public:
         BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
         void Update() override;
 
-        // Remove (I will merge all UiController class in one)
+        // Will be removed
         void SetActorAName(const std::string name);
         void SetActorBName(const std::string name);
 };

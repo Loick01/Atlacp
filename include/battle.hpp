@@ -35,12 +35,13 @@ class BattleActor // Battler ?
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
-        BattleActor m_actorA;
-        BattleActor m_actorB;
+        BattleActor m_actorA; // Player
+        BattleActor m_actorB; // Enemy
         Turn m_currentTurn;
 
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
 
+        void CheckActorHealth();
         void PlayTurn();
 };

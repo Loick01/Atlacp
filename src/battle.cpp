@@ -1,7 +1,7 @@
 #include "battle.hpp"
 
 BattleActor::BattleActor(const std::string name, const unsigned int health):
-    m_name(name), m_health(health)
+    m_name(name), m_health(health), m_strength(10)
 {
 
 }
@@ -32,6 +32,14 @@ BattleController::BattleController(const BattleActor actorA, const BattleActor a
 
 }
 
+void BattleController::CheckActorHealth()
+{
+    if (m_actorA.GetHealth() <= 0)
+        Notify(ExitEvent::ExitLost);
+    else if (m_actorB.GetHealth() <= 0)
+        Notify(ExitEvent::ExitWin);
+}
+
 void BattleController::PlayTurn()
 {
     switch(m_currentTurn) {
@@ -48,5 +56,5 @@ void BattleController::PlayTurn()
             break;
         }
     }
-    // Notify(ExitEvent::ExitWin);
+    CheckActorHealth();
 }
