@@ -95,6 +95,7 @@ struct ScreenPosition : public Vec2
 {
     ScreenPosition() = default;
     ScreenPosition(const int px, const int py) { x = px; y = py; }
+    ScreenPosition(const float px, const float py) { x = px; y = py; }
     ScreenPosition(const Vec2& v) { x = v.x; y = v.y; }
 };
 

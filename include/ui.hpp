@@ -8,7 +8,7 @@
 
 enum class Axis
 {
-    Width, Height // Should add Both ?
+    Width, Height, None
 };
 
 enum class Anchor
@@ -22,25 +22,20 @@ enum class Anchor
 
 struct UiParams
 {
-    // ComputeZoom
     float scale;
-    Axis zoomAxis;
-    // ComputePosition
+    Axis scaleAxis; // TextArea don't use this value (text size is handled by the font, the scale value is used for SetMaxWidth())
     Anchor xAnchor;
     Anchor yAnchor;
-
-    float paddingScale;
-    Axis sourceAxis;
-    Axis paddingAxis;
+    float xPadding;
+    float yPadding;
 
     UiParams() {
         scale = 1.f;
-        zoomAxis = Axis::Width;
+        scaleAxis = Axis::None;
         xAnchor = Anchor::Center;
         yAnchor = Anchor::Center;
-        paddingScale = 0.f;
-        sourceAxis = Axis::Width;
-        paddingAxis = Axis::Width;
+        xPadding = 0.f;
+        yPadding = 0.f;
     }
 };
 
@@ -70,13 +65,13 @@ class UiElement : public ScreenDrawable
         virtual void ComputeFinal();
 
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
-        void BuildChild(std::unique_ptr<UiElement> child); // AddPadding
+        void BuildChild(std::unique_ptr<UiElement> child); // SetPadding
 
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
-        void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
+        void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf]
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
-        void AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis);
+        void SetPadding(const float xPadding, const float yPadding);
         void DrawTexture() const override; 
         void UpdatePosition(); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition localPosition); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
@@ -98,7 +93,7 @@ class TextArea : public UiElement
         
         void SetText(const std::string& text); // Must be called before GenerateText
         void GenerateText();
-        void SetMaxWidth(const float scale);
+        void SetMaxWidth(const float amount);
 
         void ComputeFinal() override;
 };

@@ -115,7 +115,8 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameplayEventController>();
-    m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, m_camera, "PixelOperator8");
+    m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, "PixelOperator8", 
+        m_camera.GetViewport(), m_camera.GetScreenOffset());
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
@@ -166,7 +167,8 @@ EditorTilemapScene::EditorTilemapScene(GameContext& context):
     TilemapScene(context, false)
 {
     m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
-    m_context.uiController = std::make_unique<EditorUiController>(m_context.textureController, m_camera, "NormalFont");
+    m_context.uiController = std::make_unique<EditorUiController>(m_context.textureController, "NormalFont", 
+        m_camera.GetViewport(), m_camera.GetScreenOffset());
     m_drawables.push_back(&m_tileset);
 }
 
@@ -198,7 +200,8 @@ BattleScene::BattleScene(GameContext& context):
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     m_context.eventController = std::make_unique<BattleEventController>();
-    m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, m_camera, "PixelOperator8");
+    m_context.uiController = std::make_unique<BattleUiController>(m_context.textureController, "PixelOperator8", 
+        m_camera.GetViewport(), m_camera.GetScreenOffset());
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());

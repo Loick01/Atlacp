@@ -48,9 +48,9 @@ void UiElement::SetLocalPosition(const ScreenPosition localPosition)
     m_localPosition = localPosition;
 }
 
-void UiElement::AddLocalPosition(const ScreenPosition padding)
+void UiElement::AddLocalPosition(const ScreenPosition position)
 {
-    m_localPosition += padding;
+    m_localPosition += position;
 }
 
 void UiElement::ComputeZoom(const float scale, const Axis axis)
@@ -113,36 +113,9 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
     SetLocalPosition(final_position);
 }
 
-void UiElement::AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis)
+void UiElement::SetPadding(const float xPadding, const float yPadding)
 {
-    ScreenPosition padding = {0,0};
-    float v = 0.f;
-
-    switch(sourceAxis){
-        case Axis::Width:
-            v = m_parentSize.x*scale;
-            break;
-        case Axis::Height:
-            v = m_parentSize.y*scale;
-            break;
-        default:
-            throw std::invalid_argument("Unknown source axis value\n");
-            break;
-    }
-
-    switch(paddingAxis){
-        case Axis::Width:
-            padding.x = v;
-            break;
-        case Axis::Height:
-            padding.y = v;
-            break;
-        default:
-            throw std::invalid_argument("Unknown padding axis value\n");
-            break;
-    }
-
-    AddLocalPosition(padding);
+    AddLocalPosition({xPadding,yPadding}); // AddLocal ???
 }
 
 void UiElement::AddChild(std::unique_ptr<UiElement>& child)
@@ -159,9 +132,9 @@ void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 
 void UiElement::ComputeFinal()
 {
-    ComputeZoom(m_params.scale, m_params.zoomAxis);
+    ComputeZoom(m_params.scale, m_params.scaleAxis);
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
-    AddPadding(m_params.paddingScale, m_params.sourceAxis, m_params.paddingAxis);
+    SetPadding(m_params.xPadding, m_params.yPadding);
 }
 
 TextArea::TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color):
@@ -183,9 +156,9 @@ void TextArea::GenerateText()
     m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
 }
 
-void TextArea::SetMaxWidth(const float scale)
+void TextArea::SetMaxWidth(const float amount)
 {
-    m_maxWidth = m_parentSize.x*scale;
+    m_maxWidth = m_parentSize.x*amount;
 }
 
 void TextArea::ComputeFinal()
@@ -195,5 +168,5 @@ void TextArea::ComputeFinal()
     SetMaxWidth(m_params.scale);
     GenerateText();
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
-    AddPadding(m_params.paddingScale, m_params.sourceAxis, m_params.paddingAxis);
+    SetPadding(m_params.xPadding, m_params.yPadding);
 }

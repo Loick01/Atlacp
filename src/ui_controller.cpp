@@ -12,9 +12,9 @@ void UiController::BuildRoot(std::unique_ptr<UiElement> ui_root,
     m_root->SetParentSize(parentSize);
     m_root->SetParentPosition(parentPosition);
     const UiParams& params = m_root->GetParams();
-    m_root->ComputeZoom(params.scale, params.zoomAxis);
+    m_root->ComputeZoom(params.scale, params.scaleAxis);
     m_root->ComputePosition(params.xAnchor, params.yAnchor);
-    m_root->AddPadding(params.paddingScale, params.sourceAxis, params.paddingAxis);
+    m_root->SetPadding(params.xPadding, params.yPadding);
 }
 
 // void UiController::OpenDialogBox()
@@ -33,23 +33,23 @@ UiElement* UiController::GetElement(const ElementKey& key)
     return m_elements[key];
 }
 
-// float UiController::GetPartialElementSizeOnAxis(const ElementKey& key, const float amount, const Axis axis)
-// {
-//     const UiElement* element = GetElement(key); // ComputeFinal must have been called on this UiElement
-//     switch(axis) {
-//         case Axis::Width : {
-//             return element->GetSize().x * amount;
-//             break;
-//         }
-//         case Axis::Height : {
-//             return element->GetSize().y * amount;
-//             break;
-//         }
-//         default : {
-//             throw std::invalid_argument("Unknown axis value\n");
-//         }
-//     }
-// }
+float UiController::GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount)
+{
+    const UiElement* element = GetElement(key); // ComputeFinal must have been called on this UiElement
+    switch(axis) {
+        case Axis::Width : {
+            return element->GetSize().x * amount;
+            break;
+        }
+        case Axis::Height : {
+            return element->GetSize().y * amount;
+            break;
+        }
+        default : {
+            throw std::invalid_argument("Unknown axis value\n");
+        }
+    }
+}
 
 void UiController::UpdateText(const ElementKey& key, const std::string& newText)
 {
@@ -60,7 +60,8 @@ void UiController::UpdateText(const ElementKey& key, const std::string& newText)
     // textArea->UpdatePosition();
 }
 
-GameplayUiController::GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath)
+GameplayUiController::GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
+    const AreaSize viewportSize, const ScreenPosition viewportPosition)
 {
     std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
     m_elements["frame"] = frame.get();
@@ -73,47 +74,35 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     // For now, dialog box is the root of UiElement graph, with global position = local position
     // Technically, m_root sould be the camera viewport, but it's not a UiElement
 
-    const AreaSize viewportSize = camera.GetViewport(); // Parent size
-    const ScreenPosition viewportPosition = camera.GetScreenOffset(); // Parent position
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = 0.5f;
-    frameParams.zoomAxis = Axis::Width;
+    frameParams.scaleAxis = Axis::Width;
     frameParams.xAnchor = Anchor::Center;
     frameParams.yAnchor = Anchor::BottomIn;
-    frameParams.paddingScale = -0.05f;
-    frameParams.sourceAxis = Axis::Height;
-    frameParams.paddingAxis = Axis::Height;
+    frameParams.yPadding = viewportSize.y * -0.05f;
     BuildRoot(std::move(frame), viewportSize, viewportPosition);
 
     UiParams& facesetParams = faceset->GetParams();
     facesetParams.scale = 0.7f;
-    facesetParams.zoomAxis = Axis::Height;
+    facesetParams.scaleAxis = Axis::Height;
     facesetParams.xAnchor = Anchor::LeftIn;
     facesetParams.yAnchor = Anchor::Center;
-    facesetParams.paddingScale = 0.15f;
-    facesetParams.sourceAxis = Axis::Height;
-    facesetParams.paddingAxis = Axis::Width;
+    facesetParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Height, 0.15f); // Should not access to root element with its key ?
     m_root->BuildChild(std::move(faceset));
 
     boxText->SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
     UiParams& boxTextParams = boxText->GetParams();
-    boxTextParams.scale = 0.75f;
-    boxTextParams.zoomAxis = Axis::Width; // Unused because TextArea do not use zoom
+    boxTextParams.scale = 0.75f; // TODO
     boxTextParams.xAnchor = Anchor::RightOut;
     boxTextParams.yAnchor = Anchor::Center;
-    boxTextParams.paddingScale = 0.18f;
-    boxTextParams.sourceAxis = Axis::Width;
-    boxTextParams.paddingAxis = Axis::Width;
+    boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
     m_elements["faceset"]->BuildChild(std::move(boxText));
 
     UiParams& faceParams = face->GetParams();
     faceParams.scale = 0.8f;
-    faceParams.zoomAxis = Axis::Width;
+    faceParams.scaleAxis = Axis::Width;
     faceParams.xAnchor = Anchor::Center;
     faceParams.yAnchor = Anchor::Center;
-    faceParams.paddingScale = 0.f;
-    faceParams.sourceAxis = Axis::Width; // Axis::None ?
-    faceParams.paddingAxis = Axis::Width; // Axis::None ?
     m_elements["faceset"]->BuildChild(std::move(face));
 
     m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
@@ -124,7 +113,8 @@ void GameplayUiController::Update()
 
 }
 
-EditorUiController::EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath):
+EditorUiController::EditorUiController(TextureController& textureController, const std::string& fontFilepath,
+    const AreaSize viewportSize, const ScreenPosition viewportPosition):
     m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
     std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
@@ -132,27 +122,20 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, fontFilepath);
     m_elements["boxText"] = boxText.get();
 
-    const AreaSize viewportSize = camera.GetViewport(); // Parent size
-    const ScreenPosition viewportPosition = camera.GetScreenOffset(); // Parent position
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = 0.3f;
-    frameParams.zoomAxis = Axis::Width;
+    frameParams.scaleAxis = Axis::Width;
     frameParams.xAnchor = Anchor::LeftIn;
     frameParams.yAnchor = Anchor::TopIn;
-    frameParams.paddingScale = 0.02f;
-    frameParams.sourceAxis = Axis::Width;
-    frameParams.paddingAxis = Axis::Height;
+    frameParams.yPadding = viewportSize.x * 0.02f;
     BuildRoot(std::move(frame), viewportSize, viewportPosition);
 
     boxText->SetText("Selected layer : " + std::to_string(m_lastLayer));
     UiParams& boxTextParams = boxText->GetParams();
     boxTextParams.scale = 0.9f;
-    boxTextParams.zoomAxis = Axis::Width; // Unused because TextArea do not use zoom
     boxTextParams.xAnchor = Anchor::LeftIn;
     boxTextParams.yAnchor = Anchor::Center;
-    boxTextParams.paddingScale = 0.1f;
-    boxTextParams.sourceAxis = Axis::Width;
-    boxTextParams.paddingAxis = Axis::Width;
+    boxTextParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.1f); // Should not access to root element with its key ?
     m_root->BuildChild(std::move(boxText));
 
     m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
@@ -168,7 +151,8 @@ void EditorUiController::Update()
     // } 
 }
 
-BattleUiController::BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath)
+BattleUiController::BattleUiController(TextureController& textureController, const std::string& fontFilepath,
+    const AreaSize viewportSize, const ScreenPosition viewportPosition)
 {
     std::unique_ptr<UiElement> background = std::make_unique<UiElement>(textureController, "../assets/battle/backgrounds/cavern.png");
     m_elements["background"] = background.get();
@@ -192,107 +176,82 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorBHealth"] = actorBHealth.get();
 
     const float size = 0.2f; // Will be removed
-    const AreaSize viewportSize = camera.GetViewport(); // Parent size
-    const ScreenPosition viewportPosition = camera.GetScreenOffset(); // Parent position
     UiParams& backgroundParams = background->GetParams();
     backgroundParams.scale = 1.f;
-    backgroundParams.zoomAxis = Axis::Height;
+    backgroundParams.scaleAxis = Axis::Height;
     backgroundParams.xAnchor = Anchor::LeftIn;
     backgroundParams.yAnchor = Anchor::TopIn;
-    backgroundParams.paddingScale = 0.f; // No padding
-    backgroundParams.sourceAxis = Axis::Width; // Axis::None ?
-    backgroundParams.paddingAxis = Axis::Width; // Axis::None ?
     BuildRoot(std::move(background), viewportSize, viewportPosition); 
 
     UiParams& actorASpriteParams = actorASprite->GetParams();
     actorASpriteParams.scale = size;
-    actorASpriteParams.zoomAxis = Axis::Width;
+    actorASpriteParams.scaleAxis = Axis::Width;
     actorASpriteParams.xAnchor = Anchor::RightIn;
     actorASpriteParams.yAnchor = Anchor::Center;
-    actorASpriteParams.paddingScale = -size;
-    actorASpriteParams.sourceAxis = Axis::Width;
-    actorASpriteParams.paddingAxis = Axis::Width;
+    actorASpriteParams.xPadding = GetPartialElementSizeOnAxis("background", Axis::Width, -size); // Should not access to root element with its key ?
     m_root->BuildChild(std::move(actorASprite));
 
     UiParams& actorBSpriteParams = actorBSprite->GetParams();
     actorBSpriteParams.scale = size;
-    actorBSpriteParams.zoomAxis = Axis::Width;
+    actorBSpriteParams.scaleAxis = Axis::Width;
     actorBSpriteParams.xAnchor = Anchor::LeftIn;
     actorBSpriteParams.yAnchor = Anchor::Center;
-    actorBSpriteParams.paddingScale = size;
-    actorBSpriteParams.sourceAxis = Axis::Width;
-    actorBSpriteParams.paddingAxis = Axis::Width;
+    actorBSpriteParams.xPadding = GetPartialElementSizeOnAxis("background", Axis::Width, size); // Should not access to root element with its key ?
     m_root->BuildChild(std::move(actorBSprite));
 
     UiParams& mainBoxParams = mainBox->GetParams();
     mainBoxParams.scale = 0.5f;
-    mainBoxParams.zoomAxis = Axis::Width;
+    mainBoxParams.scaleAxis = Axis::Width;
     mainBoxParams.xAnchor = Anchor::Center;
     mainBoxParams.yAnchor = Anchor::BottomIn;
-    mainBoxParams.paddingScale = -0.05f;
-    mainBoxParams.sourceAxis = Axis::Height;
-    mainBoxParams.paddingAxis = Axis::Height;
+    mainBoxParams.yPadding = GetPartialElementSizeOnAxis("background", Axis::Height, -0.05f); // Should not access to root element with its key ?
     m_root->BuildChild(std::move(mainBox));
 
     UiParams& actorABoxParams = actorABox->GetParams();
     actorABoxParams.scale = 1.f;
-    actorABoxParams.zoomAxis = Axis::Width;
+    actorABoxParams.scaleAxis = Axis::Width;
     actorABoxParams.xAnchor = Anchor::RightIn;
     actorABoxParams.yAnchor = Anchor::BottomIn;
-    actorABoxParams.paddingScale = size*3;
-    actorABoxParams.sourceAxis = Axis::Width;
-    actorABoxParams.paddingAxis = Axis::Width;
+    actorABoxParams.xPadding = GetPartialElementSizeOnAxis("actorASprite", Axis::Width, size);
     m_elements["actorASprite"]->BuildChild(std::move(actorABox));
 
     UiParams& actorBBoxParams = actorBBox->GetParams();
     actorBBoxParams.scale = 1.f;
-    actorBBoxParams.zoomAxis = Axis::Width;
+    actorBBoxParams.scaleAxis = Axis::Width;
     actorBBoxParams.xAnchor = Anchor::RightIn;
     actorBBoxParams.yAnchor = Anchor::BottomIn;
-    actorBBoxParams.paddingScale = size*3;
-    actorBBoxParams.sourceAxis = Axis::Width;
-    actorBBoxParams.paddingAxis = Axis::Width;
+    actorBBoxParams.xPadding = GetPartialElementSizeOnAxis("actorBSprite", Axis::Width, size);
     m_elements["actorBSprite"]->BuildChild(std::move(actorBBox));
     
     UiParams& actorANameParams = actorAName->GetParams();
     actorANameParams.scale = 1.f;
-    actorANameParams.zoomAxis = Axis::Width;
     actorANameParams.xAnchor = Anchor::LeftIn;
-    actorANameParams.yAnchor = Anchor::Center;
-    actorANameParams.paddingScale = 0.05f;
-    actorANameParams.sourceAxis = Axis::Width;
-    actorANameParams.paddingAxis = Axis::Width;
+    actorANameParams.yAnchor = Anchor::TopIn;
+    actorANameParams.xPadding = GetPartialElementSizeOnAxis("actorABox", Axis::Height, 0.15f);
+    actorANameParams.yPadding = GetPartialElementSizeOnAxis("actorABox", Axis::Height, 0.15f);
     m_elements["actorABox"]->BuildChild(std::move(actorAName));
     
     UiParams& actorAHealthParams = actorAHealth->GetParams();
     actorAHealthParams.scale = 1.f;
-    actorAHealthParams.zoomAxis = Axis::Width;
-    actorAHealthParams.xAnchor = Anchor::LeftIn;
-    actorAHealthParams.yAnchor = Anchor::Center;
-    actorAHealthParams.paddingScale = 1.f;
-    actorAHealthParams.sourceAxis = Axis::Height;
-    actorAHealthParams.paddingAxis = Axis::Height;
-    m_elements["actorAName"]->BuildChild(std::move(actorAHealth));
+    actorAHealthParams.xAnchor = Anchor::Center;
+    actorAHealthParams.yAnchor = Anchor::BottomOut;
+    actorAHealthParams.xPadding = GetPartialElementSizeOnAxis("actorAName", Axis::Width, 0.05f);
+    m_elements["actorAName"]->BuildChild(std::move(actorAHealth)); // Could also be child of actorABox
 
     UiParams& actorBNameParams = actorBName->GetParams();
     actorBNameParams.scale = 1.f;
-    actorBNameParams.zoomAxis = Axis::Width;
     actorBNameParams.xAnchor = Anchor::LeftIn;
-    actorBNameParams.yAnchor = Anchor::Center;
-    actorBNameParams.paddingScale = 0.05f;
-    actorBNameParams.sourceAxis = Axis::Width;
-    actorBNameParams.paddingAxis = Axis::Width;
+    actorBNameParams.yAnchor = Anchor::TopIn;
+    actorBNameParams.xPadding = GetPartialElementSizeOnAxis("actorBBox", Axis::Height, 0.15f);
+    actorBNameParams.yPadding = GetPartialElementSizeOnAxis("actorBBox", Axis::Height, 0.15f);
     m_elements["actorBBox"]->BuildChild(std::move(actorBName));
 
     UiParams& actorBHealthParams = actorBHealth->GetParams();
     actorBHealthParams.scale = 1.f;
-    actorBHealthParams.zoomAxis = Axis::Width;
-    actorBHealthParams.xAnchor = Anchor::LeftIn;
-    actorBHealthParams.yAnchor = Anchor::Center;
-    actorBHealthParams.paddingScale = 1.f;
-    actorBHealthParams.sourceAxis = Axis::Height;
-    actorBHealthParams.paddingAxis = Axis::Height;
-    m_elements["actorBName"]->BuildChild(std::move(actorBHealth));
+    actorBHealthParams.xAnchor = Anchor::Center;
+    actorBHealthParams.yAnchor = Anchor::BottomOut;
+    actorBHealthParams.xPadding = GetPartialElementSizeOnAxis("actorBName", Axis::Width, 0.05f);
+    m_elements["actorBName"]->BuildChild(std::move(actorBHealth)); // Could also be child of actorBBox
 
     m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
 }

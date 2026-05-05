@@ -16,7 +16,7 @@ class UiController
         std::unordered_map<ElementKey, UiElement*> m_elements; // Instead of searching elements in the tree structure (from root)
         
         UiElement* GetElement(const ElementKey& key);
-        // float GetPartialElementSizeOnAxis(const ElementKey& key, const float amount, const Axis axis);
+        float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount); // Rename
 
         // Because the root has no parent, we must specified its initial size and position
         void BuildRoot(std::unique_ptr<UiElement> ui_root, 
@@ -33,7 +33,8 @@ class UiController
 class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
 {
     public:
-        GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
+            const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
 
@@ -43,13 +44,15 @@ class EditorUiController : public UiController, public EventStateHolder<EditorEv
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
 
     public:
-        EditorUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        EditorUiController(TextureController& textureController, const std::string& fontFilepath, 
+            const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
 
 class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
 {
     public:
-        BattleUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath);
+        BattleUiController(TextureController& textureController, const std::string& fontFilepath, 
+            const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
