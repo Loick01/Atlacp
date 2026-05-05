@@ -12,6 +12,11 @@ UiElement::UiElement(TextureController& textureController, const ScreenPosition 
     
 }
 
+UiParams& UiElement::GetParams()
+{
+    return m_params;
+}
+
 void UiElement::SetParentSize(const AreaSize parentSize)
 {
     m_parentSize = parentSize;
@@ -66,29 +71,41 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
     ScreenPosition final_position = {0,0};
     // If ComputePosition is called on a TextArea, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
-    const AreaSize newSize = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
+    const AreaSize size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
-        case Anchor::Left:
+        case Anchor::LeftIn:
             final_position.x = 0;
             break;
-        case Anchor::Center:
-            final_position.x = (m_parentSize.x-newSize.x)/2;
+        case Anchor::LeftOut:
+            final_position.x = -size.x;
             break;
-        case Anchor::Right:
-            final_position.x = m_parentSize.x-newSize.x;
+        case Anchor::Center:
+            final_position.x = (m_parentSize.x-size.x)/2;
+            break;
+        case Anchor::RightIn:
+            final_position.x = m_parentSize.x-size.x;
+            break;
+        case Anchor::RightOut:
+            final_position.x = m_parentSize.x;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for x axis\n");
     }
     switch(yAnchor){
-        case Anchor::Top:
+        case Anchor::TopIn:
             final_position.y = 0;
             break;
-        case Anchor::Center:
-            final_position.y = (m_parentSize.y-newSize.y)/2;
+        case Anchor::TopOut:
+            final_position.y = -size.y;
             break;
-        case Anchor::Bottom:
-            final_position.y = m_parentSize.y-newSize.y;
+        case Anchor::Center:
+            final_position.y = (m_parentSize.y-size.y)/2;
+            break;
+        case Anchor::BottomIn:
+            final_position.y = m_parentSize.y-size.y;
+            break;
+        case Anchor::BottomOut:
+            final_position.y = m_parentSize.y;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for y axis\n");
@@ -128,34 +145,23 @@ void UiElement::AddPadding(const float scale, const Axis sourceAxis, const Axis 
     AddLocalPosition(padding);
 }
 
-void UiElement::AddPadding(const float scale, const Axis paddingAxis)
-{
-    AddPadding(scale, paddingAxis, paddingAxis);
-}
-
 void UiElement::AddChild(std::unique_ptr<UiElement>& child)
 {
     m_childs.push_back(std::move(child));
 }
 
-void UiElement::BuildChild(std::unique_ptr<UiElement> child,
-    const float scale, const Axis zoomAxis,
-    const Anchor xAnchor, const Anchor yAnchor,
-    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 {
     child->SetParentSize(GetSize());
-    child->ComputeFinal(scale, zoomAxis, xAnchor, yAnchor, paddingScale, sourceAxis, paddingAxis);
+    child->ComputeFinal();
     AddChild(child);
 }
 
-void UiElement::ComputeFinal(
-    const float scale, const Axis zoomAxis,
-    const Anchor xAnchor, const Anchor yAnchor,
-    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+void UiElement::ComputeFinal()
 {
-    ComputeZoom(scale, zoomAxis);
-    ComputePosition(xAnchor, yAnchor);
-    AddPadding(paddingScale, sourceAxis, paddingAxis);
+    ComputeZoom(m_params.scale, m_params.zoomAxis);
+    ComputePosition(m_params.xAnchor, m_params.yAnchor);
+    AddPadding(m_params.paddingScale, m_params.sourceAxis, m_params.paddingAxis);
 }
 
 TextArea::TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color):
@@ -182,15 +188,12 @@ void TextArea::SetMaxWidth(const float scale)
     m_maxWidth = m_parentSize.x*scale;
 }
 
-void TextArea::ComputeFinal(
-    const float scale, const Axis zoomAxis, // zoomAxis is not used
-    const Anchor xAnchor, const Anchor yAnchor,
-    const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
+void TextArea::ComputeFinal()
 {
     // Do not use ComputeZoom for TextArea. Text size is controlled by the font
     // Be sure to call TextArea::ComputePosition after generating the texture with GenerateText
-    SetMaxWidth(scale);
+    SetMaxWidth(m_params.scale);
     GenerateText();
-    ComputePosition(xAnchor, yAnchor);
-    AddPadding(paddingScale, sourceAxis, paddingAxis);
+    ComputePosition(m_params.xAnchor, m_params.yAnchor);
+    AddPadding(m_params.paddingScale, m_params.sourceAxis, m_params.paddingAxis);
 }

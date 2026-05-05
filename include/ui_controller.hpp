@@ -15,12 +15,12 @@ class UiController
 
         std::unordered_map<ElementKey, UiElement*> m_elements; // Instead of searching elements in the tree structure (from root)
         
-        UiElement* GetElement(ElementKey key);
+        UiElement* GetElement(const ElementKey& key);
+        // float GetPartialElementSizeOnAxis(const ElementKey& key, const float amount, const Axis axis);
 
-        void BuildRoot(std::unique_ptr<UiElement> ui_root, const AreaSize parentSize, // Because the root has no parent, we must specified its initial size
-            const float zoomScale, const Axis zoomAxis, // ComputeZoom
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
+        // Because the root has no parent, we must specified its initial size and position
+        void BuildRoot(std::unique_ptr<UiElement> ui_root, 
+            const AreaSize parentSize, const ScreenPosition parentPosition);
 
     public:
         virtual void Update() = 0;

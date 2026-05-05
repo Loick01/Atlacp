@@ -13,7 +13,35 @@ enum class Axis
 
 enum class Anchor
 {
-    Left, Right, Center, Top, Bottom
+    LeftIn, LeftOut, 
+    RightIn, RightOut,
+    Center,
+    TopIn, TopOut,
+    BottomIn, BottomOut
+};
+
+struct UiParams
+{
+    // ComputeZoom
+    float scale;
+    Axis zoomAxis;
+    // ComputePosition
+    Anchor xAnchor;
+    Anchor yAnchor;
+
+    float paddingScale;
+    Axis sourceAxis;
+    Axis paddingAxis;
+
+    UiParams() {
+        scale = 1.f;
+        zoomAxis = Axis::Width;
+        xAnchor = Anchor::Center;
+        yAnchor = Anchor::Center;
+        paddingScale = 0.f;
+        sourceAxis = Axis::Width;
+        paddingAxis = Axis::Width;
+    }
 };
 
 class UiElement : public ScreenDrawable
@@ -21,13 +49,15 @@ class UiElement : public ScreenDrawable
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
         
-        // Should have UiElement* parent ?
         ScreenPosition m_localPosition; // In addition to ScreenDrawable::m_position, UiElement have a relative position to its parent
-        ScreenPosition m_parentPosition;
-
-        AreaSize m_parentSize;
         // For the root UiElement, local = global
         // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
+        
+        // Should have UiElement* parent ?
+        ScreenPosition m_parentPosition;
+        AreaSize m_parentSize;
+
+        UiParams m_params;
 
         void AddChild(std::unique_ptr<UiElement>& child); // Do not use directly AddChild, use instead BuildChild
 
@@ -35,23 +65,18 @@ class UiElement : public ScreenDrawable
         UiElement(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
         UiElement(TextureController& textureController, const ScreenPosition localPosition={0,0});
         
-        virtual void ComputeFinal(
-            const float scale, const Axis zoomAxis, // ComputeZoom
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis);
+        UiParams& GetParams();
+
+        virtual void ComputeFinal();
 
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
-        void BuildChild(std::unique_ptr<UiElement> child,
-            const float zoomScale, const Axis zoomAxis, // ComputeZoom
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
+        void BuildChild(std::unique_ptr<UiElement> child); // AddPadding
 
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
         void AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis);
-        void AddPadding(const float scale, const Axis paddingAxis); // Remove
         void DrawTexture() const override; 
         void UpdatePosition(); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition localPosition); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
@@ -75,9 +100,5 @@ class TextArea : public UiElement
         void GenerateText();
         void SetMaxWidth(const float scale);
 
-        void ComputeFinal(
-            const float zoomScale, const Axis zoomAxis, // ComputeZoom
-            const Anchor xAnchor, const Anchor yAnchor, // ComputePosition
-            const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
-        override;
+        void ComputeFinal() override;
 };
