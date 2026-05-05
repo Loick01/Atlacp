@@ -20,7 +20,11 @@ class UiElement : public ScreenDrawable
 {
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
+        
+        // Should have UiElement* parent ?
         ScreenPosition m_localPosition; // In addition to ScreenDrawable::m_position, UiElement have a relative position to its parent
+        ScreenPosition m_parentPosition;
+
         AreaSize m_parentSize;
         // For the root UiElement, local = global
         // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
@@ -43,12 +47,13 @@ class UiElement : public ScreenDrawable
             const float paddingScale, const Axis sourceAxis, const Axis paddingAxis); // AddPadding
 
         void SetParentSize(const AreaSize parentSize);
+        void SetParentPosition(const ScreenPosition parentPosition);
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf] (Do not use for TextArea)
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
         void AddPadding(const float scale, const Axis sourceAxis, const Axis paddingAxis);
         void AddPadding(const float scale, const Axis paddingAxis); // Remove
         void DrawTexture() const override; 
-        void UpdatePosition(const ScreenPosition parentPosition={0,0}); // Update position on current UiElement and each children
+        void UpdatePosition(); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition localPosition); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()
         void AddLocalPosition(const ScreenPosition padding);
 };

@@ -88,6 +88,9 @@ void TextureController::DeleteTexture(const TextureKey& textureKey)
 void TextureController::LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
     int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
+    // Maybe I will change textureKey type
+    if (textureKey == "") throw std::runtime_error("Texture key (string) is empty, text in TextArea should never be \"\"");
+    
     SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(fontKey), text.c_str(), textColor, maxWidth);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
     textureWidth = surface->w, textureHeight = surface->h;

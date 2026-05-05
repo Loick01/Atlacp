@@ -17,6 +17,11 @@ void UiElement::SetParentSize(const AreaSize parentSize)
     m_parentSize = parentSize;
 }
 
+void UiElement::SetParentPosition(const ScreenPosition parentPosition)
+{
+    m_parentPosition = parentPosition;
+}
+
 void UiElement::DrawTexture() const
 {
     ScreenDrawable::DrawTexture();
@@ -24,11 +29,13 @@ void UiElement::DrawTexture() const
         e->DrawTexture();
 }
 
-void UiElement::UpdatePosition(const ScreenPosition parentPosition)
+void UiElement::UpdatePosition()
 {
-    SetScreenPosition(parentPosition + m_localPosition); // ScreenDrawable::m_position is the global position
-    for (const std::unique_ptr<UiElement>& e : m_childs)
-        e->UpdatePosition(GetScreenPosition()); // Make sure to update childs position after updating m_position
+    SetScreenPosition(m_parentPosition + m_localPosition); // ScreenDrawable::m_position is the global position
+    for (const std::unique_ptr<UiElement>& e : m_childs) {
+        e->SetParentPosition(GetScreenPosition());
+        e->UpdatePosition(); // Make sure to update childs position after updating m_position
+    }
 }
 
 void UiElement::SetLocalPosition(const ScreenPosition localPosition)
@@ -152,7 +159,7 @@ void UiElement::ComputeFinal(
 }
 
 TextArea::TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color):
-    UiElement(textureController), m_textColor(color)
+    UiElement(textureController), m_textColor(color), m_text("No_Text")
 {
     const unsigned int fontSize = 24;
     m_fontKey = fontFilepath + std::to_string(fontSize); // fontFilepath is not the full path, just the filename in the font directory
@@ -176,7 +183,7 @@ void TextArea::SetMaxWidth(const float scale)
 }
 
 void TextArea::ComputeFinal(
-    const float scale, const Axis zoomAxis,
+    const float scale, const Axis zoomAxis, // zoomAxis is not used
     const Anchor xAnchor, const Anchor yAnchor,
     const float paddingScale, const Axis sourceAxis, const Axis paddingAxis)
 {

@@ -202,9 +202,11 @@ BattleScene::BattleScene(GameContext& context):
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
-    // Actor name will be defined here instead of BattleUiController (names will be retrivied from the BattleController)
-    uiController->UpdateText("actorAInfo", "Howler"); 
-    uiController->UpdateText("actorBInfo", "Bone Appetit");
+    // Actor name and health will be defined here instead of BattleUiController (names will be retrivied from the BattleController)
+    uiController->UpdateText("actorAName", "Howler"); 
+    uiController->UpdateText("actorBName", "Bone Appetit");
+    uiController->UpdateText("actorAHealth", "100 PV"); 
+    uiController->UpdateText("actorBHealth", "100 PV");
 
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events

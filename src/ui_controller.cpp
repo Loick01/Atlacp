@@ -38,13 +38,8 @@ void UiController::UpdateText(const ElementKey& key, const std::string& newText)
     TextArea* textArea = static_cast<TextArea*>(GetElement(key));
     textArea->SetText(newText);
     textArea->GenerateText();
-    // This is not enough, ComputeFinal() must be called on textArea here, but I need padding, zoom, anchors, etc.
-    // Also need to call UpdatePosition() ?
-
-    //textArea->UpdatePosition();
-    // m_actorAInfo.SetText(name);
-    // m_actorAInfo.MakeChild(&m_actorABox, 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
-    // m_actorAInfo.UpdatePosition(m_actorABox.GetScreenPosition());
+    // textArea->ComputeFinal(); // I would need anchor, scale, padding, etc.
+    // textArea->UpdatePosition();
 }
 
 GameplayUiController::GameplayUiController(TextureController& textureController, const Camera& camera, const std::string& fontFilepath)
@@ -70,7 +65,8 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
 
     m_elements["faceset"]->BuildChild(std::move(face), 0.8f, Axis::Width, Anchor::Center, Anchor::Center, 0., Axis::Width, Axis::Width); // Axis::None ?
 
-    m_root->UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
+    m_root->SetParentPosition(camera.GetScreenOffset());
+    m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
 }
 
 void GameplayUiController::Update()
@@ -92,7 +88,8 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     textArea->SetText("Selected layer : " + std::to_string(m_lastLayer));
     m_root->BuildChild(std::move(textArea), 0.9f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
 
-    m_root->UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
+    m_root->SetParentPosition(camera.GetScreenOffset());
+    m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
 }
 
 void EditorUiController::Update()
@@ -119,10 +116,14 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorBBox"] = actorBBox.get();
     std::unique_ptr<UiElement> mainBox = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
     m_elements["mainBox"] = mainBox.get();
-    std::unique_ptr<TextArea> actorAInfo = std::make_unique<TextArea>(textureController, fontFilepath);
-    m_elements["actorAInfo"] = actorAInfo.get();
-    std::unique_ptr<TextArea> actorBInfo = std::make_unique<TextArea>(textureController, fontFilepath);
-    m_elements["actorBInfo"] = actorBInfo.get();
+    std::unique_ptr<TextArea> actorAName = std::make_unique<TextArea>(textureController, fontFilepath);
+    m_elements["actorAName"] = actorAName.get();
+    std::unique_ptr<TextArea> actorBName = std::make_unique<TextArea>(textureController, fontFilepath);
+    m_elements["actorBName"] = actorBName.get();
+    std::unique_ptr<TextArea> actorAHealth = std::make_unique<TextArea>(textureController, fontFilepath);
+    m_elements["actorAHealth"] = actorAHealth.get();
+    std::unique_ptr<TextArea> actorBHealth = std::make_unique<TextArea>(textureController, fontFilepath);
+    m_elements["actorBHealth"] = actorBHealth.get();
 
     const float size = 0.2f; // Will be removed
     const AreaSize viewport_size = camera.GetViewport();
@@ -132,16 +133,17 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_root->BuildChild(std::move(actorBSprite), size, Axis::Width, Anchor::Left, Anchor::Center, size, Axis::Width, Axis::Width);
     m_root->BuildChild(std::move(mainBox), 0.5f, Axis::Width, Anchor::Center, Anchor::Bottom, -0.05f, Axis::Height, Axis::Height);
 
-    m_elements["actorASprite"]->BuildChild(std::move(actorABox), 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
-    m_elements["actorBSprite"]->BuildChild(std::move(actorBBox), 0.8f, Axis::Width, Anchor::Right, Anchor::Bottom, size*2, Axis::Width, Axis::Width);
+    m_elements["actorASprite"]->BuildChild(std::move(actorABox), 1.f, Axis::Width, Anchor::Right, Anchor::Bottom, size*3, Axis::Width, Axis::Width);
+    m_elements["actorBSprite"]->BuildChild(std::move(actorBBox), 1.f, Axis::Width, Anchor::Right, Anchor::Bottom, size*3, Axis::Width, Axis::Width);
     
-    actorAInfo->SetText("Howler"); // Will be removed
-    m_elements["actorABox"]->BuildChild(std::move(actorAInfo), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    m_elements["actorABox"]->BuildChild(std::move(actorAName), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.05f, Axis::Width, Axis::Width);
+    m_elements["actorAName"]->BuildChild(std::move(actorAHealth), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 1.f, Axis::Height, Axis::Height);
 
-    actorBInfo->SetText("Bone Appetit"); // Will be removed
-    m_elements["actorBBox"]->BuildChild(std::move(actorBInfo), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.1f, Axis::Width, Axis::Width);
+    m_elements["actorBBox"]->BuildChild(std::move(actorBName), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 0.05f, Axis::Width, Axis::Width);
+    m_elements["actorBName"]->BuildChild(std::move(actorBHealth), 1.f, Axis::Width, Anchor::Left, Anchor::Center, 1.f, Axis::Height, Axis::Height);
 
-    m_root->UpdatePosition(camera.GetScreenOffset()); // Call UpdatePosition on the root UiElement
+    m_root->SetParentPosition(camera.GetScreenOffset());
+    m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement
 }
 
 void BattleUiController::Update()

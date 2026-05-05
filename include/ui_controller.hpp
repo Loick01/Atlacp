@@ -26,7 +26,7 @@ class UiController
         virtual void Update() = 0;
         void Draw() const;
         // void OpenDialogBox(); // Will be removed
-        void UpdateText(const ElementKey& key, const std::string& newText);
+        void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
 };
 
 // UI configuration will not stay in constructor
