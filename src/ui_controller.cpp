@@ -75,15 +75,15 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     // Technically, m_root sould be the camera viewport, but it's not a UiElement
 
     UiParams& frameParams = frame->GetParams();
-    frameParams.scale = 0.5f;
+    frameParams.scale = viewportSize.x*0.5f; // TODO
     frameParams.scaleAxis = Axis::Width;
     frameParams.xAnchor = Anchor::Center;
     frameParams.yAnchor = Anchor::BottomIn;
-    frameParams.yPadding = viewportSize.y * -0.05f;
+    frameParams.yPadding = viewportSize.y*-0.05f; // TODO
     BuildRoot(std::move(frame), viewportSize, viewportPosition);
 
     UiParams& facesetParams = faceset->GetParams();
-    facesetParams.scale = 0.7f;
+    facesetParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Height, 0.7f);
     facesetParams.scaleAxis = Axis::Height;
     facesetParams.xAnchor = Anchor::LeftIn;
     facesetParams.yAnchor = Anchor::Center;
@@ -92,14 +92,14 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
 
     boxText->SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
     UiParams& boxTextParams = boxText->GetParams();
-    boxTextParams.scale = 0.75f; // TODO
+    boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.75f);
     boxTextParams.xAnchor = Anchor::RightOut;
     boxTextParams.yAnchor = Anchor::Center;
     boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
     m_elements["faceset"]->BuildChild(std::move(boxText));
 
     UiParams& faceParams = face->GetParams();
-    faceParams.scale = 0.8f;
+    faceParams.scale = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.8f);
     faceParams.scaleAxis = Axis::Width;
     faceParams.xAnchor = Anchor::Center;
     faceParams.yAnchor = Anchor::Center;
@@ -123,16 +123,16 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     m_elements["boxText"] = boxText.get();
 
     UiParams& frameParams = frame->GetParams();
-    frameParams.scale = 0.3f;
+    frameParams.scale = viewportSize.x*0.3f; // TODO
     frameParams.scaleAxis = Axis::Width;
     frameParams.xAnchor = Anchor::LeftIn;
     frameParams.yAnchor = Anchor::TopIn;
-    frameParams.yPadding = viewportSize.x * 0.02f;
+    frameParams.yPadding = viewportSize.x*0.02f; // TODO
     BuildRoot(std::move(frame), viewportSize, viewportPosition);
 
     boxText->SetText("Selected layer : " + std::to_string(m_lastLayer));
     UiParams& boxTextParams = boxText->GetParams();
-    boxTextParams.scale = 0.9f;
+    boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.9f);
     boxTextParams.xAnchor = Anchor::LeftIn;
     boxTextParams.yAnchor = Anchor::Center;
     boxTextParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.1f); // Should not access to root element with its key ?
@@ -143,12 +143,10 @@ EditorUiController::EditorUiController(TextureController& textureController, con
 
 void EditorUiController::Update()
 {
-    // if (m_eventState.selectedLayer != m_lastLayer){
-    //     m_lastLayer = m_eventState.selectedLayer;
-    //     // Should merge the 2 lines below (with maybe calling ComputePosition) ?
-    //     m_textArea.SetText("Selected layer : " + std::to_string(m_lastLayer));
-    //     m_textArea.GenerateText();
-    // } 
+    if (m_eventState.selectedLayer != m_lastLayer){
+        m_lastLayer = m_eventState.selectedLayer;
+        UpdateText("boxText", "Selected layer : " + std::to_string(m_lastLayer));
+    } 
 }
 
 BattleUiController::BattleUiController(TextureController& textureController, const std::string& fontFilepath,
@@ -177,14 +175,14 @@ BattleUiController::BattleUiController(TextureController& textureController, con
 
     const float size = 0.2f; // Will be removed
     UiParams& backgroundParams = background->GetParams();
-    backgroundParams.scale = 1.f;
+    backgroundParams.scale = viewportSize.y*1.f; // TODO
     backgroundParams.scaleAxis = Axis::Height;
     backgroundParams.xAnchor = Anchor::LeftIn;
     backgroundParams.yAnchor = Anchor::TopIn;
     BuildRoot(std::move(background), viewportSize, viewportPosition); 
 
     UiParams& actorASpriteParams = actorASprite->GetParams();
-    actorASpriteParams.scale = size;
+    actorASpriteParams.scale = GetPartialElementSizeOnAxis("background", Axis::Width, size);
     actorASpriteParams.scaleAxis = Axis::Width;
     actorASpriteParams.xAnchor = Anchor::RightIn;
     actorASpriteParams.yAnchor = Anchor::Center;
@@ -192,7 +190,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_root->BuildChild(std::move(actorASprite));
 
     UiParams& actorBSpriteParams = actorBSprite->GetParams();
-    actorBSpriteParams.scale = size;
+    actorBSpriteParams.scale = GetPartialElementSizeOnAxis("background", Axis::Width, size);;
     actorBSpriteParams.scaleAxis = Axis::Width;
     actorBSpriteParams.xAnchor = Anchor::LeftIn;
     actorBSpriteParams.yAnchor = Anchor::Center;
@@ -200,7 +198,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_root->BuildChild(std::move(actorBSprite));
 
     UiParams& mainBoxParams = mainBox->GetParams();
-    mainBoxParams.scale = 0.5f;
+    mainBoxParams.scale = GetPartialElementSizeOnAxis("background", Axis::Width, 0.5f);;
     mainBoxParams.scaleAxis = Axis::Width;
     mainBoxParams.xAnchor = Anchor::Center;
     mainBoxParams.yAnchor = Anchor::BottomIn;
@@ -208,7 +206,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_root->BuildChild(std::move(mainBox));
 
     UiParams& actorABoxParams = actorABox->GetParams();
-    actorABoxParams.scale = 1.f;
+    actorABoxParams.scale = GetPartialElementSizeOnAxis("actorASprite", Axis::Width, 1.f);
     actorABoxParams.scaleAxis = Axis::Width;
     actorABoxParams.xAnchor = Anchor::RightIn;
     actorABoxParams.yAnchor = Anchor::BottomIn;
@@ -216,7 +214,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorASprite"]->BuildChild(std::move(actorABox));
 
     UiParams& actorBBoxParams = actorBBox->GetParams();
-    actorBBoxParams.scale = 1.f;
+    actorBBoxParams.scale = GetPartialElementSizeOnAxis("actorBSprite", Axis::Width, 1.f);
     actorBBoxParams.scaleAxis = Axis::Width;
     actorBBoxParams.xAnchor = Anchor::RightIn;
     actorBBoxParams.yAnchor = Anchor::BottomIn;
@@ -224,7 +222,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorBSprite"]->BuildChild(std::move(actorBBox));
     
     UiParams& actorANameParams = actorAName->GetParams();
-    actorANameParams.scale = 1.f;
+    actorANameParams.scale = GetPartialElementSizeOnAxis("actorABox", Axis::Width, 1.f);
     actorANameParams.xAnchor = Anchor::LeftIn;
     actorANameParams.yAnchor = Anchor::TopIn;
     actorANameParams.xPadding = GetPartialElementSizeOnAxis("actorABox", Axis::Height, 0.15f);
@@ -232,14 +230,13 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorABox"]->BuildChild(std::move(actorAName));
     
     UiParams& actorAHealthParams = actorAHealth->GetParams();
-    actorAHealthParams.scale = 1.f;
+    actorAHealthParams.scale = GetPartialElementSizeOnAxis("actorAName", Axis::Width, 1.f);
     actorAHealthParams.xAnchor = Anchor::Center;
     actorAHealthParams.yAnchor = Anchor::BottomOut;
-    actorAHealthParams.xPadding = GetPartialElementSizeOnAxis("actorAName", Axis::Width, 0.05f);
     m_elements["actorAName"]->BuildChild(std::move(actorAHealth)); // Could also be child of actorABox
 
     UiParams& actorBNameParams = actorBName->GetParams();
-    actorBNameParams.scale = 1.f;
+    actorBNameParams.scale = GetPartialElementSizeOnAxis("actorBBox", Axis::Width, 1.f);
     actorBNameParams.xAnchor = Anchor::LeftIn;
     actorBNameParams.yAnchor = Anchor::TopIn;
     actorBNameParams.xPadding = GetPartialElementSizeOnAxis("actorBBox", Axis::Height, 0.15f);
@@ -247,10 +244,9 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     m_elements["actorBBox"]->BuildChild(std::move(actorBName));
 
     UiParams& actorBHealthParams = actorBHealth->GetParams();
-    actorBHealthParams.scale = 1.f;
+    actorBHealthParams.scale = GetPartialElementSizeOnAxis("actorBName", Axis::Width, 1.f);
     actorBHealthParams.xAnchor = Anchor::Center;
     actorBHealthParams.yAnchor = Anchor::BottomOut;
-    actorBHealthParams.xPadding = GetPartialElementSizeOnAxis("actorBName", Axis::Width, 0.05f);
     m_elements["actorBName"]->BuildChild(std::move(actorBHealth)); // Could also be child of actorBBox
 
     m_root->UpdatePosition(); // Call UpdatePosition on the root UiElement

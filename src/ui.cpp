@@ -57,10 +57,10 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
 {
     switch(axis){
         case Axis::Width:
-            SetZoom((m_parentSize.x*scale)/GetTextureWidth());
+            SetZoom(scale/GetTextureWidth());
             break;
         case Axis::Height:
-            SetZoom((m_parentSize.y*scale)/GetTextureHeight());
+            SetZoom(scale/GetTextureHeight());
             break;
         default:
             throw std::invalid_argument("Unknown axis value\n");
@@ -158,7 +158,7 @@ void TextArea::GenerateText()
 
 void TextArea::SetMaxWidth(const float amount)
 {
-    m_maxWidth = m_parentSize.x*amount;
+    m_maxWidth = amount;
 }
 
 void TextArea::ComputeFinal()
