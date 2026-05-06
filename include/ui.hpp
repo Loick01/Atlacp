@@ -6,6 +6,8 @@
 
 #include "drawable.hpp"
 
+using ElementKey = std::string; // ???
+
 enum class Axis
 {
     Width, Height, None
@@ -41,6 +43,11 @@ struct UiParams
 
 class UiElement : public ScreenDrawable
 {
+    private:
+        const ElementKey m_key;
+
+        void AddChild(std::unique_ptr<UiElement>& child); // Do not use directly AddChild, use instead BuildChild
+        
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
         
@@ -48,25 +55,33 @@ class UiElement : public ScreenDrawable
         // For the root UiElement, local = global
         // For every other UiElement B, child of A, we have : global position (B) = global position (A) + local position (B)  
         
-        // Should have UiElement* parent ?
+        // UiElement const* m_parent; 
+        UiElement* m_parent; 
+        // Because UiElement can be subroot (without real parent, only UiController), I can't use UiElement::GetPosition() and GetSize()
+        // That's why I still need parentPosition and parentSize members
         ScreenPosition m_parentPosition;
         AreaSize m_parentSize;
 
         UiParams m_params;
 
-        void AddChild(std::unique_ptr<UiElement>& child); // Do not use directly AddChild, use instead BuildChild
-
     public:
-        UiElement(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
-        UiElement(TextureController& textureController, const ScreenPosition localPosition={0,0});
-        
-        UiParams& GetParams();
+        UiElement(TextureController& textureController, const ElementKey& key,
+            const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
+        UiElement(TextureController& textureController, const ElementKey& key, 
+            const ScreenPosition localPosition={0,0});
 
         virtual void ComputeFinal();
+        
+        std::vector<std::unique_ptr<UiElement>>& GetChilds(); // Should return a const vector ? The function should be const ?
+        UiElement* GetParent(); // Should return const and be const ?
+        const ElementKey& GetKey() const;
+        UiParams& GetParams();
 
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
-        void BuildChild(std::unique_ptr<UiElement> child); // SetPadding
+        void BuildChild(std::unique_ptr<UiElement> child);
 
+        // void SetParent(UiElement const* parent);
+        void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf]
@@ -89,7 +104,8 @@ class TextArea : public UiElement
         int m_maxWidth;
 
     public:
-        TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
+        TextArea(TextureController& textureController, const ElementKey& key, 
+            const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
         
         void SetText(const std::string& text); // Must be called before GenerateText
         void GenerateText();

@@ -1,20 +1,42 @@
 #include "ui.hpp"
 
-UiElement::UiElement(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition localPosition):
-    ScreenDrawable(textureController, textureFilepath), m_localPosition(localPosition)
+UiElement::UiElement(TextureController& textureController, const ElementKey& key,
+    const std::string& textureFilepath, const ScreenPosition localPosition):
+    ScreenDrawable(textureController, textureFilepath), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
 {
     
 }
 
-UiElement::UiElement(TextureController& textureController, const ScreenPosition localPosition):
-    ScreenDrawable(textureController), m_localPosition(localPosition)
+UiElement::UiElement(TextureController& textureController, const ElementKey& key,
+    const ScreenPosition localPosition):
+    ScreenDrawable(textureController), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
 {
     
+}
+
+std::vector<std::unique_ptr<UiElement>>& UiElement::GetChilds() {
+    return m_childs;
 }
 
 UiParams& UiElement::GetParams()
 {
     return m_params;
+}
+
+UiElement* UiElement::GetParent()
+{
+    return m_parent;
+}
+
+const ElementKey& UiElement::GetKey() const
+{
+    return m_key;
+}
+
+// void UiElement::SetParent(UiElement const* parent)
+void UiElement::SetParent(UiElement* parent)
+{
+    m_parent = parent;
 }
 
 void UiElement::SetParentSize(const AreaSize parentSize)
@@ -125,6 +147,7 @@ void UiElement::AddChild(std::unique_ptr<UiElement>& child)
 
 void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 {
+    child->SetParent(this);
     child->SetParentSize(GetSize());
     child->ComputeFinal();
     AddChild(child);
@@ -137,8 +160,8 @@ void UiElement::ComputeFinal()
     SetPadding(m_params.xPadding, m_params.yPadding);
 }
 
-TextArea::TextArea(TextureController& textureController, const std::string& fontFilepath, const SDL_Color color):
-    UiElement(textureController), m_textColor(color), m_text("No_Text")
+TextArea::TextArea(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
+    UiElement(textureController, key), m_textColor(color), m_text("No_Text")
 {
     const unsigned int fontSize = 24;
     m_fontKey = fontFilepath + std::to_string(fontSize); // fontFilepath is not the full path, just the filename in the font directory

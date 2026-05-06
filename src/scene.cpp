@@ -210,7 +210,8 @@ BattleScene::BattleScene(GameContext& context):
     uiController->UpdateText("actorBName", "Bone Appetit");
     uiController->UpdateText("actorAHealth", "100 PV"); 
     uiController->UpdateText("actorBHealth", "100 PV");
-
+    // uiController->DeleteElement("actorAHealth");
+    
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events
 }

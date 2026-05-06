@@ -6,13 +6,13 @@ UiController::UiController(const AreaSize size, const ScreenPosition position):
 
 void UiController::Draw() const
 {
-    for (const std::unique_ptr<UiElement>& e : m_branches)
+    for (const std::unique_ptr<UiElement>& e : m_subRoots)
         e->DrawTexture();
 }
 
 void UiController::UpdatePosition()
 {
-    for (const std::unique_ptr<UiElement>& e : m_branches)
+    for (const std::unique_ptr<UiElement>& e : m_subRoots)
         e->UpdatePosition();
 }
 
@@ -21,15 +21,55 @@ void UiController::AddElement(const ElementKey& key, UiElement* element)
     m_elements[key] = element;
 }
 
+void UiController::DeleteElement(const ElementKey& key)
+{
+    UiElement* parent = GetElement(key)->GetParent(); // Should be const ?
+    
+    // Remove from UiController::m_elements
+    std::unordered_map<ElementKey, UiElement*>::const_iterator it = m_elements.find(key); // Should use a GetIteratorOnElement function ?
+    if (it == m_elements.end())
+        throw std::runtime_error("This Ui element can't be found : " + key); // ???
+    m_elements.erase(it);
+    
+    // Remove from UiController::m_subRoots or UiElement::m_childs
+    std::unique_ptr<UiElement> elementPtr; // This is what I want to get
+    
+    // TODO Merge
+    if (parent == nullptr) { // if UiElement with key is a subroot, its parent is nullptr (as setted in UiController::BuildSubRoot())
+        std::vector<std::unique_ptr<UiElement>>::iterator it;
+        for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
+            if ((*it)->GetKey() == key) {
+                elementPtr = std::move(*it); // Or directly delete the pointer here ?
+                m_subRoots.erase(it);
+                break;
+            }
+        }
+    } else {
+        std::vector<std::unique_ptr<UiElement>>& childs = parent->GetChilds();
+        std::vector<std::unique_ptr<UiElement>>::iterator it;
+        for (it = childs.begin() ; it != childs.end() ; it++) {
+            if ((*it)->GetKey() == key) {
+                elementPtr = std::move(*it); // Or directly delete the pointer here ?
+                childs.erase(it);
+                break;
+            }
+        }
+    }
+    
+    // Free the unique_ptr
+    elementPtr.reset();
+}
+
 void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
 {
+    subRoot->SetParent(nullptr); // Already initialized to nullptr in UiElement constructors
     subRoot->SetParentSize(m_size);
     subRoot->SetParentPosition(m_position);
     const UiParams& params = subRoot->GetParams();
     subRoot->ComputeZoom(params.scale, params.scaleAxis);
     subRoot->ComputePosition(params.xAnchor, params.yAnchor);
     subRoot->SetPadding(params.xPadding, params.yPadding);
-    m_branches.push_back(std::move(subRoot)); 
+    m_subRoots.push_back(std::move(subRoot)); 
 }
 
 UiElement* UiController::GetElement(const ElementKey& key) const
@@ -37,6 +77,7 @@ UiElement* UiController::GetElement(const ElementKey& key) const
     std::unordered_map<ElementKey, UiElement*>::const_iterator it = m_elements.find(key);
     if (it == m_elements.end())
         throw std::runtime_error("This Ui element can't be found : " + key);
+    // Verify if != nullptr ?
     return it->second;
 }
 
@@ -88,13 +129,13 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition)
 {
-    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
+    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "frame", "../assets/ui/box.png");
     AddElement("frame", frame.get());
-    std::unique_ptr<UiElement> faceset = std::make_unique<UiElement>(textureController, "../assets/ui/faceset.png");
+    std::unique_ptr<UiElement> faceset = std::make_unique<UiElement>(textureController, "faceset", "../assets/ui/faceset.png");
     AddElement("faceset", faceset.get());
-    std::unique_ptr<UiElement> face = std::make_unique<UiElement>(textureController, "../assets/ui/hunter_face.png");
+    std::unique_ptr<UiElement> face = std::make_unique<UiElement>(textureController, "face", "../assets/ui/hunter_face.png");
     AddElement("face", face.get());
-    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, "boxText", fontFilepath);
     AddElement("boxText", boxText.get());
 
     UiParams& frameParams = frame->GetParams();
@@ -138,9 +179,9 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
-    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
+    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "frame", "../assets/ui/box.png");
     AddElement("frame", frame.get());
-    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, "boxText", fontFilepath);
     AddElement("boxText", boxText.get());
 
     UiParams& frameParams = frame->GetParams();
@@ -174,25 +215,25 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition)
 {
-    std::unique_ptr<UiElement> background = std::make_unique<UiElement>(textureController, "../assets/battle/backgrounds/cavern.png");
+    std::unique_ptr<UiElement> background = std::make_unique<UiElement>(textureController, "background", "../assets/battle/backgrounds/cavern.png");
     AddElement("background", background.get());
-    std::unique_ptr<UiElement> actorASprite = std::make_unique<UiElement>(textureController, "../assets/battle/werewolf.png");
+    std::unique_ptr<UiElement> actorASprite = std::make_unique<UiElement>(textureController, "actorASprite", "../assets/battle/werewolf.png");
     AddElement("actorASprite", actorASprite.get());
-    std::unique_ptr<UiElement> actorBSprite = std::make_unique<UiElement>(textureController, "../assets/battle/bone_appetit.png");
+    std::unique_ptr<UiElement> actorBSprite = std::make_unique<UiElement>(textureController, "actorBSprite", "../assets/battle/bone_appetit.png");
     AddElement("actorBSprite", actorBSprite.get());
-    std::unique_ptr<UiElement> actorABox = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
+    std::unique_ptr<UiElement> actorABox = std::make_unique<UiElement>(textureController, "actorABox", "../assets/ui/box.png");
     AddElement("actorABox", actorABox.get());
-    std::unique_ptr<UiElement> actorBBox = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
+    std::unique_ptr<UiElement> actorBBox = std::make_unique<UiElement>(textureController, "actorBBox", "../assets/ui/box.png");
     AddElement("actorBBox", actorBBox.get());
-    std::unique_ptr<UiElement> mainBox = std::make_unique<UiElement>(textureController, "../assets/ui/box.png");
+    std::unique_ptr<UiElement> mainBox = std::make_unique<UiElement>(textureController, "mainBox", "../assets/ui/box.png");
     AddElement("mainBox", mainBox.get());
-    std::unique_ptr<TextArea> actorAName = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> actorAName = std::make_unique<TextArea>(textureController, "actorAName", fontFilepath);
     AddElement("actorAName", actorAName.get());
-    std::unique_ptr<TextArea> actorBName = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> actorBName = std::make_unique<TextArea>(textureController, "actorBName", fontFilepath);
     AddElement("actorBName", actorBName.get());
-    std::unique_ptr<TextArea> actorAHealth = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> actorAHealth = std::make_unique<TextArea>(textureController, "actorAHealth", fontFilepath);
     AddElement("actorAHealth", actorAHealth.get());
-    std::unique_ptr<TextArea> actorBHealth = std::make_unique<TextArea>(textureController, fontFilepath);
+    std::unique_ptr<TextArea> actorBHealth = std::make_unique<TextArea>(textureController, "actorBHealth", fontFilepath);
     AddElement("actorBHealth", actorBHealth.get());
 
     const float size = 0.2f; // Will be removed
