@@ -11,11 +11,33 @@
 
 // Should add a FontController instead of having TextureController::m_fonts ?
 
+struct Texture
+{
+    SDL_Texture* texture;
+    unsigned int count;
+
+    Texture() {
+        texture = nullptr;
+        count = 0;
+    }
+};
+
+struct Font
+{
+    TTF_Font* font;
+    unsigned int count;
+
+    Font() {
+        font = nullptr;
+        count = 0;
+    }
+};
+
 class TextureController
 {
     private:
-        std::map<TextureKey,SDL_Texture*> m_textures;
-        std::map<TextureKey,TTF_Font*> m_fonts;
+        std::map<TextureKey,Texture> m_textures;
+        std::map<TextureKey,Font> m_fonts;
         SDL_Renderer* m_windowRenderer;
 
     public:
