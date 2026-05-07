@@ -24,11 +24,17 @@ class UiController
         const ScreenPosition m_position; // Initialized with the viewport position
         const AreaSize m_size; // Initialized with the viewport size
 
+        // void AddElement(const ElementKey& key, UiElement* element); // Add in UiController::m_elements
+        void RemoveElement(const ElementKey& key); // Remove from UiController::m_elements
+
     protected:
         UiElement* GetElement(const ElementKey& key) const;
         float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
 
+        void AddElement(const ElementKey& key, UiElement* element); // Remove
+        std::unique_ptr<UiElement> CreateElement(TextureController& textureController, const ElementKey& key, const std::string& textureFilepath);
+        std::unique_ptr<TextArea> CreateTextElement(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath);
         void HandleUiEvent(const UiElementEvent e, const ElementKey& key);
         void UpdatePosition(); // Compute the rendering position for every UiElement in every branch --> This function must be called in every UiController constructors 
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
@@ -39,9 +45,7 @@ class UiController
          
         virtual void Update() = 0;
         void Draw() const;
-        void AddElement(const ElementKey& key, UiElement* element);
         void DeleteElement(const ElementKey& key);
-        void RemoveElement(const ElementKey& key); // Remove from UiController::m_elements
 
         void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
 };

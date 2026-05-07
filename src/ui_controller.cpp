@@ -118,6 +118,24 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
     }
 }
 
+std::unique_ptr<UiElement> UiController::CreateElement(TextureController& textureController, 
+    const ElementKey& key, const std::string& textureFilepath)
+{
+    std::unique_ptr<UiElement> element = std::make_unique<UiElement>(textureController, key, textureFilepath);
+    element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
+    AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
+    return element;
+}
+
+std::unique_ptr<TextArea> UiController::CreateTextElement(TextureController& textureController, 
+    const ElementKey& key, const std::string& fontFilepath)
+{
+    std::unique_ptr<TextArea> element = std::make_unique<TextArea>(textureController, key, fontFilepath);
+    element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
+    AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
+    return element;
+}
+
 void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
 {
     switch(e) {
@@ -143,18 +161,10 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition)
 {
-    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "frame", "../assets/ui/box.png");
-    frame->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "frame");});
-    AddElement("frame", frame.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
-    std::unique_ptr<UiElement> faceset = std::make_unique<UiElement>(textureController, "faceset", "../assets/ui/faceset.png");
-    faceset->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "faceset");});
-    AddElement("faceset", faceset.get());
-    std::unique_ptr<UiElement> face = std::make_unique<UiElement>(textureController, "face", "../assets/ui/hunter_face.png");
-    face->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "face");});
-    AddElement("face", face.get());
-    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, "boxText", fontFilepath);
-    boxText->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "boxText");});
-    AddElement("boxText", boxText.get());
+    std::unique_ptr<UiElement> frame = CreateElement(textureController, "frame", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> faceset = CreateElement(textureController, "faceset", "../assets/ui/faceset.png");
+    std::unique_ptr<UiElement> face = CreateElement(textureController, "face", "../assets/ui/hunter_face.png");
+    std::unique_ptr<TextArea> boxText = CreateTextElement(textureController, "boxText", fontFilepath);
 
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = GetPartialRootSizeOnAxis(Axis::Width, 0.5f);
@@ -197,10 +207,8 @@ EditorUiController::EditorUiController(TextureController& textureController, con
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
-    std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "frame", "../assets/ui/box.png");
-    AddElement("frame", frame.get());
-    std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, "boxText", fontFilepath);
-    AddElement("boxText", boxText.get());
+    std::unique_ptr<UiElement> frame = CreateElement(textureController, "frame", "../assets/ui/box.png");
+    std::unique_ptr<TextArea> boxText = CreateTextElement(textureController, "boxText", fontFilepath);
 
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = GetPartialRootSizeOnAxis(Axis::Width, 0.3f);
@@ -233,26 +241,16 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(viewportSize, viewportPosition)
 {
-    std::unique_ptr<UiElement> background = std::make_unique<UiElement>(textureController, "background", "../assets/battle/backgrounds/cavern.png");
-    AddElement("background", background.get());
-    std::unique_ptr<UiElement> actorASprite = std::make_unique<UiElement>(textureController, "actorASprite", "../assets/battle/werewolf.png");
-    AddElement("actorASprite", actorASprite.get());
-    std::unique_ptr<UiElement> actorBSprite = std::make_unique<UiElement>(textureController, "actorBSprite", "../assets/battle/bone_appetit.png");
-    AddElement("actorBSprite", actorBSprite.get());
-    std::unique_ptr<UiElement> actorABox = std::make_unique<UiElement>(textureController, "actorABox", "../assets/ui/box.png");
-    AddElement("actorABox", actorABox.get());
-    std::unique_ptr<UiElement> actorBBox = std::make_unique<UiElement>(textureController, "actorBBox", "../assets/ui/box.png");
-    AddElement("actorBBox", actorBBox.get());
-    std::unique_ptr<UiElement> mainBox = std::make_unique<UiElement>(textureController, "mainBox", "../assets/ui/box.png");
-    AddElement("mainBox", mainBox.get());
-    std::unique_ptr<TextArea> actorAName = std::make_unique<TextArea>(textureController, "actorAName", fontFilepath);
-    AddElement("actorAName", actorAName.get());
-    std::unique_ptr<TextArea> actorBName = std::make_unique<TextArea>(textureController, "actorBName", fontFilepath);
-    AddElement("actorBName", actorBName.get());
-    std::unique_ptr<TextArea> actorAHealth = std::make_unique<TextArea>(textureController, "actorAHealth", fontFilepath);
-    AddElement("actorAHealth", actorAHealth.get());
-    std::unique_ptr<TextArea> actorBHealth = std::make_unique<TextArea>(textureController, "actorBHealth", fontFilepath);
-    AddElement("actorBHealth", actorBHealth.get());
+    std::unique_ptr<UiElement> background = CreateElement(textureController, "background", "../assets/battle/backgrounds/cavern.png");
+    std::unique_ptr<UiElement> actorASprite = CreateElement(textureController, "actorASprite", "../assets/battle/werewolf.png");
+    std::unique_ptr<UiElement> actorBSprite = CreateElement(textureController, "actorBSprite", "../assets/battle/bone_appetit.png");
+    std::unique_ptr<UiElement> actorABox = CreateElement(textureController, "actorABox", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> actorBBox = CreateElement(textureController, "actorBBox", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> mainBox = CreateElement(textureController, "mainBox", "../assets/ui/box.png");
+    std::unique_ptr<TextArea> actorAName = CreateTextElement(textureController, "actorAName", fontFilepath);
+    std::unique_ptr<TextArea> actorBName = CreateTextElement(textureController, "actorBName", fontFilepath);
+    std::unique_ptr<TextArea> actorAHealth = CreateTextElement(textureController, "actorAHealth", fontFilepath);
+    std::unique_ptr<TextArea> actorBHealth = CreateTextElement(textureController, "actorBHealth", fontFilepath);
 
     const float size = 0.2f; // Will be removed
     UiParams& backgroundParams = background->GetParams();
