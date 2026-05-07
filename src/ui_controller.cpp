@@ -21,15 +21,17 @@ void UiController::AddElement(const ElementKey& key, UiElement* element)
     m_elements[key] = element;
 }
 
-void UiController::DeleteElement(const ElementKey& key)
+void UiController::RemoveElement(const ElementKey& key)
 {
-    UiElement* parent = GetElement(key)->GetParent(); // Should be const ?
-    
-    // Remove from UiController::m_elements
     std::unordered_map<ElementKey, UiElement*>::const_iterator it = m_elements.find(key); // Should use a GetIteratorOnElement function ?
     if (it == m_elements.end())
         throw std::runtime_error("This Ui element can't be found : " + key); // ???
     m_elements.erase(it);
+}
+
+void UiController::DeleteElement(const ElementKey& key)
+{
+    UiElement* parent = GetElement(key)->GetParent(); // Should be const ?
     
     // Remove from UiController::m_subRoots or UiElement::m_childs
     std::unique_ptr<UiElement> elementPtr; // This is what I want to get
@@ -57,7 +59,7 @@ void UiController::DeleteElement(const ElementKey& key)
     }
     
     // Free the unique_ptr
-    elementPtr.reset();
+    elementPtr.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
 }
 
 void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
@@ -116,11 +118,23 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
     }
 }
 
+void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
+{
+    switch(e) {
+        case UiElementEvent::Delete : {
+            RemoveElement(key);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 void UiController::UpdateText(const ElementKey& key, const std::string& newText)
 {
     TextArea* textArea = static_cast<TextArea*>(GetElement(key));
     textArea->SetText(newText);
-    textArea->GenerateText();
+    textArea->GenerateText(); // The texture generated for the previous text is not deleted, but it should
     // textArea->ComputeFinal(); // I would need anchor, scale, padding, etc.
     // textArea->UpdatePosition();
 }
@@ -130,12 +144,16 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     UiController(viewportSize, viewportPosition)
 {
     std::unique_ptr<UiElement> frame = std::make_unique<UiElement>(textureController, "frame", "../assets/ui/box.png");
-    AddElement("frame", frame.get());
+    frame->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "frame");});
+    AddElement("frame", frame.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
     std::unique_ptr<UiElement> faceset = std::make_unique<UiElement>(textureController, "faceset", "../assets/ui/faceset.png");
+    faceset->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "faceset");});
     AddElement("faceset", faceset.get());
     std::unique_ptr<UiElement> face = std::make_unique<UiElement>(textureController, "face", "../assets/ui/hunter_face.png");
+    face->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "face");});
     AddElement("face", face.get());
     std::unique_ptr<TextArea> boxText = std::make_unique<TextArea>(textureController, "boxText", fontFilepath);
+    boxText->AddCallback([this](UiElementEvent e){HandleUiEvent(e, "boxText");});
     AddElement("boxText", boxText.get());
 
     UiParams& frameParams = frame->GetParams();

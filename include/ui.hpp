@@ -5,8 +5,14 @@
 #include <string>
 
 #include "drawable.hpp"
+#include "notifier.hpp"
 
 using ElementKey = std::string; // ???
+
+enum class UiElementEvent
+{
+    Delete // Create ?
+};
 
 enum class Axis
 {
@@ -41,7 +47,7 @@ struct UiParams
     }
 };
 
-class UiElement : public ScreenDrawable
+class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {
     private:
         const ElementKey m_key;
@@ -69,7 +75,8 @@ class UiElement : public ScreenDrawable
             const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
         UiElement(TextureController& textureController, const ElementKey& key, 
             const ScreenPosition localPosition={0,0});
-
+        virtual ~UiElement();
+        
         virtual void ComputeFinal();
         
         std::vector<std::unique_ptr<UiElement>>& GetChilds(); // Should return a const vector ? The function should be const ?
@@ -106,7 +113,8 @@ class TextArea : public UiElement
     public:
         TextArea(TextureController& textureController, const ElementKey& key, 
             const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
-        
+        // ~TextArea();
+
         void SetText(const std::string& text); // Must be called before GenerateText
         void GenerateText();
         void SetMaxWidth(const float amount);

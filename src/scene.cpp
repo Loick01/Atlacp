@@ -115,8 +115,11 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameplayEventController>();
+    
     m_context.uiController = std::make_unique<GameplayUiController>(m_context.textureController, "PixelOperator8", 
         m_camera.GetViewport(), m_camera.GetScreenOffset());
+    // m_context.uiController->DeleteElement("faceset");
+    
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
@@ -204,13 +207,13 @@ BattleScene::BattleScene(GameContext& context):
         m_camera.GetViewport(), m_camera.GetScreenOffset());
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
-    BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
+    // BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
     // Actor name and health will be defined here instead of BattleUiController (names will be retrivied from the BattleController)
-    uiController->UpdateText("actorAName", "Howler"); 
-    uiController->UpdateText("actorBName", "Bone Appetit");
-    uiController->UpdateText("actorAHealth", "100 PV"); 
-    uiController->UpdateText("actorBHealth", "100 PV");
-    // uiController->DeleteElement("actorAHealth");
+    m_context.uiController->UpdateText("actorAName", "Howler"); 
+    m_context.uiController->UpdateText("actorBName", "Bone Appetit");
+    m_context.uiController->UpdateText("actorAHealth", "100 PV"); 
+    m_context.uiController->UpdateText("actorBHealth", "100 PV");
+    // m_context.uiController->DeleteElement("actorASprite");
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events
