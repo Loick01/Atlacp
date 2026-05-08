@@ -14,7 +14,7 @@ TextureController::TextureController(SDL_Renderer* windowRenderer) :
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, Texture>& p : m_textures){
-        // std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // Will be removed
+        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // Will be removed
         SDL_DestroyTexture(p.second.texture);
     }
     for (const std::pair<const TextureKey, Font>& f : m_fonts){
@@ -31,7 +31,7 @@ TTF_Font* TextureController::GetFont(const TextureKey& textureKey) const
     return m_fonts.at(textureKey).font; // No verifications for the moment
 }
 
-void TextureController::LoadImageFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int& textureWidth, int& textureHeight)
+void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int& textureWidth, int& textureHeight)
 {
     if (m_textures.find(textureKey) == m_textures.end()){
         SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
@@ -46,7 +46,30 @@ void TextureController::LoadImageFromFile(const std::string& textureFilepath, co
         m_textures[textureKey].texture = texture;
     }else{ // This file has already been loaded as a texture (SDL_Texture already exists in m_textures)
         m_textures[textureKey].count++;
-        SDL_QueryTexture(m_textures[textureKey].texture, nullptr, nullptr, &textureWidth, &textureHeight); // LoadImageFromFile could return texture size instead of using extra parameters ?
+        SDL_QueryTexture(m_textures[textureKey].texture, nullptr, nullptr, &textureWidth, &textureHeight); // LoadTextureFromFile could return texture size instead of using extra parameters ?
+    }
+}
+
+void TextureController::LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
+    int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
+{
+    // Maybe I will change textureKey type
+    if (textureKey == "") throw std::runtime_error("Texture key (string) is empty, text in TextArea should never be \"\"");
+    
+    if (m_textures.find(textureKey) == m_textures.end()) {
+        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(fontKey), text.c_str(), textColor, maxWidth);
+        if (!surface) 
+            throw std::runtime_error("Failed to create a surface for this text : " + text + "\n" + std::string(IMG_GetError()));
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
+        if (!texture)
+            throw std::runtime_error("Failed to convert this surface into a texture : " + text + "\n" + std::string(SDL_GetError()));
+        textureWidth = surface->w, textureHeight = surface->h;
+        SDL_FreeSurface(surface);
+        m_textures[textureKey].count = 1;
+        m_textures[textureKey].texture = texture;
+    }else{ // This text has already been generated as a texture
+        m_textures[textureKey].count++;
+        SDL_QueryTexture(m_textures[textureKey].texture, nullptr, nullptr, &textureWidth, &textureHeight);
     }
 }
 
@@ -81,6 +104,7 @@ void TextureController::DeleteTexture(const TextureKey& textureKey)
             it->second.count--;
         }
     } else {
+        std::cout << "Try to delete a texture not in m_textures : " << textureKey << "\n";
         // throw std::runtime_error("Try to delete a texture that don't exist in TextureController : " + textureKey);
     }
 }
@@ -93,17 +117,3 @@ void TextureController::DeleteTexture(const TextureKey& textureKey)
 //         m_fonts.erase(it);
 //     }
 // }
-
-void TextureController::LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
-    int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
-{
-    // Maybe I will change textureKey type
-    if (textureKey == "") throw std::runtime_error("Texture key (string) is empty, text in TextArea should never be \"\"");
-    
-    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(fontKey), text.c_str(), textColor, maxWidth);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
-    textureWidth = surface->w, textureHeight = surface->h;
-    SDL_FreeSurface(surface);
-    if (m_textures[textureKey].texture) SDL_DestroyTexture(m_textures[textureKey].texture);
-    m_textures[textureKey].texture = texture;
-}

@@ -45,9 +45,12 @@ class TextureController
         ~TextureController();
 
         TTF_Font* GetFont(const TextureKey& textureKey) const;
+        
+        // Try to merge LoadTextureFromFile and LoadTextureFromText
+        void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int &textureWidth, int& textureHeight);
         void LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
             int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth);
-        void LoadImageFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int &textureWidth, int& textureHeight);
+
         void LoadFontFromFile(const std::string& fontFilepath, const TextureKey& textureKey, const int fontSize);
         void RenderTexture(const TextureKey& textureKey, const SDL_Rect& src, const SDL_Rect& dst) const;
         void DeleteTexture(const TextureKey& textureKey);

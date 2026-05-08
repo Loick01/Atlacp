@@ -14,13 +14,13 @@ Drawable::Drawable(TextureController& textureController):
 
 Drawable::~Drawable()
 {
-    m_textureController.DeleteTexture(m_textureKey);
+    DeleteTexture();
 }
 
 void Drawable::LoadTexture(const std::string& textureFilepath)
 {
     m_textureKey = textureFilepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    m_textureController.LoadImageFromFile(textureFilepath, m_textureKey, m_textureWidth, m_textureHeight); 
+    m_textureController.LoadTextureFromFile(textureFilepath, m_textureKey, m_textureWidth, m_textureHeight); 
 }
 
 TextureKey Drawable::GetTextureKey() const
@@ -43,17 +43,14 @@ bool Drawable::IsPositionInTexture(const Vec2 sp) const // sp must be normalized
     return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
 }
 
+void Drawable::DeleteTexture()
+{
+    m_textureController.DeleteTexture(m_textureKey);
+}
+
 SceneDrawable::SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position):
     Drawable(textureController, textureFilepath), m_camera(camera), m_position(position)
-{
-
-}
-
-SceneDrawable::SceneDrawable(TextureController& textureController, Camera& camera, const ScenePosition position):
-    Drawable(textureController), m_camera(camera), m_position(position)
-{
-
-}
+{}
 
 ScenePosition SceneDrawable::GetDisplayOffset() const
 {
@@ -72,15 +69,11 @@ void SceneDrawable::LookMe()
 
 ScreenDrawable::ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position, const bool shouldDraw):
     Drawable(textureController, textureFilepath), m_position(position), m_shouldDraw(shouldDraw), m_zoom(1.0f) // Default value for zoom must be 1.0
-{
-    
-}
+{}
 
 ScreenDrawable::ScreenDrawable(TextureController& textureController, const ScreenPosition position, const bool shouldDraw):
     Drawable(textureController), m_position(position), m_shouldDraw(shouldDraw), m_zoom(1.0f) // Default value for zoom must be 1.0
-{
-
-}
+{}
 
 ScreenPosition ScreenDrawable::GetScreenPosition() const
 {

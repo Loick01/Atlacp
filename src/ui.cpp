@@ -14,11 +14,13 @@ UiElement::UiElement(TextureController& textureController, const ElementKey& key
     
 }
 
-UiElement::~UiElement() {
+UiElement::~UiElement() 
+{
     Notify(UiElementEvent::Delete); // Will delete the associated pointer in UiController::m_elements
 }
 
-std::vector<std::unique_ptr<UiElement>>& UiElement::GetChilds() {
+std::vector<std::unique_ptr<UiElement>>& UiElement::GetChilds() 
+{
     return m_childs;
 }
 

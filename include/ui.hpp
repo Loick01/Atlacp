@@ -115,7 +115,7 @@ class TextArea : public UiElement
             const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
         // ~TextArea();
 
-        void SetText(const std::string& text); // Must be called before GenerateText
+        void SetText(const std::string& text);
         void GenerateText();
         void SetMaxWidth(const float amount);
 

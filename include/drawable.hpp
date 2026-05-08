@@ -24,8 +24,10 @@ class Drawable
         virtual TextureKey GetTextureKey() const;
         virtual int GetTextureWidth() const; // Remove virtual ?
         virtual int GetTextureHeight() const; // Remove virtual ?
-        bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
         virtual void DrawTexture() const = 0;
+
+        bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
+        void DeleteTexture();
 };
 
 class SceneDrawable : public Drawable
@@ -40,7 +42,6 @@ class SceneDrawable : public Drawable
     
     public:
         SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position);
-        SceneDrawable(TextureController& textureController, Camera& camera, const ScenePosition position);
         void LookMe();
 };
 

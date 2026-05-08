@@ -148,11 +148,12 @@ void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
     }
 }
 
-void UiController::UpdateText(const ElementKey& key, const std::string& newText)
+void UiController::UpdateText(const ElementKey& key, const std::string& newText) // Could be in TextArea ?
 {
-    TextArea* textArea = static_cast<TextArea*>(GetElement(key));
+    TextArea* textArea = static_cast<TextArea*>(GetElement(key)); // ???
+    textArea->DeleteTexture(); // Delete the previous generated texture
     textArea->SetText(newText);
-    textArea->GenerateText(); // The texture generated for the previous text is not deleted, but it should
+    textArea->GenerateText();
     // textArea->ComputeFinal(); // I would need anchor, scale, padding, etc.
     // textArea->UpdatePosition();
 }
