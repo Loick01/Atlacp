@@ -68,9 +68,7 @@ void SceneController::StartGameloop()
 
 Scene::Scene(GameContext& context):
     m_context(context), m_gameloop(true)
-{
-
-}
+{}
 
 bool Scene::GetGameloop() const
 {

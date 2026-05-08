@@ -1,23 +1,27 @@
 #pragma once
 
-#include "camera.hpp" // Will be removed ?
-#include "drawable.hpp"
+#include "camera.hpp"
 #include "tileset.hpp"
-#include "texture.hpp" // Will be removed ?
+#include "texture.hpp"
 #include "type.hpp" 
 
-class TileLayer : public SceneDrawable
+// No longer inherits from SceneDrawable --> Too many issues caused by the fact 
+// that m_textureKey was unused (problematic calls of TextureController::DeleteTexture() with empty key) 
+class TileLayer
 {
     private:
+        TextureController& m_textureController;
+        Camera& m_camera;
         std::vector<Tile> m_tiles;
         Tileset& m_tileset;
         const GridSize m_size;
     
     public:
         TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset);
+
         std::vector<Tile> GetTiles() const;
         Tile GetTile(const size_t index) const;
-        void DrawTexture() const override;
+        void DrawTexture() const;
         void AddTile(const Tile t);
         void SetTile(const size_t index, const Tile t);
 };

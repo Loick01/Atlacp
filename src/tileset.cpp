@@ -136,7 +136,8 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
 void Tileset::CleanTilesets()
 {
     for (const TilesetData& e : m_tilesets){
-        m_textureController.DeleteTexture(e.tilesetKey);
+        if (e.tilesetKey != m_textureKey) // Tileset with m_textureKey will be deleted with ~Drawable
+            m_textureController.DeleteTexture(e.tilesetKey);
     }
     m_tilesets.clear();
 }

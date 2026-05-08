@@ -68,6 +68,10 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
     ReadHeaderMapFile(input, data);
     Tile t;
     const size_t layerSize = data.size.x*data.size.y;
+    // WARNING : Use push_back on data.map reallocate its internal storage, 
+    // causing existing elements to be copied/moved and their destructors to be called.
+    // That's why reserve() MUST be called if I want to avoid unexpected calls of ~TileLayer() 
+    data.map.reserve(data.layerCount);
     for (unsigned int i = 0 ; i < data.layerCount ; i++){
         TileLayer currentLayer(data.size, camera, textureController, tileset); // Currently, all layers have the same size
         for (size_t c = 0 ; c < layerSize ; c++){

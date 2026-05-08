@@ -1,10 +1,9 @@
 #include "layer.hpp"
 
 TileLayer::TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset):
-    SceneDrawable(textureController, camera, ScenePosition{0,0}), m_tileset(tileset), m_size(layerSize) // I could remove the ScenePosition argument ?
+    m_textureController(textureController), m_camera(camera), m_tileset(tileset), m_size(layerSize)
 {
     m_tiles.reserve(layerSize.x*layerSize.y);
-    // TileLayer doesn't have a m_textureKey --> default value = "" (used in ~Drawable)
 }
 
 std::vector<Tile> TileLayer::GetTiles() const

@@ -20,7 +20,7 @@ class Drawable
         int m_textureHeight;
     
     public:
-        ~Drawable();
+        virtual ~Drawable();
         virtual TextureKey GetTextureKey() const;
         virtual int GetTextureWidth() const; // Remove virtual ?
         virtual int GetTextureHeight() const; // Remove virtual ?

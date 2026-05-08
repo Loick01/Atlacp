@@ -14,7 +14,7 @@ TextureController::TextureController(SDL_Renderer* windowRenderer) :
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, Texture>& p : m_textures){
-        // std::cout << "Drawable should destroy their respective texture in their own destructor. Try to avoid being here\n"; // Will be removed
+        // std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // Will be removed
         SDL_DestroyTexture(p.second.texture);
     }
     for (const std::pair<const TextureKey, Font>& f : m_fonts){
