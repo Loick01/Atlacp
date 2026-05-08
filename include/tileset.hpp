@@ -30,5 +30,7 @@ class Tileset : public ScreenDrawable // Could be a UiElement
         void UpdateSelectedTile(const ScreenPosition sp, const int selectedTileset, Tile& tile) const;
         void LoadTileset(const FileReader& fileReader, const std::string& path);
         void SetDisplayedTileset(const int selectedTileset);
-        void CleanTilesets();
+        // if shouldDeleteCurrent is true, the texture with key = m_textureKey is Deleted,
+        // otherwise this texture must be deleted by ~Drawable()
+        void CleanTilesets(const bool shouldDeleteCurrent);
 };

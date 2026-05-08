@@ -130,7 +130,7 @@ void Tilemap::LoadMap(const std::string& path)
 {
     // I don't think I should delete all tilesets when loading a new map
     // Instead, I could only delete the unused one
-    m_tileset.CleanTilesets(); // Delete tilesets used for the previous map
+    m_tileset.CleanTilesets(true); // Delete tilesets used for the previous map
 
     // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered

@@ -12,7 +12,7 @@ Tileset::Tileset(TextureController& textureController):
 
 Tileset::~Tileset()
 {
-    CleanTilesets(); // Delete every textures whose keys are in m_tilesets
+    CleanTilesets(false); // Delete every textures whose keys are in m_tilesets
 }
 
 // Should be an override of Drawable::LoadTexture ?
@@ -133,10 +133,10 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
     throw std::runtime_error("No tileset can be found to draw this tile (" + std::to_string(tile) + ")\n"); // Will not be a runtime_error
 }
 
-void Tileset::CleanTilesets()
+void Tileset::CleanTilesets(const bool shouldDeleteCurrent)
 {
     for (const TilesetData& e : m_tilesets){
-        if (e.tilesetKey != m_textureKey) // Tileset with m_textureKey will be deleted with ~Drawable
+        if (shouldDeleteCurrent || e.tilesetKey != m_textureKey) // Tileset with m_textureKey will be deleted with ~Drawable
             m_textureController.DeleteTexture(e.tilesetKey);
     }
     m_tilesets.clear();
