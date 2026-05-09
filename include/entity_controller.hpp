@@ -14,6 +14,7 @@ class EntityController
         const FileReader& m_fileReader;
         Player m_player; // ?
         
+        // Will use unique_ptr<Entity> ?
         std::vector<Entity*> m_renderedEntities; // Sorted by y position
         // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
         std::vector<Entity*> m_updatedEntities;
@@ -23,6 +24,9 @@ class EntityController
     public:
         EntityController(const FileReader& fileReader, TextureController& textureController, Camera& camera, Tilemap& tilemap);
         ~EntityController();
+
+        // Use the given parameter for Entity that need it
+        void SetUiController(UiController* uiController); // Rename
 
         void Draw() const;
         void Update(const GameplayEventState& playerEventState, const float deltaTime); // GameplayEventState or call SetEventState in GameplayScene (before EntityController::Update()) 

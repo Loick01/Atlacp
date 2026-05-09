@@ -5,7 +5,6 @@ EntityController::EntityController(const FileReader& fileReader, TextureControll
     m_fileReader(fileReader)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-    // m_interactionController.SetUiController(m_context.uiController.get());
     
     m_renderedEntities = {&m_player}; // ?
     
@@ -32,6 +31,11 @@ EntityController::EntityController(const FileReader& fileReader, TextureControll
 EntityController::~EntityController()
 {
     DeleteNPCs();
+}
+
+void EntityController::SetUiController(UiController* uiController)
+{
+    m_interactionController.SetUiController(uiController);
 }
 
 void EntityController::DeleteNPCs()

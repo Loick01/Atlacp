@@ -1,7 +1,8 @@
 #include "ui_controller.hpp"
 
-UiController::UiController(const AreaSize size, const ScreenPosition position):
-    m_size(size), m_position(position)
+UiController::UiController(TextureController& textureController, const std::string& fontFilepath,
+const AreaSize size, const ScreenPosition position):
+    m_textureController(textureController), m_fontFilepath(fontFilepath), m_size(size), m_position(position)
 {}
 
 void UiController::Draw() const
@@ -118,19 +119,17 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
     }
 }
 
-std::unique_ptr<UiElement> UiController::CreateElement(TextureController& textureController, 
-    const ElementKey& key, const std::string& textureFilepath)
+std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
 {
-    std::unique_ptr<UiElement> element = std::make_unique<UiElement>(textureController, key, textureFilepath);
+    std::unique_ptr<UiElement> element = std::make_unique<UiElement>(m_textureController, key, textureFilepath);
     element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
     AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
     return element;
 }
 
-std::unique_ptr<TextArea> UiController::CreateTextElement(TextureController& textureController, 
-    const ElementKey& key, const std::string& fontFilepath)
+std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
 {
-    std::unique_ptr<TextArea> element = std::make_unique<TextArea>(textureController, key, fontFilepath);
+    std::unique_ptr<TextArea> element = std::make_unique<TextArea>(m_textureController, key, fontFilepath);
     element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
     AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
     return element;
@@ -150,7 +149,7 @@ void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
 
 void UiController::UpdateText(const ElementKey& key, const std::string& newText) // Could be in TextArea ?
 {
-    TextArea* textArea = static_cast<TextArea*>(GetElement(key)); // ???
+    TextArea* textArea = static_cast<TextArea*>(GetElement(key)); // static_cast ?
     textArea->DeleteTexture(); // Delete the previous generated texture
     textArea->SetText(newText);
     textArea->GenerateText();
@@ -158,14 +157,12 @@ void UiController::UpdateText(const ElementKey& key, const std::string& newText)
     // textArea->UpdatePosition();
 }
 
-GameplayUiController::GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
-    const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(viewportSize, viewportPosition)
+void UiController::OpenDialogBox(const std::string& text)
 {
-    std::unique_ptr<UiElement> frame = CreateElement(textureController, "frame", "../assets/ui/box.png");
-    std::unique_ptr<UiElement> faceset = CreateElement(textureController, "faceset", "../assets/ui/faceset.png");
-    std::unique_ptr<UiElement> face = CreateElement(textureController, "face", "../assets/ui/hunter_face.png");
-    std::unique_ptr<TextArea> boxText = CreateTextElement(textureController, "boxText", fontFilepath);
+    std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> faceset = CreateElement("faceset", "../assets/ui/faceset.png");
+    std::unique_ptr<UiElement> face = CreateElement("face", "../assets/ui/hunter_face.png");
+    // std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
 
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = GetPartialRootSizeOnAxis(Axis::Width, 0.5f);
@@ -183,13 +180,13 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     facesetParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Height, 0.15f); // Should not access to root element with its key ?
     GetElement("frame")->BuildChild(std::move(faceset));
 
-    boxText->SetText("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf...");
-    UiParams& boxTextParams = boxText->GetParams();
-    boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.75f);
-    boxTextParams.xAnchor = Anchor::RightOut;
-    boxTextParams.yAnchor = Anchor::Center;
-    boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
-    GetElement("faceset")->BuildChild(std::move(boxText));
+    // boxText->SetText(text);
+    // UiParams& boxTextParams = boxText->GetParams();
+    // boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.75f);
+    // boxTextParams.xAnchor = Anchor::RightOut;
+    // boxTextParams.yAnchor = Anchor::Center;
+    // boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
+    // GetElement("faceset")->BuildChild(std::move(boxText));
 
     UiParams& faceParams = face->GetParams();
     faceParams.scale = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.8f);
@@ -198,7 +195,14 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
     faceParams.yAnchor = Anchor::Center;
     GetElement("faceset")->BuildChild(std::move(face));
 
-    UpdatePosition(); // Call UpdatePosition on all the branches
+    UpdatePosition(); // Should call it only on frame ?
+}
+
+GameplayUiController::GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
+    const AreaSize viewportSize, const ScreenPosition viewportPosition):
+    UiController(textureController, fontFilepath, viewportSize, viewportPosition)
+{
+    UpdatePosition(); // Should remove it if no UiElement are created here ?
 }
 
 void GameplayUiController::Update()
@@ -206,10 +210,10 @@ void GameplayUiController::Update()
 
 EditorUiController::EditorUiController(TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
+    UiController(textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
-    std::unique_ptr<UiElement> frame = CreateElement(textureController, "frame", "../assets/ui/box.png");
-    std::unique_ptr<TextArea> boxText = CreateTextElement(textureController, "boxText", fontFilepath);
+    std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
+    std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
 
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = GetPartialRootSizeOnAxis(Axis::Width, 0.3f);
@@ -240,18 +244,18 @@ void EditorUiController::Update()
 
 BattleUiController::BattleUiController(TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(viewportSize, viewportPosition)
+    UiController(textureController, fontFilepath, viewportSize, viewportPosition)
 {
-    std::unique_ptr<UiElement> background = CreateElement(textureController, "background", "../assets/battle/backgrounds/cavern.png");
-    std::unique_ptr<UiElement> actorASprite = CreateElement(textureController, "actorASprite", "../assets/battle/werewolf.png");
-    std::unique_ptr<UiElement> actorBSprite = CreateElement(textureController, "actorBSprite", "../assets/battle/bone_appetit.png");
-    std::unique_ptr<UiElement> actorABox = CreateElement(textureController, "actorABox", "../assets/ui/box.png");
-    std::unique_ptr<UiElement> actorBBox = CreateElement(textureController, "actorBBox", "../assets/ui/box.png");
-    std::unique_ptr<UiElement> mainBox = CreateElement(textureController, "mainBox", "../assets/ui/box.png");
-    std::unique_ptr<TextArea> actorAName = CreateTextElement(textureController, "actorAName", fontFilepath);
-    std::unique_ptr<TextArea> actorBName = CreateTextElement(textureController, "actorBName", fontFilepath);
-    std::unique_ptr<TextArea> actorAHealth = CreateTextElement(textureController, "actorAHealth", fontFilepath);
-    std::unique_ptr<TextArea> actorBHealth = CreateTextElement(textureController, "actorBHealth", fontFilepath);
+    std::unique_ptr<UiElement> background = CreateElement("background", "../assets/battle/backgrounds/cavern.png");
+    std::unique_ptr<UiElement> actorASprite = CreateElement("actorASprite", "../assets/battle/werewolf.png");
+    std::unique_ptr<UiElement> actorBSprite = CreateElement("actorBSprite", "../assets/battle/bone_appetit.png");
+    std::unique_ptr<UiElement> actorABox = CreateElement("actorABox", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> actorBBox = CreateElement("actorBBox", "../assets/ui/box.png");
+    std::unique_ptr<UiElement> mainBox = CreateElement("mainBox", "../assets/ui/box.png");
+    std::unique_ptr<TextArea> actorAName = CreateTextElement("actorAName", m_fontFilepath);
+    std::unique_ptr<TextArea> actorBName = CreateTextElement("actorBName", m_fontFilepath);
+    std::unique_ptr<TextArea> actorAHealth = CreateTextElement("actorAHealth", m_fontFilepath);
+    std::unique_ptr<TextArea> actorBHealth = CreateTextElement("actorBHealth", m_fontFilepath);
 
     const float size = 0.2f; // Will be removed
     UiParams& backgroundParams = background->GetParams();

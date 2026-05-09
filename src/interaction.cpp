@@ -2,9 +2,7 @@
 
 InteractionController::InteractionController() :
     m_uiController(nullptr), m_srcEntity(nullptr), m_dstEntity(nullptr)
-{
-
-}
+{}
 
 void InteractionController::SetUiController(UiController* uiController)
 {
@@ -32,7 +30,7 @@ void InteractionController::StartInteraction(std::vector<Entity*> entities)
     if (m_dstEntity != nullptr) { // If an Entity has been found
         m_dstEntity->SetOrientation(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
         m_dstEntity->SetState(EntityState::Interacting); // Targeted entity will not move
-        // m_uiController->OpenDialogBox();
+        m_uiController->OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // Will be removed
     } else { // Will be removed
         m_srcEntity->SetState(EntityState::Free);
     }

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "texture.hpp"
 #include "ui.hpp"
 
 class UiController
@@ -21,26 +22,31 @@ class UiController
         // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will throw errors because the keys will not
         // be able to be found in m_elements
 
+        TextureController& m_textureController;
+
         const ScreenPosition m_position; // Initialized with the viewport position
         const AreaSize m_size; // Initialized with the viewport size
 
-        // void AddElement(const ElementKey& key, UiElement* element); // Add in UiController::m_elements
+        void AddElement(const ElementKey& key, UiElement* element); // Add in UiController::m_elements
         void RemoveElement(const ElementKey& key); // Remove from UiController::m_elements
 
     protected:
+        // Should be private ?
+        const std::string& m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?) 
+
         UiElement* GetElement(const ElementKey& key) const;
         float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
 
-        void AddElement(const ElementKey& key, UiElement* element); // Remove
-        std::unique_ptr<UiElement> CreateElement(TextureController& textureController, const ElementKey& key, const std::string& textureFilepath);
-        std::unique_ptr<TextArea> CreateTextElement(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath);
+        std::unique_ptr<UiElement> CreateElement(const ElementKey& key, const std::string& textureFilepath);
+        std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key, const std::string& fontFilepath); // Remove fontFilepath ?
         void HandleUiEvent(const UiElementEvent e, const ElementKey& key);
         void UpdatePosition(); // Compute the rendering position for every UiElement in every branch --> This function must be called in every UiController constructors 
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
 
     public:
-        UiController(const AreaSize size, const ScreenPosition position);
+        UiController(TextureController& textureController, const std::string& fontFilepath, 
+            const AreaSize size, const ScreenPosition position);
         // virtual ~UiController();
          
         virtual void Update() = 0;
@@ -48,6 +54,8 @@ class UiController
         void DeleteElement(const ElementKey& key);
 
         void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
+
+        void OpenDialogBox(const std::string& text);
 };
 
 // UI configuration will not stay in constructor

@@ -118,6 +118,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
         m_camera.GetViewport(), m_camera.GetScreenOffset());
     // m_context.uiController->DeleteElement("faceset");
     
+    m_entities.SetUiController(m_context.uiController.get());
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
