@@ -72,8 +72,14 @@ void Entity::TryStartInteraction(const MapPosition targetPosition)
     if (bound == MapBound::Inside){
         m_state = EntityState::Interacting;
         SetTargetPosition(targetPosition);
-        Notify(EntityEvent::Interaction);
+        Notify(EntityEvent::EnterInteraction);
     }
+}
+
+void Entity::LeaveInteraction()
+{
+    // SetState(Free) should be here rather than inside InteractionController::EndInteraction()
+    Notify(EntityEvent::LeaveInteraction);
 }
 
 ScenePosition Entity::ContinueMovement(const float deltaTime)

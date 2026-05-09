@@ -69,7 +69,7 @@ void Player::Update(const float deltaTime)
 
         case EntityState::Interacting: {
             if (m_eventState.isInteracting){
-                // OrderInteraction(direction);
+                LeaveInteraction();
                 break;
             }
             break;

@@ -35,3 +35,10 @@ void InteractionController::StartInteraction(std::vector<Entity*> entities)
         m_srcEntity->SetState(EntityState::Free);
     }
 }
+
+void InteractionController::EndInteraction()
+{
+    m_srcEntity->SetState(EntityState::Free);
+    m_dstEntity->SetState(EntityState::Free); 
+    m_uiController->DeleteElement("frame"); // Should not be here ?
+}

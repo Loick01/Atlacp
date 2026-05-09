@@ -132,7 +132,8 @@ void GameplayTilemapScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     
-    m_context.eventController->HandleEvents(); 
+    m_context.eventController->HandlePolledEvents(); 
+    m_context.eventController->HandleStateEvents(); 
     
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)
@@ -177,10 +178,12 @@ EditorTilemapScene::EditorTilemapScene(GameContext& context):
 void EditorTilemapScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_context.eventController->PollAllEvents();
     
+    m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
-    m_context.eventController->HandleEvents();
+    m_context.eventController->HandlePolledEvents(); 
+    // For now, I don't have any state event, so no call to EditorEventController::HandleStateEvents()
+
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
     const EditorEventState eventState = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventState(); 
@@ -221,10 +224,11 @@ BattleScene::BattleScene(GameContext& context):
 void BattleScene::Gameloop()
 {
     m_context.window.ClearRenderer();
-    m_context.eventController->PollAllEvents();
     
+    m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
-    m_context.eventController->HandleEvents();
+    m_context.eventController->HandlePolledEvents();
+    m_context.eventController->HandleStateEvents();
 
     const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState(); 
     // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventState(eventState);

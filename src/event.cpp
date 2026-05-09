@@ -1,6 +1,6 @@
 #include "event.hpp"
 
-void KeyboardActionController::GetActions()
+void KeyboardActionController::GetStateActions()
 {
     m_state = SDL_GetKeyboardState(NULL);
 }
@@ -25,14 +25,26 @@ bool KeyboardActionController::IsDownAction()
     return m_state[SDL_SCANCODE_S];
 }
 
-bool KeyboardActionController::IsPrimaryAction()
+bool KeyboardActionController::IsPrimaryActionStated()
 {
     return m_state[SDL_SCANCODE_SPACE];
 }
 
-bool KeyboardActionController::IsSecondaryAction()
+bool KeyboardActionController::IsPrimaryActionPolled(const SDL_Event& event)
+{
+    if (event.key.repeat != 0) return false;
+    //SDL_Scancode eventScancode = event.key.keysym.scancode;
+    return event.key.keysym.scancode == SDL_SCANCODE_SPACE;
+}
+
+bool KeyboardActionController::IsSecondaryActionStated()
 {
     return m_state[SDL_SCANCODE_LSHIFT];
+}
+
+bool KeyboardActionController::IsPressedPolledEvent(const Uint32 eventType)
+{
+    return eventType == SDL_KEYDOWN;
 }
 
 JoystickActionController::JoystickActionController() :
@@ -67,7 +79,7 @@ for (SDL_Event event : m_events){
 */
 
 /*
-When I need to know joystick button id (move this in JoystickActionController::GetActions)
+When I need to know joystick button id (move this in JoystickActionController::GetStateActions)
 
 int buttonCount = SDL_JoystickNumButtons(m_joystick);
 
@@ -80,7 +92,7 @@ for (int i = 0; i < buttonCount; i++) {
 }
 */
 
-void JoystickActionController::GetActions()
+void JoystickActionController::GetStateActions()
 {
     m_axisX = SDL_JoystickGetAxis(m_joystick, 0);
     m_axisY = SDL_JoystickGetAxis(m_joystick, 1);
@@ -106,14 +118,24 @@ bool JoystickActionController::IsDownAction()
     return m_axisY > JOYSTICK_DEAD_ZONE;
 }
 
-bool JoystickActionController::IsPrimaryAction()
+bool JoystickActionController::IsPrimaryActionStated()
 {
-    return SDL_JoystickGetButton(m_joystick, 1); // Should be done in JoystickController:: GetActions() ?
+    return SDL_JoystickGetButton(m_joystick, 1); // Should be done in JoystickController:: GetStateActions() ?
 }
 
-bool JoystickActionController::IsSecondaryAction()
+bool JoystickActionController::IsPrimaryActionPolled(const SDL_Event& event)
 {
-    return SDL_JoystickGetButton(m_joystick, 2); // Should be done in JoystickController:: GetActions() ?
+    return event.jbutton.button == 1;
+}
+
+bool JoystickActionController::IsSecondaryActionStated()
+{
+    return SDL_JoystickGetButton(m_joystick, 2); // Should be done in JoystickController:: GetStateActions() ?
+}
+
+bool JoystickActionController::IsPressedPolledEvent(const Uint32 eventType)
+{
+    return eventType == SDL_JOYBUTTONDOWN;
 }
 
 bool EventController::HandleWindowEvents() const
@@ -152,27 +174,34 @@ GameplayEventController::GameplayEventController():
     }
 }
 
-void GameplayEventController::HandleEvents()
+void GameplayEventController::HandleStateEvents()
 {
-    m_actionController->GetActions();
-    
-    if (m_actionController->IsPrimaryAction()) { // Should not be here ?
-        // m_eventState.mapDirection = Direction::None; // Stop player's movement (maybe already done) ?
-        m_eventState.isInteracting = true;
-    } else {
-        m_eventState.isInteracting = false;
-        m_eventState.isRunning = m_actionController->IsSecondaryAction();
-        if (m_actionController->IsLeftAction())
-            m_eventState.mapDirection = Direction::Left;
-        else if (m_actionController->IsRightAction())
-            m_eventState.mapDirection = Direction::Right;
-        else if (m_actionController->IsUpAction())
-            m_eventState.mapDirection = Direction::Up;
-        else if (m_actionController->IsDownAction())
-            m_eventState.mapDirection = Direction::Down;
-        else
-            m_eventState.mapDirection = Direction::None;
+    m_actionController->GetStateActions();
+
+    m_eventState.isRunning = m_actionController->IsSecondaryActionStated();
+    if (m_actionController->IsLeftAction())
+        m_eventState.mapDirection = Direction::Left;
+    else if (m_actionController->IsRightAction())
+        m_eventState.mapDirection = Direction::Right;
+    else if (m_actionController->IsUpAction())
+        m_eventState.mapDirection = Direction::Up;
+    else if (m_actionController->IsDownAction())
+        m_eventState.mapDirection = Direction::Down;
+    else
+        m_eventState.mapDirection = Direction::None;
+}
+
+void GameplayEventController::HandlePolledEvents()
+{
+    for (SDL_Event event : m_events){
+        if (m_actionController->IsPressedPolledEvent(event.type)) {
+            if (m_actionController->IsPrimaryActionPolled(event)) {
+                m_eventState.isInteracting = true;
+                return;
+            }
+        }
     }
+    m_eventState.isInteracting = false;
 }
 
 EditorEventController::EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
@@ -194,7 +223,10 @@ ScenePosition EditorEventController::GetMouseScenePosition() const
     return (m_camera.GetPosition()-m_camera.GetScreenOffset()+GetMouseScreenPosition())/m_camera.GetZoom();
 }
 
-void EditorEventController::HandleEvents()
+void EditorEventController::HandleStateEvents()
+{}
+
+void EditorEventController::HandlePolledEvents()
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -301,23 +333,31 @@ BattleEventController::BattleEventController()
     }
 }
 
-void BattleEventController::HandleEvents()
+void BattleEventController::HandleStateEvents()
 {
-    m_actionController->GetActions();
+    m_actionController->GetStateActions();
 
-    if (m_actionController->IsPrimaryAction()) {
-        m_eventState.isAction = true;
-    } else {
-        m_eventState.isAction = false;
-        if (m_actionController->IsLeftAction())
-            m_eventState.uiDirection = Direction::Left;
-        else if (m_actionController->IsRightAction())
-            m_eventState.uiDirection = Direction::Right;
-        else if (m_actionController->IsUpAction())
-            m_eventState.uiDirection = Direction::Up;
-        else if (m_actionController->IsDownAction())
-            m_eventState.uiDirection = Direction::Down;
-        else
-            m_eventState.uiDirection = Direction::None;
+    if (m_actionController->IsLeftAction())
+        m_eventState.uiDirection = Direction::Left;
+    else if (m_actionController->IsRightAction())
+        m_eventState.uiDirection = Direction::Right;
+    else if (m_actionController->IsUpAction())
+        m_eventState.uiDirection = Direction::Up;
+    else if (m_actionController->IsDownAction())
+        m_eventState.uiDirection = Direction::Down;
+    else
+        m_eventState.uiDirection = Direction::None;
+}
+
+void BattleEventController::HandlePolledEvents()
+{
+    for (SDL_Event event : m_events){
+        if (m_actionController->IsPressedPolledEvent(event.type)) {
+            if (m_actionController->IsPrimaryActionPolled(event)) {
+                m_eventState.isAction = true;
+                return;
+            }
+        }
     }
+    m_eventState.isAction = false;
 }

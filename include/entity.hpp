@@ -6,7 +6,7 @@
 
 enum class EntityEvent
 {
-    SortEntity, Interaction // Rename
+    SortEntity, EnterInteraction, LeaveInteraction
 };
 
 // Rename MapEntity ?
@@ -39,6 +39,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         void OrderUpdateMovement(const float deltaTime);
 
         void OrderInteraction(const Direction direction);
+        void LeaveInteraction();
 
         EntityState GetState() const;
         EntityMovement GetCurrentMovement() const;

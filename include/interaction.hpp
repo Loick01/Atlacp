@@ -16,4 +16,5 @@ class InteractionController
 
         void SetUiController(UiController* uiController);
         void StartInteraction(std::vector<Entity*> entities);
+        void EndInteraction();
 };

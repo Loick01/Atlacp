@@ -82,8 +82,12 @@ void EntityController::HandleEntityEvent(const EntityEvent e)
             SortRenderedEntities();
             break;
         }
-        case EntityEvent::Interaction : {
+        case EntityEvent::EnterInteraction : {
             m_interactionController.StartInteraction(m_updatedEntities); // m_updatedEntities ?
+            break;
+        }
+        case EntityEvent::LeaveInteraction : {
+            m_interactionController.EndInteraction();
             break;
         }
         default:

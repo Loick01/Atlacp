@@ -16,13 +16,21 @@ class ActionController
 {
     public:
         virtual ~ActionController() = default;
+        
+        virtual void GetStateActions() = 0;
+        
+        // State Event only (I don't think I will need polled version)
         virtual bool IsLeftAction() = 0;
         virtual bool IsRightAction() = 0;
         virtual bool IsUpAction() = 0;
         virtual bool IsDownAction() = 0;
-        virtual bool IsPrimaryAction() = 0; // Rename ?
-        virtual bool IsSecondaryAction() = 0; // Rename ?
-        virtual void GetActions() = 0;
+        
+        virtual bool IsPrimaryActionStated() = 0;
+        virtual bool IsPrimaryActionPolled(const SDL_Event& event) = 0; // Should I avoid having a SDL_Event parameter ?
+        virtual bool IsSecondaryActionStated() = 0;
+        // virtual bool IsSecondaryActionPolled() = 0; // ???
+
+        virtual bool IsPressedPolledEvent(const Uint32 eventType) = 0;
 };
 
 class KeyboardActionController : public ActionController
@@ -31,13 +39,18 @@ class KeyboardActionController : public ActionController
         const Uint8* m_state;
 
     public: 
+        void GetStateActions() override;
+
         bool IsLeftAction() override;
         bool IsRightAction() override;
         bool IsUpAction() override;
         bool IsDownAction() override;
-        bool IsPrimaryAction() override;
-        bool IsSecondaryAction() override;
-        void GetActions() override;
+        
+        bool IsPrimaryActionStated() override;
+        bool IsPrimaryActionPolled(const SDL_Event& event) override;
+        bool IsSecondaryActionStated() override;
+        
+        bool IsPressedPolledEvent(const Uint32 eventType) override;
 };
 
 class JoystickActionController : public ActionController
@@ -51,13 +64,18 @@ class JoystickActionController : public ActionController
         JoystickActionController();
         static bool IsJoystickAvailable();
         
+        void GetStateActions() override;
+        
         bool IsLeftAction() override;
         bool IsRightAction() override;
         bool IsUpAction() override;
         bool IsDownAction() override;
-        bool IsPrimaryAction() override;
-        bool IsSecondaryAction() override;
-        void GetActions() override;
+        
+        bool IsPrimaryActionStated() override;
+        bool IsPrimaryActionPolled(const SDL_Event& event) override;
+        bool IsSecondaryActionStated() override;
+
+        bool IsPressedPolledEvent(const Uint32 eventType) override;
 };
 
 class EventController
@@ -68,8 +86,9 @@ class EventController
     public:
         EventController() = default;
         virtual ~EventController() = default;
+        virtual void HandleStateEvents() = 0; 
+        virtual void HandlePolledEvents() = 0;
         bool HandleWindowEvents() const;
-        virtual void HandleEvents() = 0; 
         void PollAllEvents();
 };
 
@@ -81,7 +100,8 @@ class GameplayEventController : public EventController, public EventStateHolder<
     public:
         GameplayEventController();
 
-        void HandleEvents() override;
+        void HandleStateEvents() override;
+        void HandlePolledEvents() override;
 };
 
 class EditorEventController : public EventController, public EventStateHolder<EditorEventState>
@@ -101,7 +121,8 @@ class EditorEventController : public EventController, public EventStateHolder<Ed
     public:
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
-        void HandleEvents() override;
+        void HandleStateEvents() override;
+        void HandlePolledEvents() override;
 };
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
@@ -112,5 +133,6 @@ class BattleEventController : public EventController, public EventStateHolder<Ba
     public:
         BattleEventController();
 
-        void HandleEvents() override;
+        void HandleStateEvents() override;
+        void HandlePolledEvents() override;
 };
