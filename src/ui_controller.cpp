@@ -162,7 +162,7 @@ void UiController::OpenDialogBox(const std::string& text)
     std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
     std::unique_ptr<UiElement> faceset = CreateElement("faceset", "../assets/ui/faceset.png");
     std::unique_ptr<UiElement> face = CreateElement("face", "../assets/ui/hunter_face.png");
-    // std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
+    std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
 
     UiParams& frameParams = frame->GetParams();
     frameParams.scale = GetPartialRootSizeOnAxis(Axis::Width, 0.5f);
@@ -180,13 +180,13 @@ void UiController::OpenDialogBox(const std::string& text)
     facesetParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Height, 0.15f); // Should not access to root element with its key ?
     GetElement("frame")->BuildChild(std::move(faceset));
 
-    // boxText->SetText(text);
-    // UiParams& boxTextParams = boxText->GetParams();
-    // boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.75f);
-    // boxTextParams.xAnchor = Anchor::RightOut;
-    // boxTextParams.yAnchor = Anchor::Center;
-    // boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
-    // GetElement("faceset")->BuildChild(std::move(boxText));
+    boxText->SetText(text);
+    UiParams& boxTextParams = boxText->GetParams();
+    boxTextParams.scale = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.75f);
+    boxTextParams.xAnchor = Anchor::RightOut;
+    boxTextParams.yAnchor = Anchor::Center;
+    boxTextParams.xPadding = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.2f);
+    GetElement("faceset")->BuildChild(std::move(boxText));
 
     UiParams& faceParams = face->GetParams();
     faceParams.scale = GetPartialElementSizeOnAxis("faceset", Axis::Width, 0.8f);

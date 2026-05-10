@@ -32,7 +32,7 @@ class UiController
 
     protected:
         // Should be private ?
-        const std::string& m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?) 
+        const std::string m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?) 
 
         UiElement* GetElement(const ElementKey& key) const;
         float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
