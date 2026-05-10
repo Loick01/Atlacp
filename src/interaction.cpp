@@ -40,5 +40,7 @@ void InteractionController::EndInteraction()
 {
     m_srcEntity->SetState(EntityState::Free);
     m_dstEntity->SetState(EntityState::Free); 
+    m_srcEntity = nullptr;
+    m_dstEntity = nullptr;
     m_uiController->DeleteElement("frame"); // Should not be here ?
 }
