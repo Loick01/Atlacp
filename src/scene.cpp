@@ -200,7 +200,8 @@ void EditorTilemapScene::Gameloop()
 }
 
 BattleScene::BattleScene(GameContext& context):
-    Scene(context), m_battleController(BattleActor("Howler", 100), BattleActor("Bone Appetit", 100)) // BattleActors will not be here
+    Scene(context), 
+    m_battleController(BattleActor("actorAName", "actorAHealth", "Howler", 100), BattleActor("actorBName", "actorBHealth", "Bone Appetit", 100)) // BattleActors will not be here
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     m_context.eventController = std::make_unique<BattleEventController>();
@@ -209,12 +210,8 @@ BattleScene::BattleScene(GameContext& context):
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     // BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
-    // Actor name and health will be defined here instead of BattleUiController (names will be retrivied from the BattleController)
-    m_context.uiController->UpdateText("actorAName", "Howler"); 
-    m_context.uiController->UpdateText("actorBName", "Bone Appetit");
-    m_context.uiController->UpdateText("actorAHealth", "100 PV"); 
-    m_context.uiController->UpdateText("actorBHealth", "100 PV");
-    // m_context.uiController->DeleteElement("actorASprite");
+    m_battleController.SetUiController(m_context.uiController.get());
+    m_battleController.UpdateStatus();
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events
@@ -233,7 +230,7 @@ void BattleScene::Gameloop()
     // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventState(eventState);
 
     m_battleController.SetEventState(eventState);
-    m_battleController.PlayTurn();
+    m_battleController.PlayFight();
 
     m_context.uiController->Draw();
     m_context.window.DrawBoxing();

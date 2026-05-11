@@ -337,6 +337,7 @@ void BattleEventController::HandleStateEvents()
 {
     m_actionController->GetStateActions();
 
+    // Could be merged with GameplayEventController::HandleStateEvents
     if (m_actionController->IsLeftAction())
         m_eventState.uiDirection = Direction::Left;
     else if (m_actionController->IsRightAction())

@@ -4,6 +4,7 @@
 
 #include "notifier.hpp"
 #include "type.hpp"
+#include "ui_controller.hpp"
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
@@ -15,16 +16,36 @@ enum class Turn
     ActorA, ActorB
 };
 
-class BattleActor // Battler ?
+enum class TurnPhase
+{
+    
+};
+
+template<typename T>
+struct ActorData // Rename + Will not be here
+{
+    ElementKey id; // const ?
+    T value;
+
+    ActorData(ElementKey key, T v):
+        id(key), value(v) 
+    {}
+};
+
+class BattleActor
 {
     private:
-        std::string m_name;
-        unsigned int m_health;
+        ActorData<std::string> m_name;
+        ActorData<unsigned int> m_health;
+
         unsigned int m_strength;
         
     public:
-        BattleActor(const std::string name, const unsigned int health);
+        BattleActor(const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health);
         
+        ElementKey GetHealthId() const;
+        ElementKey GetNameId() const;
+
         std::string GetName() const;
         unsigned int GetHealth() const;
         unsigned int GetStrength() const;
@@ -35,6 +56,7 @@ class BattleActor // Battler ?
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
+        UiController* m_uiController; // Should be BattleUiController ?
         BattleActor m_actorA; // Player
         BattleActor m_actorB; // Enemy
         Turn m_currentTurn;
@@ -42,6 +64,10 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
 
+        void SetUiController(UiController* uiController);
+        void UpdateStatus(); // Rename
         void CheckActorHealth();
-        void PlayTurn();
+
+        void PlayTurn(BattleActor& source, BattleActor& target);
+        void PlayFight();
 };

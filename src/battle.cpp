@@ -1,19 +1,27 @@
 #include "battle.hpp"
 
-BattleActor::BattleActor(const std::string name, const unsigned int health):
-    m_name(name), m_health(health), m_strength(10)
-{
+BattleActor::BattleActor(const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health):
+    m_name(nameId, name), m_health(healthId, health), m_strength(10)
+{}
 
+ElementKey BattleActor::GetHealthId() const
+{
+    return m_health.id;
+}
+
+ElementKey BattleActor::GetNameId() const
+{
+    return m_name.id;
 }
 
 std::string BattleActor::GetName() const
 {
-    return m_name;
+    return m_name.value;
 }
 
 unsigned int BattleActor::GetHealth() const
 {
-    return m_health;
+    return m_health.value;
 }
 
 unsigned int BattleActor::GetStrength() const
@@ -23,13 +31,25 @@ unsigned int BattleActor::GetStrength() const
 
 void BattleActor::TakeDamage(const unsigned int strength)
 {
-    m_health -= strength;
+    m_health.value -= strength;
 }
 
 BattleController::BattleController(const BattleActor actorA, const BattleActor actorB):
-    m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA)
-{
+    m_uiController(nullptr), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA)
+{}
 
+void BattleController::SetUiController(UiController* uiController)
+{
+    m_uiController = uiController;
+}
+
+void BattleController::UpdateStatus()
+{
+    m_uiController->UpdateText(m_actorA.GetNameId(), m_actorA.GetName()); 
+    m_uiController->UpdateText(m_actorB.GetNameId(), m_actorB.GetName());
+    m_uiController->UpdateText(m_actorA.GetHealthId(), std::to_string(m_actorA.GetHealth())); 
+    m_uiController->UpdateText(m_actorB.GetHealthId(), std::to_string(m_actorB.GetHealth()));
+    m_uiController->UpdateText("mainText", "Turn A");
 }
 
 void BattleController::CheckActorHealth()
@@ -40,21 +60,33 @@ void BattleController::CheckActorHealth()
         Notify(ExitEvent::ExitWin);
 }
 
-void BattleController::PlayTurn()
+void BattleController::PlayTurn(BattleActor& source, BattleActor& target)
+{
+    target.TakeDamage(source.GetStrength());
+    CheckActorHealth();
+    m_uiController->UpdateText(target.GetHealthId(), std::to_string(m_actorB.GetHealth()));  // I will add UiController::UpdateText(ActorData)
+}
+
+void BattleController::PlayFight()
 {
     switch(m_currentTurn) {
         case Turn::ActorA : {
             if (m_eventState.isAction) { // TODO
-                m_actorB.TakeDamage(m_actorA.GetStrength());
-                m_currentTurn = Turn::ActorB; // SwitchTurn function ?
+                PlayTurn(m_actorA, m_actorB);
+                // Will not be here ?
+                m_uiController->UpdateText("mainText", "Turn B");
+                m_currentTurn = Turn::ActorB; // SwitchTurn function (could be in PlayTurn) ?
             }   
             break;
         }
         case Turn::ActorB : {
-            m_actorA.TakeDamage(m_actorB.GetStrength());
-            m_currentTurn = Turn::ActorA; // SwitchTurn function ?
+            if (m_eventState.isAction) { // TODO
+                PlayTurn(m_actorB, m_actorA);
+                // Will not be here ?
+                m_uiController->UpdateText("mainText", "Turn A");
+                m_currentTurn = Turn::ActorA; // SwitchTurn function (could be in PlayTurn) ?
+            }
             break;
         }
     }
-    CheckActorHealth();
 }

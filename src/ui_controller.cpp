@@ -252,6 +252,7 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     std::unique_ptr<UiElement> actorABox = CreateElement("actorABox", "../assets/ui/box.png");
     std::unique_ptr<UiElement> actorBBox = CreateElement("actorBBox", "../assets/ui/box.png");
     std::unique_ptr<UiElement> mainBox = CreateElement("mainBox", "../assets/ui/box.png");
+    std::unique_ptr<TextArea> mainText = CreateTextElement("mainText", m_fontFilepath);
     std::unique_ptr<TextArea> actorAName = CreateTextElement("actorAName", m_fontFilepath);
     std::unique_ptr<TextArea> actorBName = CreateTextElement("actorBName", m_fontFilepath);
     std::unique_ptr<TextArea> actorAHealth = CreateTextElement("actorAHealth", m_fontFilepath);
@@ -288,6 +289,13 @@ BattleUiController::BattleUiController(TextureController& textureController, con
     mainBoxParams.yAnchor = Anchor::BottomIn;
     mainBoxParams.yPadding = GetPartialElementSizeOnAxis("background", Axis::Height, -0.05f); // Should not access to root element with its key ?
     GetElement("background")->BuildChild(std::move(mainBox));
+
+    UiParams& mainTextParams = mainText->GetParams();
+    mainTextParams.scale = GetPartialElementSizeOnAxis("mainBox", Axis::Width, 0.8f);
+    mainTextParams.xAnchor = Anchor::LeftIn;
+    mainTextParams.yAnchor = Anchor::Center;
+    mainTextParams.xPadding = GetPartialElementSizeOnAxis("mainBox", Axis::Width, 0.05f);
+    GetElement("mainBox")->BuildChild(std::move(mainText));
 
     UiParams& actorABoxParams = actorABox->GetParams();
     actorABoxParams.scale = GetPartialElementSizeOnAxis("actorASprite", Axis::Width, 1.f);
