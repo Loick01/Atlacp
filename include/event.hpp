@@ -20,7 +20,7 @@ class EventController
         EventController() = default;
         virtual ~EventController() = default;
         virtual void HandleStateEvents() = 0; 
-        virtual void HandlePolledEvents() = 0;
+        virtual void HandlePollEvents() = 0;
         bool HandleWindowEvents() const;
         void PollAllEvents();
 };
@@ -34,7 +34,7 @@ class GameplayEventController : public EventController, public EventStateHolder<
         GameplayEventController();
 
         void HandleStateEvents() override;
-        void HandlePolledEvents() override;
+        void HandlePollEvents() override;
 };
 
 class EditorEventController : public EventController, public EventStateHolder<EditorEventState>
@@ -55,7 +55,7 @@ class EditorEventController : public EventController, public EventStateHolder<Ed
         EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
         void HandleStateEvents() override;
-        void HandlePolledEvents() override;
+        void HandlePollEvents() override;
 };
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
@@ -67,5 +67,5 @@ class BattleEventController : public EventController, public EventStateHolder<Ba
         BattleEventController();
 
         void HandleStateEvents() override;
-        void HandlePolledEvents() override;
+        void HandlePollEvents() override;
 };

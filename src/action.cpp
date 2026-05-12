@@ -39,57 +39,51 @@ bool KeyboardActionController::IsSecondaryActionState()
 
 // KEYBOARD POLL EVENT
 
-bool KeyboardActionController::IsPressedPoll(const Uint32 eventType)
+bool KeyboardActionController::IsPressedPoll(const SDL_Event& event)
 {
-    return eventType == SDL_KEYDOWN;
+    return event.key.repeat == 0 && event.type == SDL_KEYDOWN;
 }
 
-bool KeyboardActionController::IsMotionPoll(const Uint32 eventType)
+bool KeyboardActionController::IsMotionPoll(const SDL_Event& event)
 {
-    return eventType == SDL_KEYDOWN; // Same than KeyboardActionController::IsPressedPoll, but JoystickActionController::IsMotionPoll use a different event type
+    return event.key.repeat == 0 && event.type == SDL_KEYDOWN; // Same than KeyboardActionController::IsPressedPoll, but JoystickActionController::IsMotionPoll use a different event type
 }
 
 bool KeyboardActionController::IsLeftActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     return event.key.keysym.scancode == SDL_SCANCODE_A;
 }
 
 bool KeyboardActionController::IsRightActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     return event.key.keysym.scancode == SDL_SCANCODE_D;
 }
 
 bool KeyboardActionController::IsUpActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     return event.key.keysym.scancode == SDL_SCANCODE_W;
 }
 
 bool KeyboardActionController::IsDownActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     return event.key.keysym.scancode == SDL_SCANCODE_S;
 }
 
 bool KeyboardActionController::IsPrimaryActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     // SDL_Scancode eventScancode = event.key.keysym.scancode;
     return event.key.keysym.scancode == SDL_SCANCODE_SPACE;
 }
 
 bool KeyboardActionController::IsSecondaryActionPoll(const SDL_Event& event)
 {
-    if (event.key.repeat != 0) return false;
     return event.key.keysym.scancode == SDL_SCANCODE_LSHIFT;
 }
 
 // JOYSTICK
 
 JoystickActionController::JoystickActionController() :
-    m_joystick(nullptr)
+    m_joystick(nullptr), m_joystickState(JoystickState::Neutral)
 {
     m_joystick = SDL_JoystickOpen(0);
     if (m_joystick == nullptr)
@@ -168,34 +162,58 @@ bool JoystickActionController::IsSecondaryActionState()
 
 // JOYSTICK POLL EVENT
 
-bool JoystickActionController::IsPressedPoll(const Uint32 eventType)
+bool JoystickActionController::IsPressedPoll(const SDL_Event& event)
 {
-    return eventType == SDL_JOYBUTTONDOWN;
+    return event.type == SDL_JOYBUTTONDOWN;
 }
 
-bool JoystickActionController::IsMotionPoll(const Uint32 eventType)
+bool JoystickActionController::IsMotionPoll(const SDL_Event& event)
 {
-    return eventType == SDL_JOYAXISMOTION;
+    return event.type == SDL_JOYAXISMOTION;
 }
 
 bool JoystickActionController::IsLeftActionPoll(const SDL_Event& event)
 {
-    return m_axisX < -JOYSTICK_DEAD_ZONE;
+    if (event.jaxis.axis == 0 && event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+        if (m_joystickState != JoystickState::IsLeft) {
+            m_joystickState = JoystickState::IsLeft;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool JoystickActionController::IsRightActionPoll(const SDL_Event& event)
 {
-    return m_axisX > JOYSTICK_DEAD_ZONE;
+    if (event.jaxis.axis == 0 && event.jaxis.value > JOYSTICK_DEAD_ZONE) {
+        if (m_joystickState != JoystickState::IsRight) {
+            m_joystickState = JoystickState::IsRight;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool JoystickActionController::IsUpActionPoll(const SDL_Event& event)
 {
-    return m_axisY < -JOYSTICK_DEAD_ZONE;
+    if (event.jaxis.axis == 1 && event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
+        if (m_joystickState != JoystickState::IsUp) {
+            m_joystickState = JoystickState::IsUp;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool JoystickActionController::IsDownActionPoll(const SDL_Event& event)
 {
-    return m_axisY > JOYSTICK_DEAD_ZONE;
+    if (event.jaxis.axis == 1 && event.jaxis.value > JOYSTICK_DEAD_ZONE) {
+        if (m_joystickState != JoystickState::IsDown) {
+            m_joystickState = JoystickState::IsDown;
+            return true;
+        }
+    }
+    return false;
 }
 
 bool JoystickActionController::IsPrimaryActionPoll(const SDL_Event& event)

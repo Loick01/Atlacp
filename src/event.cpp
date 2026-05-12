@@ -53,10 +53,10 @@ void GameplayEventController::HandleStateEvents()
         m_eventState.mapDirection = Direction::None;
 }
 
-void GameplayEventController::HandlePolledEvents()
+void GameplayEventController::HandlePollEvents()
 {
     for (SDL_Event event : m_events){
-        if (m_actionController->IsPressedPoll(event.type)) {
+        if (m_actionController->IsPressedPoll(event)) {
             if (m_actionController->IsPrimaryActionPoll(event)) {
                 m_eventState.isInteracting = true;
                 return;
@@ -88,7 +88,7 @@ ScenePosition EditorEventController::GetMouseScenePosition() const
 void EditorEventController::HandleStateEvents()
 {}
 
-void EditorEventController::HandlePolledEvents()
+void EditorEventController::HandlePollEvents()
 {
     for (SDL_Event event : m_events){
         switch (event.type){
@@ -197,26 +197,20 @@ BattleEventController::BattleEventController()
 
 void BattleEventController::HandleStateEvents()
 {
-    m_actionController->GetStateActions();
+    // m_actionController->GetStateActions();
 }
 
-void BattleEventController::HandlePolledEvents()
+void BattleEventController::HandlePollEvents()
 {
     for (SDL_Event event : m_events){
-        if (m_actionController->IsPressedPoll(event.type)) {
+        if (m_actionController->IsPressedPoll(event)) {
             if (m_actionController->IsPrimaryActionPoll(event)) {
                 m_eventState.isAction = true;
                 return;
             }
         } 
-        if (m_actionController->IsMotionPoll(event.type)) {
-            if (m_actionController->IsLeftActionPoll(event)) {
-                m_eventState.uiDirection = Direction::Left;
-                return;
-            } else if (m_actionController->IsRightActionPoll(event)) {
-                m_eventState.uiDirection = Direction::Right;
-                return;
-            } else if (m_actionController->IsUpActionPoll(event)) {
+        if (m_actionController->IsMotionPoll(event)) {
+            if (m_actionController->IsUpActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Up;
                 return;
             } else if (m_actionController->IsDownActionPoll(event)) {

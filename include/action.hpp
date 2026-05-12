@@ -26,8 +26,8 @@ class ActionController
         virtual bool IsPrimaryActionState() = 0; // ?
         virtual bool IsSecondaryActionState() = 0;
 
-        virtual bool IsPressedPoll(const Uint32 eventType) = 0;
-        virtual bool IsMotionPoll(const Uint32 eventType) = 0;
+        virtual bool IsPressedPoll(const SDL_Event& event) = 0;
+        virtual bool IsMotionPoll(const SDL_Event& event) = 0;
         
         virtual bool IsLeftActionPoll(const SDL_Event& event) = 0; // Should I avoid having a SDL_Event parameter ?
         virtual bool IsRightActionPoll(const SDL_Event& event) = 0;
@@ -52,8 +52,8 @@ class KeyboardActionController : public ActionController
         bool IsPrimaryActionState() override;
         bool IsSecondaryActionState() override;
 
-        bool IsPressedPoll(const Uint32 eventType) override;
-        bool IsMotionPoll(const Uint32 eventType) override;
+        bool IsPressedPoll(const SDL_Event& event) override;
+        bool IsMotionPoll(const SDL_Event& event) override;
 
         bool IsLeftActionPoll(const SDL_Event& event) override;
         bool IsRightActionPoll(const SDL_Event& event) override;
@@ -63,10 +63,16 @@ class KeyboardActionController : public ActionController
         bool IsSecondaryActionPoll(const SDL_Event& event) override;
 };
 
+enum class JoystickState
+{
+    IsLeft, IsRight, IsUp, IsDown, Neutral
+};
+
 class JoystickActionController : public ActionController
 {
     private:
         SDL_Joystick* m_joystick;
+        JoystickState m_joystickState;
         int m_axisX;
         int m_axisY;
 
@@ -83,8 +89,8 @@ class JoystickActionController : public ActionController
         bool IsPrimaryActionState() override;
         bool IsSecondaryActionState() override;
 
-        bool IsPressedPoll(const Uint32 eventType) override;
-        bool IsMotionPoll(const Uint32 eventType) override;
+        bool IsPressedPoll(const SDL_Event& event) override;
+        bool IsMotionPoll(const SDL_Event& event) override;
         
         bool IsLeftActionPoll(const SDL_Event& event) override;
         bool IsRightActionPoll(const SDL_Event& event) override;
