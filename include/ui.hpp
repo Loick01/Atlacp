@@ -28,6 +28,17 @@ enum class Anchor
     BottomIn, BottomOut
 };
 
+template<typename T>
+struct UiValue
+{
+    ElementKey id; // const ?
+    T value;
+
+    UiValue(ElementKey key, T v):
+        id(key), value(v) 
+    {}
+};
+
 struct UiParams
 {
     float scale;

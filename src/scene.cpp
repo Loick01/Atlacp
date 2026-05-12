@@ -212,6 +212,7 @@ BattleScene::BattleScene(GameContext& context):
     // BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
     m_battleController.SetUiController(m_context.uiController.get());
     m_battleController.UpdateStatus();
+    m_battleController.InitPlayerTurn();
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events

@@ -11,32 +11,16 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
     ExitWin, ExitLost
 };
 
-enum class Turn
+enum class Turn // Will be removed
 {
     ActorA, ActorB
-};
-
-enum class TurnPhase
-{
-    
-};
-
-template<typename T>
-struct ActorData // Rename + Will not be here
-{
-    ElementKey id; // const ?
-    T value;
-
-    ActorData(ElementKey key, T v):
-        id(key), value(v) 
-    {}
 };
 
 class BattleActor
 {
     private:
-        ActorData<std::string> m_name;
-        ActorData<unsigned int> m_health;
+        UiValue<std::string> m_name;
+        UiValue<unsigned int> m_health;
 
         unsigned int m_strength;
         
@@ -60,6 +44,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleActor m_actorA; // Player
         BattleActor m_actorB; // Enemy
         Turn m_currentTurn;
+        int m_selectedOption;
 
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
@@ -68,6 +53,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void UpdateStatus(); // Rename
         void CheckActorHealth();
 
+        void CreateSelect(const unsigned int targetOption);
+        void InitPlayerTurn();
         void PlayTurn(BattleActor& source, BattleActor& target);
         void PlayFight();
 };

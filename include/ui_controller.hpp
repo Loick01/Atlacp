@@ -34,12 +34,6 @@ class UiController
         // Should be private ?
         const std::string m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?) 
 
-        UiElement* GetElement(const ElementKey& key) const;
-        float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
-        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
-
-        std::unique_ptr<UiElement> CreateElement(const ElementKey& key, const std::string& textureFilepath);
-        std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key, const std::string& fontFilepath); // Remove fontFilepath ?
         void HandleUiEvent(const UiElementEvent e, const ElementKey& key);
         void UpdatePosition(); // Compute the rendering position for every UiElement in every branch --> This function must be called in every UiController constructors 
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
@@ -51,6 +45,14 @@ class UiController
          
         virtual void Update() = 0;
         void Draw() const;
+
+        UiElement* GetElement(const ElementKey& key) const;
+        float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
+        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
+        
+        std::unique_ptr<UiElement> CreateElement(const ElementKey& key, const std::string& textureFilepath);
+        std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key);
+        std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key, const std::string& fontFilepath); // Remove ?
         void DeleteElement(const ElementKey& key);
 
         void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
