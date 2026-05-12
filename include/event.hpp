@@ -6,96 +6,10 @@
 
 #include <SDL2/SDL.h>
 
+#include "action.hpp"
 #include "drawable.hpp"
 #include "tilemap.hpp"
 #include "type.hpp"
-
-#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 (should be a member in JoystickActionController to verify ?)
-
-class ActionController
-{
-    public:
-        virtual ~ActionController() = default;
-        
-        virtual void GetStateActions() = 0;
-        
-        virtual bool IsLeftActionStated() = 0;
-        virtual bool IsRightActionStated() = 0;
-        virtual bool IsUpActionStated() = 0;
-        virtual bool IsDownActionStated() = 0;
-
-        virtual bool IsLeftActionPolled(const SDL_Event& event) = 0;
-        virtual bool IsRightActionPolled(const SDL_Event& event) = 0;
-        virtual bool IsUpActionPolled(const SDL_Event& event) = 0;
-        virtual bool IsDownActionPolled(const SDL_Event& event) = 0;
-        
-        virtual bool IsPrimaryActionStated() = 0;
-        virtual bool IsPrimaryActionPolled(const SDL_Event& event) = 0; // Should I avoid having a SDL_Event parameter ?
-        virtual bool IsSecondaryActionStated() = 0;
-        virtual bool IsSecondaryActionPolled(const SDL_Event& event) = 0;
-
-        virtual bool IsPressedPolledEvent(const Uint32 eventType) = 0;
-        virtual bool IsMotionPolledEvent(const Uint32 eventType) = 0;
-};
-
-class KeyboardActionController : public ActionController
-{
-    private:
-        const Uint8* m_state;
-
-    public: 
-        void GetStateActions() override;
-
-        bool IsLeftActionStated() override;
-        bool IsRightActionStated() override;
-        bool IsUpActionStated() override;
-        bool IsDownActionStated() override;
-
-        bool IsLeftActionPolled(const SDL_Event& event) override;
-        bool IsRightActionPolled(const SDL_Event& event) override;
-        bool IsUpActionPolled(const SDL_Event& event) override;
-        bool IsDownActionPolled(const SDL_Event& event) override;
-        
-        bool IsPrimaryActionStated() override;
-        bool IsPrimaryActionPolled(const SDL_Event& event) override;
-        bool IsSecondaryActionStated() override;
-        bool IsSecondaryActionPolled(const SDL_Event& event) override;
-        
-        bool IsPressedPolledEvent(const Uint32 eventType) override;
-        bool IsMotionPolledEvent(const Uint32 eventType) override;
-};
-
-class JoystickActionController : public ActionController
-{
-    private:
-        SDL_Joystick* m_joystick;
-        int m_axisX;
-        int m_axisY;
-
-    public:
-        JoystickActionController();
-        static bool IsJoystickAvailable();
-        
-        void GetStateActions() override;
-        
-        bool IsLeftActionStated() override;
-        bool IsRightActionStated() override;
-        bool IsUpActionStated() override;
-        bool IsDownActionStated() override;
-
-        bool IsLeftActionPolled(const SDL_Event& event) override;
-        bool IsRightActionPolled(const SDL_Event& event) override;
-        bool IsUpActionPolled(const SDL_Event& event) override;
-        bool IsDownActionPolled(const SDL_Event& event) override;
-        
-        bool IsPrimaryActionStated() override;
-        bool IsPrimaryActionPolled(const SDL_Event& event) override;
-        bool IsSecondaryActionStated() override;
-        bool IsSecondaryActionPolled(const SDL_Event& event) override;
-
-        bool IsPressedPolledEvent(const Uint32 eventType) override;
-        bool IsMotionPolledEvent(const Uint32 eventType) override;
-};
 
 class EventController
 {

@@ -1,208 +1,5 @@
 #include "event.hpp"
 
-void KeyboardActionController::GetStateActions()
-{
-    m_state = SDL_GetKeyboardState(NULL);
-}
-
-bool KeyboardActionController::IsLeftActionStated()
-{
-    return m_state[SDL_SCANCODE_A];
-}
-
-bool KeyboardActionController::IsRightActionStated()
-{
-    return m_state[SDL_SCANCODE_D];
-}
-
-bool KeyboardActionController::IsUpActionStated()
-{
-    return m_state[SDL_SCANCODE_W];
-}
-
-bool KeyboardActionController::IsDownActionStated()
-{
-    return m_state[SDL_SCANCODE_S];
-}
-
-bool KeyboardActionController::IsLeftActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    return event.key.keysym.scancode == SDL_SCANCODE_A;
-}
-
-bool KeyboardActionController::IsRightActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    return event.key.keysym.scancode == SDL_SCANCODE_D;
-}
-
-bool KeyboardActionController::IsUpActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    return event.key.keysym.scancode == SDL_SCANCODE_W;
-}
-
-bool KeyboardActionController::IsDownActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    return event.key.keysym.scancode == SDL_SCANCODE_S;
-}
-
-bool KeyboardActionController::IsPrimaryActionStated()
-{
-    return m_state[SDL_SCANCODE_SPACE];
-}
-
-bool KeyboardActionController::IsPrimaryActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    //SDL_Scancode eventScancode = event.key.keysym.scancode;
-    return event.key.keysym.scancode == SDL_SCANCODE_SPACE;
-}
-
-bool KeyboardActionController::IsSecondaryActionStated()
-{
-    return m_state[SDL_SCANCODE_LSHIFT];
-}
-
-bool KeyboardActionController::IsSecondaryActionPolled(const SDL_Event& event)
-{
-    if (event.key.repeat != 0) return false;
-    return event.key.keysym.scancode == SDL_SCANCODE_LSHIFT;
-}
-
-bool KeyboardActionController::IsPressedPolledEvent(const Uint32 eventType)
-{
-    return eventType == SDL_KEYDOWN;
-}
-
-bool KeyboardActionController::IsMotionPolledEvent(const Uint32 eventType)
-{
-    return eventType == SDL_KEYDOWN;
-}
-
-JoystickActionController::JoystickActionController() :
-    m_joystick(nullptr)
-{
-    m_joystick = SDL_JoystickOpen(0);
-    if (m_joystick == nullptr)
-        throw std::runtime_error("Failed to open joystick\n" + std::string(SDL_GetError()));
-}
-
-bool JoystickActionController::IsJoystickAvailable()
-{
-    const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
-    if (joystick==0){
-        return SDL_NumJoysticks() != 0;
-    }else{
-        throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
-    }
-}
-
-/* If I need to know when the joystick is removed
-
-for (SDL_Event event : m_events){
-    switch (event.type){
-        case SDL_JOYDEVICEREMOVED: {
-            //m_joystick = nullptr;
-            std::cout << "Joystick with index " << event.jdevice.which << " was removed.\n"; // Throw an error
-            break;
-        }
-    }
-}
-*/
-
-/*
-When I need to know joystick button id (move this in JoystickActionController::GetStateActions)
-
-int buttonCount = SDL_JoystickNumButtons(m_joystick);
-
-for (int i = 0; i < buttonCount; i++) {
-    Uint8 state = SDL_JoystickGetButton(m_joystick, i);
-
-    if (state){
-        std::cout << "Button " << i << " pressed\n";
-    }
-}
-*/
-
-void JoystickActionController::GetStateActions()
-{
-    m_axisX = SDL_JoystickGetAxis(m_joystick, 0);
-    m_axisY = SDL_JoystickGetAxis(m_joystick, 1);
-}
-
-bool JoystickActionController::IsLeftActionPolled(const SDL_Event& event)
-{
-    return m_axisX < -JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsRightActionPolled(const SDL_Event& event)
-{
-    return m_axisX > JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsUpActionPolled(const SDL_Event& event)
-{
-    return m_axisY < -JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsDownActionPolled(const SDL_Event& event)
-{
-    return m_axisY > JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsLeftActionStated()
-{
-    return m_axisX < -JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsRightActionStated()
-{
-    return m_axisX > JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsUpActionStated()
-{
-    return m_axisY < -JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsDownActionStated()
-{
-    return m_axisY > JOYSTICK_DEAD_ZONE;
-}
-
-bool JoystickActionController::IsPrimaryActionStated()
-{
-    return SDL_JoystickGetButton(m_joystick, 1); // Should be done in JoystickController:: GetStateActions() ?
-}
-
-bool JoystickActionController::IsPrimaryActionPolled(const SDL_Event& event)
-{
-    return event.jbutton.button == 1;
-}
-
-bool JoystickActionController::IsSecondaryActionStated()
-{
-    return SDL_JoystickGetButton(m_joystick, 2); // Should be done in JoystickController:: GetStateActions() ?
-}
-
-bool JoystickActionController::IsSecondaryActionPolled(const SDL_Event& event)
-{
-    return event.jbutton.button == 2;
-}
-
-bool JoystickActionController::IsPressedPolledEvent(const Uint32 eventType)
-{
-    return eventType == SDL_JOYBUTTONDOWN;
-}
-
-bool JoystickActionController::IsMotionPolledEvent(const Uint32 eventType)
-{
-    return eventType == SDL_JOYAXISMOTION;
-}
-
 bool EventController::HandleWindowEvents() const
 {
     for (SDL_Event event : m_events){
@@ -243,14 +40,14 @@ void GameplayEventController::HandleStateEvents()
 {
     m_actionController->GetStateActions();
 
-    m_eventState.isRunning = m_actionController->IsSecondaryActionStated();
-    if (m_actionController->IsLeftActionStated())
+    m_eventState.isRunning = m_actionController->IsSecondaryActionState();
+    if (m_actionController->IsLeftActionState())
         m_eventState.mapDirection = Direction::Left;
-    else if (m_actionController->IsRightActionStated())
+    else if (m_actionController->IsRightActionState())
         m_eventState.mapDirection = Direction::Right;
-    else if (m_actionController->IsUpActionStated())
+    else if (m_actionController->IsUpActionState())
         m_eventState.mapDirection = Direction::Up;
-    else if (m_actionController->IsDownActionStated())
+    else if (m_actionController->IsDownActionState())
         m_eventState.mapDirection = Direction::Down;
     else
         m_eventState.mapDirection = Direction::None;
@@ -259,8 +56,8 @@ void GameplayEventController::HandleStateEvents()
 void GameplayEventController::HandlePolledEvents()
 {
     for (SDL_Event event : m_events){
-        if (m_actionController->IsPressedPolledEvent(event.type)) {
-            if (m_actionController->IsPrimaryActionPolled(event)) {
+        if (m_actionController->IsPressedPoll(event.type)) {
+            if (m_actionController->IsPrimaryActionPoll(event)) {
                 m_eventState.isInteracting = true;
                 return;
             }
@@ -400,29 +197,29 @@ BattleEventController::BattleEventController()
 
 void BattleEventController::HandleStateEvents()
 {
-    // m_actionController->GetStateActions();
+    m_actionController->GetStateActions();
 }
 
 void BattleEventController::HandlePolledEvents()
 {
     for (SDL_Event event : m_events){
-        if (m_actionController->IsPressedPolledEvent(event.type)) {
-            if (m_actionController->IsPrimaryActionPolled(event)) {
+        if (m_actionController->IsPressedPoll(event.type)) {
+            if (m_actionController->IsPrimaryActionPoll(event)) {
                 m_eventState.isAction = true;
                 return;
             }
         } 
-        if (m_actionController->IsMotionPolledEvent(event.type)) {
-            if (m_actionController->IsLeftActionPolled(event)) {
+        if (m_actionController->IsMotionPoll(event.type)) {
+            if (m_actionController->IsLeftActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Left;
                 return;
-            } else if (m_actionController->IsRightActionPolled(event)) {
+            } else if (m_actionController->IsRightActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Right;
                 return;
-            } else if (m_actionController->IsUpActionPolled(event)) {
+            } else if (m_actionController->IsUpActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Up;
                 return;
-            } else if (m_actionController->IsDownActionPolled(event)) {
+            } else if (m_actionController->IsDownActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Down;
                 return;
             }
