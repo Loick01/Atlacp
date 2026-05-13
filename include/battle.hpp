@@ -34,7 +34,7 @@ class BattleActor
         unsigned int GetHealth() const;
         unsigned int GetStrength() const;
 
-        void TakeDamage(const unsigned int strength);
+        void RemoveHealth(const unsigned int damage);
 };
 
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>

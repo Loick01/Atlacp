@@ -23,7 +23,7 @@ class ActionController
         virtual bool IsRightActionState() = 0;
         virtual bool IsUpActionState() = 0;
         virtual bool IsDownActionState() = 0;
-        virtual bool IsPrimaryActionState() = 0; // ?
+        virtual bool IsPrimaryActionState() = 0; // Unused ?
         virtual bool IsSecondaryActionState() = 0;
 
         virtual bool IsPressedPoll(const SDL_Event& event) = 0;
@@ -65,7 +65,7 @@ class KeyboardActionController : public ActionController
 
 enum class JoystickState
 {
-    IsLeft, IsRight, IsUp, IsDown, Neutral
+    Active, Neutral
 };
 
 class JoystickActionController : public ActionController

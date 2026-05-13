@@ -29,9 +29,9 @@ unsigned int BattleActor::GetStrength() const
     return m_strength;
 }
 
-void BattleActor::TakeDamage(const unsigned int strength)
+void BattleActor::RemoveHealth(const unsigned int damage)
 {
-    m_health.value -= strength;
+    m_health.value -= damage;
 }
 
 BattleController::BattleController(const BattleActor actorA, const BattleActor actorB):
@@ -95,9 +95,9 @@ void BattleController::InitPlayerTurn()
 
 void BattleController::PlayTurn(BattleActor& source, BattleActor& target)
 {
-    target.TakeDamage(source.GetStrength());
+    target.RemoveHealth(source.GetStrength());
     CheckActorHealth();
-    m_uiController->UpdateText(target.GetHealthId(), std::to_string(m_actorB.GetHealth()));  // I will add UiController::UpdateText(UiValue)
+    m_uiController->UpdateText(target.GetHealthId(), std::to_string(target.GetHealth()));  // I will add UiController::UpdateText(UiValue)
 }
 
 void BattleController::PlayFight()
@@ -108,7 +108,7 @@ void BattleController::PlayFight()
                 m_selectedOption = (m_selectedOption+1)%4;
                 m_uiController->DeleteElement("select");
                 CreateSelect(m_selectedOption);
-                m_uiController->GetElement("mainBox")->UpdatePosition();
+                m_uiController->GetElement("mainBox")->UpdatePosition(); // GetElement("option"+std::to_string(m_selectedOption))
             } else if (m_eventState.uiDirection == Direction::Up) {
                 m_selectedOption = (m_selectedOption-1+4)%4;
                 m_uiController->DeleteElement("select");
@@ -117,7 +117,6 @@ void BattleController::PlayFight()
             } else if (m_eventState.isAction) { // TODO
                 PlayTurn(m_actorA, m_actorB);
                 // Will not be here ?
-                // m_uiController->UpdateText("mainText", "Turn B");
                 m_uiController->DeleteElement("option0");
                 m_currentTurn = Turn::ActorB; // SwitchTurn function (could be in PlayTurn) ?
             }   
