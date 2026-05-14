@@ -1,8 +1,8 @@
 #include "ui_controller.hpp"
 
-UiController::UiController(TextureController& textureController, const std::string& fontFilepath,
+UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
 const AreaSize size, const ScreenPosition position):
-    m_textureController(textureController), m_fontFilepath(fontFilepath), m_size(size), m_position(position)
+    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath), m_size(size), m_position(position)
 {}
 
 void UiController::Draw() const
@@ -203,9 +203,9 @@ void UiController::OpenDialogBox(const std::string& text)
     UpdatePosition(); // Should call it only on frame ?
 }
 
-GameplayUiController::GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
+GameplayUiController::GameplayUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(textureController, fontFilepath, viewportSize, viewportPosition)
+    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition)
 {
     UpdatePosition(); // Should remove it if no UiElement are created here ?
 }
@@ -213,9 +213,9 @@ GameplayUiController::GameplayUiController(TextureController& textureController,
 void GameplayUiController::Update()
 {}
 
-EditorUiController::EditorUiController(TextureController& textureController, const std::string& fontFilepath,
+EditorUiController::EditorUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
+    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
     std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
     std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
@@ -247,9 +247,9 @@ void EditorUiController::Update()
     } 
 }
 
-BattleUiController::BattleUiController(TextureController& textureController, const std::string& fontFilepath,
+BattleUiController::BattleUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(textureController, fontFilepath, viewportSize, viewportPosition)
+    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition)
 {
     std::unique_ptr<UiElement> background = CreateElement("background", "../assets/battle/backgrounds/cavern.png");
     std::unique_ptr<UiElement> actorASprite = CreateElement("actorASprite", "../assets/battle/werewolf.png");

@@ -19,6 +19,11 @@ enum class Axis
     Width, Height, None
 };
 
+enum class UiType // Could be in file.hpp ?
+{
+    UiElement, TextArea, Invalid // Temp : Invalid exists only because I need to know when the end of ui file is reached
+};
+
 enum class Anchor
 {
     LeftIn, LeftOut, 

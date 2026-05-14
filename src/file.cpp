@@ -8,11 +8,11 @@ std::vector<DataNPC> FileReader::ReadDataNPCs(const std::string& npcsFilepath, c
     unsigned int currentIndex = 0;
     std::string s;
     while(currentIndex < mapIndex && input >> s) { // Skip to the data associated with the chosen map
-        if (s == MAP_HEADER_END) currentIndex++;
+        if (s == FILE_DELIMITER) currentIndex++;
     }
     if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid");
 
-    while (input >> s && s != MAP_HEADER_END) {
+    while (input >> s && s != FILE_DELIMITER) {
         DataNPC data;
         // No verification yet on what is read 
         data.sprite = s;
@@ -30,10 +30,9 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
     input.open(worldFilepath);
     WorldData data;
     
-    int v;
-    input >> v; data.startMap = v;
-    input >> v; data.size.x = v;
-    input >> v; data.size.y = v;
+    input >> data.startMap;
+    input >> data.size.x;
+    input >> data.size.y;
     
     std::string s;
     data.maps.reserve(data.size.x*data.size.y);
@@ -46,14 +45,13 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 {
-    int v;
-    input >> v; data.layerCount = v;
-    input >> v; data.size.x = v;
-    input >> v; data.size.y = v;
-    input >> v; data.spawnPosition.x = v;
-    input >> v; data.spawnPosition.y = v;
+    input >> data.layerCount;
+    input >> data.size.x;
+    input >> data.size.y;
+    input >> data.spawnPosition.x;
+    input >> data.spawnPosition.y;
     std::string s;
-    while (input >> s && s != MAP_HEADER_END)
+    while (input >> s && s != FILE_DELIMITER)
         data.tilesets.push_back(s);
 }
 
@@ -123,6 +121,43 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
     return data;
 }
 
+// In UiController
+// OpenFile(path);
+// UiResult r = m_fileReader.ReadUiElement();
+// while (r.type != UiType::Invalid) {
+//     // Build the UiElement/TextArea here
+//     r = m_fileReader.ReadUiElement();
+// }
+
+void FileReader::OpenFile(const std::string& filepath)
+{
+    m_input.open(filepath);
+}
+
+UiResult FileReader::ReadUiElement()
+{
+    // Maybe test if a file has been opened here ?
+    UiResult res;
+
+    m_input >> res.parentKey;
+    m_input >> res.key;
+    m_input >> res.path;
+
+    std::string v;
+    m_input >> v;
+    // Instead of if/else, I could use a static map<string, UiType> ?
+    if (v == "uielement")
+        res.type = UiType::UiElement;
+    else if (v == "textarea")
+        res.type = UiType::TextArea;
+    else  
+        throw std::runtime_error("Invalid UiType was read"); // Do not set res.type to UiType::Invalid
+    
+    // Read data for the UiParams
+    
+    return res;
+}
+
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
     std::ofstream mapFile("../assets/maps/"+mapFilepath); // Create a function in file
@@ -137,7 +172,7 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     for (const TextureKey& k : mapData.tilesets){ // Tileset filepath must be write in order
         mapFile << k << "\n"; // TilesetKey need definition for operator<<
     }
-    mapFile << MAP_HEADER_END << "\n";
+    mapFile << FILE_DELIMITER << "\n";
     
     // Map layers
     for (unsigned int layer=0 ; layer < layerCount ; layer++){

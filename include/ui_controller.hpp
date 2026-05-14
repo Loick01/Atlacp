@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "file.hpp"
 #include "texture.hpp"
 #include "ui.hpp"
 
@@ -22,6 +23,7 @@ class UiController
         // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will throw errors because the keys will not
         // be able to be found in m_elements
 
+        const FileReader& m_fileReader;
         TextureController& m_textureController;
 
         const ScreenPosition m_position; // Initialized with the viewport position
@@ -39,7 +41,7 @@ class UiController
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
 
     public:
-        UiController(TextureController& textureController, const std::string& fontFilepath, 
+        UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
             const AreaSize size, const ScreenPosition position);
         // virtual ~UiController();
          
@@ -64,7 +66,7 @@ class UiController
 class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
 {
     public:
-        GameplayUiController(TextureController& textureController, const std::string& fontFilepath,
+        GameplayUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
             const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
@@ -75,7 +77,7 @@ class EditorUiController : public UiController, public EventStateHolder<EditorEv
         int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
 
     public:
-        EditorUiController(TextureController& textureController, const std::string& fontFilepath, 
+        EditorUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
             const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
@@ -83,7 +85,7 @@ class EditorUiController : public UiController, public EventStateHolder<EditorEv
 class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
 {
     public:
-        BattleUiController(TextureController& textureController, const std::string& fontFilepath, 
+        BattleUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
             const AreaSize viewportSize, const ScreenPosition viewportPosition);
         void Update() override;
 };
