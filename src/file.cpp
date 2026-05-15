@@ -59,7 +59,7 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
     Tileset& tileset) const
 {
     std::ifstream input;
-    const std::string mapFilepath = "../assets/maps/" + path; // Create a function in File
+    const std::string mapFilepath = "../data/maps/" + path; // Create a function in File
     input.open(mapFilepath);
     MapData data;
 
@@ -121,46 +121,71 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
     return data;
 }
 
-// In UiController
-// OpenFile(path);
-// UiResult r = m_fileReader.ReadUiElement();
-// while (r.type != UiType::Invalid) {
-//     // Build the UiElement/TextArea here
-//     r = m_fileReader.ReadUiElement();
-// }
-
-void FileReader::OpenFile(const std::string& filepath)
+Axis FileReader::ReadAxis(const std::string& s) const
 {
-    m_input.open(filepath);
+    if (s == "width") return Axis::Width; // Instead of if/else, I could use a static map<string,Axis> ?
+    else if (s == "height") return Axis::Height;
+    else throw std::runtime_error("Unknown value read as Axis");
 }
 
-UiResult FileReader::ReadUiElement()
+Anchor FileReader::ReadAnchor(const std::string& s) const
 {
-    // Maybe test if a file has been opened here ?
-    UiResult res;
+    if (s == "left_in") return Anchor::LeftIn; // Instead of if/else, I could use a static map<string,Anchor> ?
+    else if (s == "left_out") return Anchor::LeftOut;
+    else if (s == "right_in") return Anchor::RightIn;
+    else if (s == "right_out") return Anchor::RightOut;
+    else if (s == "center") return Anchor::Center;
+    else if (s == "top_in") return Anchor::TopIn;
+    else if (s == "top_out") return Anchor::TopOut;
+    else if (s == "bottom_in") return Anchor::BottomIn;
+    else if (s == "bottom_out") return Anchor::BottomOut;
+    else throw std::runtime_error("Unknown value read as Anchor");
+}
 
-    m_input >> res.parentKey;
-    m_input >> res.key;
-    m_input >> res.path;
+std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
+{
+    std::ifstream input;
+    input.open(uiFilepath);
+    std::vector<DataUi> uisData;
+    
+    std::string s;
+    while (input >> s && s != FILE_DELIMITER) {
+        DataUi data;
+        // No verification yet on what is read 
+        data.parentKey = s;
+        input >> data.key; 
+        input >> data.path;
+        input >> data.type; // Verification on type will be in UiController
+        
+        // Read data for the UiParams
+        while (input >> s && s != FILE_DELIMITER) {
+            if (s == "scale") {
+                input >> data.params.scale;
+            } else if (s == "scaleAxis") {
+                input >> s;
+                data.params.scaleAxis = ReadAxis(s);
+            } else if (s == "xAnchor") {
+                input >> s;
+                data.params.xAnchor = ReadAnchor(s);
+            } else if (s == "yAnchor") {
+                input >> s;
+                data.params.yAnchor = ReadAnchor(s);
+            } else if (s == "xPadding") {
+                input >> data.params.xPadding; // TODO
+            } else if (s == "yPadding") {
+                input >> data.params.yPadding; // TODO
+            } else  
+                throw std::runtime_error("UiParams has no member with this name");
+        }
 
-    std::string v;
-    m_input >> v;
-    // Instead of if/else, I could use a static map<string, UiType> ?
-    if (v == "uielement")
-        res.type = UiType::UiElement;
-    else if (v == "textarea")
-        res.type = UiType::TextArea;
-    else  
-        throw std::runtime_error("Invalid UiType was read"); // Do not set res.type to UiType::Invalid
-    
-    // Read data for the UiParams
-    
-    return res;
+        uisData.push_back(data);
+    }
+    return uisData;
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
-    std::ofstream mapFile("../assets/maps/"+mapFilepath); // Create a function in file
+    std::ofstream mapFile("../data/maps/"+mapFilepath); // Create a function in file
     const int width = mapData.size.x;
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 

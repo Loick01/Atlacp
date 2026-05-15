@@ -155,7 +155,8 @@ struct AnimationData
     float frameDuration;
 };
 
-struct DataNPC
+// DataNPC and DataUi are used by FileReader to return values used for NPC/Ui construction
+struct DataNPC // Rename
 {
     MapPosition position;
     std::string sprite;

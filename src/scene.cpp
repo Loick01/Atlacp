@@ -77,7 +77,7 @@ bool Scene::GetGameloop() const
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
-    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "../assets/worlds/z_world", m_camera, shouldCulling)
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "../data/worlds/z_world", m_camera, shouldCulling)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
@@ -119,7 +119,7 @@ GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
     
     m_entities.SetUiController(m_context.uiController.get());
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
 }
 
@@ -157,7 +157,7 @@ void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
             m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "../assets/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
             break;
         }
         default:

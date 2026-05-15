@@ -217,6 +217,33 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
     UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
+    std::vector<DataUi> fileResult = m_fileReader.ReadUiFile("../data/ui/test");
+
+    for (const DataUi& data : fileResult) { // Will not be here
+        std::unique_ptr<UiElement> element;
+        if (data.type == "uielement") {
+            element = CreateElement(data.key, data.path);
+        } else if (data.type == "textarea") {
+            element = CreateTextElement(data.key, data.path);
+        }
+
+        UiParams& params = element->GetParams();
+        // data.params.scale is not the correct value
+        params.scale = GetPartialRootSizeOnAxis(Axis::Width, data.params.scale); // TODO : GetPartialRootSizeOnAxis or GetPartialElementSizeOnAxis
+        params.scaleAxis = data.params.scaleAxis;
+        params.xAnchor = data.params.xAnchor;
+        params.yAnchor = data.params.yAnchor;
+        
+        // TODO : Padding
+        
+        if (data.parentKey == "root") {
+            BuildSubRoot(std::move(element));
+        } else {
+            GetElement(data.parentKey)->BuildChild(std::move(element));
+        }
+    }
+
+    /*
     std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
     std::unique_ptr<TextArea> boxText = CreateTextElement("boxText", m_fontFilepath);
 
@@ -235,7 +262,8 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
     boxTextParams.yAnchor = Anchor::Center;
     boxTextParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.1f); // Should not access to root element with its key ?
     GetElement("frame")->BuildChild(std::move(boxText));
-
+    */
+    
     UpdatePosition(); // Call UpdatePosition on all the branches
 }
 

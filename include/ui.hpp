@@ -19,11 +19,6 @@ enum class Axis
     Width, Height, None
 };
 
-enum class UiType // Could be in file.hpp ?
-{
-    UiElement, TextArea, Invalid // Temp : Invalid exists only because I need to know when the end of ui file is reached
-};
-
 enum class Anchor
 {
     LeftIn, LeftOut, 
@@ -44,7 +39,7 @@ struct UiValue
     {}
 };
 
-struct UiParams
+struct UiParams // Should not be here ?
 {
     float scale;
     Axis scaleAxis; // TextArea don't use this value (text size is handled by the font, the scale value is used for SetMaxWidth())

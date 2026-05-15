@@ -1,0 +1,18 @@
+root
+frame
+../assets/ui/box.png
+uielement
+scale 0.5
+scaleAxis width
+xAnchor center
+yAnchor bottom_in
+###
+frame
+frame2
+../assets/ui/box.png
+uielement
+scale 0.3
+scaleAxis width
+xAnchor center
+yAnchor center
+###

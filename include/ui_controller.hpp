@@ -23,7 +23,6 @@ class UiController
         // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will throw errors because the keys will not
         // be able to be found in m_elements
 
-        const FileReader& m_fileReader;
         TextureController& m_textureController;
 
         const ScreenPosition m_position; // Initialized with the viewport position
@@ -35,6 +34,8 @@ class UiController
     protected:
         // Should be private ?
         const std::string m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?) 
+
+        const FileReader& m_fileReader; // Should be private ?
 
         void HandleUiEvent(const UiElementEvent e, const ElementKey& key);
         void UpdatePosition(); // Compute the rendering position for every UiElement in every branch --> This function must be called in every UiController constructors 
