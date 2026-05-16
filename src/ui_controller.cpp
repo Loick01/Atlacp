@@ -215,7 +215,7 @@ void GameplayUiController::Update()
 
 EditorUiController::EditorUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
     const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(0) // lastLayer should be initialized with EditorEventState::selectedLayer ?
+    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(-1) // lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile("../data/ui/test");
 
@@ -224,7 +224,9 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
         if (data.type == "uielement") {
             element = CreateElement(data.key, data.path);
         } else if (data.type == "textarea") {
-            element = CreateTextElement(data.key, data.path);
+            std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
+            textAreaElement->SetText(data.text); // SetText can only be called on a TextArea, not UiElement
+            element = std::move(textAreaElement);
         }
 
         UiParams& params = element->GetParams();
@@ -234,20 +236,20 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
         else 
             params.scale = GetPartialElementSizeOnAxis(data.scale.srcElement, data.scale.axis, data.scale.amount);
         
-        params.scaleAxis = data.dstScaleAxis;
+        params.scaleAxis = data.dstScaleAxis; // Also when TextArea ?
         params.xAnchor = data.xAnchor;
         params.yAnchor = data.yAnchor;
         
         const PartialSize xPaddingData = data.xPadding;
         const PartialSize yPaddingData = data.yPadding;
-        if (xPaddingData.srcElement != "undefined") {
+        if (xPaddingData.srcElement != "undefined_element") {
             if (xPaddingData.srcElement == "root")
                 params.xPadding = GetPartialRootSizeOnAxis(xPaddingData.axis, xPaddingData.amount);
             else 
                 params.xPadding = GetPartialElementSizeOnAxis(xPaddingData.srcElement, xPaddingData.axis, xPaddingData.amount);
         }
 
-        if (yPaddingData.srcElement != "undefined")  {
+        if (yPaddingData.srcElement != "undefined_element")  {
             if (yPaddingData.srcElement == "root")
                 params.yPadding = GetPartialRootSizeOnAxis(yPaddingData.axis, yPaddingData.amount);
             else 
@@ -260,6 +262,8 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
             GetElement(data.parentKey)->BuildChild(std::move(element));
         }
     }
+
+    UpdatePosition(); // Call UpdatePosition on all the branches
 
     /*
     std::unique_ptr<UiElement> frame = CreateElement("frame", "../assets/ui/box.png");
@@ -281,8 +285,6 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
     boxTextParams.xPadding = GetPartialElementSizeOnAxis("frame", Axis::Width, 0.1f); // Should not access to root element with its key ?
     GetElement("frame")->BuildChild(std::move(boxText));
     */
-    
-    UpdatePosition(); // Call UpdatePosition on all the branches
 }
 
 void EditorUiController::Update()

@@ -168,10 +168,10 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         // No verification yet on what is read 
         data.parentKey = s;
         input >> data.key; 
-        input >> data.path;
         input >> data.type; // Verification on type will be in UiController
+        input >> data.path;
         
-        // Read data for the UiParams
+        // Read optional data 
         while (input >> s && s != FILE_DELIMITER) {
             if (s == "scale") {
                 input >> data.scale.srcElement;
@@ -197,6 +197,8 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 input >> s;
                 data.yPadding.axis = ReadAxis(s);
                 input >> data.yPadding.amount;
+            } else if (s == "text") {
+                std::getline(input, data.text);
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }

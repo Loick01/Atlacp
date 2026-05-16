@@ -18,7 +18,7 @@ struct PartialSize
     float amount;
 
     PartialSize() {
-        srcElement = "undefined";
+        srcElement = "undefined_element"; // In UiController, I use srcElement to know if there is a padding
     }
 };
 
@@ -28,14 +28,18 @@ struct DataUi // Rename + Should not be here ?
     ElementKey key;
     std::string path; // image path if UiElement, font filepath if TextArea
     std::string type; // "uielement" or "textarea"
-    
+    std::string text; // Only used for TextArea (when type = "textarea"), should not be here ?
     // Can't use UiParams
     PartialSize scale;
-    Axis dstScaleAxis;
+    Axis dstScaleAxis; // Only use for UiElement (when type = "uielement"), should not be here ?
     Anchor xAnchor;
     Anchor yAnchor;
     PartialSize xPadding;
     PartialSize yPadding;
+
+    DataUi() {
+        text = "invalid_text"; // Should not happen
+    }
 };
 
 class FileReader

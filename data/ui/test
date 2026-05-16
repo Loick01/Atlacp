@@ -1,7 +1,7 @@
 root
 frame
-../assets/ui/box.png
 uielement
+../assets/ui/box.png
 scale root width 0.5
 scaleAxis width
 xAnchor center
@@ -10,11 +10,21 @@ yPadding root height -0.05
 ###
 frame
 frame2
-../assets/ui/box.png
 uielement
+../assets/ui/box.png
 scale frame width 0.8
 scaleAxis width
 xAnchor left_in
 yAnchor center
 xPadding frame height 0.1
+###
+frame2
+boxText
+textarea
+NormalFont
+scale frame2 width 0.9
+xAnchor left_in
+yAnchor center
+xPadding frame2 width 0.1
+text This is my default text
 ###
