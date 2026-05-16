@@ -60,6 +60,7 @@ class UiController
 
         void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
 
+        void BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);
 };
 

@@ -1,0 +1,38 @@
+root
+frame
+uielement
+../assets/ui/box.png
+scale root width 0.5
+scaleAxis width
+xAnchor center
+yAnchor bottom_in
+yPadding root height -0.05
+### 
+frame
+faceset
+uielement
+../assets/ui/faceset.png
+scale frame height 0.7
+scaleAxis height
+xAnchor left_in
+yAnchor center
+xPadding frame height 0.15
+###
+faceset
+face
+uielement
+../assets/ui/hunter_face.png
+scale faceset width 0.8
+scaleAxis width
+xAnchor center
+yAnchor center
+###
+faceset
+boxText
+textarea
+PixelOperator8
+scale frame width 0.75
+xAnchor right_out
+yAnchor center
+xPadding faceset width 0.2
+###

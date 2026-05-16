@@ -1,0 +1,20 @@
+root
+frame
+uielement
+../assets/ui/box.png
+scale root width 0.3
+scaleAxis width
+xAnchor left_in
+yAnchor top_in
+xPadding root height 0.02
+yPadding root height 0.02
+###
+frame
+boxText
+textarea
+NormalFont
+scale frame width 0.9
+xAnchor left_in
+yAnchor center
+xPadding frame width 0.1
+###
