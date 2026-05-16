@@ -2,17 +2,19 @@ root
 frame
 ../assets/ui/box.png
 uielement
-scale 0.5
+scale root width 0.5
 scaleAxis width
 xAnchor center
 yAnchor bottom_in
+yPadding root height -0.05
 ###
 frame
 frame2
 ../assets/ui/box.png
 uielement
-scale 0.3
+scale frame width 0.8
 scaleAxis width
-xAnchor center
+xAnchor left_in
 yAnchor center
+xPadding frame height 0.1
 ###

@@ -123,23 +123,37 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 
 Axis FileReader::ReadAxis(const std::string& s) const
 {
-    if (s == "width") return Axis::Width; // Instead of if/else, I could use a static map<string,Axis> ?
-    else if (s == "height") return Axis::Height;
-    else throw std::runtime_error("Unknown value read as Axis");
+    static const std::unordered_map<std::string, Axis> axis = {
+        {"width", Axis::Width},
+        {"height", Axis::Height}
+    };
+
+    std::unordered_map<std::string, Axis>::const_iterator it = axis.find(s);
+    if (it != axis.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as Axis");
 }
 
 Anchor FileReader::ReadAnchor(const std::string& s) const
 {
-    if (s == "left_in") return Anchor::LeftIn; // Instead of if/else, I could use a static map<string,Anchor> ?
-    else if (s == "left_out") return Anchor::LeftOut;
-    else if (s == "right_in") return Anchor::RightIn;
-    else if (s == "right_out") return Anchor::RightOut;
-    else if (s == "center") return Anchor::Center;
-    else if (s == "top_in") return Anchor::TopIn;
-    else if (s == "top_out") return Anchor::TopOut;
-    else if (s == "bottom_in") return Anchor::BottomIn;
-    else if (s == "bottom_out") return Anchor::BottomOut;
-    else throw std::runtime_error("Unknown value read as Anchor");
+    static const std::unordered_map<std::string, Anchor> anchors = {
+        {"left_in", Anchor::LeftIn},
+        {"left_out", Anchor::LeftOut},
+        {"right_in", Anchor::RightIn},
+        {"right_out", Anchor::RightOut},
+        {"center", Anchor::Center},
+        {"top_in", Anchor::TopIn},
+        {"top_out", Anchor::TopOut},
+        {"bottom_in", Anchor::BottomIn},
+        {"bottom_out", Anchor::BottomOut}
+    };
+
+    std::unordered_map<std::string, Anchor>::const_iterator it = anchors.find(s);
+    if (it != anchors.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as Anchor");
 }
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
@@ -160,20 +174,29 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         // Read data for the UiParams
         while (input >> s && s != FILE_DELIMITER) {
             if (s == "scale") {
-                input >> data.params.scale;
+                input >> data.scale.srcElement;
+                input >> s;
+                data.scale.axis = ReadAxis(s);
+                input >> data.scale.amount;
             } else if (s == "scaleAxis") {
                 input >> s;
-                data.params.scaleAxis = ReadAxis(s);
+                data.dstScaleAxis = ReadAxis(s);
             } else if (s == "xAnchor") {
                 input >> s;
-                data.params.xAnchor = ReadAnchor(s);
+                data.xAnchor = ReadAnchor(s);
             } else if (s == "yAnchor") {
                 input >> s;
-                data.params.yAnchor = ReadAnchor(s);
+                data.yAnchor = ReadAnchor(s);
             } else if (s == "xPadding") {
-                input >> data.params.xPadding; // TODO
+                input >> data.xPadding.srcElement;
+                input >> s;
+                data.xPadding.axis = ReadAxis(s);
+                input >> data.xPadding.amount;
             } else if (s == "yPadding") {
-                input >> data.params.yPadding; // TODO
+                input >> data.yPadding.srcElement;
+                input >> s;
+                data.yPadding.axis = ReadAxis(s);
+                input >> data.yPadding.amount;
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }

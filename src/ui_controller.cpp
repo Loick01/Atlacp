@@ -228,13 +228,31 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
         }
 
         UiParams& params = element->GetParams();
-        // data.params.scale is not the correct value
-        params.scale = GetPartialRootSizeOnAxis(Axis::Width, data.params.scale); // TODO : GetPartialRootSizeOnAxis or GetPartialElementSizeOnAxis
-        params.scaleAxis = data.params.scaleAxis;
-        params.xAnchor = data.params.xAnchor;
-        params.yAnchor = data.params.yAnchor;
         
-        // TODO : Padding
+        if (data.scale.srcElement == "root")
+            params.scale = GetPartialRootSizeOnAxis(data.scale.axis, data.scale.amount);
+        else 
+            params.scale = GetPartialElementSizeOnAxis(data.scale.srcElement, data.scale.axis, data.scale.amount);
+        
+        params.scaleAxis = data.dstScaleAxis;
+        params.xAnchor = data.xAnchor;
+        params.yAnchor = data.yAnchor;
+        
+        const PartialSize xPaddingData = data.xPadding;
+        const PartialSize yPaddingData = data.yPadding;
+        if (xPaddingData.srcElement != "undefined") {
+            if (xPaddingData.srcElement == "root")
+                params.xPadding = GetPartialRootSizeOnAxis(xPaddingData.axis, xPaddingData.amount);
+            else 
+                params.xPadding = GetPartialElementSizeOnAxis(xPaddingData.srcElement, xPaddingData.axis, xPaddingData.amount);
+        }
+
+        if (yPaddingData.srcElement != "undefined")  {
+            if (yPaddingData.srcElement == "root")
+                params.yPadding = GetPartialRootSizeOnAxis(yPaddingData.axis, yPaddingData.amount);
+            else 
+                params.yPadding = GetPartialElementSizeOnAxis(yPaddingData.srcElement, yPaddingData.axis, yPaddingData.amount);
+        }
         
         if (data.parentKey == "root") {
             BuildSubRoot(std::move(element));

@@ -11,13 +11,31 @@
 
 #define FILE_DELIMITER "###" // Will be removed ?
 
+struct PartialSize
+{
+    ElementKey srcElement;
+    Axis axis;
+    float amount;
+
+    PartialSize() {
+        srcElement = "undefined";
+    }
+};
+
 struct DataUi // Rename + Should not be here ?
 {
-    std::string parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
-    std::string key;
+    ElementKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
+    ElementKey key;
     std::string path; // image path if UiElement, font filepath if TextArea
     std::string type; // "uielement" or "textarea"
-    UiParams params;
+    
+    // Can't use UiParams
+    PartialSize scale;
+    Axis dstScaleAxis;
+    Anchor xAnchor;
+    Anchor yAnchor;
+    PartialSize xPadding;
+    PartialSize yPadding;
 };
 
 class FileReader
