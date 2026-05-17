@@ -53,8 +53,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void UpdateStatus(); // Rename
         void CheckActorHealth();
 
-        void CreateSelect(const unsigned int targetOption);
-        void InitPlayerTurn();
+        void InitPlayerTurn(); // Will be removed
         void PlayTurn(BattleActor& source, BattleActor& target);
         void PlayFight();
 };

@@ -58,7 +58,8 @@ class UiController
         std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key, const std::string& fontFilepath); // Remove ?
         void DeleteElement(const ElementKey& key);
 
-        void UpdateText(const ElementKey& key, const std::string& newText); // Should be in TextArea ?
+        void UpdateText(const ElementKey& key, const std::string& text); // Will be in TextArea ?
+        void UpdateParent(const ElementKey& key, const ElementKey& parent); // Will be in UiElement ?
 
         void BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);

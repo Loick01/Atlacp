@@ -69,9 +69,7 @@ void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
     subRoot->SetParentSize(m_size);
     subRoot->SetParentPosition(m_position);
     const UiParams& params = subRoot->GetParams();
-    subRoot->ComputeZoom(params.scale, params.scaleAxis);
-    subRoot->ComputePosition(params.xAnchor, params.yAnchor);
-    subRoot->SetPadding(params.xPadding, params.yPadding);
+    subRoot->ComputeFinal();
     m_subRoots.push_back(std::move(subRoot)); 
 }
 
@@ -152,14 +150,31 @@ void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
     }
 }
 
-void UiController::UpdateText(const ElementKey& key, const std::string& newText) // Could be in TextArea ?
+void UiController::UpdateText(const ElementKey& key, const std::string& text)
 {
     TextArea* textArea = static_cast<TextArea*>(GetElement(key)); // static_cast ?
     textArea->DeleteTexture(); // Delete the previous generated texture
-    textArea->SetText(newText);
-    textArea->GenerateText();
-    // textArea->ComputeFinal(); // I would need anchor, scale, padding, etc.
-    // textArea->UpdatePosition();
+    textArea->SetText(text);
+    textArea->ComputeFinal(); // Load the new texture (GenerateText())
+    // textArea->UpdatePosition(); // ?
+}
+
+void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
+{
+    // Could use UiElement::BuildChild() ?
+    UiElement* currentElement = GetElement(key);
+    UiElement* previousParent = currentElement->GetParent();
+    UiElement* newParent = GetElement(parent);
+    currentElement->SetParent(newParent);
+    currentElement->SetParentSize(newParent->GetSize());
+    currentElement->ComputeFinal(); // WARNING : currentElement has the same UiParams as with the previous parent, which may be not wanted
+    if (previousParent == nullptr) { // currentElement is a subRoot
+        std::unique_ptr<UiElement>& e = m_subRoots[0]; // Remove from UiController::m_subRoots
+        newParent->AddChild(e); // Add in newParent child
+    } else {
+        std::unique_ptr<UiElement> e = previousParent->RemoveChild(key);
+        newParent->AddChild(e);
+    }
 }
 
 void UiController::BuildUiFile(const std::string& filepath) 
@@ -174,6 +189,8 @@ void UiController::BuildUiFile(const std::string& filepath)
             std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
             textAreaElement->SetText(data.text); // SetText can only be called on a TextArea, not UiElement
             element = std::move(textAreaElement);
+        } else {
+            throw std::runtime_error("Unknown element type : " + data.type); // ?
         }
 
         UiParams& params = element->GetParams();
@@ -209,14 +226,13 @@ void UiController::BuildUiFile(const std::string& filepath)
             GetElement(data.parentKey)->BuildChild(std::move(element));
         }
     }
-
-    UpdatePosition(); // Call UpdatePosition on all subroots
 }
 
 void UiController::OpenDialogBox(const std::string& text)
 {
     BuildUiFile("../data/ui/dialog_box_template");
-    UpdateText("boxText", text); // Not working correctly. I think ComputeFinal?/ComputePosition? must be called
+    UpdateText("boxText", text);
+    GetElement("frame")->UpdatePosition(); // Or UiController::UpdatePosition() ?
 }
 
 GameplayUiController::GameplayUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
@@ -233,6 +249,7 @@ EditorUiController::EditorUiController(const FileReader& fileReader, TextureCont
 {
     
     BuildUiFile("../data/ui/editor_scene");
+    UpdatePosition();
 }
 
 void EditorUiController::Update()
@@ -248,6 +265,7 @@ BattleUiController::BattleUiController(const FileReader& fileReader, TextureCont
     UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition)
 {
     BuildUiFile("../data/ui/battle_scene");
+    UpdatePosition();
 }
 
 void BattleUiController::Update()

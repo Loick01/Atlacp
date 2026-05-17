@@ -59,37 +59,10 @@ void BattleController::CheckActorHealth()
         Notify(ExitEvent::ExitWin);
 }
 
-void BattleController::CreateSelect(const unsigned int targetOption)
-{
-    std::unique_ptr<UiElement> select = m_uiController->CreateElement("select", "../assets/ui/arrow.png");
-    UiParams& selectParams = select->GetParams();
-    const std::string parentId = "option" + std::to_string(targetOption);
-    selectParams.scale = m_uiController->GetPartialElementSizeOnAxis(parentId, Axis::Height, 0.8f);
-    selectParams.scaleAxis = Axis::Width;
-    selectParams.xAnchor = Anchor::LeftOut;
-    selectParams.yAnchor = Anchor::Center;
-    m_uiController->GetElement(parentId)->BuildChild(std::move(select));
-}
-
 void BattleController::InitPlayerTurn()
 {
-    for (unsigned int i = 0 ; i < 4 ; i++) {
-        std::unique_ptr<TextArea> option = m_uiController->CreateTextElement("option"+std::to_string(i));
-        option->SetText("Option " + std::to_string(i));
-        UiParams& optionParams = option->GetParams();
-        optionParams.scale = m_uiController->GetPartialElementSizeOnAxis("mainBox", Axis::Width, 0.5f);
-        optionParams.xAnchor = Anchor::LeftIn;
-        optionParams.yAnchor = Anchor::TopIn;
-        optionParams.yPadding = m_uiController->GetPartialElementSizeOnAxis("mainBox", Axis::Height, 0.18f);
-        if (i==0) {
-            optionParams.xPadding = m_uiController->GetPartialElementSizeOnAxis("mainBox", Axis::Width, 0.05f);
-            m_uiController->GetElement("mainBox")->BuildChild(std::move(option));
-        } else
-            m_uiController->GetElement("option"+std::to_string(i-1))->BuildChild(std::move(option));
-    }
-
-    CreateSelect(m_selectedOption);
-
+    m_uiController->BuildUiFile("../data/ui/option_template");
+    m_uiController->BuildUiFile("../data/ui/selector");
     m_uiController->GetElement("mainBox")->UpdatePosition();
 }
 
@@ -106,13 +79,11 @@ void BattleController::PlayFight()
         case Turn::ActorA : {
             if (m_eventState.uiDirection == Direction::Down) {
                 m_selectedOption = (m_selectedOption+1)%4;
-                m_uiController->DeleteElement("select");
-                CreateSelect(m_selectedOption);
+                m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
                 m_uiController->GetElement("mainBox")->UpdatePosition(); // GetElement("option"+std::to_string(m_selectedOption))
             } else if (m_eventState.uiDirection == Direction::Up) {
                 m_selectedOption = (m_selectedOption-1+4)%4;
-                m_uiController->DeleteElement("select");
-                CreateSelect(m_selectedOption);
+                m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
                 m_uiController->GetElement("mainBox")->UpdatePosition();
             } else if (m_eventState.isAction) { // TODO
                 PlayTurn(m_actorA, m_actorB);

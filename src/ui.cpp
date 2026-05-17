@@ -151,6 +151,19 @@ void UiElement::AddChild(std::unique_ptr<UiElement>& child)
     m_childs.push_back(std::move(child));
 }
 
+std::unique_ptr<UiElement> UiElement::RemoveChild(const ElementKey& key)
+{
+    std::vector<std::unique_ptr<UiElement>>::iterator it;
+    for (it = m_childs.begin() ; it != m_childs.end() ; it++) {
+        if ((*it)->GetKey() == key) {
+            std::unique_ptr<UiElement> removed = std::move(*it);
+            m_childs.erase(it);
+            return removed;
+        }
+    }
+    throw std::runtime_error("No elements have this key : " + key);
+}
+
 void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 {
     child->SetParent(this);

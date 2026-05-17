@@ -1,0 +1,38 @@
+mainBox
+option0
+textarea
+PixelOperator8
+scale mainBox width 0.5
+xAnchor left_in
+yAnchor top_in
+xPadding mainBox width 0.05
+yPadding mainBox height 0.2
+text Fight
+###
+option0
+option1
+textarea
+PixelOperator8
+scale mainBox width 0.5
+xAnchor left_in
+yAnchor bottom_out
+text Inventory
+###
+option1
+option2
+textarea
+PixelOperator8
+scale mainBox width 0.5
+xAnchor left_in
+yAnchor bottom_out
+text Fly
+###
+option2
+option3
+textarea
+PixelOperator8
+scale mainBox width 0.5
+xAnchor left_in
+yAnchor bottom_out
+text Leave
+###

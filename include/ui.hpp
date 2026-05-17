@@ -62,8 +62,6 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {
     private:
         const ElementKey m_key;
-
-        void AddChild(std::unique_ptr<UiElement>& child); // Do not use directly AddChild, use instead BuildChild
         
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
@@ -95,6 +93,8 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         const ElementKey& GetKey() const;
         UiParams& GetParams();
 
+        void AddChild(std::unique_ptr<UiElement>& child);
+        std::unique_ptr<UiElement> RemoveChild(const ElementKey& key);
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
         void BuildChild(std::unique_ptr<UiElement> child);
 
