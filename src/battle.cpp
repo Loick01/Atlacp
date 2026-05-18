@@ -35,12 +35,13 @@ void BattleActor::RemoveHealth(const unsigned int damage)
 }
 
 BattleController::BattleController(const BattleActor actorA, const BattleActor actorB):
-    m_uiController(nullptr), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA), m_selectedOption(0)
+    m_uiController(nullptr), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA), m_selector()
 {}
 
 void BattleController::SetUiController(UiController* uiController)
 {
     m_uiController = uiController;
+    m_selector.SetUiController(uiController);
 }
 
 void BattleController::UpdateStatus()
@@ -61,8 +62,9 @@ void BattleController::CheckActorHealth()
 
 void BattleController::InitPlayerTurn()
 {
+    // Will not be here
     m_uiController->BuildUiFile("../data/ui/option_template");
-    m_uiController->BuildUiFile("../data/ui/selector");
+    m_uiController->BuildUiFile("../data/ui/selector"); 
     m_uiController->GetElement("mainBox")->UpdatePosition();
 }
 
@@ -78,13 +80,15 @@ void BattleController::PlayFight()
     switch(m_currentTurn) {
         case Turn::ActorA : {
             if (m_eventState.uiDirection == Direction::Down) {
-                m_selectedOption = (m_selectedOption+1)%4;
-                m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
-                m_uiController->GetElement("mainBox")->UpdatePosition(); // GetElement("option"+std::to_string(m_selectedOption))
+                m_selector.Next();
+
+                // m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
+                // m_uiController->GetElement("mainBox")->UpdatePosition(); // GetElement("option"+std::to_string(m_selectedOption))
             } else if (m_eventState.uiDirection == Direction::Up) {
-                m_selectedOption = (m_selectedOption-1+4)%4;
-                m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
-                m_uiController->GetElement("mainBox")->UpdatePosition();
+                m_selector.Previous();
+
+                // m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
+                // m_uiController->GetElement("mainBox")->UpdatePosition();
             } else if (m_eventState.isAction) { // TODO
                 PlayTurn(m_actorA, m_actorB);
                 // Will not be here ?

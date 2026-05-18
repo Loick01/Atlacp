@@ -29,7 +29,7 @@ set(SOURCES
     src/behaviour.cpp
     src/scene.cpp
     src/pathfind.cpp
-    src/ui.cpp
+    src/ui_element.cpp
     src/layer.cpp
     src/sound.cpp
     src/interaction.cpp
@@ -38,6 +38,7 @@ set(SOURCES
     src/battle.cpp
     src/ui_controller.cpp
     src/action.cpp
+    src/ui_selector.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

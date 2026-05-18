@@ -5,6 +5,7 @@
 #include "notifier.hpp"
 #include "type.hpp"
 #include "ui_controller.hpp"
+#include "ui_selector.hpp"
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
@@ -43,8 +44,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController* m_uiController; // Should be BattleUiController ?
         BattleActor m_actorA; // Player
         BattleActor m_actorB; // Enemy
+        UiSelector m_selector;
         Turn m_currentTurn;
-        int m_selectedOption;
 
     public:
         BattleController(const BattleActor actorA, const BattleActor actorB);
