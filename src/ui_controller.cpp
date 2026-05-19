@@ -37,27 +37,10 @@ void UiController::DeleteElement(const ElementKey& key)
     // Remove from UiController::m_subRoots or UiElement::m_childs
     std::unique_ptr<UiElement> elementPtr; // This is what I want to get
     
-    // TODO Merge
-    if (parent == nullptr) { // if UiElement with key is a subroot, its parent is nullptr (as setted in UiController::BuildSubRoot())
-        std::vector<std::unique_ptr<UiElement>>::iterator it;
-        for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
-            if ((*it)->GetKey() == key) {
-                elementPtr = std::move(*it); // Or directly delete the pointer here ?
-                m_subRoots.erase(it);
-                break;
-            }
-        }
-    } else {
-        std::vector<std::unique_ptr<UiElement>>& childs = parent->GetChilds();
-        std::vector<std::unique_ptr<UiElement>>::iterator it;
-        for (it = childs.begin() ; it != childs.end() ; it++) {
-            if ((*it)->GetKey() == key) {
-                elementPtr = std::move(*it); // Or directly delete the pointer here ?
-                childs.erase(it);
-                break;
-            }
-        }
-    }
+    if (parent == nullptr) // UiElement key = nullptr is a subroot (as setted in UiController::BuildSubRoot())
+        elementPtr = RemoveSubRoots(key);
+    else
+        elementPtr = parent->RemoveChild(key);
     
     // Free the unique_ptr
     elementPtr.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
@@ -159,6 +142,20 @@ void UiController::UpdateText(const ElementKey& key, const std::string& text)
     // textArea->UpdatePosition(); // ?
 }
 
+std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) // Same than UiElement::RemoveChild
+{
+    std::vector<std::unique_ptr<UiElement>>::iterator it;
+    for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
+        if ((*it)->GetKey() == key) {
+            std::unique_ptr<UiElement> removed = std::move(*it);
+            m_subRoots.erase(it);
+            return removed;
+        }
+    }
+    throw std::runtime_error("No subroots have this key : " + key);
+}
+
+
 void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
 {
     // Could use UiElement::BuildChild() ?
@@ -168,13 +165,13 @@ void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
     currentElement->SetParent(newParent);
     currentElement->SetParentSize(newParent->GetSize());
     currentElement->ComputeFinal(); // WARNING : currentElement has the same UiParams as with the previous parent, which may be not wanted
+    std::unique_ptr<UiElement> e;
     if (previousParent == nullptr) { // currentElement is a subRoot
-        std::unique_ptr<UiElement>& e = m_subRoots[0]; // Remove from UiController::m_subRoots
-        newParent->AddChild(e); // Add in newParent child
+        e = RemoveSubRoots(key);
     } else {
-        std::unique_ptr<UiElement> e = previousParent->RemoveChild(key);
-        newParent->AddChild(e);
+        e = previousParent->RemoveChild(key);
     }
+    newParent->AddChild(e);
 }
 
 void UiController::BuildUiFile(const std::string& filepath) 

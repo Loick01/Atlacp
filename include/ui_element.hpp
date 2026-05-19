@@ -89,12 +89,12 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         virtual void ComputeFinal();
         
         std::vector<std::unique_ptr<UiElement>>& GetChilds(); // Should return a const vector ? The function should be const ?
+        std::unique_ptr<UiElement> RemoveChild(const ElementKey& key);
         UiElement* GetParent(); // Should return const and be const ?
         const ElementKey& GetKey() const;
         UiParams& GetParams();
 
         void AddChild(std::unique_ptr<UiElement>& child);
-        std::unique_ptr<UiElement> RemoveChild(const ElementKey& key);
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
         void BuildChild(std::unique_ptr<UiElement> child);
 

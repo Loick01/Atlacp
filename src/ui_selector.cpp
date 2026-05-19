@@ -3,7 +3,7 @@
 UiSelector::UiSelector() :
     m_currentIndex(0)
 {
-    m_elementKey = "selector"; // Remove
+    m_elementKey = "selector"; // Remove (should be returned by UiController::BuildUiFile ?)
     m_parentList = {"option0", "option1", "option2", "option3"}; // Remove
     // if () throw std::runtime_error("UiSelector must have at least one key in m_parentList");
 }

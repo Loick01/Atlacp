@@ -81,14 +81,8 @@ void BattleController::PlayFight()
         case Turn::ActorA : {
             if (m_eventState.uiDirection == Direction::Down) {
                 m_selector.Next();
-
-                // m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
-                // m_uiController->GetElement("mainBox")->UpdatePosition(); // GetElement("option"+std::to_string(m_selectedOption))
             } else if (m_eventState.uiDirection == Direction::Up) {
                 m_selector.Previous();
-
-                // m_uiController->UpdateParent("selector", "option"+std::to_string(m_selectedOption));
-                // m_uiController->GetElement("mainBox")->UpdatePosition();
             } else if (m_eventState.isAction) { // TODO
                 PlayTurn(m_actorA, m_actorB);
                 // Will not be here ?
