@@ -1,0 +1,9 @@
+root
+frame
+uielement
+../assets/ui/box.png
+scale root width 0.5
+scaleAxis width
+xAnchor center
+yAnchor bottom_in
+yPadding root height -0.05

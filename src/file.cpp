@@ -160,10 +160,18 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
     std::ifstream input;
     input.open(uiFilepath);
-    std::vector<DataUi> uisData;
+    if (!input) throw std::runtime_error("Can't open this file : " + uiFilepath);
+    std::vector<DataUi> resData;
     
     std::string s;
     while (input >> s && s != FILE_DELIMITER) {
+        if (s == "load") {
+            input >> s;
+            std::vector<DataUi> load = ReadUiFile(s);
+            resData.insert(std::end(resData), std::begin(load), std::end(load));
+            input >> s; // After the load line, the next line must be FILE_DELIMITER
+            continue;
+        }
         DataUi data;
         // No verification yet on what is read 
         data.parentKey = s;
@@ -202,10 +210,9 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }
-
-        uisData.push_back(data);
+        resData.push_back(data);
     }
-    return uisData;
+    return resData;
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const

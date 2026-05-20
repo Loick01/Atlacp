@@ -65,7 +65,7 @@ void BattleController::InitPlayerTurn()
     // Will not be here
     m_uiController->BuildUiFile("../data/ui/option_template");
     m_uiController->BuildUiFile("../data/ui/selector"); 
-    m_uiController->GetElement("mainBox")->UpdatePosition();
+    m_uiController->GetElement("frame")->UpdatePosition();
 }
 
 void BattleController::PlayTurn(BattleActor& source, BattleActor& target)
@@ -86,7 +86,7 @@ void BattleController::PlayFight()
             } else if (m_eventState.isAction) { // TODO
                 PlayTurn(m_actorA, m_actorB);
                 // Will not be here ?
-                m_uiController->DeleteElement("option0");
+                m_uiController->DeleteElement("frame");
                 m_currentTurn = Turn::ActorB; // SwitchTurn function (could be in PlayTurn) ?
             }   
             break;

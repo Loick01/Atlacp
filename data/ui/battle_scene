@@ -47,16 +47,6 @@ xAnchor right_in
 yAnchor bottom_in
 xPadding actorBSprite width 0.2
 ###
-background
-mainBox
-uielement
-../assets/ui/box.png
-scale background width 0.5
-scaleAxis width
-xAnchor center
-yAnchor bottom_in
-yPadding background height -0.05
-###
 actorABox
 actorAName
 textarea
