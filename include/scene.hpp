@@ -28,16 +28,16 @@ struct GameContext
     TextureController& textureController;
     SoundController& soundController;
     FileReader& fileReader; 
+    UiController& uiController;
 
     std::unique_ptr<EventController> eventController;
-    std::unique_ptr<UiController> uiController;
 };
 
 class Scene : public Notifier<SwitchEvent>
 {
     protected:
         GameContext& m_context;
-        Camera m_camera;
+        Camera m_camera; // Could be in GameContext ?
         bool m_gameloop;
 
         std::vector<const Drawable*> m_drawables; // Will be removed ?
@@ -83,6 +83,9 @@ class GameplayTilemapScene : public TilemapScene
 
 class EditorTilemapScene : public TilemapScene
 {
+    private:
+        int m_lastLayer; // UiValue ?
+        
     public:
         EditorTilemapScene(GameContext& context);
         void Gameloop() override;
@@ -106,6 +109,7 @@ class SceneController
         SoundController m_soundController;
         TextureController m_textureController;
         FileReader m_fileReader;
+        UiController m_uiController;
 
         GameContext m_context;
         std::unique_ptr<Scene> m_currentScene;

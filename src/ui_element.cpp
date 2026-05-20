@@ -97,48 +97,48 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
 
 void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
-    ScreenPosition final_position = {0,0};
+    ScreenPosition localPosition = {0,0};
     // If ComputePosition is called on a TextArea, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
     const AreaSize size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
         case Anchor::LeftIn:
-            final_position.x = 0;
+            localPosition.x = 0;
             break;
         case Anchor::LeftOut:
-            final_position.x = -size.x;
+            localPosition.x = -size.x;
             break;
         case Anchor::Center:
-            final_position.x = (m_parentSize.x-size.x)/2;
+            localPosition.x = (m_parentSize.x-size.x)/2;
             break;
         case Anchor::RightIn:
-            final_position.x = m_parentSize.x-size.x;
+            localPosition.x = m_parentSize.x-size.x;
             break;
         case Anchor::RightOut:
-            final_position.x = m_parentSize.x;
+            localPosition.x = m_parentSize.x;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for x axis\n");
     }
     switch(yAnchor){
         case Anchor::TopIn:
-            final_position.y = 0;
+            localPosition.y = 0;
             break;
         case Anchor::TopOut:
-            final_position.y = -size.y;
+            localPosition.y = -size.y;
             break;
         case Anchor::Center:
-            final_position.y = (m_parentSize.y-size.y)/2;
+            localPosition.y = (m_parentSize.y-size.y)/2;
             break;
         case Anchor::BottomIn:
-            final_position.y = m_parentSize.y-size.y;
+            localPosition.y = m_parentSize.y-size.y;
             break;
         case Anchor::BottomOut:
-            final_position.y = m_parentSize.y;
+            localPosition.y = m_parentSize.y;
             break;
         default:
             throw std::invalid_argument("Incorrect anchor value for y axis\n");
     }
-    SetLocalPosition(final_position);
+    SetLocalPosition(localPosition);
 }
 
 void UiElement::SetPadding(const float xPadding, const float yPadding)

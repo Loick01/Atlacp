@@ -28,11 +28,8 @@ class BattleActor
     public:
         BattleActor(const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health);
         
-        ElementKey GetHealthId() const;
-        ElementKey GetNameId() const;
-
-        std::string GetName() const;
-        unsigned int GetHealth() const;
+        UiValue<std::string> GetName() const;
+        UiValue<unsigned int> GetHealth() const;
         unsigned int GetStrength() const;
 
         void RemoveHealth(const unsigned int damage);
@@ -41,16 +38,15 @@ class BattleActor
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
-        UiController* m_uiController; // Should be BattleUiController ?
+        UiController& m_uiController; 
         BattleActor m_actorA; // Player
         BattleActor m_actorB; // Enemy
         UiSelector m_selector;
         Turn m_currentTurn;
 
     public:
-        BattleController(const BattleActor actorA, const BattleActor actorB);
+        BattleController(UiController& uiController, const BattleActor actorA, const BattleActor actorB);
 
-        void SetUiController(UiController* uiController);
         void UpdateStatus(); // Rename
         void CheckActorHealth();
 

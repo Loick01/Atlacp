@@ -38,3 +38,4 @@ xAnchor left_in
 yAnchor bottom_out
 text Leave
 ###
+load ../data/ui/selector_template

@@ -7,14 +7,13 @@
 class InteractionController
 {
     private:
-        UiController* m_uiController; // GameplayUiController only ?
+        UiController& m_uiController;
         Entity* m_srcEntity;
         Entity* m_dstEntity;
     
     public: 
-        InteractionController();
+        InteractionController(UiController& uiController);
 
-        void SetUiController(UiController* uiController);
         void StartInteraction(std::vector<Entity*> entities);
         void EndInteraction();
 };

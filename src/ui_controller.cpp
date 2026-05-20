@@ -1,9 +1,8 @@
 #include "ui_controller.hpp"
 
-UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
-const AreaSize size, const ScreenPosition position):
-    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath), m_size(size), m_position(position)
-{}
+UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
+    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
+{} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
 void UiController::Draw() const
 {
@@ -44,6 +43,16 @@ void UiController::DeleteElement(const ElementKey& key)
     
     // Free the unique_ptr
     elementPtr.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
+}
+
+void UiController::SetSize(const AreaSize size)
+{
+    m_size = size;
+}
+        
+void UiController::SetPosition(const ScreenPosition position)
+{
+    m_position = position;
 }
 
 void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
@@ -139,7 +148,17 @@ void UiController::UpdateText(const ElementKey& key, const std::string& text)
     textArea->DeleteTexture(); // Delete the previous generated texture
     textArea->SetText(text);
     textArea->ComputeFinal(); // Load the new texture (GenerateText())
-    // textArea->UpdatePosition(); // ?
+    textArea->UpdatePosition();
+}
+
+void UiController::UpdateText(const UiValue<std::string>& uiv)
+{
+    UpdateText(uiv.id, uiv.value);
+}
+
+void UiController::UpdateText(const UiValue<unsigned int>& uiv)
+{
+    UpdateText(uiv.id, std::to_string(uiv.value));
 }
 
 std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) // Same than UiElement::RemoveChild
@@ -158,20 +177,19 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) /
 
 void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
 {
-    // Could use UiElement::BuildChild() ?
     UiElement* currentElement = GetElement(key);
     UiElement* previousParent = currentElement->GetParent();
     UiElement* newParent = GetElement(parent);
-    currentElement->SetParent(newParent);
-    currentElement->SetParentSize(newParent->GetSize());
-    currentElement->ComputeFinal(); // WARNING : currentElement has the same UiParams as with the previous parent, which may be not wanted
-    std::unique_ptr<UiElement> e;
-    if (previousParent == nullptr) { // currentElement is a subRoot
-        e = RemoveSubRoots(key);
-    } else {
-        e = previousParent->RemoveChild(key);
-    }
-    newParent->AddChild(e);
+    
+    std::unique_ptr<UiElement> ownedElement; // unique_ptr of currentElement
+    if (previousParent == nullptr) // subRoot has no parent
+        ownedElement = RemoveSubRoots(key);
+    else
+        ownedElement = previousParent->RemoveChild(key);
+
+     // WARNING : currentElement has the same UiParams as with 
+     // the previous parent, which may be not wanted
+    newParent->BuildChild(std::move(ownedElement));
 }
 
 void UiController::BuildUiFile(const std::string& filepath) 
@@ -223,47 +241,11 @@ void UiController::BuildUiFile(const std::string& filepath)
             GetElement(data.parentKey)->BuildChild(std::move(element));
         }
     }
+    UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
 }
 
 void UiController::OpenDialogBox(const std::string& text)
 {
     BuildUiFile("../data/ui/dialog_box_template");
-    UpdateText("boxText", text);
-    GetElement("frame")->UpdatePosition(); // Or UiController::UpdatePosition() ?
+    UpdateText("dialogText", text);
 }
-
-GameplayUiController::GameplayUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
-    const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition)
-{}
-
-void GameplayUiController::Update()
-{}
-
-EditorUiController::EditorUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
-    const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition), m_lastLayer(-1) // lastLayer should be initialized with EditorEventState::selectedLayer ?
-{
-    
-    BuildUiFile("../data/ui/editor_scene");
-    UpdatePosition();
-}
-
-void EditorUiController::Update()
-{
-    if (m_eventState.selectedLayer != m_lastLayer){
-        m_lastLayer = m_eventState.selectedLayer;
-        UpdateText("boxText", "Selected layer : " + std::to_string(m_lastLayer));
-    } 
-}
-
-BattleUiController::BattleUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
-    const AreaSize viewportSize, const ScreenPosition viewportPosition):
-    UiController(fileReader, textureController, fontFilepath, viewportSize, viewportPosition)
-{
-    BuildUiFile("../data/ui/battle_scene");
-    UpdatePosition();
-}
-
-void BattleUiController::Update()
-{}

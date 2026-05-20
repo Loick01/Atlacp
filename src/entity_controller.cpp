@@ -1,8 +1,9 @@
 #include "entity_controller.hpp"
 
-EntityController::EntityController(const FileReader& fileReader, TextureController& textureController, Camera& camera, Tilemap& tilemap):
+EntityController::EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+Camera& camera, Tilemap& tilemap):
     m_player(fileReader, tilemap, textureController, "../assets/sprites/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file)
-    m_fileReader(fileReader)
+    m_fileReader(fileReader), m_interactionController(uiController)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
@@ -31,11 +32,6 @@ EntityController::EntityController(const FileReader& fileReader, TextureControll
 EntityController::~EntityController()
 {
     DeleteNPCs();
-}
-
-void EntityController::SetUiController(UiController* uiController)
-{
-    m_interactionController.SetUiController(uiController);
 }
 
 void EntityController::DeleteNPCs()

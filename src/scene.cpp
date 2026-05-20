@@ -2,8 +2,9 @@
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
-    m_window("Atlacp", {25,25,25}), m_textureController(m_window.GetRenderer()),
-    m_context{m_window, m_textureController, m_soundController, m_fileReader},
+    m_window("Atlacp", {25,25,25}), m_textureController(m_window.GetRenderer()), 
+    m_uiController(m_fileReader, m_textureController, "PixelOperator8"),
+    m_context{m_window, m_textureController, m_soundController, m_fileReader, m_uiController},
     m_pendingSwitch(std::nullopt)
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
@@ -29,6 +30,7 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
     switch(e){
         case SwitchEvent::ToGameplay: {
             m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);
+            // m_uiController.DeleteElement("background"); // Will not be here (I need something to clean UiController when switching to a new scene ?)
             break;
         } 
         case SwitchEvent::ToEditor: {
@@ -84,6 +86,10 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);});
 
+    // if I put camera in GameContext, I could avoid calling these setters ?
+    m_context.uiController.SetSize(m_camera.GetViewport());
+    m_context.uiController.SetPosition(m_camera.GetScreenOffset());
+
     // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
@@ -109,15 +115,11 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 
 
 GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
-    TilemapScene(context, true), m_entities(m_context.fileReader, m_context.textureController, m_camera, m_tilemap),
+    TilemapScene(context, true), m_entities(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameplayEventController>();
     
-    m_context.uiController = std::make_unique<GameplayUiController>(m_context.fileReader, m_context.textureController,
-        "PixelOperator8", m_camera.GetViewport(), m_camera.GetScreenOffset());
-    
-    m_entities.SetUiController(m_context.uiController.get());
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
@@ -145,7 +147,7 @@ void GameplayTilemapScene::Gameloop()
 
     m_entities.Update(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
-    m_context.uiController->Draw();
+    m_context.uiController.Draw();
     
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
@@ -166,11 +168,12 @@ void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 EditorTilemapScene::EditorTilemapScene(GameContext& context):
-    TilemapScene(context, false)
+    TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorEventState::selectedLayer ?
 {
     m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
-    m_context.uiController = std::make_unique<EditorUiController>(m_context.fileReader, m_context.textureController,
-        "NormalFont", m_camera.GetViewport(), m_camera.GetScreenOffset());
+    
+    m_context.uiController.BuildUiFile("../data/ui/editor_scene");
+    
     m_drawables.push_back(&m_tileset);
 }
 
@@ -193,24 +196,30 @@ void EditorTilemapScene::Gameloop()
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
-    static_cast<EditorUiController*>(m_context.uiController.get())->SetEventState(eventState);
-    m_context.uiController->Update();
-    m_context.uiController->Draw();
+    if (eventState.selectedLayer != m_lastLayer){
+        m_lastLayer = eventState.selectedLayer;
+        m_context.uiController.UpdateText("boxText", "Selected layer : " + std::to_string(m_lastLayer));
+    } 
+
+    m_context.uiController.Draw();
     m_context.window.UpdateRender();    
 }
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
-    m_battleController(BattleActor("actorAName", "actorAHealth", "Howler", 100), BattleActor("actorBName", "actorBHealth", "Bone Appetit", 100)) // BattleActors will not be here
+    m_battleController(m_context.uiController, BattleActor("actorAName", "actorAHealth", "Howler", 100), BattleActor("actorBName", "actorBHealth", "Bone Appetit", 100)) // BattleActors will not be here
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
+    // if I put camera in GameContext, I could avoid calling these setters ?
+    m_context.uiController.SetSize(m_camera.GetViewport());
+    m_context.uiController.SetPosition(m_camera.GetScreenOffset());
+    
     m_context.eventController = std::make_unique<BattleEventController>();
-    m_context.uiController = std::make_unique<BattleUiController>(m_context.fileReader, m_context.textureController,
-        "PixelOperator8", m_camera.GetViewport(), m_camera.GetScreenOffset());
+   
+    m_context.uiController.BuildUiFile("../data/ui/battle_scene");
+    
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
-    // BattleUiController* uiController = static_cast<BattleUiController*>(m_context.uiController.get());
-    m_battleController.SetUiController(m_context.uiController.get());
     m_battleController.UpdateStatus();
     m_battleController.InitPlayerTurn();
     
@@ -227,13 +236,12 @@ void BattleScene::Gameloop()
     m_context.eventController->HandlePollEvents();
     m_context.eventController->HandleStateEvents();
 
-    const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState(); 
-    // static_cast<BattleUiController*>(m_context.uiController.get())->SetEventState(eventState);
+    const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState();
 
     m_battleController.SetEventState(eventState);
     m_battleController.PlayFight();
 
-    m_context.uiController->Draw();
+    m_context.uiController.Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
 }

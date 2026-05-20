@@ -22,11 +22,9 @@ class EntityController
         InteractionController m_interactionController;
     
     public:
-        EntityController(const FileReader& fileReader, TextureController& textureController, Camera& camera, Tilemap& tilemap);
+        EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+            Camera& camera, Tilemap& tilemap);
         ~EntityController();
-
-        // Use the given parameter for Entity that need it
-        void SetUiController(UiController* uiController); // Rename
 
         void Draw() const;
         void Update(const GameplayEventState& playerEventState, const float deltaTime); // GameplayEventState or call SetEventState in GameplayScene (before EntityController::Update()) 

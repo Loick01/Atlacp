@@ -20,7 +20,7 @@ xAnchor center
 yAnchor center
 ###
 faceset
-boxText
+dialogText
 textarea
 PixelOperator8
 scale frame width 0.75

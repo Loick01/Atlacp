@@ -25,8 +25,8 @@ class UiController
 
         TextureController& m_textureController;
 
-        const ScreenPosition m_position; // Initialized with the viewport position
-        const AreaSize m_size; // Initialized with the viewport size
+        ScreenPosition m_position; // Initialized with the viewport position
+        AreaSize m_size; // Initialized with the viewport size
 
         void AddElement(const ElementKey& key, UiElement* element); // Add in UiController::m_elements
         void RemoveElement(const ElementKey& key); // Remove from UiController::m_elements
@@ -38,15 +38,12 @@ class UiController
         const FileReader& m_fileReader; // Should be private ?
 
         void HandleUiEvent(const UiElementEvent e, const ElementKey& key);
-        void UpdatePosition(); // Compute the rendering position for every UiElement in every branch --> This function must be called in every UiController constructors 
+        void UpdatePosition(); // Compute the rendering position for every UiElement in every branch
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
 
     public:
-        UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
-            const AreaSize size, const ScreenPosition position);
-        // virtual ~UiController();
-         
-        virtual void Update() = 0;
+        UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath); 
+
         void Draw() const;
 
         UiElement* GetElement(const ElementKey& key) const;
@@ -59,37 +56,16 @@ class UiController
         std::unique_ptr<UiElement> RemoveSubRoots(const ElementKey& key);
         void DeleteElement(const ElementKey& key);
 
-        void UpdateText(const ElementKey& key, const std::string& text); // Will be in TextArea ? Rename
-        void UpdateParent(const ElementKey& key, const ElementKey& parent); // Will be in UiElement ? Rename
+        void SetSize(const AreaSize size);
+        void SetPosition(const ScreenPosition position);
+
+        // Rename these 3 functions, I should not use Update in the name
+        void UpdateText(const ElementKey& key, const std::string& text);
+        void UpdateText(const UiValue<std::string>& uiv);
+        void UpdateText(const UiValue<unsigned int>& uiv);
+        
+        void UpdateParent(const ElementKey& key, const ElementKey& parent); // Rename
 
         void BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);
-};
-
-// UI configuration will not stay in constructor
-class GameplayUiController : public UiController // Not a EventStateHolder<GameplayEventHolder> ? (Don't need it for now)
-{
-    public:
-        GameplayUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath,
-            const AreaSize viewportSize, const ScreenPosition viewportPosition);
-        void Update() override;
-};
-
-class EditorUiController : public UiController, public EventStateHolder<EditorEventState>
-{
-    private:
-        int m_lastLayer; // Should create EditorEventState struct, and have a parameter in UiController::Draw or EditorUiController::UpdateState ?
-
-    public:
-        EditorUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
-            const AreaSize viewportSize, const ScreenPosition viewportPosition);
-        void Update() override;
-};
-
-class BattleUiController : public UiController, public EventStateHolder<BattleEventState>
-{
-    public:
-        BattleUiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath, 
-            const AreaSize viewportSize, const ScreenPosition viewportPosition);
-        void Update() override;
 };

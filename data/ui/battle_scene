@@ -72,7 +72,7 @@ actorAHealth
 textarea
 PixelOperator8
 scale actorAName width 1.
-xAnchor center
+xAnchor left_in
 yAnchor bottom_out
 ###
 actorBName
@@ -80,6 +80,6 @@ actorBHealth
 textarea
 PixelOperator8
 scale actorBName width 1.
-xAnchor center
+xAnchor left_in
 yAnchor bottom_out
 ###
