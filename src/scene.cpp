@@ -221,7 +221,7 @@ BattleScene::BattleScene(GameContext& context):
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     m_battleController.UpdateStatus();
-    m_battleController.InitPlayerTurn();
+    m_battleController.OpenPlayerOption();
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor(); // Mouse will not be used for events

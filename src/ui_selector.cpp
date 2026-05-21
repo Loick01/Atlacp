@@ -8,6 +8,11 @@ UiSelector::UiSelector(UiController& uiController) :
     // if () throw std::runtime_error("UiSelector must have at least one key in m_parentList");
 }
 
+int UiSelector::GetIndex() const
+{
+    return m_currentIndex;
+}
+
 void UiSelector::Reset()
 {
     m_currentIndex = 0;

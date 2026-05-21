@@ -6,6 +6,7 @@
 #include "type.hpp"
 #include "ui_controller.hpp"
 #include "ui_selector.hpp"
+#include "ui_text_list.hpp"
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
@@ -14,7 +15,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class Turn // Will be removed
 {
-    ActorA, ActorB
+    ActorA, WaitingA, ActorB, WaitingB
 };
 
 class BattleActor
@@ -32,7 +33,7 @@ class BattleActor
         UiValue<unsigned int> GetHealth() const;
         unsigned int GetStrength() const;
 
-        void RemoveHealth(const unsigned int damage);
+        void ModifyHealth(const int hp);
 };
 
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
@@ -41,7 +42,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController; 
         BattleActor m_actorA; // Player
         BattleActor m_actorB; // Enemy
-        UiSelector m_selector;
+        UiSelector m_selector; // Will be removed, I need a UiList component
+        UiTextList m_textList;
         Turn m_currentTurn;
 
     public:
@@ -50,7 +52,11 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void UpdateStatus(); // Rename
         void CheckActorHealth();
 
-        void InitPlayerTurn(); // Will be removed
-        void PlayTurn(BattleActor& source, BattleActor& target);
+        void OpenPlayerOption(); // Will be removed
+        void ClosePlayerOption(); // Will be removed
+        unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
+        unsigned int TakeHealth(BattleActor& source); // Rename
+        void HandlePlayerSelection(const int index); // Rename
+        void HandleEnemyTurn(); // Will be removed, I will use behaviour class
         void PlayFight();
 };

@@ -19,13 +19,13 @@ unsigned int BattleActor::GetStrength() const
     return m_strength;
 }
 
-void BattleActor::RemoveHealth(const unsigned int damage)
+void BattleActor::ModifyHealth(const int hp)
 {
-    m_health.value -= damage;
+    m_health.value += hp;
 }
 
 BattleController::BattleController(UiController& uiController, const BattleActor actorA, const BattleActor actorB):
-    m_uiController(uiController), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA), m_selector(uiController)
+    m_uiController(uiController), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA), m_selector(uiController), m_textList(uiController)
 {}
 
 void BattleController::UpdateStatus()
@@ -44,18 +44,80 @@ void BattleController::CheckActorHealth()
         Notify(ExitEvent::ExitWin);
 }
 
-void BattleController::InitPlayerTurn()
+void BattleController::OpenPlayerOption()
 {
-    // Will not be here
     m_uiController.BuildUiFile("../data/ui/battle_player_option_template");
     m_selector.Reset(); 
 }
 
-void BattleController::PlayTurn(BattleActor& source, BattleActor& target)
+void BattleController::ClosePlayerOption()
 {
-    target.RemoveHealth(source.GetStrength());
+    m_uiController.DeleteElement("option0");
+}
+
+unsigned int BattleController::TakeDamage(BattleActor& source, BattleActor& target)
+{
+    const unsigned int damage = source.GetStrength();
+    target.ModifyHealth(-damage);
     CheckActorHealth();
     m_uiController.UpdateText(target.GetHealth());
+    return damage;
+}
+
+unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Object from inventory
+{
+    const unsigned int hp = source.GetStrength(); // For now, I use the source strength
+    source.ModifyHealth(hp); // clamp
+    m_uiController.UpdateText(source.GetHealth());
+    return hp;
+}
+
+void BattleController::HandlePlayerSelection(const int index)
+{
+    switch (index) {
+        case 0: {
+            const unsigned int damage = TakeDamage(m_actorA, m_actorB); 
+            ClosePlayerOption();
+            m_currentTurn = Turn::WaitingA;
+            m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+            m_textList.AddText({m_actorA.GetName().value + " attacks !",
+                               m_actorB.GetName().value + " lost " + std::to_string(damage) + " HP !"});
+            m_textList.Next(); // Will call UpdateText with the first value (should not be here ?)
+            
+            break;
+        }
+        
+        case 1: {
+            const unsigned int hp = TakeHealth(m_actorA);
+            ClosePlayerOption();
+            m_currentTurn = Turn::WaitingA;
+            m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+            m_textList.AddText({m_actorA.GetName().value + " drinks a potion",
+                               m_actorA.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
+            m_textList.Next(); // Should not be here ?
+
+            break;
+        }
+        case 2:
+            break;
+        case 3: {
+            Notify(ExitEvent::ExitWin); // Not ExitWin
+            break;
+        }
+
+        default:
+            throw std::runtime_error("Selector is not supposed to be on this index : " + index);
+    }
+}
+
+void BattleController::HandleEnemyTurn()
+{
+    const unsigned int damage = TakeDamage(m_actorB, m_actorA); 
+    m_currentTurn = Turn::WaitingB;
+    m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+    m_textList.AddText({m_actorB.GetName().value + " attacks !",
+                        m_actorA.GetName().value + " lost " + std::to_string(damage) + " HP !"});
+    m_textList.Next(); // Should not be here ?
 }
 
 void BattleController::PlayFight()
@@ -66,21 +128,34 @@ void BattleController::PlayFight()
                 m_selector.Next();
             } else if (m_eventState.uiDirection == Direction::Up) {
                 m_selector.Previous();
-            } else if (m_eventState.isAction) { // TODO
-                PlayTurn(m_actorA, m_actorB);
-                // Will not be here ?
-                m_uiController.DeleteElement("frame");
-                m_currentTurn = Turn::ActorB; // SwitchTurn function (could be in PlayTurn) ?
+            } else if (m_eventState.isAction) {
+                HandlePlayerSelection(m_selector.GetIndex());
             }   
             break;
         }
+
         case Turn::ActorB : {
-            if (m_eventState.isAction) { // TODO
-                PlayTurn(m_actorB, m_actorA);
-                // Will not be here ?
-                // m_uiController.UpdateText("mainText", "Turn A");
-                InitPlayerTurn();
-                m_currentTurn = Turn::ActorA; // SwitchTurn function (could be in PlayTurn) ?
+            HandleEnemyTurn();
+            break;
+        }
+
+        case Turn::WaitingA : {
+            if (m_eventState.isAction) { // Try to merge with case Turn::WaitingB ?
+                if (!m_textList.Next()) {
+                    m_currentTurn = Turn::ActorB;
+                    m_uiController.DeleteElement("frameText"); // Remove
+                }
+            } 
+            break;
+        }
+
+        case Turn::WaitingB : {
+            if (m_eventState.isAction) {
+                if (!m_textList.Next()) {
+                    m_currentTurn = Turn::ActorA;
+                    m_uiController.DeleteElement("frameText"); // Remove
+                    OpenPlayerOption();
+                }
             }
             break;
         }

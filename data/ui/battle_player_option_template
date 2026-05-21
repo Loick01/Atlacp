@@ -18,7 +18,7 @@ PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
-text Inventory
+text Heal
 ###
 option1
 option2
@@ -27,7 +27,7 @@ PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
-text Fly
+text Inventory
 ###
 option2
 option3
