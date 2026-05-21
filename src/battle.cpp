@@ -25,7 +25,8 @@ void BattleActor::ModifyHealth(const int hp)
 }
 
 BattleController::BattleController(UiController& uiController, const BattleActor actorA, const BattleActor actorB):
-    m_uiController(uiController), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA), m_selector(uiController), m_textList(uiController)
+    m_uiController(uiController), m_actorA(actorA), m_actorB(actorB), m_currentTurn(Turn::ActorA),
+    m_selector(uiController), m_textList(uiController, "../data/ui/single_text_frame_template")
 {}
 
 void BattleController::UpdateStatus()
@@ -79,10 +80,9 @@ void BattleController::HandlePlayerSelection(const int index)
             const unsigned int damage = TakeDamage(m_actorA, m_actorB); 
             ClosePlayerOption();
             m_currentTurn = Turn::WaitingA;
-            m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+            m_textList.Open();
             m_textList.AddText({m_actorA.GetName().value + " attacks !",
                                m_actorB.GetName().value + " lost " + std::to_string(damage) + " HP !"});
-            m_textList.Next(); // Will call UpdateText with the first value (should not be here ?)
             
             break;
         }
@@ -91,10 +91,9 @@ void BattleController::HandlePlayerSelection(const int index)
             const unsigned int hp = TakeHealth(m_actorA);
             ClosePlayerOption();
             m_currentTurn = Turn::WaitingA;
-            m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+            m_textList.Open();
             m_textList.AddText({m_actorA.GetName().value + " drinks a potion",
                                m_actorA.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
-            m_textList.Next(); // Should not be here ?
 
             break;
         }
@@ -114,10 +113,9 @@ void BattleController::HandleEnemyTurn()
 {
     const unsigned int damage = TakeDamage(m_actorB, m_actorA); 
     m_currentTurn = Turn::WaitingB;
-    m_uiController.BuildUiFile("../data/ui/single_text_frame_template"); // Remove
+    m_textList.Open();
     m_textList.AddText({m_actorB.GetName().value + " attacks !",
                         m_actorA.GetName().value + " lost " + std::to_string(damage) + " HP !"});
-    m_textList.Next(); // Should not be here ?
 }
 
 void BattleController::PlayFight()
@@ -143,7 +141,7 @@ void BattleController::PlayFight()
             if (m_eventState.isAction) { // Try to merge with case Turn::WaitingB ?
                 if (!m_textList.Next()) {
                     m_currentTurn = Turn::ActorB;
-                    m_uiController.DeleteElement("frameText"); // Remove
+                    m_textList.Close();
                 }
             } 
             break;
@@ -153,7 +151,7 @@ void BattleController::PlayFight()
             if (m_eventState.isAction) {
                 if (!m_textList.Next()) {
                     m_currentTurn = Turn::ActorA;
-                    m_uiController.DeleteElement("frameText"); // Remove
+                    m_textList.Close();
                     OpenPlayerOption();
                 }
             }

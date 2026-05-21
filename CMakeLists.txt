@@ -40,6 +40,7 @@ set(SOURCES
     src/action.cpp
     src/ui_selector.cpp
     src/ui_text_list.cpp
+    src/ui_component.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})
