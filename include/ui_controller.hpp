@@ -46,7 +46,9 @@ class UiController
 
         void Draw() const;
 
+        std::unordered_map<ElementKey, UiElement*>::const_iterator GetIteratorOnElement(const ElementKey& key) const;
         UiElement* GetElement(const ElementKey& key) const;
+        
         float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
         
@@ -54,6 +56,7 @@ class UiController
         std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key);
         std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key, const std::string& fontFilepath); // Remove ?
         std::unique_ptr<UiElement> RemoveSubRoots(const ElementKey& key);
+        void Clear();
         void DeleteElement(const ElementKey& key);
 
         void SetSize(const AreaSize size);

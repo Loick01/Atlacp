@@ -21,12 +21,23 @@ void UiController::AddElement(const ElementKey& key, UiElement* element)
     m_elements[key] = element;
 }
 
+std::unordered_map<ElementKey, UiElement*>::const_iterator UiController::GetIteratorOnElement(const ElementKey& key) const
+{
+    return m_elements.find(key);
+}
+
 void UiController::RemoveElement(const ElementKey& key)
 {
-    std::unordered_map<ElementKey, UiElement*>::const_iterator it = m_elements.find(key); // Should use a GetIteratorOnElement function ?
+    std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
-        throw std::runtime_error("This Ui element can't be found : " + key); // ???
+        throw std::runtime_error("(UiController::RemoveElement) This Ui element can't be found : " + key); // ???
     m_elements.erase(it);
+}
+
+void UiController::Clear()
+{
+    while (!m_subRoots.empty()) // Do not use for loop (because m_subRoots is modified)
+        DeleteElement(m_subRoots[0]->GetKey());
 }
 
 void UiController::DeleteElement(const ElementKey& key)
@@ -67,9 +78,9 @@ void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
 
 UiElement* UiController::GetElement(const ElementKey& key) const
 {
-    std::unordered_map<ElementKey, UiElement*>::const_iterator it = m_elements.find(key);
+    std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
-        throw std::runtime_error("This Ui element can't be found : " + key);
+        throw std::runtime_error("(UiController::GetElement) This Ui element can't be found : " + key);
     // Verify if != nullptr ?
     return it->second;
 }
@@ -171,7 +182,7 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) /
             return removed;
         }
     }
-    throw std::runtime_error("No subroots have this key : " + key);
+    throw std::runtime_error("(UiController::RemoveSubRoots) No subroots have this key : " + key);
 }
 
 
@@ -197,12 +208,15 @@ void UiController::BuildUiFile(const std::string& filepath)
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
 
     for (const DataUi& data : fileResult) { // Will not be here
+
+        if (GetIteratorOnElement(data.key) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
+
         std::unique_ptr<UiElement> element;
         if (data.type == "uielement") {
             element = CreateElement(data.key, data.path);
         } else if (data.type == "textarea") {
             std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
-            textAreaElement->SetText(data.text); // SetText can only be called on a TextArea, not UiElement
+            textAreaElement->SetText(data.text);
             element = std::move(textAreaElement);
         } else {
             throw std::runtime_error("Unknown element type : " + data.type); // ?

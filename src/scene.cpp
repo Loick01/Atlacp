@@ -27,6 +27,7 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
 
 void SceneController::SetCurrentScene(const SwitchEvent e)
 {
+    m_uiController.Clear();
     switch(e){
         case SwitchEvent::ToGameplay: {
             m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);

@@ -3,16 +3,12 @@
 UiElement::UiElement(TextureController& textureController, const ElementKey& key,
     const std::string& textureFilepath, const ScreenPosition localPosition):
     ScreenDrawable(textureController, textureFilepath), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
-{
-    
-}
+{}
 
 UiElement::UiElement(TextureController& textureController, const ElementKey& key,
     const ScreenPosition localPosition):
     ScreenDrawable(textureController), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
-{
-    
-}
+{}
 
 UiElement::~UiElement() 
 {
@@ -161,7 +157,7 @@ std::unique_ptr<UiElement> UiElement::RemoveChild(const ElementKey& key)
             return removed;
         }
     }
-    throw std::runtime_error("No elements have this key : " + key);
+    throw std::runtime_error("(UiElement::RemoveChild) No elements have this key : " + key);
 }
 
 void UiElement::BuildChild(std::unique_ptr<UiElement> child)
