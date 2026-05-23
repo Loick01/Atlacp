@@ -208,7 +208,7 @@ void EditorTilemapScene::Gameloop()
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
-    m_battleController(m_context.uiController, BattleActor("actorAName", "actorAHealth", "Howler", 100), BattleActor("actorBName", "actorBHealth", "Bone Appetit", 100)) // BattleActors will not be here
+    m_battleController(m_context.uiController)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -240,7 +240,7 @@ void BattleScene::Gameloop()
     const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState();
 
     m_battleController.SetEventState(eventState);
-    m_battleController.PlayFight();
+    m_battleController.PlayNextTurn();
 
     m_context.uiController.Draw();
     m_context.window.DrawBoxing();
