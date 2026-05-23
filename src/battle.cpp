@@ -30,13 +30,12 @@ void BattleActor::ModifyHealth(const int hp)
 }
 
 BattleController::BattleController(UiController& uiController):
-    m_uiController(uiController), m_currentTurn(Turn::Playing),
+    m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
     m_selector(uiController), m_textList(uiController, "../data/ui/single_text_frame_template")
 {
     // Will not be here 
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
     m_actors.push_back(BattleActor(Team::Opponent, "actorBName", "actorBHealth", "Bone Appetit", 100));
-    m_nextActor = GetNextTurn();
 }
 
 void BattleController::UpdateStatus()
@@ -96,27 +95,28 @@ unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Objec
     return hp;
 }
 
-void BattleController::HandlePlayerSelection(const int index)
+void BattleController::HandlePlayerSelection(BattleActor& srcActor, const int selectorIndex)
 {
-    switch (index) {
+    switch (selectorIndex) {
         case 0: {
-            const unsigned int damage = TakeDamage(m_actors[0], m_actors[1]); 
+            BattleActor& targetActor = m_actors[1]; // TODO : Target selection
+            const unsigned int damage = TakeDamage(srcActor, targetActor); 
             ClosePlayerOption();
             m_currentTurn = Turn::Waiting;
             m_textList.Open();
-            m_textList.AddText({m_actors[0].GetName().value + " attacks !",
-                               m_actors[1].GetName().value + " lost " + std::to_string(damage) + " HP !"});
+            m_textList.AddText({srcActor.GetName().value + " attacks !",
+                               targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
             
             break;
         }
         
         case 1: {
-            const unsigned int hp = TakeHealth(m_actors[0]);
+            const unsigned int hp = TakeHealth(srcActor);
             ClosePlayerOption();
             m_currentTurn = Turn::Waiting;
             m_textList.Open();
-            m_textList.AddText({m_actors[0].GetName().value + " drinks a potion",
-                               m_actors[0].GetName().value + " recovered " + std::to_string(hp) + " HP !"});
+            m_textList.AddText({srcActor.GetName().value + " drinks a potion",
+                               srcActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
 
             break;
         }
@@ -128,17 +128,18 @@ void BattleController::HandlePlayerSelection(const int index)
         }
 
         default:
-            throw std::runtime_error("Selector is not supposed to be on this index : " + index);
+            throw std::runtime_error("Selector is not supposed to be on this index : " + selectorIndex);
     }
 }
 
-void BattleController::HandleEnemyTurn()
+void BattleController::HandleOpponentTurn(BattleActor& srcActor)
 {
-    const unsigned int damage = TakeDamage(m_actors[1], m_actors[0]); 
+    BattleActor& targetActor = m_actors[0]; // TODO : Target selection
+    const unsigned int damage = TakeDamage(srcActor, targetActor); 
     m_currentTurn = Turn::Waiting;
     m_textList.Open();
-    m_textList.AddText({m_actors[1].GetName().value + " attacks !",
-                        m_actors[0].GetName().value + " lost " + std::to_string(damage) + " HP !"});
+    m_textList.AddText({srcActor.GetName().value + " attacks !",
+                        targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
 }
 
 BattleActor* BattleController::GetNextTurn()
@@ -149,23 +150,29 @@ BattleActor* BattleController::GetNextTurn()
 void BattleController::PlayNextTurn()
 {
     switch (m_currentTurn) {
+        case Turn::Init : {
+            m_currentActor = GetNextTurn();
+            if (m_currentActor->GetTeam() == Team::Ally) OpenPlayerOption();
+            m_currentTurn = Turn::Playing; 
+        }
+        
         case Turn::Playing : {
             // const BattleActor* actor = m_turns.front();  // Not const ?
             // m_turns.pop();
 
-            switch (m_nextActor->GetTeam()) {
+            switch (m_currentActor->GetTeam()) {
                 case Team::Ally : {
                     if (m_eventState.uiDirection == Direction::Down) {
                         m_selector.Next();
                     } else if (m_eventState.uiDirection == Direction::Up) {
                         m_selector.Previous();
                     } else if (m_eventState.isAction) {
-                        HandlePlayerSelection(m_selector.GetIndex());
+                        HandlePlayerSelection(*m_currentActor, m_selector.GetIndex());
                     }   
                     break;
                 }
                 case Team::Opponent : {
-                    HandleEnemyTurn();
+                    HandleOpponentTurn(*m_currentActor);
                     break;
                 }
                 default:
@@ -177,16 +184,14 @@ void BattleController::PlayNextTurn()
         case Turn::Waiting : {
             if (m_eventState.isAction) {
                 if (!m_textList.Next()) {
-                    m_currentTurn = Turn::Playing;
-                    m_nextActor = GetNextTurn();
-                    if (m_nextActor->GetTeam() == Team::Ally) OpenPlayerOption(); // Should not be here ? 
                     m_textList.Close();
+                    m_currentTurn = Turn::Init;
                 }
             } 
             break;
         }
 
         default:
-            break;
+            throw std::runtime_error("Unknown Turn value");
     }
 }

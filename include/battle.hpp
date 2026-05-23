@@ -16,7 +16,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class Turn // Will be removed
 {
-    Playing, Waiting
+    Init, Playing, Waiting
 };
 
 enum class Team 
@@ -50,11 +50,9 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
     private:
         std::vector<BattleActor> m_actors;
         // std::queue<BattleActor*> m_turns; // Will be used to store turn order
-        BattleActor* m_nextActor; // Next actor that will play his turn
+        BattleActor* m_currentActor; // Actor that is playing his turn
 
         UiController& m_uiController; 
-        // BattleActor m_actorA; // Player
-        // BattleActor m_actorB; // Enemy
         UiSelector m_selector; // Will be removed, I need a UiList component
         UiTextList m_textList;
         Turn m_currentTurn;
@@ -71,7 +69,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void ClosePlayerOption(); // Will be removed
         unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
         unsigned int TakeHealth(BattleActor& source); // Rename
-        void HandlePlayerSelection(const int index); // Rename
-        void HandleEnemyTurn(); // Will be removed, I will use behaviour class
+        void HandlePlayerSelection(BattleActor& srcActor, const int index); // Rename
+        void HandleOpponentTurn(BattleActor& srcActor); // Will be removed, I will use behaviour class
         void PlayNextTurn();
 };

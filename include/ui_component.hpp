@@ -5,7 +5,7 @@
 class UiComponent
 {
     private:
-        std::string m_uiFilepath;
+        const std::string m_uiFilepath; // const ?
 
     public:
         UiController& m_uiController;
