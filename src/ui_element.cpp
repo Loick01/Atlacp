@@ -51,6 +51,11 @@ void UiElement::SetParentPosition(const ScreenPosition parentPosition)
     m_parentPosition = parentPosition;
 }
 
+void UiElement::SetParamsScale(const float scale)
+{
+    m_params.scale = scale;
+}
+
 void UiElement::DrawTexture() const
 {
     ScreenDrawable::DrawTexture();

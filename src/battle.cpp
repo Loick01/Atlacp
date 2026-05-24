@@ -74,6 +74,7 @@ void BattleController::OpenPlayerOption()
     m_uiController.BuildUiFile("../data/ui/battle_player_option_template"); // Will call Open() on option list
     m_selector.Open();
     m_selector.SetParents({"option0", "option1", "option2", "option3"}); // Will be get from option list
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); // When selector file is build, scale is based on root element
 }
 
 void BattleController::ClosePlayerOption()
@@ -102,7 +103,7 @@ unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Objec
 void BattleController::HandleOptionSelection(BattleActor& srcActor, const int selectorIndex)
 {
     switch (selectorIndex) {
-        case 0: { // WARNING : Currently not working because UiSelector (for target selection) size is based on "option0", which is deleted here // TODO
+        case 0: {
             ClosePlayerOption();
             m_textList.Open();
             m_textList.AddText({"Choose an opponent to attack"});
@@ -110,6 +111,7 @@ void BattleController::HandleOptionSelection(BattleActor& srcActor, const int se
             // As explained in ApplyDamage(), actors are not yet filtered according to their team.
             // That's why for now I need to add them all in the selector's list of parents 
             m_selector.SetParents({"actorASprite", "actorBSprite"}); // Remove
+            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorASprite", Axis::Height, 0.2f});
             m_currentTurn = Turn::ActorSelection;
             break;
         }

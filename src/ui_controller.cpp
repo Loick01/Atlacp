@@ -120,6 +120,14 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
     }
 }
 
+float UiController::GetResultFromPartialSize(const PartialSize& ps) const
+{
+    if (ps.srcElement == "root")
+        return GetPartialRootSizeOnAxis(ps.axis, ps.amount);
+    else 
+        return GetPartialElementSizeOnAxis(ps.srcElement, ps.axis, ps.amount);
+}
+
 std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
 {
     std::unique_ptr<UiElement> element = std::make_unique<UiElement>(m_textureController, key, textureFilepath);
@@ -203,6 +211,15 @@ void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
     newParent->BuildChild(std::move(ownedElement));
 }
 
+void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps)
+{
+    const float result = GetResultFromPartialSize(ps);
+    UiElement* e = GetElement(key);
+    e->SetParamsScale(result);
+    e->ComputeFinal();
+    e->UpdatePosition();
+}
+
 void UiController::BuildUiFile(const std::string& filepath) 
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
@@ -224,10 +241,7 @@ void UiController::BuildUiFile(const std::string& filepath)
 
         UiParams& params = element->GetParams();
         
-        if (data.scale.srcElement == "root")
-            params.scale = GetPartialRootSizeOnAxis(data.scale.axis, data.scale.amount);
-        else 
-            params.scale = GetPartialElementSizeOnAxis(data.scale.srcElement, data.scale.axis, data.scale.amount);
+        params.scale = GetResultFromPartialSize(data.scale);
         
         params.scaleAxis = data.dstScaleAxis; // Also when TextArea ?
         params.xAnchor = data.xAnchor;
@@ -235,19 +249,11 @@ void UiController::BuildUiFile(const std::string& filepath)
         
         const PartialSize xPaddingData = data.xPadding;
         const PartialSize yPaddingData = data.yPadding;
-        if (xPaddingData.srcElement != "undefined_element") {
-            if (xPaddingData.srcElement == "root")
-                params.xPadding = GetPartialRootSizeOnAxis(xPaddingData.axis, xPaddingData.amount);
-            else 
-                params.xPadding = GetPartialElementSizeOnAxis(xPaddingData.srcElement, xPaddingData.axis, xPaddingData.amount);
-        }
+        if (xPaddingData.srcElement != "undefined_element")
+            params.xPadding = GetResultFromPartialSize(xPaddingData);
 
-        if (yPaddingData.srcElement != "undefined_element")  {
-            if (yPaddingData.srcElement == "root")
-                params.yPadding = GetPartialRootSizeOnAxis(yPaddingData.axis, yPaddingData.amount);
-            else 
-                params.yPadding = GetPartialElementSizeOnAxis(yPaddingData.srcElement, yPaddingData.axis, yPaddingData.amount);
-        }
+        if (yPaddingData.srcElement != "undefined_element")
+            params.yPadding = GetResultFromPartialSize(yPaddingData);
         
         if (data.parentKey == "root") {
             BuildSubRoot(std::move(element));

@@ -13,6 +13,7 @@ class UiComponent
         
         UiComponent(UiController& uiController, const std::string& uiFilepath);
 
+        ElementKey GetKey() const;
         void Open();
         void Close();
 };

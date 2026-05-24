@@ -20,6 +20,8 @@ struct PartialSize
     PartialSize() {
         srcElement = "undefined_element"; // In UiController, I use srcElement to know if there is a padding
     }
+
+    PartialSize(const ElementKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
 };
 
 struct DataUi // Rename + Should not be here ?

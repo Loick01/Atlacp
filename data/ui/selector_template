@@ -1,8 +1,8 @@
-option0
+root
 selector
 uielement
 ../assets/ui/arrow.png
-scale option0 height 0.8
+scale root height 0.8
 scaleAxis width
 xAnchor left_out
 yAnchor center

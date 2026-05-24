@@ -102,6 +102,7 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
+        void SetParamsScale(const float scale);
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf]
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
         void SetPadding(const float xPadding, const float yPadding);

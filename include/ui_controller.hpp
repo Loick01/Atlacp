@@ -51,6 +51,7 @@ class UiController
         
         float GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const; // Rename
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
+        float GetResultFromPartialSize(const PartialSize& ps) const;
         
         std::unique_ptr<UiElement> CreateElement(const ElementKey& key, const std::string& textureFilepath);
         std::unique_ptr<TextArea> CreateTextElement(const ElementKey& key);
@@ -62,13 +63,14 @@ class UiController
         void SetSize(const AreaSize size);
         void SetPosition(const ScreenPosition position);
 
-        // Rename these 3 functions, I should not use Update in the name
+        // Rename these functions, I should not use Update in the name
         void UpdateText(const ElementKey& key, const std::string& text);
         void UpdateText(const UiValue<std::string>& uiv);
         void UpdateText(const UiValue<unsigned int>& uiv);
+        void UpdateParent(const ElementKey& key, const ElementKey& parent);
+        void UpdateScalingSize(const ElementKey& key, const PartialSize ps); // Should use ElementKey+Axis+float, instead of PartialSize (which is from file.hpp)
+        // Should add UpdateScalingAxis ?
         
-        void UpdateParent(const ElementKey& key, const ElementKey& parent); // Rename
-
         void BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);
 };
