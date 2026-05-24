@@ -39,8 +39,9 @@ set(SOURCES
     src/ui_controller.cpp
     src/action.cpp
     src/ui_selector.cpp
-    src/ui_text_list.cpp
+    src/ui_text_series.cpp
     src/ui_component.cpp
+    src/ui_list.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

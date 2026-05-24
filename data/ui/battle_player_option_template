@@ -37,5 +37,3 @@ scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
 text Leave
-###
-load ../data/ui/selector_template

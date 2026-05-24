@@ -1,22 +1,23 @@
 #pragma once
 
+#include <initializer_list>
+
+#include "ui_component.hpp"
 #include "ui_controller.hpp"
 #include "ui_element.hpp"
 
-class UiSelector // Will inherits UiComponent
+class UiSelector : public UiComponent
 {
     private:
-        UiController& m_uiController; // Will be in UiComponent
-        std::vector<ElementKey> m_parentList;
-        ElementKey m_elementKey; // Will be in UiComponent
-        // std::string m_uiFilepath; // Will be in UiComponent
+        std::vector<ElementKey> m_parents;
         int m_currentIndex;
     
     public:
-        UiSelector(UiController& uiController);
+        UiSelector(UiController& uiController, const std::string& uiFilepath);
 
         int GetIndex() const;
         void Reset();
+        void SetParents(std::initializer_list<ElementKey> parents);
         void UpdateParent();
         void Previous();
         void Next();

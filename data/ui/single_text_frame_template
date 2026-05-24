@@ -1,3 +1,5 @@
+load ../data/ui/frame_template
+###
 frame
 frameText
 textarea

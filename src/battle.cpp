@@ -31,11 +31,13 @@ void BattleActor::ModifyHealth(const int hp)
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
-    m_selector(uiController), m_textList(uiController, "../data/ui/single_text_frame_template")
+    m_selector(uiController, "../data/ui/selector_template"), m_textList(uiController, "../data/ui/single_text_frame_template")
 {
     // Will not be here 
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
     m_actors.push_back(BattleActor(Team::Opponent, "actorBName", "actorBHealth", "Bone Appetit", 100));
+    m_turns.push(&(m_actors[0])); // Remove
+    m_turns.push(&(m_actors[1])); // Remove
 }
 
 void BattleController::UpdateStatus()
@@ -69,13 +71,15 @@ void BattleController::CheckActorHealth()
 
 void BattleController::OpenPlayerOption()
 {
-    m_uiController.BuildUiFile("../data/ui/battle_player_option_template");
-    m_selector.Reset(); 
+    m_uiController.BuildUiFile("../data/ui/battle_player_option_template"); // Will call Open() on option list
+    m_selector.Open();
+    m_selector.SetParents({"option0", "option1", "option2", "option3"}); // Will be get from option
 }
 
 void BattleController::ClosePlayerOption()
 {
-    m_uiController.DeleteElement("option0");
+    m_selector.Close();
+    m_uiController.DeleteElement("option0"); // Will call Close() on option list 
 }
 
 unsigned int BattleController::TakeDamage(BattleActor& source, BattleActor& target)
@@ -144,7 +148,11 @@ void BattleController::HandleOpponentTurn(BattleActor& srcActor)
 
 BattleActor* BattleController::GetNextTurn()
 {
-    return &(m_actors[0]); // TODO
+    // TODO
+    BattleActor* actor = m_turns.front();  // Not const ?
+    m_turns.pop();
+    m_turns.push(actor);
+    return actor;
 }
 
 void BattleController::PlayNextTurn()
@@ -157,9 +165,6 @@ void BattleController::PlayNextTurn()
         }
         
         case Turn::Playing : {
-            // const BattleActor* actor = m_turns.front();  // Not const ?
-            // m_turns.pop();
-
             switch (m_currentActor->GetTeam()) {
                 case Team::Ally : {
                     if (m_eventState.uiDirection == Direction::Down) {

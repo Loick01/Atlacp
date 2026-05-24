@@ -7,14 +7,14 @@
 #include "type.hpp"
 #include "ui_controller.hpp"
 #include "ui_selector.hpp"
-#include "ui_text_list.hpp"
+#include "ui_text_series.hpp"
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
     ExitWin, ExitLost
 };
 
-enum class Turn // Will be removed
+enum class Turn
 {
     Init, Playing, Waiting
 };
@@ -49,12 +49,12 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 {
     private:
         std::vector<BattleActor> m_actors;
-        // std::queue<BattleActor*> m_turns; // Will be used to store turn order
+        std::queue<BattleActor*> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
 
         UiController& m_uiController; 
-        UiSelector m_selector; // Will be removed, I need a UiList component
-        UiTextList m_textList;
+        UiSelector m_selector;
+        UiTextSeries m_textList;
         Turn m_currentTurn;
 
     public:
