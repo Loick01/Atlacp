@@ -216,6 +216,12 @@ void BattleEventController::HandlePollEvents()
             } else if (m_actionController->IsDownActionPoll(event)) {
                 m_eventState.uiDirection = Direction::Down;
                 return;
+            } else if (m_actionController->IsRightActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Right;
+                return;
+            } else if (m_actionController->IsLeftActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Left;
+                return;
             }
         }
     }

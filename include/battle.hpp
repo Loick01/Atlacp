@@ -16,7 +16,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class Turn
 {
-    Init, Playing, Waiting
+    Init, OptionSelection, ActorSelection, Waiting
 };
 
 enum class Team 
@@ -69,7 +69,9 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void ClosePlayerOption(); // Will be removed
         unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
         unsigned int TakeHealth(BattleActor& source); // Rename
-        void HandlePlayerSelection(BattleActor& srcActor, const int index); // Rename
+        void HandleOptionSelection(BattleActor& srcActor, const int index);
+        void HandleActorSelection();
+        void ApplyDamage(BattleActor& srcActor, const int selectorIndex);
         void HandleOpponentTurn(BattleActor& srcActor); // Will be removed, I will use behaviour class
         void PlayNextTurn();
 };

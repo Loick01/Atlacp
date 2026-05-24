@@ -73,7 +73,7 @@ void BattleController::OpenPlayerOption()
 {
     m_uiController.BuildUiFile("../data/ui/battle_player_option_template"); // Will call Open() on option list
     m_selector.Open();
-    m_selector.SetParents({"option0", "option1", "option2", "option3"}); // Will be get from option
+    m_selector.SetParents({"option0", "option1", "option2", "option3"}); // Will be get from option list
 }
 
 void BattleController::ClosePlayerOption()
@@ -99,24 +99,24 @@ unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Objec
     return hp;
 }
 
-void BattleController::HandlePlayerSelection(BattleActor& srcActor, const int selectorIndex)
+void BattleController::HandleOptionSelection(BattleActor& srcActor, const int selectorIndex)
 {
     switch (selectorIndex) {
-        case 0: {
-            BattleActor& targetActor = m_actors[1]; // TODO : Target selection
-            const unsigned int damage = TakeDamage(srcActor, targetActor); 
+        case 0: { // WARNING : Currently not working because UiSelector (for target selection) size is based on "option0", which is deleted here // TODO
             ClosePlayerOption();
-            m_currentTurn = Turn::Waiting;
             m_textList.Open();
-            m_textList.AddText({srcActor.GetName().value + " attacks !",
-                               targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
-            
+            m_textList.AddText({"Choose an opponent to attack"});
+            m_selector.Open();
+            // As explained in ApplyDamage(), actors are not yet filtered according to their team.
+            // That's why for now I need to add them all in the selector's list of parents 
+            m_selector.SetParents({"actorASprite", "actorBSprite"}); // Remove
+            m_currentTurn = Turn::ActorSelection;
             break;
         }
         
         case 1: {
-            const unsigned int hp = TakeHealth(srcActor);
             ClosePlayerOption();
+            const unsigned int hp = TakeHealth(srcActor);
             m_currentTurn = Turn::Waiting;
             m_textList.Open();
             m_textList.AddText({srcActor.GetName().value + " drinks a potion",
@@ -136,13 +136,36 @@ void BattleController::HandlePlayerSelection(BattleActor& srcActor, const int se
     }
 }
 
+void BattleController::HandleActorSelection()
+{
+    if (m_eventState.uiDirection == Direction::Right) {
+        m_selector.Next();
+    } else if (m_eventState.uiDirection == Direction::Left) {
+        m_selector.Previous();
+    } else if (m_eventState.isAction) {
+        // m_textList.Close(); // Not really necessary because Open() call in ApplyDamage will not build the associated file if it is still open
+        ApplyDamage(*m_currentActor, m_selector.GetIndex());
+        m_selector.Close();
+        m_currentTurn = Turn::Waiting;
+    }
+}
+
+void BattleController::ApplyDamage(BattleActor& srcActor, const int selectorIndex)
+{
+    BattleActor& targetActor = m_actors[selectorIndex]; // For now, the selector can choose any actors (Ally or Opponent). Later I will filter them
+    const unsigned int damage = TakeDamage(srcActor, targetActor); 
+    m_textList.Open();
+    m_textList.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
+                        targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
+}
+
 void BattleController::HandleOpponentTurn(BattleActor& srcActor)
 {
-    BattleActor& targetActor = m_actors[0]; // TODO : Target selection
+    BattleActor& targetActor = m_actors[0]; // TODO : Behaviour
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
     m_currentTurn = Turn::Waiting;
     m_textList.Open();
-    m_textList.AddText({srcActor.GetName().value + " attacks !",
+    m_textList.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
 }
 
@@ -161,10 +184,10 @@ void BattleController::PlayNextTurn()
         case Turn::Init : {
             m_currentActor = GetNextTurn();
             if (m_currentActor->GetTeam() == Team::Ally) OpenPlayerOption();
-            m_currentTurn = Turn::Playing; 
+            m_currentTurn = Turn::OptionSelection; 
         }
         
-        case Turn::Playing : {
+        case Turn::OptionSelection : {
             switch (m_currentActor->GetTeam()) {
                 case Team::Ally : {
                     if (m_eventState.uiDirection == Direction::Down) {
@@ -172,7 +195,7 @@ void BattleController::PlayNextTurn()
                     } else if (m_eventState.uiDirection == Direction::Up) {
                         m_selector.Previous();
                     } else if (m_eventState.isAction) {
-                        HandlePlayerSelection(*m_currentActor, m_selector.GetIndex());
+                        HandleOptionSelection(*m_currentActor, m_selector.GetIndex());
                     }   
                     break;
                 }
@@ -183,6 +206,11 @@ void BattleController::PlayNextTurn()
                 default:
                     throw std::runtime_error("Unknown Team value");
             }
+            break;
+        }
+
+        case Turn::ActorSelection : {
+            HandleActorSelection();
             break;
         }
 
