@@ -1,0 +1,157 @@
+#include "map/entity.hpp"
+
+Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
+    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
+    SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
+    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
+    // Remove +".png" if I create RessourceFile struct ?
+{
+    const AreaSize spriteSize = m_animation.GetSpriteSize();
+    m_textureWidth = spriteSize.x;
+    m_textureHeight = spriteSize.y;
+    // Sprites could have a different size than tiles
+    SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, m_textureHeight-tilemap.GetTileSize()});
+    Reset(initialDirection);
+}
+
+EntityState Entity::GetState() const
+{
+    return m_state;
+}
+
+EntityMovement Entity::GetCurrentMovement() const
+{
+    return m_currentMovement;
+}
+
+void Entity::SetOrientation(const Direction direction)
+{
+    m_animation.Reset(direction);
+    m_currentMovement.DefineMovement(direction);
+}
+
+void Entity::Reset(const Direction direction)
+{
+    if (direction == Direction::None) 
+        throw std::invalid_argument("Direction should not be None\n");
+    SetOrientation(direction);
+    m_state = EntityState::Free;
+}
+
+void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap)
+{
+    const MapPosition currentPosition = GetMapPosition();
+    MapPosition targetPosition = currentPosition + movement.GetMove();
+    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
+
+    if (canExitMap && bound != MapBound::Inside){
+        m_tilemap.LoadAdjacentMap(bound);
+        SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
+        const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
+        m_position = GetFinalDrawingPosition(newPosition);
+        // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
+    }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(targetPosition)){
+        m_currentMovement = movement;
+        m_state = EntityState::Moving;
+
+        int tileSize = m_tilemap.GetTileSize();
+        m_animation.Initialize(movement.GetDirection(), isFirstMovement);
+        m_currentMovement.Initialize(tileSize, currentPosition, targetPosition);
+        
+        m_tilemap.FreePosition(currentPosition);
+        m_tilemap.TakePosition(targetPosition);
+        SetMapPosition(targetPosition);
+    }else{
+        Reset(movement.GetDirection()); // Reset animation to idle + state to Free
+    }
+}
+
+void Entity::TryStartInteraction(const MapPosition targetPosition)
+{
+    const MapBound bound = m_tilemap.IsOutOfMap(targetPosition);
+    if (bound == MapBound::Inside){
+        m_state = EntityState::Interacting;
+        SetTargetPosition(targetPosition);
+        Notify(EntityEvent::EnterInteraction);
+    }
+}
+
+void Entity::LeaveInteraction()
+{
+    // SetState(Free) should be here rather than inside InteractionController::EndInteraction()
+    Notify(EntityEvent::LeaveInteraction);
+}
+
+ScenePosition Entity::ContinueMovement(const float deltaTime)
+{
+    m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
+    m_animation.ContinueAnimation(deltaTime);
+    return m_currentMovement.GetScenePosition();
+}
+
+ScenePosition Entity::GetFinalDrawingPosition(const ScenePosition sp) const
+{
+    return (sp-GetDisplayOffset())*m_camera.GetZoom();
+}
+
+void Entity::DrawTexture() const
+{
+    const Vec2 sprite = m_animation.GetCurrentSprite(); 
+    const SDL_Rect src{sprite.x, sprite.y, m_textureWidth, m_textureHeight};
+    const ScenePosition cameraPosition = m_camera.GetPosition()-m_camera.GetScreenOffset();
+    const float zoom = m_camera.GetZoom();
+    const SDL_Rect dst{m_position.x-cameraPosition.x, m_position.y-cameraPosition.y,
+                       static_cast<int>(m_textureWidth*zoom), static_cast<int>(m_textureHeight*zoom)};
+    m_textureController.RenderTexture(m_textureKey, src, dst);
+}
+
+void Entity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
+{
+    // Should berify if direction != Direction::None ?
+    EntityMovement movement;
+    movement.DefineMovement(direction);
+    TryStartMovement(movement, isFirstMovement, canExitMap);
+}
+
+void Entity::OrderUpdateMovement(const float deltaTime)
+{
+    m_position = GetFinalDrawingPosition(ContinueMovement(deltaTime));
+}
+
+void Entity::OrderInteraction(const Direction direction)
+{
+    EntityMovement movement; // To get targeted position, I need to initialize a EntityMovement (to use GetMoveFromDirection)
+    movement.DefineMovement(direction);
+    const MapPosition targetPosition = GetMapPosition() + movement.GetMove();
+    TryStartInteraction(targetPosition);
+}
+
+float Entity::GetWalkSpeed() const
+{
+    return m_walkSpeed;
+}
+
+float Entity::GetRunSpeed() const
+{
+    return m_runSpeed;
+}
+
+float Entity::GetCurrentSpeed() const
+{
+    return m_isRunning ? m_runSpeed : m_walkSpeed;
+}
+
+bool Entity::GetIsRunning() const
+{
+    return m_isRunning;
+}
+
+void Entity::SetState(const EntityState state)
+{
+    m_state = state;
+}
+
+void Entity::SetIsRunning(const bool isRunning)
+{
+    m_isRunning = isRunning;
+}

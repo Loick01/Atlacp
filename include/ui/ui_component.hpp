@@ -1,0 +1,19 @@
+#pragma once
+
+#include "ui/ui_controller.hpp"
+
+class UiComponent
+{
+    private:
+        const std::string m_uiFilepath; // const ?
+
+    public:
+        UiController& m_uiController;
+        ElementKey m_elementKey;
+        
+        UiComponent(UiController& uiController, const std::string& uiFilepath);
+
+        ElementKey GetKey() const;
+        void Open();
+        void Close();
+};

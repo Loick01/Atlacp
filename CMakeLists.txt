@@ -12,36 +12,8 @@ pkg_check_modules(SDL2IMAGE REQUIRED SDL2_image)
 pkg_check_modules(SDL2TTF REQUIRED SDL2_ttf)
 pkg_check_modules(SDL2MIXER REQUIRED SDL2_mixer)
 
-set(SOURCES
-    src/player.cpp
-    src/window.cpp
-    src/event.cpp
-    src/texture.cpp
-    src/file.cpp
-    src/tilemap.cpp
-    src/drawable.cpp
-    src/element.cpp
-    src/tileset.cpp
-    src/camera.cpp
-    src/animation.cpp
-    src/npc.cpp
-    src/entity.cpp
-    src/behaviour.cpp
-    src/scene.cpp
-    src/pathfind.cpp
-    src/ui_element.cpp
-    src/layer.cpp
-    src/sound.cpp
-    src/interaction.cpp
-    src/movement.cpp
-    src/entity_controller.cpp
-    src/battle.cpp
-    src/ui_controller.cpp
-    src/action.cpp
-    src/ui_selector.cpp
-    src/ui_text_series.cpp
-    src/ui_component.cpp
-    src/ui_list.cpp
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    src/*.cpp
 )
 
 add_executable(atlacp src/main.cpp ${SOURCES})

@@ -1,0 +1,20 @@
+#pragma once
+
+#include <initializer_list>
+#include <queue>
+
+#include "ui/ui_component.hpp"
+#include "ui/ui_controller.hpp"
+#include "ui/ui_element.hpp"
+
+class UiTextSeries : public UiComponent
+{
+    private:
+        std::queue<std::string> m_texts;
+    
+    public:
+        UiTextSeries(UiController& uiController, const std::string& uiFilepath);
+
+        bool Next(); // Rename
+        void AddText(std::initializer_list<std::string> texts);
+};
