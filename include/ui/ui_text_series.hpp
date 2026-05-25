@@ -15,6 +15,6 @@ class UiTextSeries : public UiComponent
     public:
         UiTextSeries(UiController& uiController, const std::string& uiFilepath);
 
-        bool Next(); // Rename
+        bool Next();
         void AddText(std::initializer_list<std::string> texts);
 };

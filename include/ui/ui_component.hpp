@@ -5,7 +5,7 @@
 class UiComponent
 {
     private:
-        const std::string m_uiFilepath; // const ?
+        std::string m_uiFilepath;
 
     public:
         UiController& m_uiController;
@@ -13,7 +13,8 @@ class UiComponent
         
         UiComponent(UiController& uiController, const std::string& uiFilepath);
 
-        ElementKey GetKey() const;
+        ElementKey GetKey() const; 
+        void SetFilepath(const std::string& uiFilepath);
         void Open();
         void Close();
 };

@@ -9,6 +9,11 @@ ElementKey UiComponent::GetKey() const
     return m_elementKey;
 }
 
+void UiComponent::SetFilepath(const std::string& uiFilepath)
+{
+    m_uiFilepath = uiFilepath;
+}
+
 void UiComponent::Open()
 {
     m_uiController.BuildUiFile(m_uiFilepath);

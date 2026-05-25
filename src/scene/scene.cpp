@@ -31,7 +31,6 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
     switch(e){
         case SwitchEvent::ToGameplay: {
             m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);
-            // m_uiController.DeleteElement("background"); // Will not be here (I need something to clean UiController when switching to a new scene ?)
             break;
         } 
         case SwitchEvent::ToEditor: {

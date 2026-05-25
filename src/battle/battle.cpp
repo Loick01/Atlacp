@@ -31,9 +31,10 @@ void BattleActor::ModifyHealth(const int hp)
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
-    m_selector(uiController, "../data/ui/selector_template"), m_textList(uiController, "../data/ui/single_text_frame_template")
+    m_allyList(uiController), m_opponentList(uiController), m_frameList(uiController),
+    m_selector(uiController, "../data/ui/selector_template"), m_textSeries(uiController, "../data/ui/single_text_frame_template")
 {
-    // Will not be here 
+    // Will not be here
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
     m_actors.push_back(BattleActor(Team::Opponent, "actorBName", "actorBHealth", "Bone Appetit", 100));
     m_turns.push(&(m_actors[0])); // Remove
@@ -69,18 +70,20 @@ void BattleController::CheckActorHealth()
         Notify(ExitEvent::ExitWin);
 }
 
-void BattleController::OpenPlayerOption()
+void BattleController::OpenAllyMoveSelection()
 {
-    m_uiController.BuildUiFile("../data/ui/battle_player_option_template"); // Will call Open() on option list
+    m_frameList.SetFilepath("../data/ui/ally_move_selection");
+    m_frameList.Open();
     m_selector.Open();
-    m_selector.SetParents({"option0", "option1", "option2", "option3"}); // Will be get from option list
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); // When selector file is build, scale is based on root element
+    m_selector.SetParents(m_frameList.GetElementsKey()); // Could be call before Open() ?
+    // When selector file is build, scale is based on root element
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); 
 }
 
-void BattleController::ClosePlayerOption()
+void BattleController::CloseAllyMoveSelection()
 {
     m_selector.Close();
-    m_uiController.DeleteElement("option0"); // Will call Close() on option list 
+    m_frameList.Close();
 }
 
 unsigned int BattleController::TakeDamage(BattleActor& source, BattleActor& target)
@@ -104,24 +107,23 @@ void BattleController::HandleOptionSelection(BattleActor& srcActor, const int se
 {
     switch (selectorIndex) {
         case 0: {
-            ClosePlayerOption();
-            m_textList.Open();
-            m_textList.AddText({"Choose an opponent to attack"});
+            CloseAllyMoveSelection();
+            m_textSeries.Open();
+            m_textSeries.AddText({"Choose an opponent to attack"});
             m_selector.Open();
-            // As explained in ApplyDamage(), actors are not yet filtered according to their team.
-            // That's why for now I need to add them all in the selector's list of parents 
             m_selector.SetParents({"actorASprite", "actorBSprite"}); // Remove
-            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorASprite", Axis::Height, 0.2f});
+            // m_selector.SetParents(m_opponentList.GetElementsKey());
+            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorASprite", Axis::Height, 0.2f}); // Not "actorASprite"
             m_currentTurn = Turn::ActorSelection;
             break;
         }
         
         case 1: {
-            ClosePlayerOption();
+            CloseAllyMoveSelection();
             const unsigned int hp = TakeHealth(srcActor);
             m_currentTurn = Turn::Waiting;
-            m_textList.Open();
-            m_textList.AddText({srcActor.GetName().value + " drinks a potion",
+            m_textSeries.Open();
+            m_textSeries.AddText({srcActor.GetName().value + " drinks a potion",
                                srcActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
 
             break;
@@ -145,7 +147,7 @@ void BattleController::HandleActorSelection()
     } else if (m_eventState.uiDirection == Direction::Left) {
         m_selector.Previous();
     } else if (m_eventState.isAction) {
-        // m_textList.Close(); // Not really necessary because Open() call in ApplyDamage will not build the associated file if it is still open
+        // m_textSeries.Close(); // Not really necessary because Open() call in ApplyDamage will not build the associated file if it is still open
         ApplyDamage(*m_currentActor, m_selector.GetIndex());
         m_selector.Close();
         m_currentTurn = Turn::Waiting;
@@ -156,8 +158,8 @@ void BattleController::ApplyDamage(BattleActor& srcActor, const int selectorInde
 {
     BattleActor& targetActor = m_actors[selectorIndex]; // For now, the selector can choose any actors (Ally or Opponent). Later I will filter them
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
-    m_textList.Open();
-    m_textList.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
+    m_textSeries.Open();
+    m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
 }
 
@@ -166,8 +168,8 @@ void BattleController::HandleOpponentTurn(BattleActor& srcActor)
     BattleActor& targetActor = m_actors[0]; // TODO : Behaviour
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
     m_currentTurn = Turn::Waiting;
-    m_textList.Open();
-    m_textList.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
+    m_textSeries.Open();
+    m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
 }
 
@@ -185,7 +187,7 @@ void BattleController::PlayNextTurn()
     switch (m_currentTurn) {
         case Turn::Init : {
             m_currentActor = GetNextTurn();
-            if (m_currentActor->GetTeam() == Team::Ally) OpenPlayerOption();
+            if (m_currentActor->GetTeam() == Team::Ally) OpenAllyMoveSelection();
             m_currentTurn = Turn::OptionSelection; 
         }
         
@@ -218,8 +220,8 @@ void BattleController::PlayNextTurn()
 
         case Turn::Waiting : {
             if (m_eventState.isAction) {
-                if (!m_textList.Next()) {
-                    m_textList.Close();
+                if (!m_textSeries.Next()) {
+                    m_textSeries.Close();
                     m_currentTurn = Turn::Init;
                 }
             } 

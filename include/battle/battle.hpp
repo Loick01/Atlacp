@@ -6,6 +6,7 @@
 #include "system/notifier.hpp"
 #include "system/type.hpp"
 #include "ui/ui_controller.hpp"
+#include "ui/ui_list.hpp"
 #include "ui/ui_selector.hpp"
 #include "ui/ui_text_series.hpp"
 
@@ -54,8 +55,11 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         UiController& m_uiController; 
         UiSelector m_selector;
-        UiTextSeries m_textList;
-        Turn m_currentTurn;
+        UiTextSeries m_textSeries;
+        UiList m_allyList; // TODO
+        UiList m_opponentList; // TODO
+        UiList m_frameList;
+        Turn m_currentTurn; // TODO
 
     public:
         BattleController(UiController& uiController);
@@ -65,8 +69,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         bool HasAliveActor(const Team team);
         void CheckActorHealth();
 
-        void OpenPlayerOption(); // Will be removed
-        void ClosePlayerOption(); // Will be removed
+        void OpenAllyMoveSelection(); // Will be removed
+        void CloseAllyMoveSelection(); // Will be removed
         unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
         unsigned int TakeHealth(BattleActor& source); // Rename
         void HandleOptionSelection(BattleActor& srcActor, const int index);

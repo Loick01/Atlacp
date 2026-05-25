@@ -9,7 +9,7 @@
 class UiSelector : public UiComponent
 {
     private:
-        std::vector<ElementKey> m_parents;
+        std::vector<ElementKey> m_parents; // Rename
         int m_currentIndex;
     
     public:
@@ -17,7 +17,7 @@ class UiSelector : public UiComponent
 
         int GetIndex() const;
         void Reset();
-        void SetParents(std::initializer_list<ElementKey> parents);
+        void SetParents(std::vector<ElementKey> parents);
         void UpdateParent();
         void Previous();
         void Next();
