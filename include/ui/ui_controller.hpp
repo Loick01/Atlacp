@@ -71,6 +71,8 @@ class UiController
         void UpdateScalingSize(const ElementKey& key, const PartialSize ps); // Should use ElementKey+Axis+float, instead of PartialSize (which is from file.hpp)
         // Should add UpdateScalingAxis ?
         
+        void BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey); // Rename
+        std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename
         void BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);
 };

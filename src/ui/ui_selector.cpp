@@ -28,7 +28,7 @@ void UiSelector::UpdateParent()
 {
     const ElementKey& parentKey = m_parents[m_currentIndex];
     m_uiController.UpdateParent(m_elementKey, parentKey); 
-    m_uiController.GetElement(parentKey)->UpdatePosition(); // Will update the selector position
+    m_uiController.GetElement(parentKey)->UpdatePosition();
 }
 
 void UiSelector::Previous()

@@ -132,7 +132,6 @@ std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, co
 {
     std::unique_ptr<UiElement> element = std::make_unique<UiElement>(m_textureController, key, textureFilepath);
     element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
-    AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
     return element;
 }
 
@@ -140,7 +139,6 @@ std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key,
 {
     std::unique_ptr<TextArea> element = std::make_unique<TextArea>(m_textureController, key, fontFilepath);
     element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
-    AddElement(key, element.get()); // This function could be called as a Callback if the UiElement was instantiated before its creation
     return element;
 }
 
@@ -220,46 +218,56 @@ void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps
     e->UpdatePosition();
 }
 
+std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
+{
+    std::unique_ptr<UiElement> element;
+    if (data.type == "uielement") {
+        element = CreateElement(data.key, data.path);
+    } else if (data.type == "textarea") {
+        std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
+        textAreaElement->SetText(data.text);
+        element = std::move(textAreaElement);
+    } else {
+        throw std::runtime_error("Unknown element type : " + data.type); // ?
+    }
+
+    UiParams& params = element->GetParams();
+    
+    params.scale = GetResultFromPartialSize(data.scale);
+    
+    params.scaleAxis = data.dstScaleAxis; // Also when TextArea ?
+    params.xAnchor = data.xAnchor;
+    params.yAnchor = data.yAnchor;
+    
+    const PartialSize xPaddingData = data.xPadding;
+    const PartialSize yPaddingData = data.yPadding;
+    if (xPaddingData.srcElement != "undefined_element")
+        params.xPadding = GetResultFromPartialSize(xPaddingData);
+
+    if (yPaddingData.srcElement != "undefined_element")
+        params.yPadding = GetResultFromPartialSize(yPaddingData);
+
+    return element;
+}
+
+void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
+{
+    AddElement(element->GetKey(), element.get());
+    if (parentKey == "root") {
+        BuildSubRoot(std::move(element));
+    } else {
+        GetElement(parentKey)->BuildChild(std::move(element));
+    }
+}
+
 void UiController::BuildUiFile(const std::string& filepath) 
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
 
-    for (const DataUi& data : fileResult) { // Will not be here
-
+    for (const DataUi& data : fileResult) { 
         if (GetIteratorOnElement(data.key) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
-
-        std::unique_ptr<UiElement> element;
-        if (data.type == "uielement") {
-            element = CreateElement(data.key, data.path);
-        } else if (data.type == "textarea") {
-            std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
-            textAreaElement->SetText(data.text);
-            element = std::move(textAreaElement);
-        } else {
-            throw std::runtime_error("Unknown element type : " + data.type); // ?
-        }
-
-        UiParams& params = element->GetParams();
-        
-        params.scale = GetResultFromPartialSize(data.scale);
-        
-        params.scaleAxis = data.dstScaleAxis; // Also when TextArea ?
-        params.xAnchor = data.xAnchor;
-        params.yAnchor = data.yAnchor;
-        
-        const PartialSize xPaddingData = data.xPadding;
-        const PartialSize yPaddingData = data.yPadding;
-        if (xPaddingData.srcElement != "undefined_element")
-            params.xPadding = GetResultFromPartialSize(xPaddingData);
-
-        if (yPaddingData.srcElement != "undefined_element")
-            params.yPadding = GetResultFromPartialSize(yPaddingData);
-        
-        if (data.parentKey == "root") {
-            BuildSubRoot(std::move(element));
-        } else {
-            GetElement(data.parentKey)->BuildChild(std::move(element));
-        }
+        std::unique_ptr<UiElement> element = GenerateElementFromData(data);
+        BuildElement(element, data.parentKey);
     }
     UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
 }

@@ -69,11 +69,11 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         bool HasAliveActor(const Team team);
         void CheckActorHealth();
 
-        void OpenAllyMoveSelection(); // Will be removed
-        void CloseAllyMoveSelection(); // Will be removed
+        void OpenAllyMoveSelection();
+        void CloseAllyMoveSelection();
         unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
         unsigned int TakeHealth(BattleActor& source); // Rename
-        void HandleOptionSelection(BattleActor& srcActor, const int index);
+        void HandleAllyMoveSelection(BattleActor& srcActor, const int index);
         void HandleActorSelection();
         void ApplyDamage(BattleActor& srcActor, const int selectorIndex);
         void HandleOpponentTurn(BattleActor& srcActor); // Will be removed, I will use behaviour class

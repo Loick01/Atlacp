@@ -32,7 +32,7 @@ void BattleActor::ModifyHealth(const int hp)
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
     m_allyList(uiController), m_opponentList(uiController), m_frameList(uiController),
-    m_selector(uiController, "../data/ui/selector_template"), m_textSeries(uiController, "../data/ui/single_text_frame_template")
+    m_selector(uiController, "../data/ui/selector.uit"), m_textSeries(uiController, "../data/ui/single_text_frame_template")
 {
     // Will not be here
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
@@ -75,7 +75,7 @@ void BattleController::OpenAllyMoveSelection()
     m_frameList.SetFilepath("../data/ui/ally_move_selection");
     m_frameList.Open();
     m_selector.Open();
-    m_selector.SetParents(m_frameList.GetElementsKey()); // Could be call before Open() ?
+    m_selector.SetParents(m_frameList.GetElementsKey());
     // When selector file is build, scale is based on root element
     m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); 
 }
@@ -103,7 +103,7 @@ unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Objec
     return hp;
 }
 
-void BattleController::HandleOptionSelection(BattleActor& srcActor, const int selectorIndex)
+void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int selectorIndex)
 {
     switch (selectorIndex) {
         case 0: {
@@ -199,7 +199,7 @@ void BattleController::PlayNextTurn()
                     } else if (m_eventState.uiDirection == Direction::Up) {
                         m_selector.Previous();
                     } else if (m_eventState.isAction) {
-                        HandleOptionSelection(*m_currentActor, m_selector.GetIndex());
+                        HandleAllyMoveSelection(*m_currentActor, m_selector.GetIndex());
                     }   
                     break;
                 }
