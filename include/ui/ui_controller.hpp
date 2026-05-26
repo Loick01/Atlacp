@@ -73,6 +73,6 @@ class UiController
         
         void BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey); // Rename
         std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename
-        ElementKey BuildUiFile(const std::string& filepath);
+        std::vector<ElementKey> BuildUiFile(const std::string& filepath);
         void OpenDialogBox(const std::string& text);
 };

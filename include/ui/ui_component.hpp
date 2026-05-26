@@ -4,17 +4,16 @@
 
 class UiComponent
 {
-    private:
+    protected:
+        UiController& m_uiController;
+        ElementKey m_elementKey;
         std::string m_uiFilepath;
 
     public:
-        UiController& m_uiController;
-        ElementKey m_elementKey;
-        
         UiComponent(UiController& uiController, const std::string& uiFilepath);
 
         ElementKey GetKey() const; 
         void SetFilepath(const std::string& uiFilepath);
-        void Open();
+        virtual void Open();
         void Close();
 };

@@ -75,7 +75,7 @@ void BattleController::OpenAllyMoveSelection()
     m_frameList.SetFilepath("../data/ui/ally_move_selection.uif");
     m_frameList.Open();
     m_selector.Open();
-    m_selector.SetParents(m_frameList.GetElementsKey());
+    m_selector.SetParents(m_frameList.GetItemsKey());
     // When selector file is build, scale is based on root element
     m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); 
 }
@@ -112,7 +112,7 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_selector.Open();
             m_selector.SetParents({"actorASprite", "actorBSprite"}); // Remove
-            // m_selector.SetParents(m_opponentList.GetElementsKey());
+            // m_selector.SetParents(m_opponentList.GetItemsKey());
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorASprite", Axis::Height, 0.2f}); // Not "actorASprite"
             m_currentTurn = Turn::ActorSelection;
             break;
@@ -147,7 +147,7 @@ void BattleController::HandleActorSelection()
     } else if (m_eventState.uiDirection == Direction::Left) {
         m_selector.Previous();
     } else if (m_eventState.isAction) {
-        // m_textSeries.Close(); // Not really necessary because Open() call in ApplyDamage will not build the associated file if it is still open
+        m_textSeries.Close();
         ApplyDamage(*m_currentActor, m_selector.GetIndex());
         m_selector.Close();
         m_currentTurn = Turn::Waiting;

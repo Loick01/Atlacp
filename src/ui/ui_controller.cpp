@@ -260,17 +260,19 @@ void UiController::BuildElement(std::unique_ptr<UiElement>& element, const Eleme
     }
 }
 
-ElementKey UiController::BuildUiFile(const std::string& filepath) 
+std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath) 
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
-
+    std::vector<ElementKey> createdElements;
+    
     for (const DataUi& data : fileResult) { 
         if (GetIteratorOnElement(data.key) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
+        createdElements.push_back(data.key); // Maybe I could use a flag in ui file to mark specific elements
         std::unique_ptr<UiElement> element = GenerateElementFromData(data);
         BuildElement(element, data.parentKey);
     }
     UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
-    return fileResult[0].key;
+    return createdElements;
 }
 
 void UiController::OpenDialogBox(const std::string& text)

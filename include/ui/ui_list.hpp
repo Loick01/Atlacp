@@ -7,10 +7,11 @@
 class UiList : public UiComponent
 {
     private:
-        std::vector<ElementKey> m_elements; // Rename
+        std::vector<ElementKey> m_itemsKey;
     
     public:
         UiList(UiController& uiController, const std::string& uiFilepath = "undefined_ui_list_file");
 
-        std::vector<ElementKey> GetElementsKey() const; // Rename
+        std::vector<ElementKey> GetItemsKey() const;
+        void Open() override;
 };

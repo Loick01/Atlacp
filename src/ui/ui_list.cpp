@@ -2,11 +2,16 @@
 
 UiList::UiList(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)
+{}
+
+std::vector<ElementKey> UiList::GetItemsKey() const
 {
-    m_elements = {"option0", "option1", "option2", "option3"}; // Remove (should be returned by UiController::BuildUiFile ?)
+    return m_itemsKey;
 }
 
-std::vector<ElementKey> UiList::GetElementsKey() const
+void UiList::Open()
 {
-    return m_elements;
+    const std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
+    m_elementKey = created[0];
+    m_itemsKey = created;
 }

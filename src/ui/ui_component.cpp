@@ -16,7 +16,8 @@ void UiComponent::SetFilepath(const std::string& uiFilepath)
 
 void UiComponent::Open()
 {
-    m_elementKey = m_uiController.BuildUiFile(m_uiFilepath);
+    const std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
+    m_elementKey = created[0];
 }
 
 void UiComponent::Close()
