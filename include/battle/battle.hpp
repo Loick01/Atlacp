@@ -6,6 +6,7 @@
 #include "system/notifier.hpp"
 #include "system/type.hpp"
 #include "ui/ui_controller.hpp"
+#include "ui/ui_dynamic_list.hpp"
 #include "ui/ui_list.hpp"
 #include "ui/ui_selector.hpp"
 #include "ui/ui_text_series.hpp"
@@ -56,8 +57,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController; 
         UiSelector m_selector;
         UiTextSeries m_textSeries;
-        UiList m_allyList; // TODO
-        UiList m_opponentList; // TODO
+        UiDynamicList m_allyList;
+        UiDynamicList m_opponentList;
         UiList m_frameList;
         Turn m_currentTurn; // TODO
 
@@ -65,7 +66,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleController(UiController& uiController);
 
         BattleActor* GetNextTurn();
-        void UpdateStatus(); // Rename
+        void InitializeActors();
         bool HasAliveActor(const Team team);
         void CheckActorHealth();
 

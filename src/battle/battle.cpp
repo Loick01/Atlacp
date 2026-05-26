@@ -32,7 +32,7 @@ void BattleActor::ModifyHealth(const int hp)
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
     m_allyList(uiController), m_opponentList(uiController), m_frameList(uiController),
-    m_selector(uiController, "../data/ui/selector.uit"), m_textSeries(uiController, "../data/ui/single_text_frame.uit")
+    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/template/single_text_frame.uit")
 {
     // Will not be here
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
@@ -41,12 +41,16 @@ BattleController::BattleController(UiController& uiController):
     m_turns.push(&(m_actors[1])); // Remove
 }
 
-void BattleController::UpdateStatus()
+void BattleController::InitializeActors()
 {
     for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
         m_uiController.UpdateText(m_actors[i].GetName());
         m_uiController.UpdateText(m_actors[i].GetHealth()); 
     }
+    m_allyList.SetNrItem(1);
+    m_opponentList.SetNrItem(1);
+    // m_allyList.Open();
+    // m_opponentList.Open();
 }
 
 bool BattleController::HasAliveActor(const Team team)
@@ -72,7 +76,7 @@ void BattleController::CheckActorHealth()
 
 void BattleController::OpenAllyMoveSelection()
 {
-    m_frameList.SetFilepath("../data/ui/ally_move_selection.uif");
+    m_frameList.SetFilepath("../data/ui/file/ally_move_selection.uif");
     m_frameList.Open();
     m_selector.Open();
     m_selector.SetParents(m_frameList.GetItemsKey());
