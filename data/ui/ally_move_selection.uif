@@ -1,5 +1,3 @@
-load ../data/ui/frame_template
-###
 frame
 option0
 textarea

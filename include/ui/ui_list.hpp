@@ -12,5 +12,5 @@ class UiList : public UiComponent
     public:
         UiList(UiController& uiController, const std::string& uiFilepath = "undefined_ui_list_file");
 
-        std::vector<ElementKey> GetElementsKey() const;
+        std::vector<ElementKey> GetElementsKey() const; // Rename
 };

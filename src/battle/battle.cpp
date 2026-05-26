@@ -32,7 +32,7 @@ void BattleActor::ModifyHealth(const int hp)
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
     m_allyList(uiController), m_opponentList(uiController), m_frameList(uiController),
-    m_selector(uiController, "../data/ui/selector.uit"), m_textSeries(uiController, "../data/ui/single_text_frame_template")
+    m_selector(uiController, "../data/ui/selector.uit"), m_textSeries(uiController, "../data/ui/single_text_frame.uit")
 {
     // Will not be here
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
@@ -72,7 +72,7 @@ void BattleController::CheckActorHealth()
 
 void BattleController::OpenAllyMoveSelection()
 {
-    m_frameList.SetFilepath("../data/ui/ally_move_selection");
+    m_frameList.SetFilepath("../data/ui/ally_move_selection.uif");
     m_frameList.Open();
     m_selector.Open();
     m_selector.SetParents(m_frameList.GetElementsKey());

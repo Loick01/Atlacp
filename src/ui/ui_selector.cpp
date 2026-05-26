@@ -2,9 +2,7 @@
 
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_currentIndex(0)
-{
-    m_elementKey = "selector"; // Remove (should be returned by UiController::BuildUiFile ?)
-}
+{}
 
 int UiSelector::GetIndex() const
 {

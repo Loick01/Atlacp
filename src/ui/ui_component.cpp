@@ -1,7 +1,7 @@
 #include "ui/ui_component.hpp"
 
 UiComponent::UiComponent(UiController& uiController, const std::string& uiFilepath) :
-    m_uiController(uiController), m_uiFilepath(uiFilepath) // Should initialize m_elementKey ?
+    m_uiController(uiController), m_uiFilepath(uiFilepath)
 {}
 
 ElementKey UiComponent::GetKey() const
@@ -16,7 +16,7 @@ void UiComponent::SetFilepath(const std::string& uiFilepath)
 
 void UiComponent::Open()
 {
-    m_uiController.BuildUiFile(m_uiFilepath);
+    m_elementKey = m_uiController.BuildUiFile(m_uiFilepath);
 }
 
 void UiComponent::Close()

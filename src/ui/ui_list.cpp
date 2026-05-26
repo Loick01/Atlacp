@@ -3,7 +3,6 @@
 UiList::UiList(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)
 {
-    m_elementKey = "option0"; // Remove (should be returned by UiController::BuildUiFile ?)
     m_elements = {"option0", "option1", "option2", "option3"}; // Remove (should be returned by UiController::BuildUiFile ?)
 }
 

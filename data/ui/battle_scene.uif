@@ -83,3 +83,5 @@ scale actorBName width 1.
 xAnchor left_in
 yAnchor bottom_out
 ###
+load ../data/ui/main_frame.uif
+###

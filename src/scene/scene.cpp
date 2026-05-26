@@ -216,7 +216,7 @@ BattleScene::BattleScene(GameContext& context):
     
     m_context.eventController = std::make_unique<BattleEventController>();
    
-    m_context.uiController.BuildUiFile("../data/ui/battle_scene");
+    m_context.uiController.BuildUiFile("../data/ui/battle_scene.uif");
     
     // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 

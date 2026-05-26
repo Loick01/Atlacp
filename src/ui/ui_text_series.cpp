@@ -2,9 +2,7 @@
 
 UiTextSeries::UiTextSeries(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)
-{
-    m_elementKey = "frameText"; // Remove (should be returned by UiController::BuildUiFile ?)
-}
+{}
 
 bool UiTextSeries::Next()
 {

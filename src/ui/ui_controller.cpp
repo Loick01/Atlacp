@@ -191,33 +191,6 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) /
     throw std::runtime_error("(UiController::RemoveSubRoots) No subroots have this key : " + key);
 }
 
-
-void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
-{
-    UiElement* currentElement = GetElement(key);
-    UiElement* previousParent = currentElement->GetParent();
-    UiElement* newParent = GetElement(parent);
-    
-    std::unique_ptr<UiElement> ownedElement; // unique_ptr of currentElement
-    if (previousParent == nullptr) // subRoot has no parent
-        ownedElement = RemoveSubRoots(key);
-    else
-        ownedElement = previousParent->RemoveChild(key);
-
-     // WARNING : currentElement has the same UiParams as with 
-     // the previous parent, which may be not wanted
-    newParent->BuildChild(std::move(ownedElement));
-}
-
-void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps)
-{
-    const float result = GetResultFromPartialSize(ps);
-    UiElement* e = GetElement(key);
-    e->SetParamsScale(result);
-    e->ComputeFinal();
-    e->UpdatePosition();
-}
-
 std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
 {
     std::unique_ptr<UiElement> element;
@@ -250,6 +223,33 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     return element;
 }
 
+void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
+{
+    UiElement* currentElement = GetElement(key);
+    UiElement* previousParent = currentElement->GetParent();
+    UiElement* newParent = GetElement(parent);
+    
+    std::unique_ptr<UiElement> ownedElement; // unique_ptr of currentElement
+    if (previousParent == nullptr) // subRoot has no parent
+        ownedElement = RemoveSubRoots(key);
+    else
+        ownedElement = previousParent->RemoveChild(key);
+
+     // WARNING : currentElement has the same UiParams as with 
+     // the previous parent, which may be not wanted
+    newParent->BuildChild(std::move(ownedElement));
+}
+
+void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps)
+{
+    const float result = GetResultFromPartialSize(ps);
+    UiElement* e = GetElement(key);
+    e->SetParamsScale(result);
+    e->ComputeFinal();
+    // Should also update scale size for every children of e ?
+    e->UpdatePosition();
+}
+
 void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
 {
     AddElement(element->GetKey(), element.get());
@@ -260,7 +260,7 @@ void UiController::BuildElement(std::unique_ptr<UiElement>& element, const Eleme
     }
 }
 
-void UiController::BuildUiFile(const std::string& filepath) 
+ElementKey UiController::BuildUiFile(const std::string& filepath) 
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
 
@@ -270,6 +270,7 @@ void UiController::BuildUiFile(const std::string& filepath)
         BuildElement(element, data.parentKey);
     }
     UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
+    return fileResult[0].key;
 }
 
 void UiController::OpenDialogBox(const std::string& text)

@@ -1,4 +1,4 @@
-load ../data/ui/frame_template
+load ../data/ui/main_frame.uif
 ### 
 frame
 faceset
