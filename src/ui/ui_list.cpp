@@ -13,8 +13,10 @@ std::vector<ElementKey> UiList::GetItemsKey() const
 
 void UiList::Open()
 {
+    // Should do the same process than UiComponent::Open() ?
     const std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
     m_elementKey = created[0];
+
     m_itemsKey = created;
 }
 

@@ -51,7 +51,7 @@ void UiController::DeleteElement(const ElementKey& key)
         elementPtr = RemoveSubRoots(key);
     else
         elementPtr = parent->RemoveChild(key);
-    
+
     // Free the unique_ptr
     elementPtr.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
 }
@@ -130,16 +130,12 @@ float UiController::GetResultFromPartialSize(const PartialSize& ps) const
 
 std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
 {
-    std::unique_ptr<UiElement> element = std::make_unique<UiElement>(m_textureController, key, textureFilepath);
-    element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
-    return element;
+    return std::make_unique<UiElement>(m_textureController, key, textureFilepath);
 }
 
 std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
 {
-    std::unique_ptr<TextArea> element = std::make_unique<TextArea>(m_textureController, key, fontFilepath);
-    element->AddCallback([this, key](UiElementEvent e){HandleUiEvent(e, key);});
-    return element;
+    return std::make_unique<TextArea>(m_textureController, key, fontFilepath);
 }
 
 std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key)
@@ -250,9 +246,13 @@ void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps
     e->UpdatePosition();
 }
 
-void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey) // Haven't tested it yet
+void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey)
 {
-    GetElement(key)->SetKey(newKey);
+    UiElement* element = GetElement(key);
+    element->SetKey(newKey);
+    element->ClearCallback();
+    element->AddCallback([this, newKey](UiElementEvent e){HandleUiEvent(e, newKey);});
+
     // It's useless to test if key is in m_elements, because GetElement(key) has already done it
     // However, newKey could already be used
     if (m_elements.find(newKey) != m_elements.end()) 
@@ -280,17 +280,19 @@ std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath)
     std::vector<ElementKey> createdElements;
     
     for (const DataUi& data : fileResult) { 
-        if (GetIteratorOnElement(data.key) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
-        createdElements.push_back(data.key); // Maybe I could use a flag in ui file to mark specific elements
+        const ElementKey& k = data.key;
+        if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
+        createdElements.push_back(k); // Maybe I could use a flag in ui file to mark specific elements
         std::unique_ptr<UiElement> element = GenerateElementFromData(data);
+        element->AddCallback([this, k](UiElementEvent e){HandleUiEvent(e, k);});
         BuildElement(element, data.parentKey);
     }
     UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
     return createdElements;
 }
 
-void UiController::OpenDialogBox(const std::string& text)
+void UiController::OpenDialogBox(const std::string& text) // DialogBox should be a UiComponent ?
 {
-    BuildUiFile("../data/ui/dialog_box_template");
+    BuildUiFile("../data/ui/file/dialog_box.uif");
     UpdateText("dialogText", text);
 }

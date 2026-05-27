@@ -172,7 +172,7 @@ EditorTilemapScene::EditorTilemapScene(GameContext& context):
 {
     m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
     
-    m_context.uiController.BuildUiFile("../data/ui/editor_scene");
+    m_context.uiController.BuildUiFile("../data/ui/file/editor_scene.uif");
     
     m_drawables.push_back(&m_tileset);
 }

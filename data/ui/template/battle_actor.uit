@@ -1,0 +1,38 @@
+background
+actorSprite
+uielement
+../assets/battle/ally_sprite/werewolf.png
+scale background width 0.2
+scaleAxis width
+xAnchor right_in
+yAnchor center
+xPadding background width -0.2
+###
+actorSprite
+actorBox
+uielement
+../assets/ui/box.png
+scale actorSprite width 1.
+scaleAxis width
+xAnchor right_in
+yAnchor bottom_in
+xPadding actorSprite width 0.2
+###
+actorBox
+actorName
+textarea
+PixelOperator8
+scale actorBox width 1.
+xAnchor left_in
+yAnchor top_in
+xPadding actorBox height 0.15
+yPadding actorBox height 0.15
+###
+actorName
+actorHealth
+textarea
+PixelOperator8
+scale actorName width 1.
+xAnchor left_in
+yAnchor bottom_out
+###

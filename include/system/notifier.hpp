@@ -21,4 +21,9 @@ class Notifier
             m_callbacks.push_back(c);
         }
 
+        void ClearCallback()
+        {
+            m_callbacks.clear();
+        }
+
 };

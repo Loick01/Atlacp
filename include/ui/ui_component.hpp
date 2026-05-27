@@ -14,8 +14,7 @@ class UiComponent
 
         virtual unsigned int GetInstanceCount() = 0;
         virtual void Open();
+        virtual void Close();
 
         ElementKey GetKey() const; 
-        void SetFilepath(const std::string& uiFilepath);
-        void Close();
 };

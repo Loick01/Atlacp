@@ -31,8 +31,8 @@ void BattleActor::ModifyHealth(const int hp)
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
-    m_allyList(uiController), m_opponentList(uiController), m_frameList(uiController),
-    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/template/single_text_frame.uit")
+    m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController), m_frameList(uiController, "../data/ui/file/ally_move_selection.uif"),
+    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
     // Will not be here
     m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
@@ -76,12 +76,11 @@ void BattleController::CheckActorHealth()
 
 void BattleController::OpenAllyMoveSelection()
 {
-    m_frameList.SetFilepath("../data/ui/file/ally_move_selection.uif");
     m_frameList.Open();
     m_selector.Open();
     m_selector.SetParents(m_frameList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"option0", Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_frameList.GetKey(), Axis::Height, 0.8f}); 
 }
 
 void BattleController::CloseAllyMoveSelection()
