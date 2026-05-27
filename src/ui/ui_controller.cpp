@@ -250,6 +250,20 @@ void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps
     e->UpdatePosition();
 }
 
+void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey) // Haven't tested it yet
+{
+    GetElement(key)->SetKey(newKey);
+    // It's useless to test if key is in m_elements, because GetElement(key) has already done it
+    // However, newKey could already be used
+    if (m_elements.find(newKey) != m_elements.end()) 
+        throw std::runtime_error("Try to update a node in UiController::m_elements with an already existing key : " + newKey);
+
+    // https://stackoverflow.com/questions/5743545/what-is-the-fastest-way-to-change-a-key-of-an-element-inside-stdmap
+    std::unordered_map<ElementKey, UiElement*>::node_type node = m_elements.extract(key);
+    node.key() = newKey;
+    m_elements.insert(std::move(node));
+}
+
 void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
 {
     AddElement(element->GetKey(), element.get());

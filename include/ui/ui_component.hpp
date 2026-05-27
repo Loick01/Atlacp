@@ -12,8 +12,10 @@ class UiComponent
     public:
         UiComponent(UiController& uiController, const std::string& uiFilepath);
 
+        virtual unsigned int GetInstanceCount() = 0;
+        virtual void Open();
+
         ElementKey GetKey() const; 
         void SetFilepath(const std::string& uiFilepath);
-        virtual void Open();
         void Close();
 };

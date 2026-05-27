@@ -70,6 +70,7 @@ class UiController
         void UpdateParent(const ElementKey& key, const ElementKey& parent);
         void UpdateScalingSize(const ElementKey& key, const PartialSize ps); // Should use ElementKey+Axis+float, instead of PartialSize (which is from file.hpp)
         // Should add UpdateScalingAxis ?
+        void UpdateKey(const ElementKey& key, const ElementKey& newKey); // Used for ui template instanciation (uit file)
         
         void BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey); // Rename
         std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename

@@ -5,11 +5,14 @@
 class UiDynamicList : public UiList
 {
     private:
+        static unsigned int m_instanceCount;
         unsigned int m_nrItem;
     
     public:
         UiDynamicList(UiController& uiController, const std::string& uiFilepath = "undefined_ui_dynamic_list_file");
-
-        void SetNrItem(const unsigned int nrItem);
+        
+        unsigned int GetInstanceCount() override;
         // void Open() override;
+        
+        void SetNrItem(const unsigned int nrItem);
 };

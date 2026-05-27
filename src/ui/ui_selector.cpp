@@ -1,5 +1,7 @@
 #include "ui/ui_selector.hpp"
 
+unsigned int UiSelector::m_instanceCount = 0;
+
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_currentIndex(0)
 {}
@@ -39,4 +41,9 @@ void UiSelector::Next()
 {
     m_currentIndex = (m_currentIndex+1)%m_parents.size();   
     UpdateParent();
+}
+
+unsigned int UiSelector::GetInstanceCount()
+{
+    return m_instanceCount++;
 }

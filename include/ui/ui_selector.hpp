@@ -9,12 +9,15 @@
 class UiSelector : public UiComponent
 {
     private:
+        static unsigned int m_instanceCount;
         std::vector<ElementKey> m_parents; // Rename
         int m_currentIndex;
     
     public:
         UiSelector(UiController& uiController, const std::string& uiFilepath);
 
+        unsigned int GetInstanceCount() override;
+        
         int GetIndex() const;
         void Reset();
         void SetParents(std::vector<ElementKey> parents);

@@ -35,6 +35,11 @@ const ElementKey& UiElement::GetKey() const
     return m_key;
 }
 
+void UiElement::SetKey(const ElementKey& key)
+{
+    m_key = key;
+}
+
 // void UiElement::SetParent(UiElement const* parent)
 void UiElement::SetParent(UiElement* parent)
 {

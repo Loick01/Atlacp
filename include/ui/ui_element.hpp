@@ -61,7 +61,7 @@ struct UiParams // Should not be here ?
 class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {
     private:
-        const ElementKey m_key;
+        ElementKey m_key; // Could be const if I removed UiController::UpdateKey(), but I need it for ui template instanciation
         
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
@@ -99,6 +99,7 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         void BuildChild(std::unique_ptr<UiElement> child);
 
         // void SetParent(UiElement const* parent);
+        void SetKey(const ElementKey& key); // Do not use directly (UiController::UpdateKey)
         void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);

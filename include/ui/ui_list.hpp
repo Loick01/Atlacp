@@ -7,11 +7,14 @@
 class UiList : public UiComponent
 {
     private:
+        static unsigned int m_instanceCount;
         std::vector<ElementKey> m_itemsKey;
     
     public:
         UiList(UiController& uiController, const std::string& uiFilepath = "undefined_ui_list_file");
 
-        std::vector<ElementKey> GetItemsKey() const;
+        unsigned int GetInstanceCount() override;
         void Open() override;
+        
+        std::vector<ElementKey> GetItemsKey() const;
 };
