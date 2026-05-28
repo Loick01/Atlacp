@@ -8,16 +8,6 @@ xAnchor left_in
 yAnchor top_in
 ###
 background
-actorASprite
-uielement
-../assets/battle/ally_sprite/werewolf.png
-scale background width 0.2
-scaleAxis width
-xAnchor right_in
-yAnchor center
-xPadding background width -0.2
-###
-background
 actorBSprite
 uielement
 ../assets/battle/opponent_sprite/bone_appetit.png
@@ -26,16 +16,6 @@ scaleAxis width
 xAnchor left_in
 yAnchor center
 xPadding background width 0.2
-###
-actorASprite
-actorABox
-uielement
-../assets/ui/box.png
-scale actorASprite width 1.
-scaleAxis width
-xAnchor right_in
-yAnchor bottom_in
-xPadding actorASprite width 0.2
 ###
 actorBSprite
 actorBBox
@@ -47,16 +27,6 @@ xAnchor right_in
 yAnchor bottom_in
 xPadding actorBSprite width 0.2
 ###
-actorABox
-actorAName
-textelement
-PixelOperator8
-scale actorABox width 1.
-xAnchor left_in
-yAnchor top_in
-xPadding actorABox height 0.15
-yPadding actorABox height 0.15
-###
 actorBBox
 actorBName
 textelement
@@ -66,14 +36,6 @@ xAnchor left_in
 yAnchor top_in
 xPadding actorBBox height 0.15
 yPadding actorBBox height 0.15
-###
-actorAName
-actorAHealth
-textelement
-PixelOperator8
-scale actorAName width 1.
-xAnchor left_in
-yAnchor bottom_out
 ###
 actorBName
 actorBHealth

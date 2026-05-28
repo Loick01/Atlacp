@@ -30,6 +30,8 @@ class UiController
         ScreenPosition m_position; // Initialized with the viewport position
         AreaSize m_size; // Initialized with the viewport size
 
+        std::string GetFileExtension(const std::string& filepath) const; // Will be a static function in FileReader
+
         // Add/Remove in UiController::m_elements
         void AddElement(const ElementKey& key, UiElement* element);
         void RemoveElement(const ElementKey& key);
@@ -55,7 +57,8 @@ class UiController
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
         float GetResultFromPartialSize(const PartialSize& ps) const;
         
-        bool IsTemplateFile(const std::string& filepath) const;
+        bool IsBaseUiFile(const std::string& filepath) const;
+        bool IsTemplateUiFile(const std::string& filepath) const;
         
         void ClearAll();
         void BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey); // Rename

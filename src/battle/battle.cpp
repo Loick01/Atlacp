@@ -35,7 +35,7 @@ BattleController::BattleController(UiController& uiController):
     m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
     // Will not be here
-    m_actors.push_back(BattleActor(Team::Ally, "actorAName", "actorAHealth", "Howler", 100));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName0", "actorHealth0", "Howler", 100));
     m_actors.push_back(BattleActor(Team::Opponent, "actorBName", "actorBHealth", "Bone Appetit", 100));
     m_turns.push(&(m_actors[0])); // Remove
     m_turns.push(&(m_actors[1])); // Remove
@@ -43,14 +43,14 @@ BattleController::BattleController(UiController& uiController):
 
 void BattleController::InitializeActors()
 {
+    m_allyList.SetNrItem(2);
+    m_opponentList.SetNrItem(1);
+    m_allyList.Open();
+    // m_opponentList.Open();
     for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
         m_uiController.UpdateText(m_actors[i].GetName());
         m_uiController.UpdateText(m_actors[i].GetHealth()); 
     }
-    m_allyList.SetNrItem(1);
-    m_opponentList.SetNrItem(1);
-    // m_allyList.Open();
-    // m_opponentList.Open();
 }
 
 bool BattleController::HasAliveActor(const Team team)
@@ -114,9 +114,9 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_selector.Open();
-            m_selector.SetParents({"actorASprite", "actorBSprite"}); // Remove
+            m_selector.SetParents({"actorSprite0", "actorBSprite"}); // Remove
             // m_selector.SetParents(m_opponentList.GetItemsKey());
-            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorASprite", Axis::Height, 0.2f}); // Not "actorASprite"
+            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorSprite0", Axis::Height, 0.2f}); // Not "actorSprite0"
             m_currentTurn = Turn::ActorSelection;
             break;
         }

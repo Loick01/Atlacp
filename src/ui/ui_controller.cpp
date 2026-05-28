@@ -4,6 +4,14 @@ UiController::UiController(const FileReader& fileReader, TextureController& text
     m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
+std::string UiController::GetFileExtension(const std::string& filepath) const // Will be in FileReader
+{
+    size_t pos = filepath.rfind('.');
+    if (pos == std::string::npos)
+        throw std::runtime_error("This UI file has no extension : " + filepath);
+    return filepath.substr(pos + 1);
+}
+
 void UiController::AddElement(const ElementKey& key, UiElement* element)
 {
     m_elements[key] = element;
@@ -179,13 +187,14 @@ float UiController::GetResultFromPartialSize(const PartialSize& ps) const
         return GetPartialElementSizeOnAxis(ps.srcElement, ps.axis, ps.amount);
 }
 
-bool UiController::IsTemplateFile(const std::string& filepath) const
+bool UiController::IsBaseUiFile(const std::string& filepath) const
 {
-    size_t pos = filepath.rfind('.');
-    if (pos == std::string::npos)
-        throw std::runtime_error("This UI file has no extension : " + filepath);
-    const std::string fileExtension = filepath.substr(pos + 1);
-    return fileExtension == "uit";
+    return GetFileExtension(filepath) == "uif";
+}
+
+bool UiController::IsTemplateUiFile(const std::string& filepath) const
+{
+    return GetFileExtension(filepath) == "uit";
 }
 
 void UiController::ClearAll()
