@@ -39,7 +39,7 @@ struct UiValue
     {}
 };
 
-struct UiParams // Should not be here ?
+struct UiParams
 {
     float scale;
     Axis scaleAxis; // UiTextElement don't use this value (text size is handled by the font, the scale value is used for SetMaxWidth())
@@ -49,12 +49,15 @@ struct UiParams // Should not be here ?
     float yPadding;
 
     UiParams() {
-        scale = 1.f;
-        scaleAxis = Axis::None;
-        xAnchor = Anchor::Center;
-        yAnchor = Anchor::Center;
-        xPadding = 0.f;
-        yPadding = 0.f;
+        scale = 1.f; scaleAxis = Axis::None;
+        xAnchor = Anchor::Center; yAnchor = Anchor::Center;
+        xPadding = 0.f; yPadding = 0.f;
+    }
+
+    UiParams(const float s, const Axis sA, const Anchor xA, const Anchor yA, const float xP, const float yP) {
+        scale = s; scaleAxis = sA;
+        xAnchor = xA; yAnchor= yA;
+        xPadding = xP; yPadding = yP;
     }
 };
 
@@ -98,12 +101,13 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
         void BuildChild(std::unique_ptr<UiElement> child);
 
-        // void SetParent(UiElement const* parent);
         void SetKey(const ElementKey& key); // Do not use directly (UiController::UpdateKey)
         void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
+        void SetParams(const UiParams& params);
         void SetParamsScale(const float scale);
+        
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf]
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
         void SetPadding(const float xPadding, const float yPadding);

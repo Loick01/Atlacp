@@ -56,6 +56,11 @@ void UiElement::SetParentPosition(const ScreenPosition parentPosition)
     m_parentPosition = parentPosition;
 }
 
+void UiElement::SetParams(const UiParams& params)
+{
+    m_params = params;
+}
+
 void UiElement::SetParamsScale(const float scale)
 {
     m_params.scale = scale;

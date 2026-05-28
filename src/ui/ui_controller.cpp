@@ -302,6 +302,14 @@ void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey)
     m_elements.insert(std::move(node));
 }
 
+void UiController::UpdateParams(const ElementKey& key, const UiParams& params)
+{
+    UiElement* element = GetElement(key);
+    element->SetParams(params);
+    element->ComputeFinal();
+    element->UpdatePosition();    
+}
+
 void UiController::Draw() const
 {
     for (const std::unique_ptr<UiElement>& e : m_subRoots)

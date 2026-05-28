@@ -11,7 +11,7 @@
 
 #define FILE_DELIMITER "###" // Will be removed ?
 
-struct PartialSize
+struct PartialSize // Should be in ui_element.hpp ?
 {
     ElementKey srcElement;
     Axis axis;

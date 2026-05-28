@@ -9,9 +9,9 @@ UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFi
         throw std::runtime_error("The file used for UiDynamicList must be a template file : " + m_uiFilepath);
 }
 
-void UiDynamicList::SetNrItem(const unsigned int nrItem)
+unsigned int UiDynamicList::GetInstanceCount()
 {
-    m_nrItem = nrItem;
+    return m_instanceCount++;
 }
         
 void UiDynamicList::Open()
@@ -32,8 +32,13 @@ void UiDynamicList::Open()
         }
         const ElementKey& itemParent = created[0];
         
-        if (i == 0) m_elementKey = itemParent;
-        else m_uiController.UpdateParent(itemParent, lastItemParent);
+        if (i == 0) {
+            m_elementKey = itemParent;
+            m_uiController.UpdateParams(itemParent, m_firstItemParams);
+            // Parent of itemParent (which is here parent of the first built item) will be the one given in the template file (should not be like that ?) 
+        } else {
+            m_uiController.UpdateParent(itemParent, lastItemParent);
+        }
         m_itemsKey.push_back(itemParent);
         lastItemParent = itemParent;
     }
@@ -45,7 +50,12 @@ void UiDynamicList::Close()
     m_itemsKey.clear();
 }
 
-unsigned int UiDynamicList::GetInstanceCount()
+void UiDynamicList::SetFirstItemParams(const UiParams& params)
 {
-    return m_instanceCount++;
+    m_firstItemParams = params;
+}
+
+void UiDynamicList::SetNrItem(const unsigned int nrItem)
+{
+    m_nrItem = nrItem;
 }

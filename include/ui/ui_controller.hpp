@@ -75,6 +75,7 @@ class UiController
         void UpdateScalingSize(const ElementKey& key, const PartialSize ps); // Should use ElementKey+Axis+float, instead of PartialSize (which is from file.hpp)
         // Should add UpdateScalingAxis ?
         void UpdateKey(const ElementKey& key, const ElementKey& newKey); // Used for ui template instanciation (uit file)
+        void UpdateParams(const ElementKey& key, const UiParams& params);
 
         void Draw() const;
         void OpenDialogBox(const std::string& text); // Will be removed

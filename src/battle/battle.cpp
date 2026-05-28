@@ -43,6 +43,12 @@ BattleController::BattleController(UiController& uiController):
 
 void BattleController::InitializeActors()
 {
+    // Will not be here
+    m_allyList.SetFirstItemParams(
+        UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
+        Anchor::RightIn, Anchor::Center, // Anchor
+        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, -0.2f)) , 0.f)); // Padding
+        
     m_allyList.SetNrItem(2);
     m_opponentList.SetNrItem(1);
     m_allyList.Open();
