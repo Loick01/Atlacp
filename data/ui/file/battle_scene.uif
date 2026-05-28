@@ -7,43 +7,5 @@ scaleAxis height
 xAnchor left_in
 yAnchor top_in
 ###
-background
-actorBSprite
-uielement
-../assets/battle/opponent_sprite/bone_appetit.png
-scale background width 0.2
-scaleAxis width
-xAnchor left_in
-yAnchor center
-xPadding background width 0.2
-###
-actorBSprite
-actorBBox
-uielement
-../assets/ui/box.png
-scale actorBSprite width 1.
-scaleAxis width
-xAnchor right_in
-yAnchor bottom_in
-xPadding actorBSprite width 0.2
-###
-actorBBox
-actorBName
-textelement
-PixelOperator8
-scale actorBBox width 1.
-xAnchor left_in
-yAnchor top_in
-xPadding actorBBox height 0.15
-yPadding actorBBox height 0.15
-###
-actorBName
-actorBHealth
-textelement
-PixelOperator8
-scale actorBName width 1.
-xAnchor left_in
-yAnchor bottom_out
-###
 load ../data/ui/file/main_frame.uif
 ###

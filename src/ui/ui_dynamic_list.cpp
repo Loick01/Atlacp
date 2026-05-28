@@ -25,8 +25,7 @@ void UiDynamicList::Open()
         std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
         
         for (ElementKey& k : created) {
-            // const ElementKey newKey = k + std::to_string(i) + "_" + std::to_string(countInstance);
-            const ElementKey newKey = k + std::to_string(i);
+            const ElementKey newKey = k + std::to_string(i) + "_" + std::to_string(countInstance);
             m_uiController.UpdateKey(k, newKey);
             k = newKey;
         }

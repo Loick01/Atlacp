@@ -11,7 +11,7 @@ class UiDynamicList : public UiList
         unsigned int m_nrItem;
     
     public:
-        UiDynamicList(UiController& uiController, const std::string& uiFilepath = "undefined_ui_dynamic_list_file.uit");
+        UiDynamicList(UiController& uiController, const std::string& uiFilepath);
         
         unsigned int GetInstanceCount() override;
         void Open() override;

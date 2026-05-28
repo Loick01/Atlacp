@@ -31,14 +31,19 @@ void BattleActor::ModifyHealth(const int hp)
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
-    m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController), m_frameList(uiController, "../data/ui/file/ally_move_selection.uif"),
-    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
+    m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
+    m_frameList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
+    m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
     // Will not be here
-    m_actors.push_back(BattleActor(Team::Ally, "actorName0", "actorHealth0", "Howler", 100));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorBName", "actorBHealth", "Bone Appetit", 100));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "Howler 1", 100));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "Howler 2", 100));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "Bone Appetit 1", 50));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Bone Appetit 2", 50));
     m_turns.push(&(m_actors[0])); // Remove
     m_turns.push(&(m_actors[1])); // Remove
+    m_turns.push(&(m_actors[2])); // Remove
+    m_turns.push(&(m_actors[3])); // Remove
 }
 
 void BattleController::InitializeActors()
@@ -46,13 +51,22 @@ void BattleController::InitializeActors()
     // Will not be here
     m_allyList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
-        Anchor::RightIn, Anchor::Center, // Anchor
-        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, -0.2f)) , 0.f)); // Padding
+        Anchor::RightIn, Anchor::TopIn, // Anchor
+        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, -0.2f)), // Padding
+        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
+    
+    // Will not be here
+    m_opponentList.SetFirstItemParams(
+        UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
+        Anchor::LeftIn, Anchor::TopIn, // Anchor
+        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), // Padding
+        m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
         
     m_allyList.SetNrItem(2);
-    m_opponentList.SetNrItem(1);
+    m_opponentList.SetNrItem(2);
     m_allyList.Open();
-    // m_opponentList.Open();
+    m_opponentList.Open();
+    
     for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
         m_uiController.UpdateText(m_actors[i].GetName());
         m_uiController.UpdateText(m_actors[i].GetHealth()); 
@@ -120,9 +134,8 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_selector.Open();
-            m_selector.SetParents({"actorSprite0", "actorBSprite"}); // Remove
-            // m_selector.SetParents(m_opponentList.GetItemsKey());
-            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorSprite0", Axis::Height, 0.2f}); // Not "actorSprite0"
+            m_selector.SetParents(m_opponentList.GetItemsKey());
+            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorSprite0_0", Axis::Height, 0.2f}); // Not "actorSprite0_0"
             m_currentTurn = Turn::ActorSelection;
             break;
         }
@@ -151,9 +164,9 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
 
 void BattleController::HandleActorSelection()
 {
-    if (m_eventState.uiDirection == Direction::Right) {
+    if (m_eventState.uiDirection == Direction::Down) {
         m_selector.Next();
-    } else if (m_eventState.uiDirection == Direction::Left) {
+    } else if (m_eventState.uiDirection == Direction::Up) {
         m_selector.Previous();
     } else if (m_eventState.isAction) {
         m_textSeries.Close();
@@ -165,7 +178,7 @@ void BattleController::HandleActorSelection()
 
 void BattleController::ApplyDamage(BattleActor& srcActor, const int selectorIndex)
 {
-    BattleActor& targetActor = m_actors[selectorIndex]; // For now, the selector can choose any actors (Ally or Opponent). Later I will filter them
+    BattleActor& targetActor = m_actors[selectorIndex+2]; // Remove +2 (I need it because the first 2 actor are Team::Ally, I would need a function to filter actors according to their Team)
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
     m_textSeries.Open();
     m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
@@ -174,7 +187,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, const int selectorInde
 
 void BattleController::HandleOpponentTurn(BattleActor& srcActor)
 {
-    BattleActor& targetActor = m_actors[0]; // TODO : Behaviour
+    BattleActor& targetActor = m_actors[rand()%2]; // TODO : Behaviour
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
     m_currentTurn = Turn::Waiting;
     m_textSeries.Open();
