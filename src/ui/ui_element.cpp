@@ -104,7 +104,7 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
 void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
     ScreenPosition localPosition = {0,0};
-    // If ComputePosition is called on a TextArea, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
+    // If ComputePosition is called on a UiTextElement, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
     const AreaSize size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
         case Anchor::LeftIn:
@@ -185,7 +185,7 @@ void UiElement::ComputeFinal()
     SetPadding(m_params.xPadding, m_params.yPadding);
 }
 
-TextArea::TextArea(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
+UiTextElement::UiTextElement(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
     UiElement(textureController, key), m_textColor(color), m_text("No_Text")
 {
     const unsigned int fontSize = 24;
@@ -193,26 +193,26 @@ TextArea::TextArea(TextureController& textureController, const ElementKey& key, 
     textureController.LoadFontFromFile("../assets/ui/fonts/"+fontFilepath+".ttf", m_fontKey, fontSize);
 }
 
-void TextArea::SetText(const std::string& text)
+void UiTextElement::SetText(const std::string& text)
 {
     m_text = text;
 }
 
-void TextArea::GenerateText()
+void UiTextElement::GenerateText()
 {
     m_textureKey = m_text; // Will use something else than just text as texture key
     m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
 }
 
-void TextArea::SetMaxWidth(const float amount)
+void UiTextElement::SetMaxWidth(const float amount)
 {
     m_maxWidth = amount;
 }
 
-void TextArea::ComputeFinal()
+void UiTextElement::ComputeFinal()
 {
-    // Do not use ComputeZoom for TextArea. Text size is controlled by the font
-    // Be sure to call TextArea::ComputePosition after generating the texture with GenerateText
+    // Do not use ComputeZoom for UiTextElement. Text size is controlled by the font
+    // Be sure to call UiTextElement::ComputePosition after generating the texture with GenerateText
     SetMaxWidth(m_params.scale);
     GenerateText();
     ComputePosition(m_params.xAnchor, m_params.yAnchor);

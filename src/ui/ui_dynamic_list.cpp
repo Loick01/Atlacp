@@ -5,14 +5,8 @@ unsigned int UiDynamicList::m_instanceCount = 0;
 UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFilepath):
     UiList(uiController, uiFilepath)
 {
-    // Get the file extension (will be in FileReader)
-    size_t pos = m_uiFilepath.rfind('.');
-    if (pos == std::string::npos)
-        throw std::runtime_error("This ui file has no extension : " + m_uiFilepath);
-    const std::string fileExtension = m_uiFilepath.substr(pos + 1);
-    
-    if (fileExtension == "uif") 
-        throw std::runtime_error("Do not use ui file for UiDynamicList items, it can be only instantiated once : " + m_uiFilepath);
+    if (!m_uiController.IsTemplateFile(m_uiFilepath))
+        throw std::runtime_error("The file used for UiDynamicList must be a template file : " + m_uiFilepath);
 }
 
 void UiDynamicList::SetNrItem(const unsigned int nrItem)

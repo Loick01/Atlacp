@@ -4,66 +4,35 @@ UiController::UiController(const FileReader& fileReader, TextureController& text
     m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
-void UiController::Draw() const
-{
-    for (const std::unique_ptr<UiElement>& e : m_subRoots)
-        e->DrawTexture();
-}
-
-void UiController::UpdatePosition()
-{
-    for (const std::unique_ptr<UiElement>& e : m_subRoots)
-        e->UpdatePosition();
-}
-
 void UiController::AddElement(const ElementKey& key, UiElement* element)
 {
     m_elements[key] = element;
-}
-
-std::unordered_map<ElementKey, UiElement*>::const_iterator UiController::GetIteratorOnElement(const ElementKey& key) const
-{
-    return m_elements.find(key);
 }
 
 void UiController::RemoveElement(const ElementKey& key)
 {
     std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
-        throw std::runtime_error("(UiController::RemoveElement) This Ui element can't be found : " + key); // ???
+        throw std::runtime_error("(UiController::RemoveElement) This Ui element can't be found : " + key); // This should not happen. Remove ?
     m_elements.erase(it);
 }
 
-void UiController::Clear()
+void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
 {
-    while (!m_subRoots.empty()) // Do not use for loop (because m_subRoots is modified)
-        DeleteElement(m_subRoots[0]->GetKey());
+    switch(e) {
+        case UiElementEvent::Delete : {
+            RemoveElement(key);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
-void UiController::DeleteElement(const ElementKey& key)
+void UiController::UpdatePosition()
 {
-    UiElement* parent = GetElement(key)->GetParent(); // Should be const ?
-    
-    // Remove from UiController::m_subRoots or UiElement::m_childs
-    std::unique_ptr<UiElement> elementPtr; // This is what I want to get
-    
-    if (parent == nullptr) // UiElement key = nullptr is a subroot (as setted in UiController::BuildSubRoot())
-        elementPtr = RemoveSubRoots(key);
-    else
-        elementPtr = parent->RemoveChild(key);
-
-    // Free the unique_ptr
-    elementPtr.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
-}
-
-void UiController::SetSize(const AreaSize size)
-{
-    m_size = size;
-}
-        
-void UiController::SetPosition(const ScreenPosition position)
-{
-    m_position = position;
+    for (const std::unique_ptr<UiElement>& e : m_subRoots)
+        e->UpdatePosition();
 }
 
 void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
@@ -76,12 +45,94 @@ void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
     m_subRoots.push_back(std::move(subRoot)); 
 }
 
+
+std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
+{
+    return std::make_unique<UiElement>(m_textureController, key, textureFilepath);
+}
+
+std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
+{
+    return std::make_unique<UiTextElement>(m_textureController, key, fontFilepath);
+}
+
+std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key)
+{
+    return CreateTextElement(key, m_fontFilepath);
+}
+
+std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) // Same than UiElement::RemoveChild
+{
+    std::vector<std::unique_ptr<UiElement>>::iterator it;
+    for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
+        if ((*it)->GetKey() == key) {
+            std::unique_ptr<UiElement> removed = std::move(*it);
+            m_subRoots.erase(it);
+            return removed;
+        }
+    }
+    throw std::runtime_error("(UiController::RemoveSubRoots) No subroots have this key : " + key);
+}
+
+std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
+{
+    std::unique_ptr<UiElement> element;
+    if (data.type == "uielement") {
+        element = CreateElement(data.key, data.path);
+    } else if (data.type == "textelement") {
+        std::unique_ptr<UiTextElement> textElement = CreateTextElement(data.key, data.path);
+        textElement->SetText(data.text);
+        element = std::move(textElement);
+    } else {
+        throw std::runtime_error("Unknown element type : " + data.type);
+    }
+
+    UiParams& params = element->GetParams();
+    
+    params.scale = GetResultFromPartialSize(data.scale);
+    
+    params.scaleAxis = data.dstScaleAxis; // Also when UiTextElement ?
+    params.xAnchor = data.xAnchor;
+    params.yAnchor = data.yAnchor;
+    
+    const PartialSize xPaddingData = data.xPadding;
+    const PartialSize yPaddingData = data.yPadding;
+    if (xPaddingData.srcElement != "undefined_element")
+        params.xPadding = GetResultFromPartialSize(xPaddingData);
+
+    if (yPaddingData.srcElement != "undefined_element")
+        params.yPadding = GetResultFromPartialSize(yPaddingData);
+
+    return element;
+}
+
+std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath) 
+{
+    std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
+    std::vector<ElementKey> createdElements;
+    
+    for (const DataUi& data : fileResult) { 
+        const ElementKey& k = data.key;
+        if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
+        createdElements.push_back(k); // Maybe I could use a flag in ui file to mark specific elements
+        std::unique_ptr<UiElement> element = GenerateElementFromData(data);
+        element->AddCallback([this, k](UiElementEvent e){HandleUiEvent(e, k);});
+        BuildElement(element, data.parentKey);
+    }
+    UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
+    return createdElements;
+}
+
+std::unordered_map<ElementKey, UiElement*>::const_iterator UiController::GetIteratorOnElement(const ElementKey& key) const
+{
+    return m_elements.find(key);
+}
+
 UiElement* UiController::GetElement(const ElementKey& key) const
 {
     std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
         throw std::runtime_error("(UiController::GetElement) This Ui element can't be found : " + key);
-    // Verify if != nullptr ?
     return it->second;
 }
 
@@ -128,40 +179,63 @@ float UiController::GetResultFromPartialSize(const PartialSize& ps) const
         return GetPartialElementSizeOnAxis(ps.srcElement, ps.axis, ps.amount);
 }
 
-std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
+bool UiController::IsTemplateFile(const std::string& filepath) const
 {
-    return std::make_unique<UiElement>(m_textureController, key, textureFilepath);
+    size_t pos = filepath.rfind('.');
+    if (pos == std::string::npos)
+        throw std::runtime_error("This UI file has no extension : " + filepath);
+    const std::string fileExtension = filepath.substr(pos + 1);
+    return fileExtension == "uit";
 }
 
-std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
+void UiController::ClearAll()
 {
-    return std::make_unique<TextArea>(m_textureController, key, fontFilepath);
+    while (!m_subRoots.empty()) // Do not use for loop (because m_subRoots is modified)
+        DeleteElement(m_subRoots[0]->GetKey());
 }
 
-std::unique_ptr<TextArea> UiController::CreateTextElement(const ElementKey& key)
+void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
 {
-    return CreateTextElement(key, m_fontFilepath);
-}
-
-void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
-{
-    switch(e) {
-        case UiElementEvent::Delete : {
-            RemoveElement(key);
-            break;
-        }
-        default:
-            break;
+    AddElement(element->GetKey(), element.get());
+    if (parentKey == "root") {
+        BuildSubRoot(std::move(element));
+    } else {
+        GetElement(parentKey)->BuildChild(std::move(element));
     }
+}
+
+void UiController::DeleteElement(const ElementKey& key)
+{
+    UiElement* const parent = GetElement(key)->GetParent();
+    
+    std::unique_ptr<UiElement> ownedElement; 
+    // Remove from UiController::m_subRoots or UiElement::m_childs and retrieve the unqiue_ptr
+    if (parent == nullptr) // UiElement key = nullptr is a subroot (as setted in UiController::BuildSubRoot())
+        ownedElement = RemoveSubRoots(key);
+    else
+        ownedElement = parent->RemoveChild(key);
+
+    // Free the unique_ptr
+    ownedElement.reset(); // UiElement destructor will call Notify(Delete) --> RemoveElement(key) on himself and all its children 
+}
+
+void UiController::SetSize(const AreaSize size)
+{
+    m_size = size;
+}
+        
+void UiController::SetPosition(const ScreenPosition position)
+{
+    m_position = position;
 }
 
 void UiController::UpdateText(const ElementKey& key, const std::string& text)
 {
-    TextArea* textArea = static_cast<TextArea*>(GetElement(key)); // static_cast ?
-    textArea->DeleteTexture(); // Delete the previous generated texture
-    textArea->SetText(text);
-    textArea->ComputeFinal(); // Load the new texture (GenerateText())
-    textArea->UpdatePosition();
+    UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key)); // I assume key will give a UiTextElement
+    textElement->DeleteTexture(); // Delete the previous generated texture
+    textElement->SetText(text);
+    textElement->ComputeFinal(); // Load the new texture (GenerateText())
+    textElement->UpdatePosition();
 }
 
 void UiController::UpdateText(const UiValue<std::string>& uiv)
@@ -172,51 +246,6 @@ void UiController::UpdateText(const UiValue<std::string>& uiv)
 void UiController::UpdateText(const UiValue<unsigned int>& uiv)
 {
     UpdateText(uiv.id, std::to_string(uiv.value));
-}
-
-std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) // Same than UiElement::RemoveChild
-{
-    std::vector<std::unique_ptr<UiElement>>::iterator it;
-    for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
-        if ((*it)->GetKey() == key) {
-            std::unique_ptr<UiElement> removed = std::move(*it);
-            m_subRoots.erase(it);
-            return removed;
-        }
-    }
-    throw std::runtime_error("(UiController::RemoveSubRoots) No subroots have this key : " + key);
-}
-
-std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
-{
-    std::unique_ptr<UiElement> element;
-    if (data.type == "uielement") {
-        element = CreateElement(data.key, data.path);
-    } else if (data.type == "textarea") {
-        std::unique_ptr<TextArea> textAreaElement = CreateTextElement(data.key, data.path);
-        textAreaElement->SetText(data.text);
-        element = std::move(textAreaElement);
-    } else {
-        throw std::runtime_error("Unknown element type : " + data.type); // ?
-    }
-
-    UiParams& params = element->GetParams();
-    
-    params.scale = GetResultFromPartialSize(data.scale);
-    
-    params.scaleAxis = data.dstScaleAxis; // Also when TextArea ?
-    params.xAnchor = data.xAnchor;
-    params.yAnchor = data.yAnchor;
-    
-    const PartialSize xPaddingData = data.xPadding;
-    const PartialSize yPaddingData = data.yPadding;
-    if (xPaddingData.srcElement != "undefined_element")
-        params.xPadding = GetResultFromPartialSize(xPaddingData);
-
-    if (yPaddingData.srcElement != "undefined_element")
-        params.yPadding = GetResultFromPartialSize(yPaddingData);
-
-    return element;
 }
 
 void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
@@ -264,31 +293,10 @@ void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey)
     m_elements.insert(std::move(node));
 }
 
-void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
+void UiController::Draw() const
 {
-    AddElement(element->GetKey(), element.get());
-    if (parentKey == "root") {
-        BuildSubRoot(std::move(element));
-    } else {
-        GetElement(parentKey)->BuildChild(std::move(element));
-    }
-}
-
-std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath) 
-{
-    std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
-    std::vector<ElementKey> createdElements;
-    
-    for (const DataUi& data : fileResult) { 
-        const ElementKey& k = data.key;
-        if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
-        createdElements.push_back(k); // Maybe I could use a flag in ui file to mark specific elements
-        std::unique_ptr<UiElement> element = GenerateElementFromData(data);
-        element->AddCallback([this, k](UiElementEvent e){HandleUiEvent(e, k);});
-        BuildElement(element, data.parentKey);
-    }
-    UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
-    return createdElements;
+    for (const std::unique_ptr<UiElement>& e : m_subRoots)
+        e->DrawTexture();
 }
 
 void UiController::OpenDialogBox(const std::string& text) // DialogBox should be a UiComponent ?

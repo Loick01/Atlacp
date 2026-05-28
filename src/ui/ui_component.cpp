@@ -13,13 +13,7 @@ void UiComponent::Open()
 {
     std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
 
-    // Get the file extension (will be in FileReader)
-    size_t pos = m_uiFilepath.rfind('.');
-    if (pos == std::string::npos)
-        throw std::runtime_error("This ui file has no extension : " + m_uiFilepath);
-    const std::string fileExtension = m_uiFilepath.substr(pos + 1);
-
-    if (fileExtension == "uit") {
+    if (m_uiController.IsTemplateFile(m_uiFilepath)) {
         const unsigned int countInstance = GetInstanceCount();
         for (ElementKey& k : created) {
             const ElementKey newKey = k + std::to_string(countInstance);
@@ -27,6 +21,7 @@ void UiComponent::Open()
             k = newKey;
         }
     }
+    
     m_elementKey = created[0];
 }
 

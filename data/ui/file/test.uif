@@ -20,7 +20,7 @@ xPadding frame height 0.1
 ###
 frame2
 boxText
-textarea
+textelement
 NormalFont
 scale frame2 width 0.9
 xAnchor left_in

@@ -20,7 +20,7 @@ xPadding actorSprite width 0.2
 ###
 actorBox
 actorName
-textarea
+textelement
 PixelOperator8
 scale actorBox width 1.
 xAnchor left_in
@@ -30,7 +30,7 @@ yPadding actorBox height 0.15
 ###
 actorName
 actorHealth
-textarea
+textelement
 PixelOperator8
 scale actorName width 1.
 xAnchor left_in

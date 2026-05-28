@@ -19,7 +19,7 @@ TextureController::~TextureController()
     }
     for (const std::pair<const TextureKey, Font>& f : m_fonts){
         // For now, I haven't implemented a counter to know how many textures use a font. All the fonts are closed here
-        // std::cout << "TTF_Font should be destroyed by the last TextArea that uses it. Try to avoid being here\n"; // Will be removed
+        // std::cout << "TTF_Font should be destroyed by the last UiTextElement that uses it. Try to avoid being here\n"; // Will be removed
         TTF_CloseFont(f.second.font);
     }
     IMG_Quit();
@@ -54,7 +54,7 @@ void TextureController::LoadTextureFromText(const TextureKey& fontKey, const Tex
     int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
     // Maybe I will change textureKey type
-    if (textureKey == "") throw std::runtime_error("Texture key (string) is empty, text in TextArea should never be \"\"");
+    if (textureKey == "") throw std::runtime_error("Texture key (string) is empty, text in UiTextElement should never be \"\"");
     
     if (m_textures.find(textureKey) == m_textures.end()) {
         SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFont(fontKey), text.c_str(), textColor, maxWidth);

@@ -11,7 +11,7 @@ yPadding root height 0.02
 ###
 frame
 boxText
-textarea
+textelement
 NormalFont
 scale frame width 0.9
 xAnchor left_in

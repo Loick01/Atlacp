@@ -1,6 +1,6 @@
 frame
 option0
-textarea
+textelement
 PixelOperator8
 scale frame width 0.5
 xAnchor left_in
@@ -11,7 +11,7 @@ text Fight
 ###
 option0
 option1
-textarea
+textelement
 PixelOperator8
 scale frame width 0.5
 xAnchor left_in
@@ -20,7 +20,7 @@ text Heal
 ###
 option1
 option2
-textarea
+textelement
 PixelOperator8
 scale frame width 0.5
 xAnchor left_in
@@ -29,7 +29,7 @@ text Inventory
 ###
 option2
 option3
-textarea
+textelement
 PixelOperator8
 scale frame width 0.5
 xAnchor left_in
