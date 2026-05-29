@@ -6,7 +6,7 @@ UiTextSeries::UiTextSeries(UiController& uiController, const std::string& uiFile
     UiComponent(uiController, uiFilepath)
 {}
 
-bool UiTextSeries::Next()
+bool UiTextSeries::NextText()
 {
     if (m_texts.empty()) return false;
     m_uiController.UpdateText(m_elementKey, m_texts.front());
@@ -18,7 +18,6 @@ void UiTextSeries::AddText(std::initializer_list<std::string> texts)
 {
     for (const std::string& s : texts)
         m_texts.push(s);
-    Next(); // Should not be here ?
 }
 
 unsigned int UiTextSeries::GetInstanceCount()

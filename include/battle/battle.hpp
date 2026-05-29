@@ -18,7 +18,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class Turn
 {
-    Init, OptionSelection, ActorSelection, Waiting
+    Init, MoveSelection, ActorSelection, Waiting
 };
 
 enum class Team 
@@ -26,14 +26,21 @@ enum class Team
     Ally, Opponent
 };
 
+enum class LifeState
+{
+    Alive, Dead
+};
+
 class BattleActor
 {
     private:
         UiValue<std::string> m_name; // const ?
         UiValue<unsigned int> m_health;
-        
-        // unsigned int maxHealth;
+
         const Team m_team;
+        LifeState m_lifeState;
+        
+        const unsigned int m_maxHealth;
         unsigned int m_strength;
         unsigned int m_turnSpeed; // ]0,+inf] The smaller this value is, the more frequently the actor will play a turn
         
@@ -44,7 +51,9 @@ class BattleActor
         UiValue<unsigned int> GetHealth() const;
         unsigned int GetStrength() const;
         Team GetTeam() const;
-        void ModifyHealth(const int hp);
+        LifeState GetLifeState() const;
+        void AddHealth(const unsigned int hp);
+        void RemoveHealth(const unsigned int hp);
 };
 
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
@@ -59,7 +68,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiTextSeries m_textSeries;
         UiDynamicList m_allyList;
         UiDynamicList m_opponentList;
-        UiList m_frameList;
+        UiList m_allyMoveList;
         Turn m_currentTurn; // TODO
 
     public:
@@ -68,15 +77,16 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleActor* GetNextTurn();
         void InitializeActors();
         bool HasAliveActor(const Team team);
-        void CheckActorHealth();
+        void CheckActorsHealth();
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
         unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
         unsigned int TakeHealth(BattleActor& source); // Rename
         void HandleAllyMoveSelection(BattleActor& srcActor, const int index);
-        void HandleActorSelection();
-        void ApplyDamage(BattleActor& srcActor, const int selectorIndex);
-        void HandleOpponentTurn(BattleActor& srcActor); // Will be removed, I will use behaviour class
+        void HandleActorSelection(); // I should have Open/CloseActorSelection() ?
+        void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
+        void ApplyHealth(BattleActor& srcActor);
+        void HandleOpponentMoveSelection(BattleActor& srcActor); // Will be removed, I will use behaviour class
         void PlayNextTurn();
 };

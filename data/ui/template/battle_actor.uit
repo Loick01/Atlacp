@@ -13,9 +13,8 @@ uielement
 ../assets/ui/box.png
 scale actorSprite width 1.
 scaleAxis width
-xAnchor right_in
+xAnchor center
 yAnchor bottom_in
-xPadding actorSprite width 0.2
 ###
 actorBox
 actorName

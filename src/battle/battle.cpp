@@ -1,7 +1,8 @@
 #include "battle/battle.hpp"
 
 BattleActor::BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health):
-    m_team(team), m_name(nameId, name), m_health(healthId, health), m_strength(10), m_turnSpeed(5) // m_turnSpeed will not be here 
+    m_team(team), m_name(nameId, name), m_health(healthId, health), m_lifeState(LifeState::Alive), 
+    m_maxHealth(health), m_strength(10), m_turnSpeed(5) // m_turnSpeed will not be here 
 {}
 
 UiValue<std::string> BattleActor::GetName() const
@@ -24,26 +25,39 @@ Team BattleActor::GetTeam() const
     return m_team;
 }
 
-void BattleActor::ModifyHealth(const int hp)
+LifeState BattleActor::GetLifeState() const
 {
-    m_health.value += hp;
+    return m_lifeState;
+}
+
+void BattleActor::AddHealth(const unsigned int hp)
+{ 
+    m_health.value = std::min(m_health.value+hp, m_maxHealth);
+}
+
+void BattleActor::RemoveHealth(const unsigned int hp)
+{ 
+    if (m_health.value <= hp) {
+        m_health.value = 0;
+        m_lifeState = LifeState::Dead;
+    } else {
+        m_health.value -= hp;
+    }
 }
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_frameList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
+    m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
     // Will not be here
-    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "Howler 1", 100));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "Howler 1", 10));
     m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "Howler 2", 100));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "Bone Appetit 1", 50));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Bone Appetit 2", 50));
-    m_turns.push(&(m_actors[0])); // Remove
-    m_turns.push(&(m_actors[1])); // Remove
-    m_turns.push(&(m_actors[2])); // Remove
-    m_turns.push(&(m_actors[3])); // Remove
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "Bone Appetit 1", 20));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Bone Appetit 2", 10));
+    for (BattleActor& b : m_actors) // TODO 
+        m_turns.push(&b);
 }
 
 void BattleController::InitializeActors()
@@ -75,18 +89,14 @@ void BattleController::InitializeActors()
 
 bool BattleController::HasAliveActor(const Team team)
 {
-    for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
-        const BattleActor& actor = m_actors[i];
-        if (actor.GetTeam() == team) {
-            if (actor.GetHealth().value > 0) {
-                return true;
-            }
-        }
+    for (const BattleActor& b : m_actors) {
+        if (b.GetTeam() == team && b.GetLifeState() == LifeState::Alive)
+            return true;
     }
     return false;
 }
 
-void BattleController::CheckActorHealth()
+void BattleController::CheckActorsHealth()
 {
     if (!HasAliveActor(Team::Ally))
         Notify(ExitEvent::ExitLost);
@@ -96,24 +106,24 @@ void BattleController::CheckActorHealth()
 
 void BattleController::OpenAllyMoveSelection()
 {
-    m_frameList.Open();
+    m_allyMoveList.Open();
     m_selector.Open();
-    m_selector.SetParents(m_frameList.GetItemsKey());
+    m_selector.SetParents(m_allyMoveList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_frameList.GetKey(), Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_allyMoveList.GetKey(), Axis::Height, 0.8f}); 
 }
 
 void BattleController::CloseAllyMoveSelection()
 {
     m_selector.Close();
-    m_frameList.Close();
+    m_allyMoveList.Close();
 }
 
 unsigned int BattleController::TakeDamage(BattleActor& source, BattleActor& target)
 {
     const unsigned int damage = source.GetStrength();
-    target.ModifyHealth(-damage);
-    CheckActorHealth();
+    target.RemoveHealth(damage);
+    CheckActorsHealth();
     m_uiController.UpdateText(target.GetHealth());
     return damage;
 }
@@ -121,7 +131,7 @@ unsigned int BattleController::TakeDamage(BattleActor& source, BattleActor& targ
 unsigned int BattleController::TakeHealth(BattleActor& source) // Will use Object from inventory
 {
     const unsigned int hp = source.GetStrength(); // For now, I use the source strength
-    source.ModifyHealth(hp); // clamp
+    source.AddHealth(hp);
     m_uiController.UpdateText(source.GetHealth());
     return hp;
 }
@@ -133,8 +143,9 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             CloseAllyMoveSelection();
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
+            m_textSeries.NextText();
             m_selector.Open();
-            m_selector.SetParents(m_opponentList.GetItemsKey());
+            m_selector.SetParents(m_opponentList.GetItemsKey()); // TODO : BattleActor with LifeState::Dead are still selectable
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorSprite0_0", Axis::Height, 0.2f}); // Not "actorSprite0_0"
             m_currentTurn = Turn::ActorSelection;
             break;
@@ -142,12 +153,7 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
         
         case 1: {
             CloseAllyMoveSelection();
-            const unsigned int hp = TakeHealth(srcActor);
-            m_currentTurn = Turn::Waiting;
-            m_textSeries.Open();
-            m_textSeries.AddText({srcActor.GetName().value + " drinks a potion",
-                               srcActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
-
+            ApplyHealth(*m_currentActor);
             break;
         }
         case 2:
@@ -170,36 +176,56 @@ void BattleController::HandleActorSelection()
         m_selector.Previous();
     } else if (m_eventState.isAction) {
         m_textSeries.Close();
-        ApplyDamage(*m_currentActor, m_selector.GetIndex());
+        BattleActor& targetActor = m_actors[m_selector.GetIndex()+2]; // Remove +2 (I need it because the first 2 actor are Team::Ally, I would need a function to filter actors according to their Team)
+        ApplyDamage(*m_currentActor, targetActor);
         m_selector.Close();
-        m_currentTurn = Turn::Waiting;
     }
 }
 
-void BattleController::ApplyDamage(BattleActor& srcActor, const int selectorIndex)
-{
-    BattleActor& targetActor = m_actors[selectorIndex+2]; // Remove +2 (I need it because the first 2 actor are Team::Ally, I would need a function to filter actors according to their Team)
-    const unsigned int damage = TakeDamage(srcActor, targetActor); 
-    m_textSeries.Open();
-    m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
-                        targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
-}
-
-void BattleController::HandleOpponentTurn(BattleActor& srcActor)
+void BattleController::HandleOpponentMoveSelection(BattleActor& srcActor)
 {
     BattleActor& targetActor = m_actors[rand()%2]; // TODO : Behaviour
+    ApplyDamage(srcActor, targetActor);
+}
+
+void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetActor)
+{
     const unsigned int damage = TakeDamage(srcActor, targetActor); 
-    m_currentTurn = Turn::Waiting;
     m_textSeries.Open();
     m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
+    
+    if (targetActor.GetLifeState() == LifeState::Dead) {
+        m_textSeries.AddText({targetActor.GetName().value + " fainted !"});    
+    }
+    
+    m_textSeries.NextText();
+    m_currentTurn = Turn::Waiting;
+}
+
+void BattleController::ApplyHealth(BattleActor& srcActor)
+{
+
+    const unsigned int hp = TakeHealth(srcActor); 
+    m_textSeries.Open();
+    m_textSeries.AddText({srcActor.GetName().value + " drinks a potion",
+                          srcActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
+
+    m_textSeries.NextText();
+    m_currentTurn = Turn::Waiting;
 }
 
 BattleActor* BattleController::GetNextTurn()
 {
     // TODO
-    BattleActor* actor = m_turns.front();  // Not const ?
-    m_turns.pop();
+    BattleActor* actor = nullptr;
+    while (actor == nullptr) { // Should try m_turns.empty() (even if it's not possible) ?
+        actor = m_turns.front();
+        m_turns.pop();
+        if (actor->GetLifeState() == LifeState::Dead)
+            actor = nullptr; // Dead actor is not pushed in m_turns
+    }
+    
     m_turns.push(actor);
     return actor;
 }
@@ -210,10 +236,10 @@ void BattleController::PlayNextTurn()
         case Turn::Init : {
             m_currentActor = GetNextTurn();
             if (m_currentActor->GetTeam() == Team::Ally) OpenAllyMoveSelection();
-            m_currentTurn = Turn::OptionSelection; 
+            m_currentTurn = Turn::MoveSelection; 
         }
         
-        case Turn::OptionSelection : {
+        case Turn::MoveSelection : {
             switch (m_currentActor->GetTeam()) {
                 case Team::Ally : {
                     if (m_eventState.uiDirection == Direction::Down) {
@@ -226,7 +252,7 @@ void BattleController::PlayNextTurn()
                     break;
                 }
                 case Team::Opponent : {
-                    HandleOpponentTurn(*m_currentActor);
+                    HandleOpponentMoveSelection(*m_currentActor);
                     break;
                 }
                 default:
@@ -242,7 +268,7 @@ void BattleController::PlayNextTurn()
 
         case Turn::Waiting : {
             if (m_eventState.isAction) {
-                if (!m_textSeries.Next()) {
+                if (!m_textSeries.NextText()) {
                     m_textSeries.Close();
                     m_currentTurn = Turn::Init;
                 }
