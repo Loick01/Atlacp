@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "battle/battle.hpp"
+#include "battle/battle_controller.hpp"
 #include "event/event.hpp"
 #include "image/texture.hpp"
 #include "map/entity_controller.hpp"

@@ -1,49 +1,4 @@
-#include "battle/battle.hpp"
-
-BattleActor::BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health):
-    m_team(team), m_name(nameId, name), m_health(healthId, health), m_lifeState(LifeState::Alive), 
-    m_maxHealth(health), m_strength(10), m_turnSpeed(5) // m_turnSpeed will not be here 
-{}
-
-UiValue<std::string> BattleActor::GetName() const
-{
-    return m_name;
-}
-
-UiValue<unsigned int> BattleActor::GetHealth() const
-{
-    return m_health;
-}
-
-unsigned int BattleActor::GetStrength() const
-{
-    return m_strength;
-}
-
-Team BattleActor::GetTeam() const
-{
-    return m_team;
-}
-
-LifeState BattleActor::GetLifeState() const
-{
-    return m_lifeState;
-}
-
-void BattleActor::AddHealth(const unsigned int hp)
-{ 
-    m_health.value = std::min(m_health.value+hp, m_maxHealth);
-}
-
-void BattleActor::RemoveHealth(const unsigned int hp)
-{ 
-    if (m_health.value <= hp) {
-        m_health.value = 0;
-        m_lifeState = LifeState::Dead;
-    } else {
-        m_health.value -= hp;
-    }
-}
+#include "battle/battle_controller.hpp"
 
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_currentActor(nullptr),
@@ -55,7 +10,7 @@ BattleController::BattleController(UiController& uiController):
     m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "Howler 1", 10));
     m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "Howler 2", 100));
     m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "Bone Appetit 1", 20));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Bone Appetit 2", 10));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Slime 2", 10));
     for (BattleActor& b : m_actors) // TODO 
         m_turns.push(&b);
 }
@@ -80,6 +35,12 @@ void BattleController::InitializeActors()
     m_opponentList.SetNrItem(2);
     m_allyList.Open();
     m_opponentList.Open();
+    
+    // Will be removed (I used actor_placeholder.png in actor template file)
+    m_uiController.UpdatePath("actorSprite0_0", "../assets/battle/ally_sprite/werewolf.png");
+    m_uiController.UpdatePath("actorSprite1_0", "../assets/battle/ally_sprite/werewolf.png");
+    m_uiController.UpdatePath("actorSprite0_1", "../assets/battle/opponent_sprite/bone_appetit.png");
+    m_uiController.UpdatePath("actorSprite1_1", "../assets/battle/opponent_sprite/slime.png");
     
     for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
         m_uiController.UpdateText(m_actors[i].GetName());

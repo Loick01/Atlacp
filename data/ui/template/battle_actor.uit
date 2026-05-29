@@ -1,7 +1,7 @@
 background
 actorSprite
 uielement
-../assets/battle/ally_sprite/werewolf.png
+../assets/battle/actor_placeholder.png
 scale background width 0.2
 scaleAxis width
 xAnchor center

@@ -203,7 +203,7 @@ void UiTextElement::SetText(const std::string& text)
     m_text = text;
 }
 
-void UiTextElement::GenerateText()
+void UiTextElement::GenerateText() // Same than Drawable::LoadTexture(), will be improved
 {
     m_textureKey = m_text; // Will use something else than just text as texture key
     m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);

@@ -8,9 +8,7 @@ Drawable::Drawable(TextureController& textureController, const std::string& text
 
 Drawable::Drawable(TextureController& textureController):
     m_textureController(textureController)
-{
-
-}
+{}
 
 Drawable::~Drawable()
 {

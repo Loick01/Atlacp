@@ -238,9 +238,18 @@ void UiController::SetPosition(const ScreenPosition position)
     m_position = position;
 }
 
+void UiController::UpdatePath(const ElementKey& key, const std::string& path) // No tested on UitextElement
+{
+    UiElement* element = GetElement(key);
+    element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
+    element->LoadTexture(path);
+    element->ComputeFinal();
+    element->UpdatePosition();
+}
+
 void UiController::UpdateText(const ElementKey& key, const std::string& text)
 {
-    UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key)); // I assume key will give a UiTextElement
+    UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key)); // I assume key will give a UiTextElement key
     textElement->DeleteTexture(); // Delete the previous generated texture
     textElement->SetText(text);
     textElement->ComputeFinal(); // Load the new texture (GenerateText())

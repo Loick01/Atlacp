@@ -68,6 +68,7 @@ class UiController
         void SetPosition(const ScreenPosition position);
 
         // Rename these functions, I should not use Update in the name
+        void UpdatePath(const ElementKey& key, const std::string& path);
         void UpdateText(const ElementKey& key, const std::string& text);
         void UpdateText(const UiValue<std::string>& uiv);
         void UpdateText(const UiValue<unsigned int>& uiv);

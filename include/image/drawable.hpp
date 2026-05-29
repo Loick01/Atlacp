@@ -12,7 +12,6 @@ class Drawable
         // If this class doesn't stay abstract, will need to delete m_textureKey in its destructor (textureController->DeleteTexture(textureKey))
         // If that happens, beware of every destructor of derivated class from Drawable
         
-        void LoadTexture(const std::string& textureFilepath);
 
         TextureController& m_textureController;
         TextureKey m_textureKey;
@@ -27,6 +26,7 @@ class Drawable
         virtual void DrawTexture() const = 0;
 
         bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
+        void LoadTexture(const std::string& textureFilepath); // Load a new texture and update the m_textureKey
         void DeleteTexture();
 };
 
