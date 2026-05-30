@@ -238,11 +238,11 @@ void UiController::SetPosition(const ScreenPosition position)
     m_position = position;
 }
 
-void UiController::UpdatePath(const ElementKey& key, const std::string& path) // No tested on UitextElement
+void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const ElementKey& key, const std::string& path) ? (same with the different version of UpdateText())
 {
-    UiElement* element = GetElement(key);
+    UiElement* element = GetElement(path.id);
     element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
-    element->LoadTexture(path);
+    element->LoadTexture(path.value);
     element->ComputeFinal();
     element->UpdatePosition();
 }

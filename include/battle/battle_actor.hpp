@@ -16,6 +16,7 @@ class BattleActor
 {
     private:
         const UiValue<std::string> m_name;
+        UiValue<std::string> m_spritePath; // Because I need to update the path
         UiValue<unsigned int> m_health;
 
         const Team m_team;
@@ -26,15 +27,17 @@ class BattleActor
         unsigned int m_turnSpeed; // ]0,+inf] The smaller this value is, the more frequently the actor will play a turn (TODO)
         
     public:
-        BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const std::string name, const unsigned int health); // Should have UiValue as parameters ?
+        BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const ElementKey& pathId, const std::string name, const unsigned int health); // Should have UiValue as parameters ?
         
         UiValue<std::string> GetName() const;
+        UiValue<std::string> GetSpritePath() const;
         UiValue<unsigned int> GetHealth() const;
 
         Team GetTeam() const;
         LifeState GetLifeState() const;
         unsigned int GetStrength() const;
         
+        void SetSpritePath(const std::string& path);
         void AddHealth(const unsigned int hp);
         void RemoveHealth(const unsigned int hp);
 };

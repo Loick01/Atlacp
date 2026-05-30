@@ -6,11 +6,11 @@ BattleController::BattleController(UiController& uiController):
     m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
-    // Will not be here
-    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "Howler 1", 40));
-    m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "Howler 2", 10));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "Bone Appetit 1", 20));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "Slime 2", 10));
+    // Will not be here (UiValue id will not be passed as parameters)
+    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler 1", 30));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage 2", 20));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit 1", 20));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime 2", 20));
     for (BattleActor& b : m_actors) // TODO 
         m_turns.push(&b);
 }
@@ -73,7 +73,9 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
     
     if (targetActor.GetLifeState() == LifeState::Dead) {
-        m_textSeries.AddText({targetActor.GetName().value + " fainted !"});    
+        m_textSeries.AddText({targetActor.GetName().value + " fainted !"});
+        targetActor.SetSpritePath("../assets/battle/gravestone.png");    
+        m_uiController.UpdatePath(targetActor.GetSpritePath());
     }
     
     m_textSeries.NextText();
@@ -85,7 +87,7 @@ void BattleController::ApplyHeal(BattleActor& srcActor)
 
     const unsigned int hp = ComputeHeal(srcActor); 
     m_textSeries.Open();
-    m_textSeries.AddText({srcActor.GetName().value + " drinks a potion",
+    m_textSeries.AddText({srcActor.GetName().value + " drinks a potion.",
                           srcActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
 
     m_textSeries.NextText();
@@ -117,7 +119,7 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             m_textSeries.NextText();
             m_selector.Open();
             m_selector.SetParents(m_opponentList.GetItemsKey()); // TODO : BattleActor with LifeState::Dead are still selectable
-            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{"actorSprite0_0", Axis::Height, 0.2f}); // Not "actorSprite0_0"
+            m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_currentTurn = Turn::ActorSelection;
             break;
         }
@@ -183,14 +185,15 @@ void BattleController::InitializeActors()
     m_opponentList.Open();
     
     // Will be removed (I used actor_placeholder.png in actor template file)
-    m_uiController.UpdatePath("actorSprite0_0", "../assets/battle/ally_sprite/werewolf.png");
-    m_uiController.UpdatePath("actorSprite1_0", "../assets/battle/ally_sprite/werewolf.png");
-    m_uiController.UpdatePath("actorSprite0_1", "../assets/battle/opponent_sprite/bone_appetit.png");
-    m_uiController.UpdatePath("actorSprite1_1", "../assets/battle/opponent_sprite/slime.png");
+    m_actors[0].SetSpritePath("../assets/battle/ally_sprite/werewolf.png");
+    m_actors[1].SetSpritePath("../assets/battle/ally_sprite/mage.png");
+    m_actors[2].SetSpritePath("../assets/battle/opponent_sprite/bone_appetit.png");
+    m_actors[3].SetSpritePath("../assets/battle/opponent_sprite/slime.png");
     
-    for (unsigned int i = 0 ; i < m_actors.size() ; i++) {
-        m_uiController.UpdateText(m_actors[i].GetName());
-        m_uiController.UpdateText(m_actors[i].GetHealth()); 
+    for (const BattleActor& b : m_actors) {
+        m_uiController.UpdateText(b.GetName());
+        m_uiController.UpdateText(b.GetHealth()); 
+        m_uiController.UpdatePath(b.GetSpritePath());
     }
 }
 
