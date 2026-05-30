@@ -15,11 +15,6 @@ UiValue<unsigned int> BattleActor::GetHealth() const
     return m_health;
 }
 
-unsigned int BattleActor::GetStrength() const
-{
-    return m_strength;
-}
-
 Team BattleActor::GetTeam() const
 {
     return m_team;
@@ -28,6 +23,11 @@ Team BattleActor::GetTeam() const
 LifeState BattleActor::GetLifeState() const
 {
     return m_lifeState;
+}
+
+unsigned int BattleActor::GetStrength() const
+{
+    return m_strength;
 }
 
 void BattleActor::AddHealth(const unsigned int hp)

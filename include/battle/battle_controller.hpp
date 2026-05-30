@@ -14,12 +14,12 @@
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
-    ExitWin, ExitLost
+    ExitWin, ExitLost, None
 };
 
 enum class Turn
 {
-    Init, MoveSelection, ActorSelection, Waiting
+    Init, MoveSelection, ActorSelection, Waiting, End
 };
 
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
@@ -28,31 +28,35 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::vector<BattleActor> m_actors;
         std::queue<BattleActor*> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
-
-        UiController& m_uiController; 
-        UiSelector m_selector;
-        UiTextSeries m_textSeries;
+        Turn m_currentTurn;
+        ExitEvent m_exitEvent;
+        
+        UiController& m_uiController;
         UiDynamicList m_allyList;
         UiDynamicList m_opponentList;
-        UiList m_allyMoveList;
-        Turn m_currentTurn; // TODO
+        UiList m_allyMoveList; 
+        UiSelector m_selector;
+        UiTextSeries m_textSeries;
 
-    public:
-        BattleController(UiController& uiController);
-
-        BattleActor* GetNextTurn();
-        void InitializeActors();
-        bool HasAliveActor(const Team team);
-        void CheckActorsHealth();
+        BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
+        ExitEvent CheckBattleEnd() const;
+        unsigned int ComputeDamage(BattleActor& source, BattleActor& target);
+        unsigned int ComputeHeal(BattleActor& source);
+        bool HasAliveActor(const Team team) const;
+        
+        void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
+        void ApplyHeal(BattleActor& srcActor); // Will have a targetActor parameter
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
-        unsigned int TakeDamage(BattleActor& source, BattleActor& target); // Rename
-        unsigned int TakeHealth(BattleActor& source); // Rename
         void HandleAllyMoveSelection(BattleActor& srcActor, const int index);
-        void HandleActorSelection(); // I should have Open/CloseActorSelection() ?
-        void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
-        void ApplyHealth(BattleActor& srcActor);
-        void HandleOpponentMoveSelection(BattleActor& srcActor); // Will be removed, I will use behaviour class
+        void HandleOpponentMoveSelection(BattleActor& srcActor); // Behaviours will be used in this function
+        
+        void HandleActorSelection(); // I should have Open/CloseActorSelection() ? (for now target selection is only used when an ally attacks an opponent)
+
+    public:
+        BattleController(UiController& uiController);
+        
+        void InitializeActors();
         void PlayNextTurn();
 };
