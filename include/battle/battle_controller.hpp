@@ -22,14 +22,23 @@ enum class Turn
     Init, MoveSelection, ActorSelection, Waiting, End
 };
 
+struct TurnComparer
+{
+    bool operator()(const BattleActor* b1, const BattleActor* b2) const
+    {
+        return b1->GetNextTurnTime() > b2->GetNextTurnTime();
+    }
+};
+
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
         std::vector<BattleActor> m_actors;
-        std::queue<BattleActor*> m_turns; // Used to store turn order
+        std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
         Turn m_currentTurn;
         ExitEvent m_exitEvent;
+        float m_currentTime;
         
         UiController& m_uiController;
         UiDynamicList m_allyList;

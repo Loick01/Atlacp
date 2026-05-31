@@ -1,31 +1,33 @@
 #include "battle/battle_controller.hpp"
 
 BattleController::BattleController(UiController& uiController):
-    m_uiController(uiController), m_currentTurn(Turn::Init), m_exitEvent(ExitEvent::None), m_currentActor(nullptr),
+    m_uiController(uiController), m_currentTurn(Turn::Init), m_exitEvent(ExitEvent::None), m_currentActor(nullptr), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
     // Will not be here (UiValue id will not be passed as parameters)
-    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler 1", 30));
-    m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage 2", 20));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit 1", 20));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime 2", 20));
-    for (BattleActor& b : m_actors) // TODO 
+    m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler", 40, 10));
+    m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage", 20, 20));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit", 20, 8));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 25));
+    for (BattleActor& b : m_actors) {
+        b.ComputeNextTurnTime(m_currentTime);
         m_turns.push(&b);
+    }
 }
 
 BattleActor* BattleController::PopNextTurn()
 {
-    // TODO
     BattleActor* actor = nullptr;
     while (actor == nullptr) { // Should try m_turns.empty() (even if it's not possible) ?
-        actor = m_turns.front();
+        actor = m_turns.top();
         m_turns.pop();
         if (actor->GetLifeState() == LifeState::Dead)
             actor = nullptr; // Dead actor is not pushed in m_turns
     }
-    
+    m_currentTime = actor->GetNextTurnTime();
+    actor->ComputeNextTurnTime(m_currentTime);
     m_turns.push(actor);
     return actor;
 }

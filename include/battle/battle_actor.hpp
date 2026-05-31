@@ -23,11 +23,13 @@ class BattleActor
         LifeState m_lifeState;
         
         const unsigned int m_maxHealth;
+        float m_nextTurnTime;
         unsigned int m_strength;
-        unsigned int m_turnSpeed; // ]0,+inf] The smaller this value is, the more frequently the actor will play a turn (TODO)
+        unsigned int m_turnSpeed; // ]0,+inf] The higher this value is, the more frequently the actor will play a turn
         
     public:
-        BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const ElementKey& pathId, const std::string name, const unsigned int health); // Should have UiValue as parameters ?
+        BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const ElementKey& pathId,
+            const std::string name, const unsigned int health, const unsigned int turnSpeed); // Should have UiValue as parameters ?
         
         UiValue<std::string> GetName() const;
         UiValue<std::string> GetSpritePath() const;
@@ -35,8 +37,10 @@ class BattleActor
 
         Team GetTeam() const;
         LifeState GetLifeState() const;
+        float GetNextTurnTime() const;
         unsigned int GetStrength() const;
         
+        void ComputeNextTurnTime(const float turnTime); // turnTime is the global current time from BattleController
         void SetSpritePath(const std::string& path);
         void AddHealth(const unsigned int hp);
         void RemoveHealth(const unsigned int hp);
