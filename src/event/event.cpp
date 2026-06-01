@@ -1,5 +1,10 @@
 #include "event/event.hpp"
 
+// Because of EditorEventController
+#include "system/camera.hpp"
+#include "tile/tilemap.hpp"
+#include "tile/tileset.hpp"
+
 bool EventController::HandleWindowEvents() const
 {
     for (SDL_Event event : m_events){

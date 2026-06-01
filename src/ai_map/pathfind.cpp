@@ -1,5 +1,7 @@
 #include "ai_map/pathfind.hpp"
 
+#include "tile/tilemap.hpp"
+
 Pathfind& Pathfind::GetInstance() {
     static Pathfind instance; // Local static object, create an instance only when this is the first call
     return instance;

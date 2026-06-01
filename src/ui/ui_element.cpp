@@ -1,5 +1,9 @@
 #include "ui/ui_element.hpp"
 
+#include <stdexcept>
+
+#include "image/texture.hpp"
+
 UiElement::UiElement(TextureController& textureController, const ElementKey& key,
     const std::string& textureFilepath, const ScreenPosition localPosition):
     ScreenDrawable(textureController, textureFilepath), m_key(key), m_localPosition(localPosition), m_parent(nullptr)

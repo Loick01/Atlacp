@@ -1,10 +1,10 @@
 #include "system/camera.hpp"
 
+#include "system/window.hpp"
+
 Camera::Camera():
     m_position(ScenePosition{0,0})
-{
-
-}
+{}
 
 void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)
 {

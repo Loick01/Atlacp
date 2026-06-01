@@ -1,5 +1,8 @@
 #include "map/interaction.hpp"
 
+#include "map/entity.hpp"
+#include "ui/ui_controller.hpp"
+
 InteractionController::InteractionController(UiController& uiController) :
     m_uiController(uiController), m_srcEntity(nullptr), m_dstEntity(nullptr)
 {}

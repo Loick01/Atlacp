@@ -1,8 +1,8 @@
 #pragma once
 
-#include "animation/animation.hpp"
 #include "system/type.hpp"
-#include "tile/tilemap.hpp"
+
+class Tilemap;
 
 class MapElement
 {

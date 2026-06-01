@@ -1,8 +1,9 @@
 #pragma once
 
-#include "map/entity.hpp"
-#include "system/type.hpp"
-#include "ui/ui_controller.hpp"
+#include <vector>
+
+class Entity;
+class UiController;
 
 class InteractionController
 {

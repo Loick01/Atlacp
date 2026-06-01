@@ -1,5 +1,7 @@
 #include "ui/ui_selector.hpp"
 
+#include "ui/ui_controller.hpp"
+
 unsigned int UiSelector::m_instanceCount = 0;
 
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :

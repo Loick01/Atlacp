@@ -1,5 +1,10 @@
 #include "ui/ui_controller.hpp"
 
+#include <stdexcept>
+
+#include "image/texture.hpp"
+#include "system/file.hpp"
+
 UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
     m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()

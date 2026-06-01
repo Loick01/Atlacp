@@ -5,44 +5,16 @@
 #include <string>
 #include <vector>
 
-#include "system/type.hpp" // Try to remove ?
-#include "tile/layer.hpp"
-#include "ui/ui_element.hpp" // I need UiParams
+#include "system/type.hpp"
+#include "ui/ui_types.hpp"
 
 #define FILE_DELIMITER "###" // Will be removed ?
 
-struct PartialSize // Should be in ui_element.hpp ?
-{
-    ElementKey srcElement;
-    Axis axis;
-    float amount;
+class Camera;
+class TextureController;
+class Tileset;
 
-    PartialSize() {
-        srcElement = "undefined_element"; // In UiController, I use srcElement to know if there is a padding
-    }
-
-    PartialSize(const ElementKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
-};
-
-struct DataUi // Rename + Should not be here ?
-{
-    ElementKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
-    ElementKey key;
-    std::string path; // image path if UiElement, font filepath if UiTextElement
-    std::string type; // "uielement" or "textelement"
-    std::string text; // Only used for UiTextElement (when type = "textelement"), should not be here ?
-    // Can't use UiParams
-    PartialSize scale;
-    Axis dstScaleAxis; // Only use for UiElement (when type = "uielement"), should not be here ?
-    Anchor xAnchor;
-    Anchor yAnchor;
-    PartialSize xPadding;
-    PartialSize yPadding;
-
-    DataUi() {
-        text = "invalid_text"; // Should not happen
-    }
-};
+struct MapData;
 
 class FileReader
 {

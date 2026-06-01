@@ -1,7 +1,9 @@
 #pragma once
 
-#include "image/texture.hpp"
-#include "system/camera.hpp"
+#include "system/type.hpp"
+
+class Camera;
+class TextureController;
 
 class Drawable
 {
@@ -12,7 +14,6 @@ class Drawable
         // If this class doesn't stay abstract, will need to delete m_textureKey in its destructor (textureController->DeleteTexture(textureKey))
         // If that happens, beware of every destructor of derivated class from Drawable
         
-
         TextureController& m_textureController;
         TextureKey m_textureKey;
         int m_textureWidth;

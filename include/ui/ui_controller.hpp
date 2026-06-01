@@ -1,13 +1,13 @@
 #pragma once
 
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#include "image/texture.hpp"
-#include "system/file.hpp"
 #include "ui/ui_element.hpp"
+
+class FileReader;
+class TextureController;
 
 class UiController
 {       

@@ -1,5 +1,7 @@
 #include "event/action.hpp"
 
+#include <stdexcept>
+
 // KEYBOARD STATE EVENT
 
 void KeyboardActionController::GetStateActions()

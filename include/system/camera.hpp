@@ -1,9 +1,10 @@
 #pragma once
 
-#include <algorithm>
+#include <algorithm> // std::clamp
 
 #include "system/type.hpp"
-#include "system/window.hpp"
+
+class Window;
 
 class Camera
 {

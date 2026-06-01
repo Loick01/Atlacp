@@ -4,6 +4,7 @@
 #include "system/type.hpp"
 
 class FileReader;
+class TextureController;
 
 class Tileset : public ScreenDrawable // Could be a UiElement
 {

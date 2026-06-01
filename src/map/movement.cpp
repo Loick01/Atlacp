@@ -2,9 +2,7 @@
 
 EntityMovement::EntityMovement():
     m_direction(Direction::None), m_move(MapPosition{0, 0})
-{
-
-}
+{}
 
 MapPosition EntityMovement::GetMove() const
 {

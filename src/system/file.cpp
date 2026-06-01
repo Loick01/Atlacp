@@ -1,5 +1,12 @@
 #include "system/file.hpp"
 
+#include <unordered_map>
+
+#include "image/texture.hpp"
+#include "system/camera.hpp"
+#include "tile/layer.hpp"
+#include "tile/tileset.hpp"
+
 std::vector<DataNPC> FileReader::ReadDataNPCs(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
     std::ifstream input;

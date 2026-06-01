@@ -1,5 +1,7 @@
 #include "ui/ui_text_series.hpp"
 
+#include "ui/ui_controller.hpp"
+
 unsigned int UiTextSeries::m_instanceCount = 0;
 
 UiTextSeries::UiTextSeries(UiController& uiController, const std::string& uiFilepath) :

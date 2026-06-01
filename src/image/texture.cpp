@@ -1,5 +1,7 @@
 #include "image/texture.hpp"
 
+#include <stdexcept>
+
 TextureController::TextureController(SDL_Renderer* windowRenderer) :
     m_windowRenderer(windowRenderer)
 {

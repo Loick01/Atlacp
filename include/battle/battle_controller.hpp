@@ -6,11 +6,12 @@
 #include "battle/battle_actor.hpp"
 #include "system/notifier.hpp"
 #include "system/type.hpp"
-#include "ui/ui_controller.hpp"
 #include "ui/ui_dynamic_list.hpp"
 #include "ui/ui_list.hpp"
 #include "ui/ui_selector.hpp"
 #include "ui/ui_text_series.hpp"
+
+// class UiController;
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {

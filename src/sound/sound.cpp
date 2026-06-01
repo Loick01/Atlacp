@@ -1,5 +1,7 @@
 #include "sound/sound.hpp"
 
+#include <stdexcept>
+
 SoundController::SoundController()
 {
     // SDL_mixer initialization

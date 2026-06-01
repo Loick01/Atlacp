@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ai_map/pathfind.hpp"
-#include "map/entity.hpp"
 #include "system/type.hpp"
+
+class Entity;
+class Tilemap;
 
 class EntityBehaviour // Should be call EntityMovementBehaviour or MovementBehaviour ?
 {

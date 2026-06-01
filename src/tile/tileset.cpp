@@ -1,5 +1,6 @@
 #include "tile/tileset.hpp"
 
+#include "image/texture.hpp"
 // I had : tileset.hpp > file.hpp > layer.hpp > tileset.hpp > ... 
 // Because I need a FileReader in Tileset::LoadTileset, I use a forward declaration in tileset.hpp, and I include file.hpp here
 #include "system/file.hpp"

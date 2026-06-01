@@ -1,5 +1,7 @@
 #include "map/player.hpp"
 
+#include "tile/tilemap.hpp"
+
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
     Entity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)

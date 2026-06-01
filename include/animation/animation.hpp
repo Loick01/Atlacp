@@ -1,7 +1,8 @@
 #pragma once
 
-#include "system/file.hpp"
 #include "system/type.hpp"
+
+class FileReader;
 
 // Rename this class (SpriteAnimation ?)
 class Animation // Must have sprites for 4 directions

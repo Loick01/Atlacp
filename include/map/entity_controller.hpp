@@ -1,12 +1,12 @@
 #pragma once
 
-#include "map/entity.hpp"
 #include "map/interaction.hpp"
-#include "map/npc.hpp"
 #include "map/player.hpp"
-#include "system/camera.hpp"
-#include "system/file.hpp"
-#include "tile/tilemap.hpp"
+
+class Camera;
+class Entity;
+class FileReader;
+class Tilemap;
 
 class EntityController
 {

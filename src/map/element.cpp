@@ -1,10 +1,10 @@
 #include "map/element.hpp"
 
+#include "tile/tilemap.hpp"
+
 MapElement::MapElement(Tilemap& tilemap):
     m_tilemap(tilemap)
-{
-    
-}
+{}
 
 MapPosition MapElement::GetMapPosition() const
 {

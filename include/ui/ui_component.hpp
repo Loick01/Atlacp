@@ -1,6 +1,10 @@
 #pragma once
 
-#include "ui/ui_controller.hpp"
+#include <string>
+
+#include "ui/ui_types.hpp"
+
+class UiController;
 
 class UiComponent
 {

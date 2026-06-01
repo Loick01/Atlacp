@@ -1,5 +1,7 @@
 #include "battle/battle_controller.hpp"
 
+#include "ui/ui_controller.hpp"
+
 BattleController::BattleController(UiController& uiController):
     m_uiController(uiController), m_currentTurn(Turn::Init), m_exitEvent(ExitEvent::None), m_currentActor(nullptr), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),

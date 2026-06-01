@@ -1,65 +1,15 @@
 #pragma once
 
 #include <memory>
-#include <stdexcept>
 #include <string>
+
+#include <SDL2/SDL_pixels.h> // SDL_Color
 
 #include "image/drawable.hpp"
 #include "system/notifier.hpp"
+#include "ui/ui_types.hpp"
 
-using ElementKey = std::string; // ???
-
-enum class UiElementEvent
-{
-    Delete // Create ?
-};
-
-enum class Axis
-{
-    Width, Height, None
-};
-
-enum class Anchor
-{
-    LeftIn, LeftOut, 
-    RightIn, RightOut,
-    Center,
-    TopIn, TopOut,
-    BottomIn, BottomOut
-};
-
-template<typename T>
-struct UiValue
-{
-    ElementKey id; // const ?
-    T value;
-
-    UiValue(ElementKey key, T v):
-        id(key), value(v) 
-    {}
-};
-
-struct UiParams
-{
-    float scale;
-    Axis scaleAxis; // UiTextElement don't use this value (text size is handled by the font, the scale value is used for SetMaxWidth())
-    Anchor xAnchor;
-    Anchor yAnchor;
-    float xPadding;
-    float yPadding;
-
-    UiParams() {
-        scale = 1.f; scaleAxis = Axis::None;
-        xAnchor = Anchor::Center; yAnchor = Anchor::Center;
-        xPadding = 0.f; yPadding = 0.f;
-    }
-
-    UiParams(const float s, const Axis sA, const Anchor xA, const Anchor yA, const float xP, const float yP) {
-        scale = s; scaleAxis = sA;
-        xAnchor = xA; yAnchor= yA;
-        xPadding = xP; yPadding = yP;
-    }
-};
+class TextureController;
 
 class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {

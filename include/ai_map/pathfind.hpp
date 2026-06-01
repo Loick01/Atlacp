@@ -4,7 +4,8 @@
 #include <queue>
 
 #include "system/type.hpp"
-#include "tile/tilemap.hpp"
+
+class Tilemap;
 
 class Pathfind // Singleton
 {

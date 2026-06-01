@@ -3,17 +3,18 @@
 #include <string>
 #include <vector>
 
-#include "image/drawable.hpp"
-#include "system/file.hpp"
 #include "system/notifier.hpp"
 #include "system/type.hpp"
 #include "tile/layer.hpp"
-#include "tile/tileset.hpp"
 
 enum class TilemapEvent
 {
     LoadingMap
 };
+
+class Camera;
+class FileReader;
+class Tileset;
 
 class Tilemap : public Notifier<TilemapEvent>
 {

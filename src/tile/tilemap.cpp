@@ -1,5 +1,9 @@
 #include "tile/tilemap.hpp"
 
+#include "system/camera.hpp"
+#include "system/file.hpp"
+#include "tile/tileset.hpp"
+
 Tilemap::Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 
     const std::string& worldFilepath, Camera& camera, const bool shouldCulling) :
     m_camera(camera), m_textureController(textureController), m_fileReader(fileReader), m_tileset(tileset), m_shouldCulling(shouldCulling)

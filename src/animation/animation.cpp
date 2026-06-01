@@ -1,5 +1,7 @@
 #include "animation/animation.hpp"
 
+#include "system/file.hpp"
+
 Animation::Animation(const FileReader& fileReader, const std::string& path):
     m_currentSpriteIndex(0), m_indexOffset(0) // useless to initialize index offset here ?
 {

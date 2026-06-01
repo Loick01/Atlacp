@@ -1,9 +1,10 @@
 #pragma once
 
-#include "image/texture.hpp"
-#include "system/camera.hpp"
 #include "system/type.hpp" 
-#include "tile/tileset.hpp"
+
+class Camera;
+class TextureController;
+class Tileset;
 
 // No longer inherits from SceneDrawable --> Too many issues caused by the fact 
 // that m_textureKey was unused (problematic calls of TextureController::DeleteTexture() with empty key) 

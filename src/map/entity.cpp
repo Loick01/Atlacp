@@ -1,5 +1,11 @@
 #include "map/entity.hpp"
 
+#include <SDL2/SDL_rect.h>
+
+#include "image/texture.hpp"
+#include "system/camera.hpp"
+#include "tile/tilemap.hpp"
+
 Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
     SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),

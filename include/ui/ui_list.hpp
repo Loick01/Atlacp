@@ -1,8 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include "ui/ui_component.hpp"
-#include "ui/ui_controller.hpp"
-#include "ui/ui_element.hpp"
+#include "ui/ui_types.hpp"
 
 class UiList : public UiComponent
 {

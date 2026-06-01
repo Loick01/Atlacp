@@ -1,5 +1,9 @@
 #include "ai_map/behaviour.hpp"
 
+#include "ai_map/pathfind.hpp"
+#include "map/entity.hpp"
+#include "tile/tilemap.hpp"
+
 RandomBehaviour::RandomBehaviour()
 {
     m_delay = m_random.GetRandomFloat(0.5f, 5.f);

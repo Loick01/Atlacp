@@ -1,5 +1,11 @@
 #include "map/entity_controller.hpp"
 
+#include "map/entity.hpp"
+#include "map/npc.hpp"
+#include "system/camera.hpp"
+#include "system/file.hpp"
+#include "tile/tilemap.hpp"
+
 EntityController::EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
 Camera& camera, Tilemap& tilemap):
     m_player(fileReader, tilemap, textureController, "../assets/sprites/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file)

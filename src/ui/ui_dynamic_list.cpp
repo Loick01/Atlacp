@@ -1,5 +1,7 @@
 #include "ui/ui_dynamic_list.hpp"
 
+#include "ui/ui_controller.hpp"
+
 unsigned int UiDynamicList::m_instanceCount = 0;
 
 UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFilepath):

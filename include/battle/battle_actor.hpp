@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/ui_element.hpp"
+#include "ui/ui_element.hpp" // Because UiValue
 
 enum class LifeState
 {

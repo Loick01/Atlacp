@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_timer.h>
 
 struct Time
 {
@@ -10,9 +10,7 @@ struct Time
 
     Time():
         m_lastTime(SDL_GetTicks()) 
-    {
-
-    }
+    {}
 
     void Update()
     {

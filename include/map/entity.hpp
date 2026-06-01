@@ -1,8 +1,14 @@
 #pragma once
 
+#include "animation/animation.hpp"
 #include "image/drawable.hpp"
 #include "map/element.hpp"
 #include "map/movement.hpp"
+#include "system/notifier.hpp"
+
+class Camera;
+class TextureController;
+class Tilemap;
 
 enum class EntityEvent
 {

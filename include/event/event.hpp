@@ -1,15 +1,17 @@
 #pragma once 
 
 #include <memory>
-#include <stdexcept>
 #include <vector>
 
 #include <SDL2/SDL.h>
 
 #include "event/action.hpp"
-#include "image/drawable.hpp"
 #include "system/type.hpp"
-#include "tile/tilemap.hpp"
+
+// Because of EditorEventController (Remove ?)
+class Camera;
+class Tilemap;
+class Tileset;
 
 class EventController
 {

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #include <string>
 
 #include <SDL2/SDL_mixer.h>
