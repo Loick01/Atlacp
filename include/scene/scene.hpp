@@ -7,6 +7,7 @@
 
 #include "battle/battle_controller.hpp"
 #include "event/event.hpp"
+#include "image/font.hpp"
 #include "image/texture.hpp"
 #include "map/entity_controller.hpp"
 #include "sound/sound.hpp"
@@ -26,6 +27,7 @@ enum class SwitchEvent
 struct GameContext
 {
     Window& window;
+    FontController& fontController;
     TextureController& textureController;
     SoundController& soundController;
     FileReader& fileReader; 
@@ -108,6 +110,7 @@ class SceneController
     private:
         Window m_window;
         SoundController m_soundController;
+        FontController m_fontController;
         TextureController m_textureController;
         FileReader m_fileReader;
         UiController m_uiController;

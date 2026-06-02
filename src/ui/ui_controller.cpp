@@ -2,11 +2,12 @@
 
 #include <stdexcept>
 
+#include "image/font.hpp"
 #include "image/texture.hpp"
 #include "system/file.hpp"
 
-UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
-    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
+UiController::UiController(const FileReader& fileReader, FontController& fontController, TextureController& textureController, const std::string& fontFilepath):
+    m_fileReader(fileReader), m_fontController(fontController), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
 std::string UiController::GetFileExtension(const std::string& filepath) const // Will be in FileReader
@@ -66,7 +67,7 @@ std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, co
 
 std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
 {
-    return std::make_unique<UiTextElement>(m_textureController, key, fontFilepath);
+    return std::make_unique<UiTextElement>(m_fontController, m_textureController, key, fontFilepath);
 }
 
 std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key)

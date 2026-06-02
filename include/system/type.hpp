@@ -8,6 +8,7 @@
 #include <time.h>
 #include <vector>    
 
+using FontKey = std::string;
 using TextureKey = std::string;
 using Tile = unsigned int; // Use a struct ?
 

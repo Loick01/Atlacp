@@ -4,11 +4,9 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h> // TTF_RenderUTF8_Blended_Wrapped
 
 #include "system/type.hpp"
-
-// Should add a FontController instead of having TextureController::m_fonts ?
 
 struct Texture
 {
@@ -21,36 +19,26 @@ struct Texture
     }
 };
 
-struct Font
-{
-    TTF_Font* font;
-    unsigned int count;
-
-    Font() {
-        font = nullptr;
-        count = 0;
-    }
-};
+class FontController;
 
 class TextureController
 {
     private:
         std::map<TextureKey,Texture> m_textures;
-        std::map<TextureKey,Font> m_fonts;
+        FontController& m_fontController;
         SDL_Renderer* m_windowRenderer;
 
     public:
-        TextureController(SDL_Renderer* windowRenderer);
+        TextureController(FontController& FontController, SDL_Renderer* windowRenderer);
         ~TextureController();
-
-        TTF_Font* GetFont(const TextureKey& textureKey) const;
         
-        // Try to merge LoadTextureFromFile and LoadTextureFromText
-        void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& textureKey, int &textureWidth, int& textureHeight);
-        void LoadTextureFromText(const TextureKey& fontKey, const TextureKey& textureKey, const std::string& text, 
+        void CreateTextureFromSurface(SDL_Surface* surface, const TextureKey& key, const std::string& s, int& textureWidth, int& textureHeight);
+        void AddTexture(const TextureKey& key, int& textureWidth, int& textureHeight); // Rename ?
+
+        void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int &textureWidth, int& textureHeight);
+        void LoadTextureFromText(const TextureKey& fontKey, const TextureKey& key, const std::string& text, 
             int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth);
 
-        void LoadFontFromFile(const std::string& fontFilepath, const TextureKey& textureKey, const int fontSize);
-        void RenderTexture(const TextureKey& textureKey, const SDL_Rect& src, const SDL_Rect& dst) const;
-        void DeleteTexture(const TextureKey& textureKey);
+        void RenderTexture(const TextureKey& key, const SDL_Rect& src, const SDL_Rect& dst) const;
+        void DeleteTexture(const TextureKey& key);
 };

@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "image/font.hpp"
 #include "image/texture.hpp"
 
 UiElement::UiElement(TextureController& textureController, const ElementKey& key,
@@ -194,12 +195,17 @@ void UiElement::ComputeFinal()
     SetPadding(m_params.xPadding, m_params.yPadding);
 }
 
-UiTextElement::UiTextElement(TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
-    UiElement(textureController, key), m_textColor(color), m_text("No_Text")
+UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
+    UiElement(textureController, key), m_fontController(fontController), m_textColor(color), m_text("No_Text")
 {
     const unsigned int fontSize = 24;
-    m_fontKey = fontFilepath + std::to_string(fontSize); // fontFilepath is not the full path, just the filename in the font directory
-    textureController.LoadFontFromFile("../assets/ui/fonts/"+fontFilepath+".ttf", m_fontKey, fontSize);
+    m_fontKey = fontFilepath + "_" + std::to_string(fontSize); // fontFilepath is not the full path, just the filename in the font directory
+    fontController.LoadFontFromFile("../assets/ui/fonts/"+fontFilepath+".ttf", m_fontKey, fontSize);
+}
+
+UiTextElement::~UiTextElement()
+{
+    m_fontController.DeleteFont(m_fontKey); // Because LoadTextureFromText is in UiTextElement
 }
 
 void UiTextElement::SetText(const std::string& text)
