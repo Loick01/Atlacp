@@ -1,7 +1,7 @@
-#include "ai_map/behaviour.hpp"
+#include "ai_map/map_behaviour.hpp"
 
 #include "ai_map/pathfind.hpp"
-#include "map/entity.hpp"
+#include "map/map_entity.hpp"
 #include "tile/tilemap.hpp"
 
 RandomBehaviour::RandomBehaviour()
@@ -9,7 +9,7 @@ RandomBehaviour::RandomBehaviour()
     m_delay = m_random.GetRandomFloat(0.5f, 5.f);
 }
 
-void RandomBehaviour::FreeCase(Entity& entity, const float deltaTime)
+void RandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_delay > 0.f) m_delay -= deltaTime;
     else{
@@ -21,17 +21,17 @@ void RandomBehaviour::FreeCase(Entity& entity, const float deltaTime)
     }
 }
 
-void RandomBehaviour::MovingCase(Entity& entity, const float deltaTime)
+void RandomBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void RandomBehaviour::OnStopCase(Entity& entity)
+void RandomBehaviour::OnStopCase(MapEntity& entity)
 {
     entity.Reset(entity.GetCurrentMovement().GetDirection()); // Set state to Free where a new delay will be generated
 }
 
-FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const float followerWalkSpeed):
+FollowEntityBehaviour::FollowEntityBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed):
     m_trackedEntity(trackedEntity)
 {
     if (trackedEntity == nullptr)
@@ -41,10 +41,10 @@ FollowEntityBehaviour::FollowEntityBehaviour(const Entity* trackedEntity, const 
         throw std::invalid_argument("FollowEntityBehaviour should not be used if tracked entity is faster than follower\n");
 }
 
-void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)
+void FollowEntityBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_trackedEntity->GetState() != EntityState::Free){
-        const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
+        const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
@@ -52,15 +52,15 @@ void FollowEntityBehaviour::FreeCase(Entity& entity, const float deltaTime)
     }
 }
 
-void FollowEntityBehaviour::MovingCase(Entity& entity, const float deltaTime)
+void FollowEntityBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void FollowEntityBehaviour::OnStopCase(Entity& entity)
+void FollowEntityBehaviour::OnStopCase(MapEntity& entity)
 {
     if (m_trackedEntity->GetState() != EntityState::Free){
-        const EntityMovement movement = m_trackedEntity->GetCurrentMovement();
+        const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
@@ -76,7 +76,7 @@ GoToBehaviour::GoToBehaviour(const MapPosition startPosition, const MapPosition 
     m_path = Pathfind::GetInstance().ComputePath(startPosition, endPosition, tilemap);
 }
 
-void GoToBehaviour::FreeCase(Entity& entity, const float deltaTime)
+void GoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_pathIndex < m_path.size()){
         const MapPosition nextPosition = m_path[m_pathIndex];
@@ -87,12 +87,12 @@ void GoToBehaviour::FreeCase(Entity& entity, const float deltaTime)
     }
 }
 
-void GoToBehaviour::MovingCase(Entity& entity, const float deltaTime)
+void GoToBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void GoToBehaviour::OnStopCase(Entity& entity)
+void GoToBehaviour::OnStopCase(MapEntity& entity)
 {
     m_pathIndex++;
     if (m_pathIndex < m_path.size()){

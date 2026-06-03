@@ -1,35 +1,35 @@
-#include "map/movement.hpp"
+#include "map/map_movement.hpp"
 
-EntityMovement::EntityMovement():
+MapMovement::MapMovement():
     m_direction(Direction::None), m_move(MapPosition{0, 0})
 {}
 
-MapPosition EntityMovement::GetMove() const
+MapPosition MapMovement::GetMove() const
 {
     return m_move;
 }
 
-Direction EntityMovement::GetDirection() const
+Direction MapMovement::GetDirection() const
 {
     return m_direction;
 }
 
-Direction EntityMovement::GetOppositeDirection() const
+Direction MapMovement::GetOppositeDirection() const
 {
     return static_cast<Direction>(((int)m_direction+2)%4);
 }
 
-MapPosition EntityMovement::GetStartPosition() const
+MapPosition MapMovement::GetStartPosition() const
 {
     return m_startMapPosition;
 }
 
-ScenePosition EntityMovement::GetScenePosition() const
+ScenePosition MapMovement::GetScenePosition() const
 {
     return m_startPosition + (m_endPosition - m_startPosition) * m_progress; // Should be in Interpolation struct ?
 }
 
-EntityState EntityMovement::UpdateProgress(const float speed, const float deltaTime)
+EntityState MapMovement::UpdateProgress(const float speed, const float deltaTime)
 {
     m_progress += speed * deltaTime;
     m_progress = std::min(1.0f, m_progress); 
@@ -37,7 +37,7 @@ EntityState EntityMovement::UpdateProgress(const float speed, const float deltaT
     return newState;
 }
 
-MapPosition EntityMovement::GetMoveFromDirection(const Direction direction) const
+MapPosition MapMovement::GetMoveFromDirection(const Direction direction) const
 {
     switch(direction){
         case Direction::Up:
@@ -53,7 +53,7 @@ MapPosition EntityMovement::GetMoveFromDirection(const Direction direction) cons
     }
 }
 
-Direction EntityMovement::GetDirectionFromMove(const MapPosition move) const
+Direction MapMovement::GetDirectionFromMove(const MapPosition move) const
 {
     if (move.x==0){
         if (move.y==-1) return Direction::Up;
@@ -65,13 +65,13 @@ Direction EntityMovement::GetDirectionFromMove(const MapPosition move) const
     return Direction::None; // Will throw error ?
 }
 
-void EntityMovement::DefineMovement(const Direction direction)
+void MapMovement::DefineMovement(const Direction direction)
 {
     m_direction = direction;
     m_move = GetMoveFromDirection(direction);
 }
 
-void EntityMovement::Initialize(const int tileSize, const MapPosition startPosition, const MapPosition endPosition)
+void MapMovement::Initialize(const int tileSize, const MapPosition startPosition, const MapPosition endPosition)
 {
     m_startMapPosition = startPosition;
     m_startPosition = startPosition.ToScenePosition(tileSize);

@@ -1,15 +1,15 @@
 #include "map/interaction.hpp"
 
-#include "map/entity.hpp"
+#include "map/map_entity.hpp"
 #include "ui/ui_controller.hpp"
 
 InteractionController::InteractionController(UiController& uiController) :
     m_uiController(uiController), m_srcEntity(nullptr), m_dstEntity(nullptr)
 {}
 
-void InteractionController::StartInteraction(std::vector<Entity*> entities)
+void InteractionController::StartInteraction(std::vector<MapEntity*> entities)
 {
-    for (Entity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
+    for (MapEntity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
         // Only one interaction at a time
         if (e->GetState() == EntityState::Interacting) {
             m_srcEntity = e;
@@ -19,13 +19,13 @@ void InteractionController::StartInteraction(std::vector<Entity*> entities)
 
     const MapPosition target = m_srcEntity->GetTargetPosition();
 
-    for (Entity* e : entities) {
+    for (MapEntity* e : entities) {
         if (e->GetMapPosition() == target && e->GetState() == EntityState::Free) { // Will interact only with EntityState::Free
             m_dstEntity = e;
             break;
         }
     }
-    if (m_dstEntity != nullptr) { // If an Entity has been found
+    if (m_dstEntity != nullptr) { // If an MapEntity has been found
         m_dstEntity->SetOrientation(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
         m_dstEntity->SetState(EntityState::Interacting); // Targeted entity will not move
         m_uiController.OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // Will be removed

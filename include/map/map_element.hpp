@@ -8,7 +8,7 @@ class MapElement
 {
     private:
         MapPosition m_mapPosition;
-        MapPosition m_targetPosition;
+        MapPosition m_targetPosition; // Should use orientation instead ? 
 
     protected:
         Tilemap& m_tilemap;

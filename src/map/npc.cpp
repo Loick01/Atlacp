@@ -2,13 +2,13 @@
 
 #include "tile/tilemap.hpp"
 
-NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const Entity* trackedEntity, // Entity parameter use for follow behaviour, should not be here
+NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const MapEntity* trackedEntity, // MapEntity parameter use for follow behaviour, should not be here
     const std::string& spriteFilepath, Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
+    MapEntity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
 {
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position is defined in NPC constructor)
+    tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     m_behaviour = std::make_unique<RandomBehaviour>();
     //m_behaviour = std::make_unique<FollowEntityBehaviour>(trackedEntity, GetWalkSpeed());
@@ -17,7 +17,7 @@ NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& text
 
 void NPC::Update(const float deltaTime)
 {
-    switch (GetState()){ // This code has the same structure than Player::Update, I think I can merge it in Entity::Update
+    switch (GetState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
         case EntityState::Free:
         {
             m_behaviour->FreeCase(*this, deltaTime);

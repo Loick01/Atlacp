@@ -2,12 +2,12 @@
 
 #include "system/type.hpp"
 
-enum class EntityState // Should be called MovementState (and I should add AnimationState ?)
+enum class EntityState // Should be called MovementState (and I should add AnimationState ?). In any case, do not keep EntityState !!!
 {
     Free, Moving, OnStop, Interacting
 };
 
-class EntityMovement
+class MapMovement
 {
     private:
         MapPosition m_move;
@@ -19,7 +19,7 @@ class EntityMovement
         float m_progress;
 
     public:
-        EntityMovement();
+        MapMovement();
 
         MapPosition GetMove() const;
         Direction GetDirection() const;

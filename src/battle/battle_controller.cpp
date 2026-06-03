@@ -8,11 +8,11 @@ BattleController::BattleController(UiController& uiController):
     m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {
-    // Will not be here (UiValue id will not be passed as parameters)
+    // Will not be here + UiValue id will not be passed as parameters
     m_actors.push_back(BattleActor(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler", 40, 10));
     m_actors.push_back(BattleActor(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage", 20, 20));
     m_actors.push_back(BattleActor(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit", 20, 8));
-    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 25));
+    m_actors.push_back(BattleActor(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 20));
     for (BattleActor& b : m_actors) {
         b.ComputeNextTurnTime(m_currentTime);
         m_turns.push(&b);
@@ -133,10 +133,12 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
             ApplyHeal(*m_currentActor);
             break;
         }
+
         case 2:
             CloseAllyMoveSelection();
             m_currentTurn = Turn::End;
             break;
+            
         case 3: {
             Notify(ExitEvent::ExitWin); // Not ExitWin
             break;
@@ -162,7 +164,7 @@ void BattleController::HandleActorSelection()
     } else if (m_eventState.isAction) {
         m_textSeries.Close();
         BattleActor& targetActor = m_actors[m_selector.GetIndex()+2]; // Remove +2 (I need it because the first 2 actor are Team::Ally, I would need a function to filter actors according to their Team)
-        ApplyDamage(*m_currentActor, targetActor);
+        ApplyDamage(*m_currentActor, targetActor); // Will not be here
         m_selector.Close();
     }
 }

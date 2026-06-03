@@ -125,7 +125,7 @@ enum class MapBound
 enum class Direction
 {
     // Do not change the order (sprite animation is based on implicit int defined in this enum)
-    // Random::GetRandomDirection and EntityMovement::GetOppositeDirection also use this order
+    // Random::GetRandomDirection and MapMovement::GetOppositeDirection also use this order
     Down, // 0
     Right, // 1
     Up, // 2

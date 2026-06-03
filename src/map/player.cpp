@@ -4,7 +4,7 @@
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
-    Entity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
+    MapEntity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -14,18 +14,18 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
         throw std::runtime_error("A spawn position must be defined for the first loaded map (defined in world file)");
     }
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // Should be in Entity (currently not possible because spawn position if defined in Player constructor)
+    tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     LookMe();
 }
 
 void Player::Update(const float deltaTime)
 {
-    switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in Entity::Update
+    switch (GetState()){ // This code has the same structure than NPC::Update, I think I can merge it in MapEntity::Update
         case EntityState::Free:
         {
             if (m_eventState.isInteracting){
-                // Warning : If the player has not moved once, direction is None by default (should initialize it in Entity constructor) 
+                // Warning : If the player has not moved once, direction is None by default (should initialize it in MapEntity constructor) 
                 const Direction direction = GetCurrentMovement().GetDirection(); // Previous movement direction (can't use m_eventState.mapDirection which is reset to None)
                 OrderInteraction(direction);
                 break;

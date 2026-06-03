@@ -35,7 +35,7 @@ class SceneDrawable : public Drawable
 {
     protected:
         ScenePosition m_position;
-        ScenePosition m_displayOffset; // Should be in Entity
+        ScenePosition m_displayOffset; // Should be in MapEntity
         Camera& m_camera;
 
         ScenePosition GetDisplayOffset() const;

@@ -1,6 +1,6 @@
 #include "map/entity_controller.hpp"
 
-#include "map/entity.hpp"
+#include "map/map_entity.hpp"
 #include "map/npc.hpp"
 #include "system/camera.hpp"
 #include "system/file.hpp"
@@ -23,7 +23,7 @@ Camera& camera, Tilemap& tilemap):
     // }
     
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
-    // Entity* trackedEntity = &m_player;
+    // MapEntity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
     //     NPC* npc = new NPC(m_context.m_fileReader, tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", camera, 4.f, 6.f);
     //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
@@ -45,7 +45,7 @@ void EntityController::DeleteNPCs()
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
     for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
         delete m_updatedEntities[i];
-        m_updatedEntities[i] = nullptr; // Fix segfault on Entity::Update() when loading a new map
+        m_updatedEntities[i] = nullptr; // Fix segfault on MapEntity::Update() when loading a new map
     }
     
     // Warning : NPC adress are still in m_renderedEntities
@@ -53,7 +53,7 @@ void EntityController::DeleteNPCs()
 
 void EntityController::Draw() const
 {
-    for (Entity* e : m_renderedEntities)
+    for (MapEntity* e : m_renderedEntities)
         e->DrawTexture();
 }
 
@@ -61,7 +61,7 @@ void EntityController::Update(const GameplayEventState& playerEventState, const 
 {
     m_player.SetEventState(playerEventState);
     
-    for (Entity* e : m_updatedEntities) {
+    for (MapEntity* e : m_updatedEntities) {
         if (e == nullptr) break; // I don't like that
         e->Update(deltaTime);
     }
@@ -69,10 +69,10 @@ void EntityController::Update(const GameplayEventState& playerEventState, const 
 
 void EntityController::SortRenderedEntities()
 {
-    // m_renderedEntities is sorted each time an Entity ends its movement (remove then insert the moving entity at the correct index instead ?)
+    // m_renderedEntities is sorted each time an MapEntity ends its movement (remove then insert the moving entity at the correct index instead ?)
     // It would be even better to sort only once when several entities end their movement in the same frame
     std::sort(m_renderedEntities.begin(), m_renderedEntities.end(),
-        [](Entity* a, Entity* b){
+        [](MapEntity* a, MapEntity* b){
             return a->GetMapPosition().y < b->GetMapPosition().y; 
         });
 }

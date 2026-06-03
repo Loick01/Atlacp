@@ -4,7 +4,7 @@
 #include "map/player.hpp"
 
 class Camera;
-class Entity;
+class MapEntity;
 class FileReader;
 class Tilemap;
 
@@ -14,10 +14,10 @@ class EntityController
         const FileReader& m_fileReader;
         Player m_player; // ?
         
-        // Will use unique_ptr<Entity> ?
-        std::vector<Entity*> m_renderedEntities; // Sorted by y position
-        // A specific order could be necessary for Entity updating (for example with FollowEntityBehaviour), I use a second vector of Entity*
-        std::vector<Entity*> m_updatedEntities;
+        // Will use unique_ptr<MapEntity> ?
+        std::vector<MapEntity*> m_renderedEntities; // Sorted by y position
+        // A specific order could be necessary for MapEntity updating (for example with FollowEntityBehaviour), I use a second vector of MapEntity*
+        std::vector<MapEntity*> m_updatedEntities;
 
         InteractionController m_interactionController;
     

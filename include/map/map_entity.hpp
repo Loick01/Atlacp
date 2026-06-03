@@ -2,8 +2,8 @@
 
 #include "animation/animation.hpp"
 #include "image/drawable.hpp"
-#include "map/element.hpp"
-#include "map/movement.hpp"
+#include "map/map_element.hpp"
+#include "map/map_movement.hpp"
 #include "system/notifier.hpp"
 
 class Camera;
@@ -15,11 +15,10 @@ enum class EntityEvent
     SortEntity, EnterInteraction, LeaveInteraction
 };
 
-// Rename MapEntity ?
-class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>
+class MapEntity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>
 {
     private:
-        EntityMovement m_currentMovement;
+        MapMovement m_currentMovement;
         Animation m_animation;
         EntityState m_state;
         float m_walkSpeed;
@@ -27,11 +26,11 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         bool m_isRunning;
 
         ScenePosition ContinueMovement(const float deltaTime);
-        void TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap);
+        void TryStartMovement(const MapMovement movement, const bool isFirstMovement, const bool canExitMap);
         void TryStartInteraction(const MapPosition targetPosition);
 
     protected:
-        Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
+        MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
             Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed);
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
@@ -48,7 +47,7 @@ class Entity : public SceneDrawable, public MapElement, public Notifier<EntityEv
         void LeaveInteraction();
 
         EntityState GetState() const;
-        EntityMovement GetCurrentMovement() const;
+        MapMovement GetCurrentMovement() const;
         float GetWalkSpeed() const;
         float GetRunSpeed() const;
         float GetCurrentSpeed() const;

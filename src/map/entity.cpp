@@ -1,4 +1,4 @@
-#include "map/entity.hpp"
+#include "map/map_entity.hpp"
 
 #include <SDL2/SDL_rect.h>
 
@@ -6,7 +6,7 @@
 #include "system/camera.hpp"
 #include "tile/tilemap.hpp"
 
-Entity::Entity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
+MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
     SceneDrawable(textureController, spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap),
     m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
@@ -20,23 +20,23 @@ Entity::Entity(TextureController& textureController, const std::string& spriteFi
     Reset(initialDirection);
 }
 
-EntityState Entity::GetState() const
+EntityState MapEntity::GetState() const
 {
     return m_state;
 }
 
-EntityMovement Entity::GetCurrentMovement() const
+MapMovement MapEntity::GetCurrentMovement() const
 {
     return m_currentMovement;
 }
 
-void Entity::SetOrientation(const Direction direction)
+void MapEntity::SetOrientation(const Direction direction)
 {
     m_animation.Reset(direction);
     m_currentMovement.DefineMovement(direction);
 }
 
-void Entity::Reset(const Direction direction)
+void MapEntity::Reset(const Direction direction)
 {
     if (direction == Direction::None) 
         throw std::invalid_argument("Direction should not be None\n");
@@ -44,7 +44,7 @@ void Entity::Reset(const Direction direction)
     m_state = EntityState::Free;
 }
 
-void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstMovement, const bool canExitMap)
+void MapEntity::TryStartMovement(const MapMovement movement, const bool isFirstMovement, const bool canExitMap)
 {
     const MapPosition currentPosition = GetMapPosition();
     MapPosition targetPosition = currentPosition + movement.GetMove();
@@ -72,7 +72,7 @@ void Entity::TryStartMovement(const EntityMovement movement, const bool isFirstM
     }
 }
 
-void Entity::TryStartInteraction(const MapPosition targetPosition)
+void MapEntity::TryStartInteraction(const MapPosition targetPosition)
 {
     const MapBound bound = m_tilemap.IsOutOfMap(targetPosition);
     if (bound == MapBound::Inside){
@@ -82,25 +82,25 @@ void Entity::TryStartInteraction(const MapPosition targetPosition)
     }
 }
 
-void Entity::LeaveInteraction()
+void MapEntity::LeaveInteraction()
 {
     // SetState(Free) should be here rather than inside InteractionController::EndInteraction()
     Notify(EntityEvent::LeaveInteraction);
 }
 
-ScenePosition Entity::ContinueMovement(const float deltaTime)
+ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 {
     m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
     m_animation.ContinueAnimation(deltaTime);
     return m_currentMovement.GetScenePosition();
 }
 
-ScenePosition Entity::GetFinalDrawingPosition(const ScenePosition sp) const
+ScenePosition MapEntity::GetFinalDrawingPosition(const ScenePosition sp) const
 {
     return (sp-GetDisplayOffset())*m_camera.GetZoom();
 }
 
-void Entity::DrawTexture() const
+void MapEntity::DrawTexture() const
 {
     const Vec2 sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_textureWidth, m_textureHeight};
@@ -111,53 +111,53 @@ void Entity::DrawTexture() const
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 
-void Entity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
+void MapEntity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
 {
     // Should berify if direction != Direction::None ?
-    EntityMovement movement;
+    MapMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);
 }
 
-void Entity::OrderUpdateMovement(const float deltaTime)
+void MapEntity::OrderUpdateMovement(const float deltaTime)
 {
     m_position = GetFinalDrawingPosition(ContinueMovement(deltaTime));
 }
 
-void Entity::OrderInteraction(const Direction direction)
+void MapEntity::OrderInteraction(const Direction direction)
 {
-    EntityMovement movement; // To get targeted position, I need to initialize a EntityMovement (to use GetMoveFromDirection)
+    MapMovement movement; // To get targeted position, I need to initialize a MapMovement (to use GetMoveFromDirection)
     movement.DefineMovement(direction);
     const MapPosition targetPosition = GetMapPosition() + movement.GetMove();
     TryStartInteraction(targetPosition);
 }
 
-float Entity::GetWalkSpeed() const
+float MapEntity::GetWalkSpeed() const
 {
     return m_walkSpeed;
 }
 
-float Entity::GetRunSpeed() const
+float MapEntity::GetRunSpeed() const
 {
     return m_runSpeed;
 }
 
-float Entity::GetCurrentSpeed() const
+float MapEntity::GetCurrentSpeed() const
 {
     return m_isRunning ? m_runSpeed : m_walkSpeed;
 }
 
-bool Entity::GetIsRunning() const
+bool MapEntity::GetIsRunning() const
 {
     return m_isRunning;
 }
 
-void Entity::SetState(const EntityState state)
+void MapEntity::SetState(const EntityState state)
 {
     m_state = state;
 }
 
-void Entity::SetIsRunning(const bool isRunning)
+void MapEntity::SetIsRunning(const bool isRunning)
 {
     m_isRunning = isRunning;
 }

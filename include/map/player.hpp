@@ -1,8 +1,8 @@
 #pragma once
 
-#include "map/entity.hpp"
+#include "map/map_entity.hpp"
 
-class Player : public Entity, public EventStateHolder<GameplayEventState>
+class Player : public MapEntity, public EventStateHolder<GameplayEventState>
 {
     public:
         Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
