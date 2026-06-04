@@ -39,7 +39,7 @@ struct TurnComparer
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
-        std::vector<BattleActor> m_actors;
+        std::vector<BattleActor> m_actors; // Should have allyList + opponentList instead ?
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
         // BattleActor* m_targetActor;
@@ -55,9 +55,12 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
+        std::vector<BattleActor*> GetActorsInTeam(const Team team); // Remove ?
+        
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
-        BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ? (for now target selection is only used when an ally attacks an opponent)
+        BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ?
         ExitEvent CheckBattleEnd() const;
+        Team GetTeamFromCommand() const; // Remove ?
         unsigned int ComputeDamage(BattleActor& source, BattleActor& target);
         unsigned int ComputeHeal(BattleActor& source,  BattleActor& target);
         bool HasAliveActor(const Team team) const;

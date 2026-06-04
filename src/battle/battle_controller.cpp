@@ -19,6 +19,16 @@ BattleController::BattleController(UiController& uiController):
     }
 }
 
+std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team)
+{
+    std::vector<BattleActor*> actors;
+    for (BattleActor& b : m_actors) {
+        if (b.GetTeam() == team)
+            actors.push_back(&b);
+    }
+    return actors;
+}
+
 BattleActor* BattleController::PopNextTurn()
 {
     BattleActor* actor = nullptr;
@@ -43,7 +53,9 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
     } else if (m_eventState.isAction) {
         m_textSeries.Close();
         m_selector.Close();
-        BattleActor* targetActor = &(m_actors[m_selector.GetIndex()+2]); // Remove +2 (I need it because the first 2 actor are Team::Ally, I would need a function to filter actors according to their Team)
+        const Team team = GetTeamFromCommand();
+        std::vector<BattleActor*> actors = GetActorsInTeam(team);
+        BattleActor* targetActor = actors[m_selector.GetIndex()];
         return targetActor;
     }
     return nullptr;
@@ -56,6 +68,18 @@ ExitEvent BattleController::CheckBattleEnd() const
     else if (!HasAliveActor(Team::Opponent))
         return ExitEvent::ExitWin;
     return ExitEvent::None;
+}
+
+Team BattleController::GetTeamFromCommand() const
+{
+    switch (m_currentCommand) {
+        case BattleCommand::Attack :
+            return (m_currentActor->GetTeam() == Team::Ally ? Team::Opponent : Team::Ally); // ?
+        case BattleCommand::Heal :
+            return m_currentActor->GetTeam();
+        default :
+            throw std::runtime_error("Unknown BattleCommand value"); 
+    }
 }
 
 unsigned int BattleController::ComputeDamage(BattleActor& source, BattleActor& target)
@@ -172,7 +196,8 @@ void BattleController::HandleAllyMoveSelection(BattleActor& srcActor, const int 
 void BattleController::HandleOpponentMoveSelection(BattleActor& srcActor)
 {
     // TODO : Behaviour
-    BattleActor* targetActor = &(m_actors[rand()%2]);
+    std::vector<BattleActor*> allies = GetActorsInTeam(Team::Ally);
+    BattleActor* targetActor = allies[rand()%allies.size()];
     m_currentCommand = BattleCommand::Attack;
     HandleCurrentCommand(targetActor);
     m_turnState = TurnState::Waiting; // Should be in HandleCurrentCommand() ?
