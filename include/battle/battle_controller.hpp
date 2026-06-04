@@ -13,12 +13,17 @@
 
 // class UiController;
 
+enum class BattleCommand
+{
+    Attack, Heal
+};
+
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 {
     ExitWin, ExitLost, None
 };
 
-enum class Turn
+enum class TurnState
 {
     Init, MoveSelection, ActorSelection, Waiting, End
 };
@@ -37,8 +42,10 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::vector<BattleActor> m_actors;
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
-        Turn m_currentTurn;
+        // BattleActor* m_targetActor;
+        TurnState m_turnState;
         ExitEvent m_exitEvent;
+        BattleCommand m_currentCommand;
         float m_currentTime;
         
         UiController& m_uiController;
@@ -49,20 +56,21 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiTextSeries m_textSeries;
 
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
+        BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ? (for now target selection is only used when an ally attacks an opponent)
         ExitEvent CheckBattleEnd() const;
         unsigned int ComputeDamage(BattleActor& source, BattleActor& target);
-        unsigned int ComputeHeal(BattleActor& source);
+        unsigned int ComputeHeal(BattleActor& source,  BattleActor& target);
         bool HasAliveActor(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
-        void ApplyHeal(BattleActor& srcActor); // Will have a targetActor parameter
+        void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
         void HandleAllyMoveSelection(BattleActor& srcActor, const int index);
         void HandleOpponentMoveSelection(BattleActor& srcActor); // Behaviours will be used in this function
         
-        void HandleActorSelection(); // I should have Open/CloseActorSelection() ? (for now target selection is only used when an ally attacks an opponent)
+        void HandleCurrentCommand(BattleActor* targetActor);
 
     public:
         BattleController(UiController& uiController);
