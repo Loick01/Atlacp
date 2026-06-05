@@ -3,6 +3,7 @@
 #include <queue>
 #include <string>
 
+#include "battle/ai_actor.hpp"
 #include "battle/battle_actor.hpp"
 #include "system/notifier.hpp"
 #include "system/type.hpp"
@@ -13,7 +14,7 @@
 
 // class UiController;
 
-enum class BattleCommand
+enum class BattleCommand // Could be a struct ?
 {
     Attack, Heal
 };
@@ -39,7 +40,7 @@ struct TurnComparer
 class BattleController : public Notifier<ExitEvent>, public EventStateHolder<BattleEventState>
 {
     private:
-        std::vector<BattleActor> m_actors; // Should have allyList + opponentList instead ?
+        std::vector<std::unique_ptr<BattleActor>> m_actors;
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         BattleActor* m_currentActor; // Actor that is playing his turn
         // BattleActor* m_targetActor;
@@ -70,8 +71,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
-        void HandleAllyMoveSelection(BattleActor& srcActor, const int index);
-        void HandleOpponentMoveSelection(BattleActor& srcActor); // Behaviours will be used in this function
+        void HandleAllyMoveSelection(const int index); // Rename (do not use Ally)
+        void HandleAiActorMoveSelection(AiActor& srcActor);
         
         void HandleCurrentCommand(BattleActor* targetActor);
 
