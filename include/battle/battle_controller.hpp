@@ -71,7 +71,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
-        void HandleAllyMoveSelection(const int index); // Rename (do not use Ally)
+        void HandleActorMoveSelection(const int index);
         void HandleAiActorMoveSelection(AiActor& srcActor);
         
         void HandleCurrentCommand(BattleActor* targetActor);

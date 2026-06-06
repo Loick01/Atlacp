@@ -11,9 +11,9 @@ BattleController::BattleController(UiController& uiController):
 {
     // Will not be here + UiValue id will not be passed as parameters
     m_actors.push_back(std::make_unique<BattleActor>(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler", 40, 10));
-    m_actors.push_back(std::make_unique<BattleActor>(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage", 20, 20));
+    m_actors.push_back(std::make_unique<AiActor>(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage", 20, 15));
     m_actors.push_back(std::make_unique<AiActor>(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit", 20, 8));
-    m_actors.push_back(std::make_unique<AiActor>(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 20));
+    m_actors.push_back(std::make_unique<AiActor>(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 15));
     for (std::unique_ptr<BattleActor>& b : m_actors) {
         b->ComputeNextTurnTime(m_currentTime);
         m_turns.push(b.get());
@@ -150,7 +150,7 @@ void BattleController::CloseAllyMoveSelection()
     m_allyMoveList.Close();
 }
 
-void BattleController::HandleAllyMoveSelection(const int selectorIndex)
+void BattleController::HandleActorMoveSelection(const int selectorIndex)
 {
     switch (selectorIndex) {
         case 0: {
@@ -196,9 +196,10 @@ void BattleController::HandleAllyMoveSelection(const int selectorIndex)
 
 void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 {
-    const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
-    BattleActor* targetActor = srcBehaviour.SelectTarget(GetActorsInTeam(Team::Ally)); // Should not be filtered with Team::Ally, but for now only Opponent are AiActor
     m_currentCommand = BattleCommand::Attack;
+    const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    const Team team = GetTeamFromCommand(); // ?
+    BattleActor* targetActor = srcBehaviour.SelectTarget(GetActorsInTeam(team));
     HandleCurrentCommand(targetActor);
     m_turnState = TurnState::Waiting; // Should be in HandleCurrentCommand() ?
 }
@@ -258,28 +259,21 @@ void BattleController::PlayNextTurn()
     switch (m_turnState) {
         case TurnState::Init : {
             m_currentActor = PopNextTurn();
-            if (m_currentActor->GetTeam() == Team::Ally) OpenAllyMoveSelection();
+            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenAllyMoveSelection();
             m_turnState = TurnState::MoveSelection; 
         }
         
         case TurnState::MoveSelection : {
-            switch (m_currentActor->GetTeam()) {
-                case Team::Ally : {
-                    if (m_eventState.uiDirection == Direction::Down) {
-                        m_selector.Next();
-                    } else if (m_eventState.uiDirection == Direction::Up) {
-                        m_selector.Previous();
-                    } else if (m_eventState.isAction) {
-                        HandleAllyMoveSelection(m_selector.GetIndex());
-                    }   
-                    break;
-                }
-                case Team::Opponent : {
-                    HandleAiActorMoveSelection(static_cast<AiActor&>(*m_currentActor));
-                    break;
-                }
-                default:
-                    throw std::runtime_error("Unknown Team value");
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
+            if (aiActor != nullptr) {
+                HandleAiActorMoveSelection(*aiActor);
+            } else {
+                if (m_eventState.uiDirection == Direction::Down)
+                    m_selector.Next();
+                else if (m_eventState.uiDirection == Direction::Up)
+                    m_selector.Previous();
+                else if (m_eventState.isAction)
+                    HandleActorMoveSelection(m_selector.GetIndex());
             }
             break;
         }
