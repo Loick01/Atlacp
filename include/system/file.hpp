@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "battle/battle_types.hpp"
 #include "system/type.hpp"
 #include "ui/ui_types.hpp"
 
@@ -26,14 +27,15 @@ class FileReader
     public:
         FileReader() = default;
 
-        std::vector<DataNPC> ReadDataNPCs(const std::string& npcsFilepath, const unsigned int mapIndex) const; // Rename
+        std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const; // Rename
+        std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const; // Rename
+        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename
+        
         WorldData ReadWorldFile(const std::string& worldFilepath) const; // Rename
         MapData GetMapFromFile(const std::string& path, Camera& camera, TextureController& textureController, // Rename
             Tileset& tileset) const;
         TilesetData GetTilesetFromFile(const std::string& path) const; // Rename
         AnimationData GetAnimationFromFile(const std::string& path) const; // Rename
-
-        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename
         
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 };

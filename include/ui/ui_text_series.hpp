@@ -9,7 +9,7 @@
 class UiTextSeries : public UiComponent
 {
     private:
-        static unsigned int m_instanceCount;
+        static inline unsigned int m_instanceCount;
         std::queue<std::string> m_texts;
     
     public:

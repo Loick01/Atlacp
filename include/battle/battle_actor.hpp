@@ -1,15 +1,11 @@
 #pragma once
 
+#include "battle/battle_types.hpp"
 #include "ui/ui_element.hpp" // Because UiValue
 
-enum class LifeState
+enum class LifeState // Should be in battle_types.hpp ?
 {
     Alive, Dead
-};
-
-enum class Team 
-{
-    Ally, Opponent
 };
 
 class BattleActor

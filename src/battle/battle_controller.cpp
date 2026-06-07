@@ -1,24 +1,16 @@
 #include "battle/battle_controller.hpp"
 
 #include "ai_battle/battle_behaviour.hpp"
+#include "system/file.hpp"
 #include "ui/ui_controller.hpp"
 
-BattleController::BattleController(UiController& uiController):
-    m_uiController(uiController), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentActor(nullptr), m_currentTime(0.f),
+BattleController::BattleController(FileReader& fileReader, UiController& uiController):
+    m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), 
+    m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
-{
-    // Will not be here + UiValue id will not be passed as parameters
-    m_actors.push_back(std::make_unique<BattleActor>(Team::Ally, "actorName0_0", "actorHealth0_0", "actorSprite0_0", "Howler", 40, 10));
-    m_actors.push_back(std::make_unique<AiActor>(Team::Ally, "actorName1_0", "actorHealth1_0", "actorSprite1_0", "Mage", 20, 15));
-    m_actors.push_back(std::make_unique<AiActor>(Team::Opponent, "actorName0_1", "actorHealth0_1", "actorSprite0_1", "Bone Appetit", 20, 8));
-    m_actors.push_back(std::make_unique<AiActor>(Team::Opponent, "actorName1_1", "actorHealth1_1", "actorSprite1_1", "Slime", 20, 15));
-    for (std::unique_ptr<BattleActor>& b : m_actors) {
-        b->ComputeNextTurnTime(m_currentTime);
-        m_turns.push(b.get());
-    }
-}
+{}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team)
 {
@@ -220,37 +212,45 @@ void BattleController::HandleCurrentCommand(BattleActor* targetActor)
     }
 }
 
-void BattleController::InitializeActors()
+void BattleController::InitializeActors(const std::string& battleFile)
 {
-    // Will not be here
+    // Will not be here ?
     m_allyList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
         Anchor::RightIn, Anchor::TopIn, // Anchor
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, -0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
     
-    // Will not be here
+    // Will not be here ?
     m_opponentList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
         Anchor::LeftIn, Anchor::TopIn, // Anchor
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
-        
+    
+    // Will not be here
     m_allyList.SetNrItem(2);
     m_opponentList.SetNrItem(2);
     m_allyList.Open();
     m_opponentList.Open();
-    
-    // Will be removed (I used actor_placeholder.png in actor template file)
-    m_actors[0]->SetSpritePath("../assets/battle/ally_sprite/werewolf.png");
-    m_actors[1]->SetSpritePath("../assets/battle/ally_sprite/mage.png");
-    m_actors[2]->SetSpritePath("../assets/battle/opponent_sprite/bone_appetit.png");
-    m_actors[3]->SetSpritePath("../assets/battle/opponent_sprite/slime.png");
-    
-    for (const std::unique_ptr<BattleActor>& b : m_actors) {
-        m_uiController.UpdateText(b->GetName());
-        m_uiController.UpdateText(b->GetHealth()); 
-        m_uiController.UpdatePath(b->GetSpritePath());
+
+    // Will not be here
+    std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
+    for (const DataBattleActor& data : dataActors) {
+        std::unique_ptr<BattleActor> actor;
+        
+        if (data.isAiActor)
+            actor = std::make_unique<AiActor>(data.team, data.nameId, data.healthId, data.spriteId, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
+        else
+            actor = std::make_unique<BattleActor>(data.team, data.nameId, data.healthId, data.spriteId, data.name, data.health, data.turnSpeed);
+
+        actor->SetSpritePath(data.spritePath);
+        m_uiController.UpdateText(actor->GetName());
+        m_uiController.UpdateText(actor->GetHealth()); 
+        m_uiController.UpdatePath(actor->GetSpritePath());
+        actor->ComputeNextTurnTime(m_currentTime);
+        m_turns.push(actor.get());
+        m_actors.push_back(std::move(actor));
     }
 }
 

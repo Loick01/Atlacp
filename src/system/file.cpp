@@ -7,7 +7,41 @@
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
-std::vector<DataNPC> FileReader::ReadDataNPCs(const std::string& npcsFilepath, const unsigned int mapIndex) const
+std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
+{
+    std::ifstream input;
+    input.open(battleFilepath);
+    if (!input) throw std::runtime_error("Can't open this file : " + battleFilepath);
+    std::vector<DataBattleActor> actorsData;
+    std::string s;
+    
+    while (input >> s && s != FILE_DELIMITER) {
+        DataBattleActor data;
+        data.isAiActor = true;
+        if (s == "ally") data.team = Team::Ally;
+        else if (s == "opponent") data.team = Team::Opponent;
+        
+        // ?
+        input >> s;
+        if (s == "ai") data.isAiActor = true;
+        else if (s == "player") data.isAiActor = false;
+        else throw std::runtime_error("Error : Must be \"ai\" or \"player\"");
+        
+        input >> data.nameId; // Will not be in battle file 
+        input >> data.healthId; // Will not be in battle file
+        input >> data.spriteId; // Will not be in battle file
+        input >> data.name;
+        input >> data.health;
+        input >> data.turnSpeed;
+        input >> data.spritePath;
+        actorsData.push_back(data);
+        input >> s; // After a BattleActor construction, the last line must be FILE_DELIMITER
+    }
+    
+    return actorsData;
+}
+
+std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
     std::ifstream input;
     input.open(npcsFilepath);
@@ -29,6 +63,65 @@ std::vector<DataNPC> FileReader::ReadDataNPCs(const std::string& npcsFilepath, c
         npcsData.push_back(data);
     }
     return npcsData;
+}
+
+std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
+{
+    std::ifstream input;
+    input.open(uiFilepath);
+    if (!input) throw std::runtime_error("Can't open this file : " + uiFilepath);
+    std::vector<DataUi> uisData;
+    
+    std::string s;
+    while (input >> s && s != FILE_DELIMITER) {
+        if (s == "load") {
+            input >> s;
+            std::vector<DataUi> load = ReadUiFile(s);
+            uisData.insert(std::end(uisData), std::begin(load), std::end(load));
+            input >> s; // After the load line, the next line must be FILE_DELIMITER
+            continue;
+        }
+        DataUi data;
+        // No verification yet on what is read 
+        data.parentKey = s;
+        input >> data.key; 
+        input >> data.type; // Verification on type will be in UiController
+        input >> data.path;
+        
+        // Read optional data 
+        while (input >> s && s != FILE_DELIMITER) {
+            if (s == "scale") {
+                input >> data.scale.srcElement;
+                input >> s;
+                data.scale.axis = ReadAxis(s);
+                input >> data.scale.amount;
+            } else if (s == "scaleAxis") {
+                input >> s;
+                data.dstScaleAxis = ReadAxis(s);
+            } else if (s == "xAnchor") {
+                input >> s;
+                data.xAnchor = ReadAnchor(s);
+            } else if (s == "yAnchor") {
+                input >> s;
+                data.yAnchor = ReadAnchor(s);
+            } else if (s == "xPadding") {
+                input >> data.xPadding.srcElement;
+                input >> s;
+                data.xPadding.axis = ReadAxis(s);
+                input >> data.xPadding.amount;
+            } else if (s == "yPadding") {
+                input >> data.yPadding.srcElement;
+                input >> s;
+                data.yPadding.axis = ReadAxis(s);
+                input >> data.yPadding.amount;
+            } else if (s == "text") {
+                std::getline(input, data.text);
+            } else  
+                throw std::runtime_error("UiParams has no member with this name");
+        }
+        uisData.push_back(data);
+    }
+    return uisData;
 }
 
 WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
@@ -161,65 +254,6 @@ Anchor FileReader::ReadAnchor(const std::string& s) const
         return it->second;
 
     throw std::runtime_error("Unknown value read as Anchor");
-}
-
-std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
-{
-    std::ifstream input;
-    input.open(uiFilepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + uiFilepath);
-    std::vector<DataUi> resData;
-    
-    std::string s;
-    while (input >> s && s != FILE_DELIMITER) {
-        if (s == "load") {
-            input >> s;
-            std::vector<DataUi> load = ReadUiFile(s);
-            resData.insert(std::end(resData), std::begin(load), std::end(load));
-            input >> s; // After the load line, the next line must be FILE_DELIMITER
-            continue;
-        }
-        DataUi data;
-        // No verification yet on what is read 
-        data.parentKey = s;
-        input >> data.key; 
-        input >> data.type; // Verification on type will be in UiController
-        input >> data.path;
-        
-        // Read optional data 
-        while (input >> s && s != FILE_DELIMITER) {
-            if (s == "scale") {
-                input >> data.scale.srcElement;
-                input >> s;
-                data.scale.axis = ReadAxis(s);
-                input >> data.scale.amount;
-            } else if (s == "scaleAxis") {
-                input >> s;
-                data.dstScaleAxis = ReadAxis(s);
-            } else if (s == "xAnchor") {
-                input >> s;
-                data.xAnchor = ReadAnchor(s);
-            } else if (s == "yAnchor") {
-                input >> s;
-                data.yAnchor = ReadAnchor(s);
-            } else if (s == "xPadding") {
-                input >> data.xPadding.srcElement;
-                input >> s;
-                data.xPadding.axis = ReadAxis(s);
-                input >> data.xPadding.amount;
-            } else if (s == "yPadding") {
-                input >> data.yPadding.srcElement;
-                input >> s;
-                data.yPadding.axis = ReadAxis(s);
-                input >> data.yPadding.amount;
-            } else if (s == "text") {
-                std::getline(input, data.text);
-            } else  
-                throw std::runtime_error("UiParams has no member with this name");
-        }
-        resData.push_back(data);
-    }
-    return resData;
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const

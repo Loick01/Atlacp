@@ -2,8 +2,6 @@
 
 #include "ui/ui_controller.hpp"
 
-unsigned int UiSelector::m_instanceCount = 0;
-
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_currentIndex(0)
 {}

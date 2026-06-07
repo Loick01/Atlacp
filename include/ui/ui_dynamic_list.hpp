@@ -5,7 +5,7 @@
 class UiDynamicList : public UiList
 {
     private:
-        static unsigned int m_instanceCount;
+        static inline unsigned int m_instanceCount;
         
         UiParams m_firstItemParams; // This UiParams will be used only for the first built item, following item will use values given in the template file
         unsigned int m_nrItem;

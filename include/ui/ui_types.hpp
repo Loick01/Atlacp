@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 using ElementKey = std::string; // ??? + Rename ?
 
 enum class UiElementEvent

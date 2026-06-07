@@ -8,7 +8,7 @@
 class UiList : public UiComponent
 {
     private:
-        static unsigned int m_instanceCount;
+        static inline unsigned int m_instanceCount;
     
     protected:
         std::vector<ElementKey> m_itemsKey;

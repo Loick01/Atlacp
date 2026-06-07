@@ -2,8 +2,6 @@
 
 #include "ui/ui_controller.hpp"
 
-unsigned int UiList::m_instanceCount = 0;
-
 UiList::UiList(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)
 {

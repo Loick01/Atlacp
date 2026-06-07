@@ -105,7 +105,7 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
     // Same code in EntityController constructor, try to merge it
     m_renderedEntities = {&m_player}; // Clear this vector and keep only the player
 
-    const std::vector<DataNPC> npcsData = m_fileReader.ReadDataNPCs(filepath, mapIndex);
+    const std::vector<DataNPC> npcsData = m_fileReader.ReadNPCsFile(filepath, mapIndex);
 
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
         DataNPC currentData = npcsData[i];

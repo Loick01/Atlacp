@@ -2,6 +2,7 @@
 
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/battle_actor.hpp"
+#include "battle/battle_types.hpp"
 
 class AiActor : public BattleActor
 {
