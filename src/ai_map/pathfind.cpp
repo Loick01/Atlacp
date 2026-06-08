@@ -1,5 +1,7 @@
 #include "ai_map/pathfind.hpp"
 
+#include <queue>
+
 #include "tile/tilemap.hpp"
 
 Pathfind& Pathfind::GetInstance() {

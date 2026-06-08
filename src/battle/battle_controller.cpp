@@ -1,7 +1,8 @@
 #include "battle/battle_controller.hpp"
 
 #include "ai_battle/battle_behaviour.hpp"
-#include "system/file.hpp"
+#include "battle/ai_actor.hpp"
+#include "core/file.hpp"
 #include "ui/ui_controller.hpp"
 
 BattleController::BattleController(FileReader& fileReader, UiController& uiController):

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "system/type.hpp"
+#include "map/map_types.hpp" // MapPosition
 
 class Tilemap;
 

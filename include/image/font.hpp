@@ -1,11 +1,12 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "system/type.hpp"
+#include "image/image_types.hpp" // FontKey
 
 struct Font
 {

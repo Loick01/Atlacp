@@ -1,18 +1,19 @@
 #pragma once
 
+#include <memory>
 #include <queue>
 #include <string>
 
-#include "battle/ai_actor.hpp"
 #include "battle/battle_actor.hpp"
-#include "battle/battle_types.hpp"
-#include "system/notifier.hpp"
-#include "system/type.hpp"
+#include "battle/battle_types.hpp" // Team
+#include "core/notifier.hpp"
+#include "event/event_types.hpp" // BattleEventState
 #include "ui/ui_dynamic_list.hpp"
 #include "ui/ui_list.hpp"
 #include "ui/ui_selector.hpp"
 #include "ui/ui_text_series.hpp"
 
+class AiActor;
 class FileReader;
 class UiController;
 

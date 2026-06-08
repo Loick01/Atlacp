@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ui/ui_element.hpp"
+#include "ui/ui_types.hpp"
 
 class FileReader;
 class FontController;

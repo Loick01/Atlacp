@@ -1,9 +1,9 @@
-#include "system/file.hpp"
+#include "core/file.hpp"
 
 #include <unordered_map>
 
 #include "image/texture.hpp"
-#include "system/camera.hpp"
+#include "core/camera.hpp"
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 

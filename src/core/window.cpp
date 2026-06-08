@@ -1,4 +1,6 @@
-#include "system/window.hpp"
+#include "core/window.hpp"
+
+#include <stdexcept>
 
 Window::Window(const std::string& title, const SDL_Color bgColor) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bgColor(bgColor)

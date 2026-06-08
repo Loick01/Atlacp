@@ -1,6 +1,7 @@
 #pragma once
 
-#include "system/type.hpp"
+#include "map/map_types.hpp" // MapPosition, Direction
+#include "image/image_types.hpp" // ScenePosition
 
 enum class EntityState // Should be called MovementState (and I should add AnimationState ?). In any case, do not keep EntityState !!!
 {

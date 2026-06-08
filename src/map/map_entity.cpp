@@ -2,8 +2,8 @@
 
 #include <SDL2/SDL_rect.h>
 
+#include "core/camera.hpp"
 #include "image/texture.hpp"
-#include "system/camera.hpp"
 #include "tile/tilemap.hpp"
 
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,

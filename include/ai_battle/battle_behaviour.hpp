@@ -1,6 +1,8 @@
 #pragma once
 
-#include "battle/battle_actor.hpp"
+#include <vector>
+
+class BattleActor;
 
 class BattleBehaviour 
 {

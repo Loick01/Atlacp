@@ -1,6 +1,7 @@
 #pragma once
 
-#include "system/type.hpp"
+#include "core/core_types.hpp" // Vec2
+#include "image/image_types.hpp" // TextureKey, ScenePosition, ScreenPosition
 
 class Camera;
 class TextureController;

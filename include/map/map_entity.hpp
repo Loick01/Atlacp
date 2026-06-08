@@ -4,7 +4,7 @@
 #include "image/drawable.hpp"
 #include "map/map_element.hpp"
 #include "map/map_movement.hpp"
-#include "system/notifier.hpp"
+#include "core/notifier.hpp"
 
 class Camera;
 class TextureController;

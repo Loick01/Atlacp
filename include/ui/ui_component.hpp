@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "ui/ui_types.hpp"
+#include "ui/ui_types.hpp" // UiKey
 
 class UiController;
 

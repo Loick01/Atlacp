@@ -1,11 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
-#include <SDL2/SDL.h> // <SDL.h> ?
-
-#include "system/type.hpp"
+#include <SDL2/SDL.h>
 
 #define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 (should be a member in JoystickActionController to verify ?)
 

@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "event/action.hpp"
-#include "system/type.hpp"
+#include "event/event_types.hpp" // GameplayEventState, EditorEventState, BattleEventState
 
 // Because of EditorEventController (Remove ?)
 class Camera;

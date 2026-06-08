@@ -2,9 +2,9 @@
 
 #include <stdexcept>
 
+#include "core/file.hpp"
 #include "image/font.hpp"
 #include "image/texture.hpp"
-#include "system/file.hpp"
 
 UiController::UiController(const FileReader& fileReader, FontController& fontController, TextureController& textureController, const std::string& fontFilepath):
     m_fileReader(fileReader), m_fontController(fontController), m_textureController(textureController), m_fontFilepath(fontFilepath)

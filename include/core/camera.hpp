@@ -2,7 +2,8 @@
 
 #include <algorithm> // std::clamp
 
-#include "system/type.hpp"
+#include "core/core_types.hpp" // GridSize, AreaSize
+#include "image/image_types.hpp" // ScenePosition
 
 class Window;
 

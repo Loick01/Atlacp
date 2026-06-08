@@ -1,7 +1,7 @@
 #include "tile/tilemap.hpp"
 
-#include "system/camera.hpp"
-#include "system/file.hpp"
+#include "core/camera.hpp"
+#include "core/file.hpp"
 #include "tile/tileset.hpp"
 
 Tilemap::Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 

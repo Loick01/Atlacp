@@ -2,8 +2,8 @@
 
 #include "map/map_entity.hpp"
 #include "map/npc.hpp"
-#include "system/camera.hpp"
-#include "system/file.hpp"
+#include "core/camera.hpp"
+#include "core/file.hpp"
 #include "tile/tilemap.hpp"
 
 EntityController::EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,

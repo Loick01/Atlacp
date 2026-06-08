@@ -1,7 +1,7 @@
 #include "image/drawable.hpp"
 
 #include "image/texture.hpp"
-#include "system/camera.hpp"
+#include "core/camera.hpp"
 
 Drawable::Drawable(TextureController& textureController, const std::string& textureFilepath):
     m_textureController(textureController)

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include "battle/battle_types.hpp"
-#include "system/type.hpp"
-#include "ui/ui_types.hpp"
+#include "animation/animation_types.hpp" // AnimationData
+#include "battle/battle_types.hpp" // DataBattleActor
+#include "map/map_types.hpp" // DataNPC
+#include "tile/tile_types.hpp" // WorldData, TilesetData
+#include "ui/ui_types.hpp" // DataUi
 
 #define FILE_DELIMITER "###" // Will be removed ?
 

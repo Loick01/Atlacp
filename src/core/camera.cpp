@@ -1,6 +1,6 @@
-#include "system/camera.hpp"
+#include "core/camera.hpp"
 
-#include "system/window.hpp"
+#include "core/window.hpp"
 
 Camera::Camera():
     m_position(ScenePosition{0,0})

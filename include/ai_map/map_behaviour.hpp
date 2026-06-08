@@ -1,6 +1,8 @@
 #pragma once
 
-#include "system/type.hpp"
+#include <vector>
+
+#include "core/random.hpp"
 
 class MapEntity;
 class Tilemap;

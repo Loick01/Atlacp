@@ -1,7 +1,7 @@
 #include "event/event.hpp"
 
 // Because of EditorEventController
-#include "system/camera.hpp"
+#include "core/camera.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
 

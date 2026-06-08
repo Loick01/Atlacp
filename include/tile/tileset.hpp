@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include "image/drawable.hpp"
-#include "system/type.hpp"
+#include "tile/tile_types.hpp" // Tile, TilesetData, TilesetNormalizationInfo
 
 class FileReader;
 class TextureController;

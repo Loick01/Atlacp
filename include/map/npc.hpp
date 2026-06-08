@@ -5,6 +5,8 @@
 #include "ai_map/map_behaviour.hpp"
 #include "map/map_entity.hpp"
 
+// Forward declaration of Tilemap is already in map_entity.hpp
+
 class NPC : public MapEntity
 {
     private:

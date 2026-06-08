@@ -6,8 +6,9 @@
 #include <SDL2/SDL_pixels.h> // SDL_Color
 
 #include "image/drawable.hpp"
-#include "system/notifier.hpp"
-#include "ui/ui_types.hpp"
+#include "image/image_types.hpp" // ScreenPosition
+#include "core/notifier.hpp"
+#include "ui/ui_types.hpp" // UiKey
 
 class FontController;
 class TextureController;

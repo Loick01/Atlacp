@@ -1,9 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <queue>
 
-#include "system/type.hpp"
+#include "map/map_types.hpp"
 
 class Tilemap;
 

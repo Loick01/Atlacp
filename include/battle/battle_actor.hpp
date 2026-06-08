@@ -1,7 +1,7 @@
 #pragma once
 
-#include "battle/battle_types.hpp"
-#include "ui/ui_element.hpp" // Because UiValue
+#include "battle/battle_types.hpp" // Team
+#include "ui/ui_types.hpp" // UiValue
 
 enum class LifeState // Should be in battle_types.hpp ?
 {

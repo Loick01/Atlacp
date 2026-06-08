@@ -1,5 +1,7 @@
 #include "scene/scene.hpp"
 
+#include <stdexcept>
+
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
     m_window("Atlacp", {25,25,25}), m_fontController(), m_textureController(m_fontController, m_window.GetRenderer()), 

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "system/type.hpp"
+#include "animation/animation_types.hpp" // AnimationData
+#include "core/core_types.hpp" // Vec2, AreaSize
+#include "map/map_types.hpp" // Direction
 
 class FileReader;
 

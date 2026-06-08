@@ -1,7 +1,7 @@
 #include "tile/layer.hpp"
 
 #include "image/texture.hpp"
-#include "system/camera.hpp"
+#include "core/camera.hpp"
 #include "tile/tileset.hpp"
 
 TileLayer::TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset):

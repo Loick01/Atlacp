@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <optional>
-#include <stdexcept>
 #include <vector>
 
 #include "battle/battle_controller.hpp"
@@ -11,10 +10,10 @@
 #include "image/texture.hpp"
 #include "map/entity_controller.hpp"
 #include "sound/sound.hpp"
-#include "system/camera.hpp"
-#include "system/file.hpp"
-#include "system/time.hpp"
-#include "system/window.hpp"
+#include "core/camera.hpp"
+#include "core/file.hpp"
+#include "core/time.hpp"
+#include "core/window.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
 #include "ui/ui_controller.hpp"

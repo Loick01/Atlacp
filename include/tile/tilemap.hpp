@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "system/notifier.hpp"
-#include "system/type.hpp"
+#include "core/notifier.hpp"
+#include "tile/tile_types.hpp" // Tile
 #include "tile/layer.hpp"
 
 enum class TilemapEvent

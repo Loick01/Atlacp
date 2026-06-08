@@ -1,11 +1,10 @@
 #pragma once
 
-#include <stdexcept>
 #include <string>
 
 #include <SDL2/SDL.h>
 
-#include "system/type.hpp"
+#include "core/core_types.hpp" // AreaSize
 
 struct Boxing
 {

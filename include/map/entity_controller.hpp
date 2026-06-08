@@ -4,8 +4,8 @@
 #include "map/player.hpp"
 
 class Camera;
-class MapEntity;
 class FileReader;
+class MapEntity;
 class Tilemap;
 
 class EntityController

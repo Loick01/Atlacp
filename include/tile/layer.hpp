@@ -1,6 +1,7 @@
 #pragma once
 
-#include "system/type.hpp" 
+#include "map/map_types.hpp" // MapPosition
+#include "tile/tile_types.hpp" // Tile
 
 class Camera;
 class TextureController;

@@ -1,12 +1,15 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h> // TTF_RenderUTF8_Blended_Wrapped
 
-#include "system/type.hpp"
+#include "image/image_types.hpp" // TextureKey
+
+class FontController;
 
 struct Texture
 {
@@ -18,8 +21,6 @@ struct Texture
         count = 0;
     }
 };
-
-class FontController;
 
 class TextureController
 {

@@ -1,10 +1,11 @@
 #pragma once
 
 #include <initializer_list>
+#include <string>
 #include <vector>
 
 #include "ui/ui_component.hpp"
-#include "ui/ui_types.hpp"
+#include "ui/ui_types.hpp" // UiKey
 
 class UiSelector : public UiComponent
 {
