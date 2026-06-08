@@ -20,9 +20,11 @@ struct MapData;
 class FileReader
 {
     private:
-        void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
+        static std::ifstream OpenFile(const std::string& filepath);
+
         Axis ReadAxis(const std::string& s) const;
         Anchor ReadAnchor(const std::string& s) const;
+        void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:
         FileReader() = default;

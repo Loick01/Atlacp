@@ -7,11 +7,17 @@
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
-std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
+std::ifstream FileReader::OpenFile(const std::string& filepath)
 {
     std::ifstream input;
-    input.open(battleFilepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + battleFilepath);
+    input.open(filepath);
+    if (!input) throw std::runtime_error("Can't open this file : " + filepath);
+    return input;
+}
+
+std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
+{
+    std::ifstream input = OpenFile(battleFilepath);
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
@@ -43,8 +49,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
 
 std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
-    std::ifstream input;
-    input.open(npcsFilepath);
+    std::ifstream input = OpenFile(npcsFilepath);
     std::vector<DataNPC> npcsData;
     unsigned int currentIndex = 0;
     std::string s;
@@ -67,9 +72,7 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
-    std::ifstream input;
-    input.open(uiFilepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + uiFilepath);
+    std::ifstream input = OpenFile(uiFilepath);
     std::vector<DataUi> uisData;
     
     std::string s;
@@ -126,8 +129,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 
 WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
-    std::ifstream input;
-    input.open(worldFilepath);
+    std::ifstream input = OpenFile(worldFilepath);
     WorldData data;
     
     input >> data.startMap;
@@ -158,9 +160,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
-    std::ifstream input;
-    const std::string mapFilepath = "../data/maps/" + path; // Create a function in File
-    input.open(mapFilepath);
+    std::ifstream input = OpenFile("../data/maps/" + path); // Create a function to get full path in FilepathManager ?
     MapData data;
 
     ReadHeaderMapFile(input, data);
@@ -184,8 +184,7 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
 
 AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
 {
-    std::ifstream input;
-    input.open(path);
+    std::ifstream input = OpenFile(path);
     AnimationData data;
 
     input >> data.spriteSize.x;
@@ -204,9 +203,7 @@ AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
 
 TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
 {
-    std::ifstream input;
-    const std::string tilesetFilepath = "../assets/tilesets/" + path; // Create a function in File
-    input.open(tilesetFilepath);
+    std::ifstream input = OpenFile("../assets/tilesets/" + path);
     TilesetData data;
 
     input >> data.size.x;

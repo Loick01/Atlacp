@@ -9,7 +9,7 @@ UiTextSeries::UiTextSeries(UiController& uiController, const std::string& uiFile
 bool UiTextSeries::NextText()
 {
     if (m_texts.empty()) return false;
-    m_uiController.UpdateText(m_elementKey, m_texts.front());
+    m_uiController.UpdateText(m_uiKey, m_texts.front());
     m_texts.pop();
     return true;
 }

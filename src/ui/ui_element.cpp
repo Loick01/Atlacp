@@ -5,12 +5,12 @@
 #include "image/font.hpp"
 #include "image/texture.hpp"
 
-UiElement::UiElement(TextureController& textureController, const ElementKey& key,
+UiElement::UiElement(TextureController& textureController, const UiKey& key,
     const std::string& textureFilepath, const ScreenPosition localPosition):
     ScreenDrawable(textureController, textureFilepath), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
 {}
 
-UiElement::UiElement(TextureController& textureController, const ElementKey& key,
+UiElement::UiElement(TextureController& textureController, const UiKey& key,
     const ScreenPosition localPosition):
     ScreenDrawable(textureController), m_key(key), m_localPosition(localPosition), m_parent(nullptr)
 {}
@@ -35,12 +35,12 @@ UiElement* UiElement::GetParent()
     return m_parent;
 }
 
-const ElementKey& UiElement::GetKey() const
+const UiKey& UiElement::GetKey() const
 {
     return m_key;
 }
 
-void UiElement::SetKey(const ElementKey& key)
+void UiElement::SetKey(const UiKey& key)
 {
     m_key = key;
 }
@@ -167,7 +167,7 @@ void UiElement::AddChild(std::unique_ptr<UiElement>& child)
     m_childs.push_back(std::move(child));
 }
 
-std::unique_ptr<UiElement> UiElement::RemoveChild(const ElementKey& key)
+std::unique_ptr<UiElement> UiElement::RemoveChild(const UiKey& key)
 {
     std::vector<std::unique_ptr<UiElement>>::iterator it;
     for (it = m_childs.begin() ; it != m_childs.end() ; it++) {
@@ -195,7 +195,7 @@ void UiElement::ComputeFinal()
     SetPadding(m_params.xPadding, m_params.yPadding);
 }
 
-UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const ElementKey& key, const std::string& fontFilepath, const SDL_Color color):
+UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, const std::string& fontFilepath, const SDL_Color color):
     UiElement(textureController, key), m_fontController(fontController), m_textColor(color), m_text("No_Text")
 {
     const unsigned int fontSize = 24;

@@ -10,7 +10,7 @@ class UiComponent
 {
     protected:
         UiController& m_uiController;
-        ElementKey m_elementKey;
+        UiKey m_uiKey;
         std::string m_uiFilepath;
 
     public:
@@ -20,5 +20,5 @@ class UiComponent
         virtual void Open();
         virtual void Close();
 
-        ElementKey GetKey() const; 
+        UiKey GetKey() const; 
 };

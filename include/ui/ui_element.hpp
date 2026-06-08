@@ -15,7 +15,7 @@ class TextureController;
 class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {
     private:
-        ElementKey m_key; // Could be const if I removed UiController::UpdateKey(), but I need it for ui template instanciation
+        UiKey m_key; // Could be const if I removed UiController::UpdateKey(), but I need it for ui template instanciation
         
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
@@ -34,25 +34,25 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         UiParams m_params;
 
     public:
-        UiElement(TextureController& textureController, const ElementKey& key,
+        UiElement(TextureController& textureController, const UiKey& key,
             const std::string& textureFilepath, const ScreenPosition localPosition={0,0});
-        UiElement(TextureController& textureController, const ElementKey& key, 
+        UiElement(TextureController& textureController, const UiKey& key, 
             const ScreenPosition localPosition={0,0});
         virtual ~UiElement();
         
         virtual void ComputeFinal();
         
         std::vector<std::unique_ptr<UiElement>>& GetChilds(); // Should return a const vector ? The function should be const ?
-        std::unique_ptr<UiElement> RemoveChild(const ElementKey& key);
+        std::unique_ptr<UiElement> RemoveChild(const UiKey& key);
         UiElement* GetParent(); // Should return const and be const ?
-        const ElementKey& GetKey() const;
+        const UiKey& GetKey() const;
         UiParams& GetParams();
 
         void AddChild(std::unique_ptr<UiElement>& child);
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
         void BuildChild(std::unique_ptr<UiElement> child);
 
-        void SetKey(const ElementKey& key); // Do not use directly (UiController::UpdateKey)
+        void SetKey(const UiKey& key); // Do not use directly (UiController::UpdateKey)
         void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);
@@ -80,7 +80,7 @@ class UiTextElement : public UiElement
         int m_maxWidth;
 
     public:
-        UiTextElement(FontController& fontController, TextureController& textureController, const ElementKey& key, 
+        UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, 
             const std::string& fontFilepath, const SDL_Color color=SDL_Color{0,0,0,255});
         ~UiTextElement();
 

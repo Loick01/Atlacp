@@ -19,20 +19,20 @@ void UiDynamicList::Open()
     if (m_nrItem == 0) throw std::runtime_error("UiDynamicList::m_nrItem should not be 0");
      
     const unsigned int countInstance = GetInstanceCount();
-    ElementKey lastItemParent;
+    UiKey lastItemParent;
     
     for (unsigned int i = 0 ; i < m_nrItem ; i++) {
-        std::vector<ElementKey> created = m_uiController.BuildUiFile(m_uiFilepath);
+        std::vector<UiKey> created = m_uiController.BuildUiFile(m_uiFilepath);
         
-        for (ElementKey& k : created) {
-            const ElementKey newKey = k + std::to_string(i) + "_" + std::to_string(countInstance);
+        for (UiKey& k : created) {
+            const UiKey newKey = k + std::to_string(i) + "_" + std::to_string(countInstance);
             m_uiController.UpdateKey(k, newKey);
             k = newKey;
         }
-        const ElementKey& itemParent = created[0];
+        const UiKey& itemParent = created[0];
         
         if (i == 0) {
-            m_elementKey = itemParent;
+            m_uiKey = itemParent;
             m_uiController.UpdateParams(itemParent, m_firstItemParams);
             // Parent of itemParent (which is here parent of the first built item) will be the one given in the template file (should not be like that ?) 
         } else {

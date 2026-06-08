@@ -24,7 +24,7 @@ class BattleActor
         unsigned int m_turnSpeed; // ]0,+inf] The higher this value is, the more frequently the actor will play a turn
         
     public:
-        BattleActor(const Team team, const ElementKey& nameId, const ElementKey& healthId, const ElementKey& pathId,
+        BattleActor(const Team team, const UiKey& nameId, const UiKey& healthId, const UiKey& pathId,
             const std::string name, const unsigned int health, const unsigned int turnSpeed); // Should have UiValue as parameters ?
         virtual ~BattleActor() = default;
         // I need at least one virtual function for BattleActor to be polymorphic, because of dynamic_cast in BattleController::PlayNextTurn (case TurnState::MoveSelection)

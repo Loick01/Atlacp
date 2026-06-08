@@ -18,20 +18,20 @@ std::string UiController::GetFileExtension(const std::string& filepath) const //
     return filepath.substr(pos + 1);
 }
 
-void UiController::AddElement(const ElementKey& key, UiElement* element)
+void UiController::AddElement(const UiKey& key, UiElement* element)
 {
     m_elements[key] = element;
 }
 
-void UiController::RemoveElement(const ElementKey& key)
+void UiController::RemoveElement(const UiKey& key)
 {
-    std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
+    std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
         throw std::runtime_error("(UiController::RemoveElement) This Ui element can't be found : " + key); // This should not happen. Remove ?
     m_elements.erase(it);
 }
 
-void UiController::HandleUiEvent(const UiElementEvent e, const ElementKey& key)
+void UiController::HandleUiEvent(const UiElementEvent e, const UiKey& key)
 {
     switch(e) {
         case UiElementEvent::Delete : {
@@ -60,22 +60,22 @@ void UiController::BuildSubRoot(std::unique_ptr<UiElement> subRoot)
 }
 
 
-std::unique_ptr<UiElement> UiController::CreateElement(const ElementKey& key, const std::string& textureFilepath)
+std::unique_ptr<UiElement> UiController::CreateElement(const UiKey& key, const std::string& textureFilepath)
 {
     return std::make_unique<UiElement>(m_textureController, key, textureFilepath);
 }
 
-std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key, const std::string& fontFilepath)
+std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key, const std::string& fontFilepath)
 {
     return std::make_unique<UiTextElement>(m_fontController, m_textureController, key, fontFilepath);
 }
 
-std::unique_ptr<UiTextElement> UiController::CreateTextElement(const ElementKey& key)
+std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key)
 {
     return CreateTextElement(key, m_fontFilepath);
 }
 
-std::unique_ptr<UiElement> UiController::RemoveSubRoots(const ElementKey& key) // Same than UiElement::RemoveChild
+std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Same than UiElement::RemoveChild
 {
     std::vector<std::unique_ptr<UiElement>>::iterator it;
     for (it = m_subRoots.begin() ; it != m_subRoots.end() ; it++) {
@@ -120,13 +120,13 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     return element;
 }
 
-std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath) 
+std::vector<UiKey> UiController::BuildUiFile(const std::string& filepath) 
 {
     std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
-    std::vector<ElementKey> createdElements;
+    std::vector<UiKey> createdElements;
     
     for (const DataUi& data : fileResult) { 
-        const ElementKey& k = data.key;
+        const UiKey& k = data.key;
         if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
         createdElements.push_back(k); // Maybe I could use a flag in ui file to mark specific elements
         std::unique_ptr<UiElement> element = GenerateElementFromData(data);
@@ -137,20 +137,20 @@ std::vector<ElementKey> UiController::BuildUiFile(const std::string& filepath)
     return createdElements;
 }
 
-std::unordered_map<ElementKey, UiElement*>::const_iterator UiController::GetIteratorOnElement(const ElementKey& key) const
+std::unordered_map<UiKey, UiElement*>::const_iterator UiController::GetIteratorOnElement(const UiKey& key) const
 {
     return m_elements.find(key);
 }
 
-UiElement* UiController::GetElement(const ElementKey& key) const
+UiElement* UiController::GetElement(const UiKey& key) const
 {
-    std::unordered_map<ElementKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
+    std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end())
         throw std::runtime_error("(UiController::GetElement) This Ui element can't be found : " + key);
     return it->second;
 }
 
-float UiController::GetPartialElementSizeOnAxis(const ElementKey& key, const Axis axis, const float amount) const
+float UiController::GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const
 {
     const UiElement* element = GetElement(key); // ComputeFinal must have been called on this UiElement
     switch(axis) {
@@ -209,7 +209,7 @@ void UiController::ClearAll()
         DeleteElement(m_subRoots[0]->GetKey());
 }
 
-void UiController::BuildElement(std::unique_ptr<UiElement>& element, const ElementKey& parentKey)
+void UiController::BuildElement(std::unique_ptr<UiElement>& element, const UiKey& parentKey)
 {
     AddElement(element->GetKey(), element.get());
     if (parentKey == "root") {
@@ -219,7 +219,7 @@ void UiController::BuildElement(std::unique_ptr<UiElement>& element, const Eleme
     }
 }
 
-void UiController::DeleteElement(const ElementKey& key)
+void UiController::DeleteElement(const UiKey& key)
 {
     UiElement* const parent = GetElement(key)->GetParent();
     
@@ -244,7 +244,7 @@ void UiController::SetPosition(const ScreenPosition position)
     m_position = position;
 }
 
-void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const ElementKey& key, const std::string& path) ? (same with the different version of UpdateText())
+void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
 {
     UiElement* element = GetElement(path.id);
     element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
@@ -253,7 +253,7 @@ void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use 
     element->UpdatePosition();
 }
 
-void UiController::UpdateText(const ElementKey& key, const std::string& text)
+void UiController::UpdateText(const UiKey& key, const std::string& text)
 {
     UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key)); // I assume key will give a UiTextElement key
     textElement->DeleteTexture(); // Delete the previous generated texture
@@ -272,7 +272,7 @@ void UiController::UpdateText(const UiValue<unsigned int>& uiv)
     UpdateText(uiv.id, std::to_string(uiv.value));
 }
 
-void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
+void UiController::UpdateParent(const UiKey& key, const UiKey& parent)
 {
     UiElement* currentElement = GetElement(key);
     UiElement* previousParent = currentElement->GetParent();
@@ -289,7 +289,7 @@ void UiController::UpdateParent(const ElementKey& key, const ElementKey& parent)
     newParent->BuildChild(std::move(ownedElement));
 }
 
-void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps)
+void UiController::UpdateScalingSize(const UiKey& key, const PartialSize ps)
 {
     const float result = GetResultFromPartialSize(ps);
     UiElement* e = GetElement(key);
@@ -299,7 +299,7 @@ void UiController::UpdateScalingSize(const ElementKey& key, const PartialSize ps
     e->UpdatePosition();
 }
 
-void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey)
+void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
 {
     UiElement* element = GetElement(key);
     element->SetKey(newKey);
@@ -312,12 +312,12 @@ void UiController::UpdateKey(const ElementKey& key, const ElementKey& newKey)
         throw std::runtime_error("Try to update a node in UiController::m_elements with an already existing key : " + newKey);
 
     // https://stackoverflow.com/questions/5743545/what-is-the-fastest-way-to-change-a-key-of-an-element-inside-stdmap
-    std::unordered_map<ElementKey, UiElement*>::node_type node = m_elements.extract(key);
+    std::unordered_map<UiKey, UiElement*>::node_type node = m_elements.extract(key);
     node.key() = newKey;
     m_elements.insert(std::move(node));
 }
 
-void UiController::UpdateParams(const ElementKey& key, const UiParams& params)
+void UiController::UpdateParams(const UiKey& key, const UiParams& params)
 {
     UiElement* element = GetElement(key);
     element->SetParams(params);

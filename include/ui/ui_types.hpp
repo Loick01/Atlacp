@@ -2,7 +2,7 @@
 
 #include <string>
 
-using ElementKey = std::string; // ??? + Rename ?
+using UiKey = std::string; // string ? Rename UiElementKey ?
 
 enum class UiElementEvent
 {
@@ -26,10 +26,10 @@ enum class Anchor
 template<typename T>
 struct UiValue
 {
-    ElementKey id; // const ?
+    UiKey id; // const ?
     T value;
 
-    UiValue(ElementKey key, T v):
+    UiValue(UiKey key, T v):
         id(key), value(v) 
     {}
 };
@@ -58,7 +58,7 @@ struct UiParams
 
 struct PartialSize // Should be in ui_element.hpp ?
 {
-    ElementKey srcElement;
+    UiKey srcElement;
     Axis axis;
     float amount;
 
@@ -66,13 +66,13 @@ struct PartialSize // Should be in ui_element.hpp ?
         srcElement = "undefined_element"; // In UiController, I use srcElement to know if there is a padding
     }
 
-    PartialSize(const ElementKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
+    PartialSize(const UiKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
 };
 
 struct DataUi // Rename + Should not be here ?
 {
-    ElementKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
-    ElementKey key;
+    UiKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
+    UiKey key;
     std::string path; // image path if UiElement, font filepath if UiTextElement
     std::string type; // "uielement" or "textelement"
     std::string text; // Only used for UiTextElement (when type = "textelement"), should not be here ?

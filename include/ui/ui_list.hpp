@@ -11,7 +11,7 @@ class UiList : public UiComponent
         static inline unsigned int m_instanceCount;
     
     protected:
-        std::vector<ElementKey> m_itemsKey;
+        std::vector<UiKey> m_itemsKey;
     
     public:
         UiList(UiController& uiController, const std::string& uiFilepath);
@@ -19,5 +19,5 @@ class UiList : public UiComponent
         unsigned int GetInstanceCount() override;
         void Open() override;
         
-        std::vector<ElementKey> GetItemsKey() const;
+        std::vector<UiKey> GetItemsKey() const;
 };

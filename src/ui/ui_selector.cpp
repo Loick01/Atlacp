@@ -17,7 +17,7 @@ void UiSelector::Reset()
     UpdateParent();
 }
 
-void UiSelector::SetParents(std::vector<ElementKey> parents)
+void UiSelector::SetParents(std::vector<UiKey> parents)
 {
     if (parents.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_parents");
     m_parents = parents;
@@ -26,8 +26,8 @@ void UiSelector::SetParents(std::vector<ElementKey> parents)
 
 void UiSelector::UpdateParent()
 {
-    const ElementKey& parentKey = m_parents[m_currentIndex];
-    m_uiController.UpdateParent(m_elementKey, parentKey); 
+    const UiKey& parentKey = m_parents[m_currentIndex];
+    m_uiController.UpdateParent(m_uiKey, parentKey); 
     m_uiController.GetElement(parentKey)->UpdatePosition();
 }
 
