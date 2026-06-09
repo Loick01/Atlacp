@@ -237,13 +237,28 @@ void BattleController::InitializeActors(const std::string& battleFile)
 
     // Will not be here
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
+    unsigned int countAlly = 0;
+    unsigned int countOpponent = 0;
+    // Prefixes should be read from UI template 
+    const std::string prefixName = "actorName";
+    const std::string prefixHealth = "actorHealth";
+    const std::string prefixSprite = "actorSprite";
     for (const DataBattleActor& data : dataActors) {
         std::unique_ptr<BattleActor> actor;
         
+        std::string suffixKey;
+        if (data.team == Team::Ally) {
+            suffixKey = std::to_string(countAlly++);
+            suffixKey += "_" + std::to_string(0);
+        } else if (data.team == Team::Opponent) { // else ? (if I keep only Ally/Opponent)
+            suffixKey = std::to_string(countOpponent++);
+            suffixKey += "_" + std::to_string(1);
+        }
+        
         if (data.isAiActor)
-            actor = std::make_unique<AiActor>(data.team, data.nameId, data.healthId, data.spriteId, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
+            actor = std::make_unique<AiActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
         else
-            actor = std::make_unique<BattleActor>(data.team, data.nameId, data.healthId, data.spriteId, data.name, data.health, data.turnSpeed);
+            actor = std::make_unique<BattleActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
 
         actor->SetSpritePath(data.spritePath);
         m_uiController.UpdateText(actor->GetName());

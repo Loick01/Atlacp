@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/ui_types.hpp" // UiKey
+#include <string>
 
 enum class Team
 {
@@ -9,9 +9,6 @@ enum class Team
 
 struct DataBattleActor // Rename
 {
-    UiKey nameId;
-    UiKey healthId;
-    UiKey spriteId;
     std::string spritePath;
     std::string name;
     Team team;

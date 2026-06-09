@@ -33,9 +33,6 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         else if (s == "player") data.isAiActor = false;
         else throw std::runtime_error("Error : Must be \"ai\" or \"player\"");
         
-        input >> data.nameId; // Will not be in battle file 
-        input >> data.healthId; // Will not be in battle file
-        input >> data.spriteId; // Will not be in battle file
         input >> data.name;
         input >> data.health;
         input >> data.turnSpeed;

@@ -1,34 +1,22 @@
 ally player
-actorName0_0
-actorHealth0_0
-actorSprite0_0
 Howler
 40
 10
 ../assets/battle/ally_sprite/werewolf.png
 ###
 ally ai
-actorName1_0
-actorHealth1_0
-actorSprite1_0
 Mage
 20
 15
 ../assets/battle/ally_sprite/mage.png
 ###
 opponent ai
-actorName0_1
-actorHealth0_1
-actorSprite0_1
 Bone_Appetit
 20
 8
 ../assets/battle/opponent_sprite/bone_appetit.png
 ###
 opponent ai
-actorName1_1
-actorHealth1_1
-actorSprite1_1
 Slime
 20
 15
