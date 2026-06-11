@@ -61,7 +61,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
-        std::vector<BattleActor*> GetActorsInTeam(const Team team); // Remove ?
+        std::vector<BattleActor*> GetActorsInTeam(const Team team) const;
+        std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ?

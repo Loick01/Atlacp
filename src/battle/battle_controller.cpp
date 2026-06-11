@@ -13,14 +13,24 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {}
 
-std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team)
+std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
     std::vector<BattleActor*> actors;
-    for (std::unique_ptr<BattleActor>& b : m_actors) {
+    for (const std::unique_ptr<BattleActor>& b : m_actors) {
         if (b->GetTeam() == team)
             actors.push_back(b.get());
     }
     return actors;
+}
+
+std::vector<BattleActor*> BattleController::FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const
+{
+    std::vector<BattleActor*> result;
+    for (BattleActor* b : actors) {
+        if (b->GetLifeState() == lifeState)
+            result.push_back(b);
+    }
+    return result;
 }
 
 BattleActor* BattleController::PopNextTurn()
@@ -29,7 +39,7 @@ BattleActor* BattleController::PopNextTurn()
     while (actor == nullptr) { // Should try m_turns.empty() (even if it's not possible) ?
         actor = m_turns.top();
         m_turns.pop();
-        if (actor->GetLifeState() == LifeState::Dead)
+        if (actor->GetLifeState() == LifeState::Dead) // When a BattleActor dies, he's not instantly removed from m_turns 
             actor = nullptr; // Dead actor is not pushed in m_turns
     }
     m_currentTime = actor->GetNextTurnTime();
@@ -48,7 +58,7 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
         m_textSeries.Close();
         m_selector.Close();
         const Team team = GetTeamFromCommand();
-        std::vector<BattleActor*> actors = GetActorsInTeam(team);
+        std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive); // Will not be LifeState::Alive for every case
         BattleActor* targetActor = actors[m_selector.GetIndex()];
         return targetActor;
     }
@@ -94,11 +104,8 @@ unsigned int BattleController::ComputeHeal(BattleActor& source,  BattleActor& ta
 
 bool BattleController::HasAliveActor(const Team team) const
 {
-    for (const std::unique_ptr<BattleActor>& b : m_actors) {
-        if (b->GetTeam() == team && b->GetLifeState() == LifeState::Alive)
-            return true;
-    }
-    return false;
+    const std::vector<BattleActor*> actors = GetActorsInTeam(team);
+    return (FilterActorsByLifeState(actors, LifeState::Alive)).size() > 0;
 }
 
 void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetActor)
@@ -152,7 +159,14 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_textSeries.NextText();
             m_selector.Open();
-            m_selector.SetParents(m_opponentList.GetItemsKey()); // TODO : BattleActor with LifeState::Dead are still selectable
+
+            // Will be merged with the same code in case 1
+            std::vector<BattleActor*> aliveOpponents = FilterActorsByLifeState(GetActorsInTeam(Team::Opponent), LifeState::Alive); // LifeState::Alive ?
+            std::vector<UiKey> keys;
+            for (const BattleActor* opponent : aliveOpponents)
+                keys.push_back(opponent->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_opponentList
+            m_selector.SetParents(keys); // m_opponentList.GetItemsKey());
+            
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
             m_currentCommand = BattleCommand::Attack;
@@ -165,7 +179,14 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.AddText({"Choose an ally to heal"});
             m_textSeries.NextText();
             m_selector.Open();
-            m_selector.SetParents(m_allyList.GetItemsKey()); // TODO : BattleActor with LifeState::Dead are still selectable
+
+            // Will be merged with the same code in case 0
+            std::vector<BattleActor*> aliveAllies = FilterActorsByLifeState(GetActorsInTeam(Team::Ally), LifeState::Alive); // LifeState::Alive ?
+            std::vector<UiKey> keys;
+            for (const BattleActor* ally : aliveAllies)
+                keys.push_back(ally->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList
+            m_selector.SetParents(keys); // m_allyList.GetItemsKey()
+             
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
             m_currentCommand = BattleCommand::Heal;
@@ -191,8 +212,9 @@ void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 {
     m_currentCommand = BattleCommand::Attack;
     const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
-    const Team team = GetTeamFromCommand(); // ?
-    BattleActor* targetActor = srcBehaviour.SelectTarget(GetActorsInTeam(team));
+    const Team team = GetTeamFromCommand();
+    const LifeState lf = LifeState::Alive; // Will not be LifeState::Alive. BattleBehaviour could order to heal a BattleActor with LifeState::Dead
+    BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(team), lf));
     HandleCurrentCommand(targetActor);
     m_turnState = TurnState::Waiting; // Should be in HandleCurrentCommand() ?
 }
@@ -221,8 +243,6 @@ void BattleController::InitializeActors(const std::string& battleFile)
         Anchor::RightIn, Anchor::TopIn, // Anchor
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, -0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
-    
-    // Will not be here ?
     m_opponentList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
         Anchor::LeftIn, Anchor::TopIn, // Anchor
