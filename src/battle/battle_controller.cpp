@@ -15,12 +15,14 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
-    std::vector<BattleActor*> actors;
-    for (const std::unique_ptr<BattleActor>& b : m_actors) {
-        if (b->GetTeam() == team)
-            actors.push_back(b.get());
+    switch(team) {
+        case Team::Ally : 
+            return m_allies;
+        case Team::Opponent :
+            return m_opponents;
+        default :
+            throw std::runtime_error("Unknown Team value");
     }
-    return actors;
 }
 
 std::vector<BattleActor*> BattleController::FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const
@@ -58,8 +60,8 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
         m_textSeries.Close();
         m_selector.Close();
         const Team team = GetTeamFromCommand();
-        std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive); // Will not be LifeState::Alive for every case
-        BattleActor* targetActor = actors[m_selector.GetIndex()];
+        std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive); // Will not be LifeState::Alive in every situation
+        BattleActor* targetActor = actors[m_selector.GetOptionIndex()];
         return targetActor;
     }
     return nullptr;
@@ -139,7 +141,7 @@ void BattleController::OpenAllyMoveSelection()
 {
     m_allyMoveList.Open();
     m_selector.Open();
-    m_selector.SetParents(m_allyMoveList.GetItemsKey());
+    m_selector.SetOptionKeys(m_allyMoveList.GetItemsKey());
     // When selector file is build, scale is based on root element
     m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_allyMoveList.GetKey(), Axis::Height, 0.8f}); 
 }
@@ -148,6 +150,15 @@ void BattleController::CloseAllyMoveSelection()
 {
     m_selector.Close();
     m_allyMoveList.Close();
+}
+
+void BattleController::SetSelectorOptions(const Team team)
+{
+    std::vector<BattleActor*> aliveActors = FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive); // LifeState::Alive ?
+    std::vector<UiKey> keys;
+    for (const BattleActor* actor : aliveActors)
+        keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList/m_opponentList
+    m_selector.SetOptionKeys(keys); // Should not be here ?
 }
 
 void BattleController::HandleActorMoveSelection(const int selectorIndex)
@@ -159,13 +170,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_textSeries.NextText();
             m_selector.Open();
-
-            // Will be merged with the same code in case 1
-            std::vector<BattleActor*> aliveOpponents = FilterActorsByLifeState(GetActorsInTeam(Team::Opponent), LifeState::Alive); // LifeState::Alive ?
-            std::vector<UiKey> keys;
-            for (const BattleActor* opponent : aliveOpponents)
-                keys.push_back(opponent->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_opponentList
-            m_selector.SetParents(keys); // m_opponentList.GetItemsKey());
+            SetSelectorOptions(Team::Opponent);
             
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
@@ -179,14 +184,8 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.AddText({"Choose an ally to heal"});
             m_textSeries.NextText();
             m_selector.Open();
+            SetSelectorOptions(Team::Ally);
 
-            // Will be merged with the same code in case 0
-            std::vector<BattleActor*> aliveAllies = FilterActorsByLifeState(GetActorsInTeam(Team::Ally), LifeState::Alive); // LifeState::Alive ?
-            std::vector<UiKey> keys;
-            for (const BattleActor* ally : aliveAllies)
-                keys.push_back(ally->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList
-            m_selector.SetParents(keys); // m_allyList.GetItemsKey()
-             
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
             m_currentCommand = BattleCommand::Heal;
@@ -285,7 +284,10 @@ void BattleController::InitializeActors(const std::string& battleFile)
         m_uiController.UpdateText(actor->GetHealth()); 
         m_uiController.UpdatePath(actor->GetSpritePath());
         actor->ComputeNextTurnTime(m_currentTime);
+        
         m_turns.push(actor.get());
+        if (data.team == Team::Ally) m_allies.push_back(actor.get());
+        else if (data.team == Team::Opponent) m_opponents.push_back(actor.get()); // else ? (if I keep only Ally/Opponent)
         m_actors.push_back(std::move(actor));
     }
 }
@@ -309,7 +311,7 @@ void BattleController::PlayNextTurn()
                 else if (m_eventState.uiDirection == Direction::Up)
                     m_selector.Previous();
                 else if (m_eventState.isAction)
-                    HandleActorMoveSelection(m_selector.GetIndex());
+                    HandleActorMoveSelection(m_selector.GetOptionIndex());
             }
             break;
         }

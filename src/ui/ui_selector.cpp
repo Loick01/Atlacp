@@ -3,44 +3,44 @@
 #include "ui/ui_controller.hpp"
 
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
-    UiComponent(uiController, uiFilepath), m_currentIndex(0)
+    UiComponent(uiController, uiFilepath), m_optionIndex(0)
 {}
 
-int UiSelector::GetIndex() const
+int UiSelector::GetOptionIndex() const
 {
-    return m_currentIndex;
+    return m_optionIndex;
 }
 
-void UiSelector::Reset()
+void UiSelector::UpdateToOptionIndex()
 {
-    m_currentIndex = 0;
-    UpdateParent();
-}
-
-void UiSelector::SetParents(std::vector<UiKey> parents)
-{
-    if (parents.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_parents");
-    m_parents = parents;
-    Reset(); 
-}
-
-void UiSelector::UpdateParent()
-{
-    const UiKey& parentKey = m_parents[m_currentIndex];
+    const UiKey& parentKey = m_optionKeys[m_optionIndex];
     m_uiController.UpdateParent(m_uiKey, parentKey); 
     m_uiController.GetElement(parentKey)->UpdatePosition();
 }
 
+void UiSelector::Reset()
+{
+    m_optionIndex = 0;
+    UpdateToOptionIndex();
+}
+
+void UiSelector::SetOptionKeys(std::vector<UiKey> optionKeys)
+{
+    if (optionKeys.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_optionKeys");
+    m_optionKeys = optionKeys;
+    Reset(); 
+}
+
 void UiSelector::Previous()
 {
-    m_currentIndex = (m_currentIndex-1+m_parents.size())%m_parents.size();
-    UpdateParent();
+    m_optionIndex = (m_optionIndex-1+m_optionKeys.size())%m_optionKeys.size();
+    UpdateToOptionIndex();
 }
 
 void UiSelector::Next()
 {
-    m_currentIndex = (m_currentIndex+1)%m_parents.size();   
-    UpdateParent();
+    m_optionIndex = (m_optionIndex+1)%m_optionKeys.size();   
+    UpdateToOptionIndex();
 }
 
 unsigned int UiSelector::GetInstanceCount()

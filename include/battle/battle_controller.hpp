@@ -45,6 +45,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
     private:
         std::vector<std::unique_ptr<BattleActor>> m_actors;
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
+        std::vector<BattleActor*> m_allies; std::vector<BattleActor*> m_opponents;
         BattleActor* m_currentActor; // Actor that is playing his turn
         // BattleActor* m_targetActor;
         TurnState m_turnState;
@@ -61,7 +62,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
-        std::vector<BattleActor*> GetActorsInTeam(const Team team) const;
+        std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
         std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
@@ -77,6 +78,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         void OpenAllyMoveSelection();
         void CloseAllyMoveSelection();
+        void SetSelectorOptions(const Team team);
         void HandleActorMoveSelection(const int index);
         void HandleAiActorMoveSelection(AiActor& srcActor);
         

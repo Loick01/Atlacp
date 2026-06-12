@@ -11,18 +11,19 @@ class UiSelector : public UiComponent
 {
     private:
         static inline unsigned int m_instanceCount;
-        std::vector<UiKey> m_parents; // Rename
-        int m_currentIndex;
+        std::vector<UiKey> m_optionKeys;
+        int m_optionIndex;
+
+        void UpdateToOptionIndex(); // Use m_optionIndex
     
     public:
         UiSelector(UiController& uiController, const std::string& uiFilepath);
 
         unsigned int GetInstanceCount() override;
         
-        int GetIndex() const;
+        int GetOptionIndex() const;
         void Reset();
-        void SetParents(std::vector<UiKey> parents);
-        void UpdateParent();
+        void SetOptionKeys(std::vector<UiKey> optionKeys);
         void Previous();
         void Next();
 };
