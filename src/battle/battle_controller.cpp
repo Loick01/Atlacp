@@ -5,6 +5,12 @@
 #include "core/file.hpp"
 #include "ui/ui_controller.hpp"
 
+namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
+    const std::string prefixName = "actorName";
+    const std::string prefixHealth = "actorHealth";
+    const std::string prefixSprite = "actorSprite";
+}
+
 BattleController::BattleController(FileReader& fileReader, UiController& uiController):
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), 
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
@@ -236,7 +242,6 @@ void BattleController::HandleCurrentCommand(BattleActor* targetActor)
 
 void BattleController::InitializeActors(const std::string& battleFile)
 {
-    // Will not be here ?
     m_allyList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
         Anchor::RightIn, Anchor::TopIn, // Anchor
@@ -247,21 +252,10 @@ void BattleController::InitializeActors(const std::string& battleFile)
         Anchor::LeftIn, Anchor::TopIn, // Anchor
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
-    
-    // Will not be here
-    m_allyList.SetNrItem(2);
-    m_opponentList.SetNrItem(2);
-    m_allyList.Open();
-    m_opponentList.Open();
 
-    // Will not be here
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
     unsigned int countAlly = 0;
     unsigned int countOpponent = 0;
-    // Prefixes should be read from UI template 
-    const std::string prefixName = "actorName";
-    const std::string prefixHealth = "actorHealth";
-    const std::string prefixSprite = "actorSprite";
     for (const DataBattleActor& data : dataActors) {
         std::unique_ptr<BattleActor> actor;
         
@@ -279,16 +273,26 @@ void BattleController::InitializeActors(const std::string& battleFile)
         else
             actor = std::make_unique<BattleActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
 
-        actor->SetSpritePath(data.spritePath);
-        m_uiController.UpdateText(actor->GetName());
-        m_uiController.UpdateText(actor->GetHealth()); 
-        m_uiController.UpdatePath(actor->GetSpritePath());
+        actor->SetSpritePath(data.spritePath); // Sprite path should be in BattleActor constructor ?
+
         actor->ComputeNextTurnTime(m_currentTime);
-        
         m_turns.push(actor.get());
+        
         if (data.team == Team::Ally) m_allies.push_back(actor.get());
         else if (data.team == Team::Opponent) m_opponents.push_back(actor.get()); // else ? (if I keep only Ally/Opponent)
+        
         m_actors.push_back(std::move(actor));
+    }
+
+    m_allyList.SetNrItem(countAlly);
+    m_opponentList.SetNrItem(countOpponent);
+    m_allyList.Open();
+    m_opponentList.Open();
+
+    for (const std::unique_ptr<BattleActor>& b : m_actors) {
+        m_uiController.UpdateText(b->GetName());
+        m_uiController.UpdateText(b->GetHealth()); 
+        m_uiController.UpdatePath(b->GetSpritePath());
     }
 }
 
