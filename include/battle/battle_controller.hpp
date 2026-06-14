@@ -17,9 +17,38 @@ class AiActor;
 class FileReader;
 class UiController;
 
-enum class BattleCommand // Could be a struct ?
+enum class MoveType
 {
     Attack, Heal
+};
+
+struct BattleCommand
+{
+    MoveType move;
+    Team sourceTeam;
+    Team targetTeam;
+    LifeState targetLifeState;
+
+    Team ComputeTargetTeam() const
+    {
+        switch (move) {
+            case MoveType::Attack :
+                return (sourceTeam == Team::Ally ? Team::Opponent : Team::Ally);
+            case MoveType::Heal :
+                return sourceTeam;
+            default :
+                throw std::runtime_error("Unknown MoveType value"); 
+        }
+    }
+
+    BattleCommand() = default;
+
+    BattleCommand(const MoveType m, const Team st, const LifeState s) {
+        move = m;
+        sourceTeam = st;
+        targetTeam = ComputeTargetTeam();
+        targetLifeState = s;
+    }
 };
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
@@ -58,7 +87,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController;
         UiDynamicList m_allyList;
         UiDynamicList m_opponentList;
-        UiList m_allyMoveList; 
+        UiList m_moveList; 
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
@@ -68,7 +97,6 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ?
         ExitEvent CheckBattleEnd() const;
-        Team GetTeamFromCommand() const; // Remove ?
         unsigned int ComputeDamage(BattleActor& source, BattleActor& target);
         unsigned int ComputeHeal(BattleActor& source,  BattleActor& target);
         bool HasAliveActor(const Team team) const;
@@ -76,8 +104,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
 
-        void OpenAllyMoveSelection();
-        void CloseAllyMoveSelection();
+        void OpenActorMoveSelection(); 
+        void CloseActorMoveSelection(); 
         void SetSelectorOptions(const Team team);
         void HandleActorMoveSelection(const int index);
         void HandleAiActorMoveSelection(AiActor& srcActor);

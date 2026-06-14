@@ -15,7 +15,7 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), 
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_allyMoveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
+    m_moveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {}
 
@@ -65,8 +65,7 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
     } else if (m_eventState.isAction) {
         m_textSeries.Close();
         m_selector.Close();
-        const Team team = GetTeamFromCommand();
-        std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive); // Will not be LifeState::Alive in every situation
+        std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
         BattleActor* targetActor = actors[m_selector.GetOptionIndex()];
         return targetActor;
     }
@@ -80,18 +79,6 @@ ExitEvent BattleController::CheckBattleEnd() const
     else if (!HasAliveActor(Team::Opponent))
         return ExitEvent::ExitWin;
     return ExitEvent::None;
-}
-
-Team BattleController::GetTeamFromCommand() const
-{
-    switch (m_currentCommand) {
-        case BattleCommand::Attack :
-            return (m_currentActor->GetTeam() == Team::Ally ? Team::Opponent : Team::Ally); // ?
-        case BattleCommand::Heal :
-            return m_currentActor->GetTeam(); // ?
-        default :
-            throw std::runtime_error("Unknown BattleCommand value"); 
-    }
 }
 
 unsigned int BattleController::ComputeDamage(BattleActor& source, BattleActor& target)
@@ -143,19 +130,19 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
     m_textSeries.NextText();
 }
 
-void BattleController::OpenAllyMoveSelection()
+void BattleController::OpenActorMoveSelection()
 {
-    m_allyMoveList.Open();
+    m_moveList.Open();
     m_selector.Open();
-    m_selector.SetOptionKeys(m_allyMoveList.GetItemsKey());
+    m_selector.SetOptionKeys(m_moveList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_allyMoveList.GetKey(), Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_moveList.GetKey(), Axis::Height, 0.8f}); 
 }
 
-void BattleController::CloseAllyMoveSelection()
+void BattleController::CloseActorMoveSelection()
 {
     m_selector.Close();
-    m_allyMoveList.Close();
+    m_moveList.Close();
 }
 
 void BattleController::SetSelectorOptions(const Team team)
@@ -171,35 +158,37 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
 {
     switch (selectorIndex) {
         case 0: {
-            CloseAllyMoveSelection();
+            CloseActorMoveSelection();
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_textSeries.NextText();
             m_selector.Open();
-            SetSelectorOptions(Team::Opponent);
             
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand::Attack;
+            m_currentCommand = BattleCommand(MoveType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
+            
+            SetSelectorOptions(m_currentCommand.targetTeam);
             break;
         }
         
         case 1: {
-            CloseAllyMoveSelection();
+            CloseActorMoveSelection();
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an ally to heal"});
             m_textSeries.NextText();
             m_selector.Open();
-            SetSelectorOptions(Team::Ally);
 
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand::Heal;
+            m_currentCommand = BattleCommand(MoveType::Heal, m_currentActor->GetTeam(), LifeState::Alive);
+
+            SetSelectorOptions(m_currentCommand.targetTeam);
             break;
         }
 
         case 2:
-            CloseAllyMoveSelection();
+            CloseActorMoveSelection();
             m_turnState = TurnState::End;
             break;
             
@@ -215,28 +204,27 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
 
 void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 {
-    m_currentCommand = BattleCommand::Attack;
+    m_currentCommand = BattleCommand(MoveType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
     const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
-    const Team team = GetTeamFromCommand();
-    const LifeState lf = LifeState::Alive; // Will not be LifeState::Alive. BattleBehaviour could order to heal a BattleActor with LifeState::Dead
-    BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(team), lf));
+    const LifeState lf = m_currentCommand.targetLifeState;
+    BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
     HandleCurrentCommand(targetActor);
     m_turnState = TurnState::Waiting; // Should be in HandleCurrentCommand() ?
 }
 
 void BattleController::HandleCurrentCommand(BattleActor* targetActor)
 {
-    switch (m_currentCommand) {
-        case BattleCommand::Attack : {
+    switch (m_currentCommand.move) {
+        case MoveType::Attack : {
             ApplyDamage(*m_currentActor, *targetActor);
             break;
         }
-        case BattleCommand::Heal : {
+        case MoveType::Heal : {
             ApplyHeal(*m_currentActor, *targetActor);
             break;
         }
         default : 
-            throw std::runtime_error("Unknown BattleCommand value"); 
+            throw std::runtime_error("Unknown MoveType value"); 
     }
 }
 
@@ -301,12 +289,12 @@ void BattleController::PlayNextTurn()
     switch (m_turnState) {
         case TurnState::Init : {
             m_currentActor = PopNextTurn();
-            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenAllyMoveSelection();
+            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenActorMoveSelection();
             m_turnState = TurnState::MoveSelection; 
         }
         
         case TurnState::MoveSelection : {
-            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor); // Already a dynamic_cast in TurnState::Init ?
             if (aiActor != nullptr) {
                 HandleAiActorMoveSelection(*aiActor);
             } else {
