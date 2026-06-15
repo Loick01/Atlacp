@@ -285,8 +285,8 @@ CommandType FileReader::ReadCommandType(const std::string& s) const
 MoveType FileReader::ReadMoveType(const std::string& s) const
 {
     static const std::unordered_map<std::string, MoveType> axis = {
-        {"physical", MoveType::P},
-        {"magic", MoveType::M}
+        {"physical", MoveType::Physical},
+        {"magic", MoveType::Magic}
     };
 
     std::unordered_map<std::string, MoveType>::const_iterator it = axis.find(s);

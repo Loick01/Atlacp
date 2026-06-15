@@ -23,6 +23,7 @@ struct BattleCommand
     Team sourceTeam;
     Team targetTeam;
     LifeState targetLifeState;
+    unsigned int moveValue; // Rename
 
     Team ComputeTargetTeam() const
     {
@@ -38,11 +39,12 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const LifeState s) {
+    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv) {
         commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
         targetLifeState = s;
+        moveValue = mv;
     }
 };
 
@@ -92,8 +94,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ?
         ExitEvent CheckBattleEnd() const;
-        unsigned int ComputeDamage(BattleActor& source, BattleActor& target);
-        unsigned int ComputeHeal(BattleActor& source,  BattleActor& target);
+        BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const; // Should remove srcActor ?
+        unsigned int ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
         bool HasAliveActor(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);

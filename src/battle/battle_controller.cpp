@@ -17,9 +17,7 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_moveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
-{
-    // m_fileReader.ReadMoveFile("../data/battle/moves/move_list");
-}
+{}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
@@ -83,20 +81,22 @@ ExitEvent BattleController::CheckBattleEnd() const
     return ExitEvent::None;
 }
 
-unsigned int BattleController::ComputeDamage(BattleActor& source, BattleActor& target)
+unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const
 {
-    const unsigned int damage = source.GetStrength();
-    target.RemoveHealth(damage);
-    m_uiController.UpdateText(target.GetHealth());
-    return damage;
+    switch(mt) {
+        case MoveType::Physical :
+            return baseValue * srcActor->GetStrength();
+        case MoveType::Magic :
+            return baseValue * srcActor->GetStrength(); // Need a new field in BattleActor
+        default:
+            throw std::runtime_error("Unknown MoveType value");
+    }
 }
 
-unsigned int BattleController::ComputeHeal(BattleActor& source,  BattleActor& target) // Will use Object from inventory
+BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const
 {
-    const unsigned int hp = source.GetStrength(); // For now, I use the source strength
-    target.AddHealth(hp);
-    m_uiController.UpdateText(target.GetHealth());
-    return hp;
+    const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
+    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount); // Will not be LifeState::Alive
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -107,7 +107,10 @@ bool BattleController::HasAliveActor(const Team team) const
 
 void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetActor)
 {
-    const unsigned int damage = ComputeDamage(srcActor, targetActor); 
+    const unsigned int damage = m_currentCommand.moveValue;
+    targetActor.RemoveHealth(damage);
+    m_uiController.UpdateText(targetActor.GetHealth());
+    
     m_textSeries.Open();
     m_textSeries.AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
@@ -123,8 +126,10 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
 
 void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor)
 {
-
-    const unsigned int hp = ComputeHeal(srcActor, targetActor); 
+    const unsigned int hp = m_currentCommand.moveValue;
+    targetActor.AddHealth(hp);
+    m_uiController.UpdateText(targetActor.GetHealth());
+    
     m_textSeries.Open();
     m_textSeries.AddText({srcActor.GetName().value + " gives a potion to " + targetActor.GetName().value + ".",
                           targetActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
@@ -164,13 +169,16 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_textSeries.NextText();
+            
+            const unsigned int moveIndex = 0; // TODO : Move selection
+            const MoveDefinition md = (m_fileReader.ReadMoveFile("../data/battle/moves/move_list"))[moveIndex]; // Will be done only once
+            m_currentCommand = CreateCommand(m_currentActor, md);
+            
             m_selector.Open();
-            
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
-            m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand(CommandType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
-            
             SetSelectorOptions(m_currentCommand.targetTeam);
+            
+            m_turnState = TurnState::ActorSelection;
             break;
         }
         
@@ -179,13 +187,16 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an ally to heal"});
             m_textSeries.NextText();
+            
+            const unsigned int moveIndex = 2; // TODO : Move selection
+            const MoveDefinition md = (m_fileReader.ReadMoveFile("../data/battle/moves/move_list"))[moveIndex]; // Will be done only once
+            m_currentCommand = CreateCommand(m_currentActor, md);
+
             m_selector.Open();
-
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
-            m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand(CommandType::Heal, m_currentActor->GetTeam(), LifeState::Alive);
-
             SetSelectorOptions(m_currentCommand.targetTeam);
+
+            m_turnState = TurnState::ActorSelection;
             break;
         }
 
@@ -206,7 +217,10 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
 
 void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 {
-    m_currentCommand = BattleCommand(CommandType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
+    const unsigned int moveIndex = 0; // TODO : Move selection
+    const MoveDefinition md = (m_fileReader.ReadMoveFile("../data/battle/moves/move_list"))[moveIndex]; // Will be done only once
+    m_currentCommand = CreateCommand(m_currentActor, md);
+
     const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
     const LifeState lf = m_currentCommand.targetLifeState;
     BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));

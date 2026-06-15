@@ -9,7 +9,7 @@ enum class CommandType // Rename
 
 enum class MoveType // Rename
 {
-    P, M
+    Physical, Magic
 };
 
 enum class Team
