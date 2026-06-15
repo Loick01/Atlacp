@@ -44,6 +44,24 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     return actorsData;
 }
 
+std::vector<MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
+{
+    std::ifstream input = OpenFile(moveFilepath);
+    std::vector<MoveDefinition> moves;
+    std::string s;
+    while (input >> s) {
+        MoveDefinition m;
+        m.name = s;
+        input >> s;
+        m.commandType = ReadCommandType(s);
+        input >> s;
+        m.moveType = ReadMoveType(s);
+        input >> m.value;
+        moves.push_back(m);
+    }
+    return moves;
+}
+
 std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
     std::ifstream input = OpenFile(npcsFilepath);
@@ -248,6 +266,34 @@ Anchor FileReader::ReadAnchor(const std::string& s) const
         return it->second;
 
     throw std::runtime_error("Unknown value read as Anchor");
+}
+
+CommandType FileReader::ReadCommandType(const std::string& s) const
+{
+    static const std::unordered_map<std::string, CommandType> axis = {
+        {"attack", CommandType::Attack},
+        {"heal", CommandType::Heal}
+    };
+
+    std::unordered_map<std::string, CommandType>::const_iterator it = axis.find(s);
+    if (it != axis.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as CommandType");
+}
+
+MoveType FileReader::ReadMoveType(const std::string& s) const
+{
+    static const std::unordered_map<std::string, MoveType> axis = {
+        {"physical", MoveType::P},
+        {"magic", MoveType::M}
+    };
+
+    std::unordered_map<std::string, MoveType>::const_iterator it = axis.find(s);
+    if (it != axis.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as MoveType");
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const

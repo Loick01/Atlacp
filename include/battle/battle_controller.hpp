@@ -17,34 +17,29 @@ class AiActor;
 class FileReader;
 class UiController;
 
-enum class MoveType
-{
-    Attack, Heal
-};
-
 struct BattleCommand
 {
-    MoveType move;
+    CommandType commandType;
     Team sourceTeam;
     Team targetTeam;
     LifeState targetLifeState;
 
     Team ComputeTargetTeam() const
     {
-        switch (move) {
-            case MoveType::Attack :
+        switch (commandType) {
+            case CommandType::Attack :
                 return (sourceTeam == Team::Ally ? Team::Opponent : Team::Ally);
-            case MoveType::Heal :
+            case CommandType::Heal :
                 return sourceTeam;
             default :
-                throw std::runtime_error("Unknown MoveType value"); 
+                throw std::runtime_error("Unknown CommandType value"); 
         }
     }
 
     BattleCommand() = default;
 
-    BattleCommand(const MoveType m, const Team st, const LifeState s) {
-        move = m;
+    BattleCommand(const CommandType ct, const Team st, const LifeState s) {
+        commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
         targetLifeState = s;

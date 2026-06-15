@@ -25,12 +25,15 @@ class FileReader
 
         Axis ReadAxis(const std::string& s) const;
         Anchor ReadAnchor(const std::string& s) const;
+        CommandType ReadCommandType(const std::string& s) const;
+        MoveType ReadMoveType(const std::string& s) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:
         FileReader() = default;
 
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const; // Rename
+        std::vector<MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const; // Rename + I will use a function that return a MoveDefinition associated to an ID 
         std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const; // Rename
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename
         

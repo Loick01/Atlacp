@@ -17,7 +17,9 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_moveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
-{}
+{
+    // m_fileReader.ReadMoveFile("../data/battle/moves/move_list");
+}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
@@ -166,7 +168,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
             
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand(MoveType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
+            m_currentCommand = BattleCommand(CommandType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
             
             SetSelectorOptions(m_currentCommand.targetTeam);
             break;
@@ -181,7 +183,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
 
             m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
             m_turnState = TurnState::ActorSelection;
-            m_currentCommand = BattleCommand(MoveType::Heal, m_currentActor->GetTeam(), LifeState::Alive);
+            m_currentCommand = BattleCommand(CommandType::Heal, m_currentActor->GetTeam(), LifeState::Alive);
 
             SetSelectorOptions(m_currentCommand.targetTeam);
             break;
@@ -204,7 +206,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
 
 void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 {
-    m_currentCommand = BattleCommand(MoveType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
+    m_currentCommand = BattleCommand(CommandType::Attack, m_currentActor->GetTeam(), LifeState::Alive);
     const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
     const LifeState lf = m_currentCommand.targetLifeState;
     BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
@@ -214,17 +216,17 @@ void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
 
 void BattleController::HandleCurrentCommand(BattleActor* targetActor)
 {
-    switch (m_currentCommand.move) {
-        case MoveType::Attack : {
+    switch (m_currentCommand.commandType) {
+        case CommandType::Attack : {
             ApplyDamage(*m_currentActor, *targetActor);
             break;
         }
-        case MoveType::Heal : {
+        case CommandType::Heal : {
             ApplyHeal(*m_currentActor, *targetActor);
             break;
         }
         default : 
-            throw std::runtime_error("Unknown MoveType value"); 
+            throw std::runtime_error("Unknown CommandType value"); 
     }
 }
 
