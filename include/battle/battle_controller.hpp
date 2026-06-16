@@ -55,7 +55,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class TurnState
 {
-    Init, MoveSelection, ActorSelection, Waiting, End
+    Init, ActionSelection, ActorSelection, Waiting, End
 };
 
 struct TurnComparer
@@ -84,7 +84,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController;
         UiDynamicList m_allyList;
         UiDynamicList m_opponentList;
-        UiList m_moveList; 
+        UiList m_actionList; 
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
@@ -92,7 +92,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
-        BattleActor* GetActorSelection(); // I should have Open/CloseActorSelection() ?
+        BattleActor* GetActorSelection();
         ExitEvent CheckBattleEnd() const;
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const; // Should remove srcActor ?
         unsigned int ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
@@ -101,11 +101,11 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
 
-        void OpenActorMoveSelection(); 
-        void CloseActorMoveSelection(); 
+        void OpenActionSelection(); 
+        void CloseActionSelection(); 
         void SetSelectorOptions(const Team team);
-        void HandleActorMoveSelection(const int index);
-        void HandleAiActorMoveSelection(AiActor& srcActor);
+        void HandleActionSelection(const int index);
+        void HandleAiActionSelection(AiActor& srcActor); // Rename ?
         
         void HandleCurrentCommand(BattleActor* targetActor);
 

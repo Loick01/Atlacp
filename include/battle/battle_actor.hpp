@@ -27,7 +27,7 @@ class BattleActor
         BattleActor(const Team team, const UiKey& nameId, const UiKey& healthId, const UiKey& pathId,
             const std::string name, const unsigned int health, const unsigned int turnSpeed); // Should have UiValue as parameters ?
         virtual ~BattleActor() = default;
-        // I need at least one virtual function for BattleActor to be polymorphic, because of dynamic_cast in BattleController::PlayNextTurn (case TurnState::MoveSelection)
+        // I need at least one virtual function for BattleActor to be polymorphic, because of dynamic_cast in BattleController::PlayNextTurn (case TurnState::ActionSelection)
         // https://stackoverflow.com/questions/15114093/getting-source-type-is-not-polymorphic-when-trying-to-use-dynamic-cast
 
         UiValue<std::string> GetName() const;

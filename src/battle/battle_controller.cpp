@@ -15,7 +15,7 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), 
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_moveList(uiController, "../data/ui/file/ally_move_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
+    m_actionList(uiController, "../data/ui/file/action_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
     m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {}
 
@@ -137,19 +137,19 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
     m_textSeries.NextText();
 }
 
-void BattleController::OpenActorMoveSelection()
+void BattleController::OpenActionSelection()
 {
-    m_moveList.Open();
+    m_actionList.Open();
     m_selector.Open();
-    m_selector.SetOptionKeys(m_moveList.GetItemsKey());
+    m_selector.SetOptionKeys(m_actionList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_moveList.GetKey(), Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_actionList.GetKey(), Axis::Height, 0.8f}); 
 }
 
-void BattleController::CloseActorMoveSelection()
+void BattleController::CloseActionSelection()
 {
     m_selector.Close();
-    m_moveList.Close();
+    m_actionList.Close();
 }
 
 void BattleController::SetSelectorOptions(const Team team)
@@ -161,11 +161,11 @@ void BattleController::SetSelectorOptions(const Team team)
     m_selector.SetOptionKeys(keys); // Should not be here ?
 }
 
-void BattleController::HandleActorMoveSelection(const int selectorIndex)
+void BattleController::HandleActionSelection(const int selectorIndex)
 {
     switch (selectorIndex) {
         case 0: {
-            CloseActorMoveSelection();
+            CloseActionSelection();
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an opponent to attack"});
             m_textSeries.NextText();
@@ -183,7 +183,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
         }
         
         case 1: {
-            CloseActorMoveSelection();
+            CloseActionSelection();
             m_textSeries.Open();
             m_textSeries.AddText({"Choose an ally to heal"});
             m_textSeries.NextText();
@@ -201,7 +201,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
         }
 
         case 2:
-            CloseActorMoveSelection();
+            CloseActionSelection();
             m_turnState = TurnState::End;
             break;
             
@@ -215,7 +215,7 @@ void BattleController::HandleActorMoveSelection(const int selectorIndex)
     }
 }
 
-void BattleController::HandleAiActorMoveSelection(AiActor& srcActor)
+void BattleController::HandleAiActionSelection(AiActor& srcActor)
 {
     const unsigned int moveIndex = 0; // TODO : Move selection
     const MoveDefinition md = (m_fileReader.ReadMoveFile("../data/battle/moves/move_list"))[moveIndex]; // Will be done only once
@@ -305,21 +305,21 @@ void BattleController::PlayNextTurn()
     switch (m_turnState) {
         case TurnState::Init : {
             m_currentActor = PopNextTurn();
-            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenActorMoveSelection();
-            m_turnState = TurnState::MoveSelection; 
+            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenActionSelection();
+            m_turnState = TurnState::ActionSelection; 
         }
         
-        case TurnState::MoveSelection : {
+        case TurnState::ActionSelection : {
             AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor); // Already a dynamic_cast in TurnState::Init ?
             if (aiActor != nullptr) {
-                HandleAiActorMoveSelection(*aiActor);
+                HandleAiActionSelection(*aiActor);
             } else {
                 if (m_eventState.uiDirection == Direction::Down)
                     m_selector.Next();
                 else if (m_eventState.uiDirection == Direction::Up)
                     m_selector.Previous();
                 else if (m_eventState.isAction)
-                    HandleActorMoveSelection(m_selector.GetOptionIndex());
+                    HandleActionSelection(m_selector.GetOptionIndex());
             }
             break;
         }
