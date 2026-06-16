@@ -1,6 +1,8 @@
 #pragma once
 
-#include "battle/battle_types.hpp" // Team
+#include <vector>
+
+#include "battle/battle_types.hpp"
 #include "ui/ui_types.hpp" // UiValue
 
 enum class LifeState // Should be in battle_types.hpp ?
@@ -11,6 +13,8 @@ enum class LifeState // Should be in battle_types.hpp ?
 class BattleActor
 {
     private:
+        std::vector<MoveDefinition> m_moves;
+        
         const UiValue<std::string> m_name;
         UiValue<std::string> m_spritePath; // Because I need to update the path
         UiValue<unsigned int> m_health;
@@ -36,11 +40,13 @@ class BattleActor
 
         Team GetTeam() const;
         LifeState GetLifeState() const;
+        MoveDefinition GetMove(const unsigned int index) const;
         float GetNextTurnTime() const;
         unsigned int GetStrength() const;
         
         void ComputeNextTurnTime(const float turnTime); // turnTime is the global current time from BattleController
         void SetSpritePath(const std::string& path);
+        void SetMoves(const std::vector<MoveDefinition>& moves);
         void AddHealth(const unsigned int hp);
         void RemoveHealth(const unsigned int hp);
 };

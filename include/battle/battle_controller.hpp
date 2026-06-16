@@ -55,7 +55,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class TurnState
 {
-    Init, ActionSelection, ActorSelection, Waiting, End
+    Init, ActionSelection, MoveSelection, ActorSelection, Waiting, End
 };
 
 struct TurnComparer
@@ -103,9 +103,10 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         void OpenActionSelection(); 
         void CloseActionSelection(); 
-        void SetSelectorOptions(const Team team);
+        void OpenSelectorOnActors();
         void HandleActionSelection(const int index);
         void HandleAiActionSelection(AiActor& srcActor); // Rename ?
+        void HandleMoveSelection(const int moveIndex);
         
         void HandleCurrentCommand(BattleActor* targetActor);
 

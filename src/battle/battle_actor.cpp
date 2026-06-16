@@ -31,6 +31,11 @@ LifeState BattleActor::GetLifeState() const
     return m_lifeState;
 }
 
+MoveDefinition BattleActor::GetMove(const unsigned int index) const
+{
+    return m_moves[index];
+}
+
 float BattleActor::GetNextTurnTime() const
 {
     return m_nextTurnTime;
@@ -49,6 +54,11 @@ void BattleActor::ComputeNextTurnTime(const float turnTime)
 void BattleActor::SetSpritePath(const std::string& path)
 {
     m_spritePath.value = path;
+}
+
+void BattleActor::SetMoves(const std::vector<MoveDefinition>& moves)
+{
+    m_moves = moves;
 }
 
 void BattleActor::AddHealth(const unsigned int hp)
