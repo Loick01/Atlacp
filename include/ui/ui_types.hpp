@@ -23,6 +23,10 @@ enum class Anchor
     BottomIn, BottomOut
 };
 
+enum class UiDirection { // Try to merge with enum Direction in map/map_types.hpp ?
+    Down, Up, Left, Right, None
+};
+
 template<typename T>
 struct UiValue
 {

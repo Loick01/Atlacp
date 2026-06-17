@@ -12,11 +12,11 @@ namespace { // These values must be the same as in the template file used for th
 }
 
 BattleController::BattleController(FileReader& fileReader, UiController& uiController):
-    m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), 
+    m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_actionList(uiController, "../data/ui/file/action_selection.uif"), m_selector(uiController, "../data/ui/template/selector.uit"),
-    m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
+    m_staticList(uiController, "../data/ui/file/action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
+    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
@@ -58,11 +58,8 @@ BattleActor* BattleController::PopNextTurn()
 
 BattleActor* BattleController::GetActorSelection() // Could return BattleActor index in m_actors ?
 {
-    if (m_eventState.uiDirection == Direction::Down) {
-        m_selector.Next();
-    } else if (m_eventState.uiDirection == Direction::Up) {
-        m_selector.Previous();
-    } else if (m_eventState.isAction) {
+    m_selector.VerticalNavigation(m_eventState.uiDirection);
+    if (m_eventState.isAction) {
         m_textSeries.Close();
         m_selector.Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
@@ -139,17 +136,44 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
 
 void BattleController::OpenActionSelection()
 {
-    m_actionList.Open();
+    m_staticList.Open();
     m_selector.Open();
-    m_selector.SetOptionKeys(m_actionList.GetItemsKey());
+    m_selector.SetOptionKeys(m_staticList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_actionList.GetKey(), Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 0.8f}); 
 }
 
 void BattleController::CloseActionSelection()
 {
     m_selector.Close();
-    m_actionList.Close();
+    m_staticList.Close();
+}
+
+void BattleController::OpenMoveSelection()
+{
+    const std::vector<MoveDefinition> moves = m_currentActor->GetMoves();
+    m_dynamicList.SetFirstItemParams(
+        UiParams(m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.5f)), Axis::Width, // Scale
+        Anchor::LeftIn, Anchor::TopIn, // Anchor
+        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.05f)), // Padding
+        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f))));
+    m_dynamicList.SetNrItem(moves.size());
+    m_dynamicList.Open();
+    
+    const std::vector<UiKey> keys = m_dynamicList.GetItemsKey();
+    for (unsigned int i = 0 ; i < keys.size() ; i++) { // keys.size = moves.size()
+        m_uiController.UpdateText(keys[i], moves[i].name);
+    }
+
+    m_selector.Open();
+    m_selector.SetOptionKeys(keys);
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_dynamicList.GetKey(), Axis::Height, 0.8f});
+}
+
+void BattleController::CloseMoveSelection()
+{
+    m_selector.Close();
+    m_dynamicList.Close();
 }
 
 void BattleController::OpenSelectorOnActors()
@@ -161,6 +185,10 @@ void BattleController::OpenSelectorOnActors()
         keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList/m_opponentList
     m_selector.SetOptionKeys(keys);
     m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
+
+    m_textSeries.Open();
+    m_textSeries.AddText({"Select a BattleActor"}); // TODO
+    m_textSeries.NextText();
 }
 
 void BattleController::HandleActionSelection(const int selectorIndex)
@@ -169,30 +197,8 @@ void BattleController::HandleActionSelection(const int selectorIndex)
     
     switch (selectorIndex) {
         case 0: {
-            m_textSeries.Open();
-            m_textSeries.AddText({"Choose an opponent to attack"});
-            m_textSeries.NextText();
-            
-            // Remove
-            const MoveDefinition md = m_currentActor->GetMove(0);
-            m_currentCommand = CreateCommand(m_currentActor, md);
-
-            OpenSelectorOnActors();
-            m_turnState = TurnState::ActorSelection;
-            break;
-        }
-        
-        case 1: {
-            m_textSeries.Open();
-            m_textSeries.AddText({"Choose an ally to heal"});
-            m_textSeries.NextText();
-
-            // Remove
-            const MoveDefinition md = m_currentActor->GetMove(2);
-            m_currentCommand = CreateCommand(m_currentActor, md);
-
-            OpenSelectorOnActors();
-            m_turnState = TurnState::ActorSelection;
+            OpenMoveSelection();
+            m_turnState = TurnState::MoveSelection;
             break;
         }
 
@@ -218,29 +224,31 @@ void BattleController::HandleAiActionSelection(AiActor& srcActor)
 
     const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
     const LifeState lf = m_currentCommand.targetLifeState;
-    BattleActor* targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
-    HandleCurrentCommand(targetActor);
+    m_targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
+    
+    m_turnState = TurnState::HandleCommand;
 }
 
 void BattleController::HandleMoveSelection(const int moveIndex)
 {
+    CloseMoveSelection();
+    
     const MoveDefinition md = m_currentActor->GetMove(moveIndex);
     m_currentCommand = CreateCommand(m_currentActor, md);
 
-    // Should not be here ?
     OpenSelectorOnActors(); // Selectable actors are filtered with targetTeam and targetLifeState in m_currentCommand
     m_turnState = TurnState::ActorSelection;
 }
 
-void BattleController::HandleCurrentCommand(BattleActor* targetActor)
+void BattleController::HandleCurrentCommand()
 {
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
-            ApplyDamage(*m_currentActor, *targetActor);
+            ApplyDamage(*m_currentActor, *m_targetActor);
             break;
         }
         case CommandType::Heal : {
-            ApplyHeal(*m_currentActor, *targetActor);
+            ApplyHeal(*m_currentActor, *m_targetActor);
             break;
         }
         default : 
@@ -318,38 +326,37 @@ void BattleController::PlayNextTurn()
             m_turnState = TurnState::ActionSelection; 
         }
         
-        case TurnState::ActionSelection : {
-            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor); // Already a dynamic_cast in TurnState::Init ?
+        case TurnState::ActionSelection : { // Should have TurnState::AiActionSelection to avoid dynamic_cast ?
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
             if (aiActor != nullptr) {
                 HandleAiActionSelection(*aiActor);
             } else {
-                if (m_eventState.uiDirection == Direction::Down)
-                    m_selector.Next();
-                else if (m_eventState.uiDirection == Direction::Up)
-                    m_selector.Previous();
-                else if (m_eventState.isAction)
+                m_selector.VerticalNavigation(m_eventState.uiDirection);
+                if (m_eventState.isAction)
                     HandleActionSelection(m_selector.GetOptionIndex());
             }
             break;
         }
 
         case TurnState::MoveSelection : {
-            if (m_eventState.uiDirection == Direction::Down)
-                m_selector.Next();
-            else if (m_eventState.uiDirection == Direction::Up)
-                m_selector.Previous();
-            else if (m_eventState.isAction)
+            m_selector.VerticalNavigation(m_eventState.uiDirection);
+            if (m_eventState.isAction)
                 HandleMoveSelection(m_selector.GetOptionIndex());
             break;
         }
 
         case TurnState::ActorSelection : {
-            BattleActor* targetActor = GetActorSelection();
-            if (targetActor != nullptr)
-                HandleCurrentCommand(targetActor);
+            m_targetActor = GetActorSelection();
+            if (m_targetActor != nullptr)
+                m_turnState = TurnState::HandleCommand;
             break;
         }
 
+        case TurnState::HandleCommand : {
+            HandleCurrentCommand();
+            break;
+        }
+        
         case TurnState::Waiting : {
             if (m_eventState.isAction) {
                 if (!m_textSeries.NextText()) {

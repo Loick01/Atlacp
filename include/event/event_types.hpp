@@ -2,6 +2,7 @@
 
 #include "map/map_types.hpp" // Direction
 #include "tile/tile_types.hpp" // Tile
+#include "ui/ui_types.hpp" // UiDirection
 
 struct GameplayEventState
 {
@@ -40,11 +41,11 @@ struct EditorEventState
 
 struct BattleEventState
 {
-    Direction uiDirection; // Rename
+    UiDirection uiDirection;
     bool isAction;
 
     BattleEventState() {
-        uiDirection = Direction::None;
+        uiDirection = UiDirection::None;
         isAction = false;
     }
 };

@@ -1,0 +1,9 @@
+frame
+move
+textelement
+PixelOperator8
+scale frame width 0.5
+scaleAxis width
+xAnchor left_in
+yAnchor bottom_out
+text Default

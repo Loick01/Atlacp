@@ -17,6 +17,16 @@ class AiActor;
 class FileReader;
 class UiController;
 
+enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
+{
+    ExitWin, ExitLost, None
+};
+
+enum class TurnState
+{
+    Init, ActionSelection, MoveSelection, ActorSelection, HandleCommand, Waiting, End
+};
+
 struct BattleCommand
 {
     CommandType commandType;
@@ -48,16 +58,6 @@ struct BattleCommand
     }
 };
 
-enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
-{
-    ExitWin, ExitLost, None
-};
-
-enum class TurnState
-{
-    Init, ActionSelection, MoveSelection, ActorSelection, Waiting, End
-};
-
 struct TurnComparer
 {
     bool operator()(const BattleActor* b1, const BattleActor* b2) const
@@ -73,7 +73,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         std::vector<BattleActor*> m_allies; std::vector<BattleActor*> m_opponents;
         BattleActor* m_currentActor; // Actor that is playing his turn
-        // BattleActor* m_targetActor;
+        BattleActor* m_targetActor;
         TurnState m_turnState;
         ExitEvent m_exitEvent;
         BattleCommand m_currentCommand;
@@ -84,7 +84,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController;
         UiDynamicList m_allyList;
         UiDynamicList m_opponentList;
-        UiList m_actionList; 
+        UiList m_staticList; // Used for action selection
+        UiDynamicList m_dynamicList; // Used for move selection
         UiSelector m_selector;
         UiTextSeries m_textSeries;
 
@@ -102,13 +103,15 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
 
         void OpenActionSelection(); 
-        void CloseActionSelection(); 
+        void CloseActionSelection();
+        void OpenMoveSelection(); 
+        void CloseMoveSelection();
         void OpenSelectorOnActors();
         void HandleActionSelection(const int index);
         void HandleAiActionSelection(AiActor& srcActor); // Rename ?
         void HandleMoveSelection(const int moveIndex);
         
-        void HandleCurrentCommand(BattleActor* targetActor);
+        void HandleCurrentCommand();
 
     public:
         BattleController(FileReader& fileReader, UiController& uiController);

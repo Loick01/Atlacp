@@ -26,4 +26,5 @@ class UiSelector : public UiComponent
         void SetOptionKeys(std::vector<UiKey> optionKeys);
         void Previous();
         void Next();
+        void VerticalNavigation(const UiDirection d);
 };
