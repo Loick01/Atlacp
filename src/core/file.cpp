@@ -133,7 +133,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 data.yPadding.axis = ReadAxis(s);
                 input >> data.yPadding.amount;
             } else if (s == "text") {
-                std::getline(input, data.text);
+                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream 
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }

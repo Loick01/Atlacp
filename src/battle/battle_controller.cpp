@@ -161,9 +161,8 @@ void BattleController::OpenMoveSelection()
     m_dynamicList.Open();
     
     const std::vector<UiKey> keys = m_dynamicList.GetItemsKey();
-    for (unsigned int i = 0 ; i < keys.size() ; i++) { // keys.size = moves.size()
+    for (unsigned int i = 0 ; i < keys.size() ; i++) // keys.size = moves.size()
         m_uiController.UpdateText(keys[i], moves[i].name);
-    }
 
     m_selector.Open();
     m_selector.SetOptionKeys(keys);
@@ -202,11 +201,14 @@ void BattleController::HandleActionSelection(const int selectorIndex)
             break;
         }
 
-        case 2:
-            m_turnState = TurnState::End;
+        case 1:
+            m_textSeries.Open();
+            m_textSeries.AddText({"This turn has been skipped"});
+            m_textSeries.NextText();
+            m_turnState = TurnState::Waiting;
             break;
             
-        case 3: {
+        case 2: {
             Notify(ExitEvent::ExitWin); // Not ExitWin
             break;
         }
