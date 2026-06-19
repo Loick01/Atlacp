@@ -2,11 +2,13 @@
 
 #include <stdexcept>
 
+#include "sound/sound.hpp"
+
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
     m_window("Atlacp", {25,25,25}), m_fontController(), m_textureController(m_fontController, m_window.GetRenderer()), 
     m_uiController(m_fileReader, m_fontController, m_textureController, "PixelOperator8"),
-    m_context{m_window, m_fontController, m_textureController, m_soundController, m_fileReader, m_uiController},
+    m_context{m_window, m_fontController, m_textureController, m_fileReader, m_uiController},
     m_pendingSwitch(std::nullopt)
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
@@ -92,7 +94,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
 
-    // m_context.soundController.SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
+    // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -209,7 +211,7 @@ void EditorTilemapScene::Gameloop()
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
-    m_battleController(m_context.fileReader, m_context.soundController, m_context.uiController)
+    m_battleController(m_context.fileReader, m_context.uiController)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -220,7 +222,7 @@ BattleScene::BattleScene(GameContext& context):
    
     m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
     
-    m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
+    SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     m_battleController.InitializeActors("../data/battle/battles/test");
     

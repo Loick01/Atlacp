@@ -4,12 +4,7 @@
 
 #include "tile/tilemap.hpp"
 
-Pathfind& Pathfind::GetInstance() {
-    static Pathfind instance; // Local static object, create an instance only when this is the first call
-    return instance;
-}
-
-std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap) const
+std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap)
 {
     // Breadth First Search -> Explore all the accessible tiles
     std::queue<MapPosition> queue;

@@ -43,7 +43,6 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         
         virtual void ComputeFinal();
         
-        std::vector<std::unique_ptr<UiElement>>& GetChilds(); // Should return a const vector ? The function should be const ?
         std::unique_ptr<UiElement> RemoveChild(const UiKey& key);
         UiElement* GetParent(); // Should return const and be const ?
         const UiKey& GetKey() const;

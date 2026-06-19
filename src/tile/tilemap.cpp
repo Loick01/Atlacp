@@ -19,29 +19,9 @@ const std::vector<TileLayer>& Tilemap::GetLayers() const
     return m_mapData.map;
 }
 
-GridSize Tilemap::GetLayerSize() const
+const std::vector<bool>& Tilemap::GetOccupancyGrid() const
 {
-    return m_mapData.size;
-}
-
-MapPosition Tilemap::GetSpawnPosition() const
-{
-    return m_mapData.spawnPosition; // Return the spawn position of the loaded map (could be -1 if undefined)
-}
-
-int Tilemap::GetTileSize() const
-{
-    return m_tileset.GetTileSize();
-}
-
-unsigned int Tilemap::GetTileIndex(const MapPosition p) const
-{
-    return p.y*m_mapData.size.x+p.x;
-}
-
-void Tilemap::SetTileAt(const size_t layer, const Tile newTile, const MapPosition p)
-{
-    m_mapData.map[layer].SetTile(GetTileIndex(p), newTile);
+    return m_mapData.occupancyGrid;
 }
 
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
@@ -53,31 +33,9 @@ MapBound Tilemap::IsOutOfMap(const MapPosition p) const
     return MapBound::Inside;
 }
 
-void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
+MapPosition Tilemap::GetSpawnPosition() const
 {
-    // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
-    // Maps are supposed to be designed in such a way the player can't get out of the world.
-    switch (bound){
-        case MapBound::OutUp:
-            m_currentMap -= m_worldData.size.x;
-            break;
-        case MapBound::OutDown:
-            m_currentMap += m_worldData.size.x;
-            break;
-        case MapBound::OutRight:
-            m_currentMap += 1;
-            break;
-        case MapBound::OutLeft:
-            m_currentMap -= 1;
-            break;
-    }
-    LoadMap(m_worldData.maps[m_currentMap]);
-    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
-}
-
-std::vector<bool> Tilemap::GetOccupancyGrid() const
-{
-    return m_mapData.occupancyGrid;
+    return m_mapData.spawnPosition; // Return the spawn position of the loaded map (could be -1 if undefined)
 }
 
 MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound) const
@@ -100,24 +58,9 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
     return projectedPosition;
 }
 
-void Tilemap::TakePosition(const MapPosition p)
+GridSize Tilemap::GetLayerSize() const
 {
-    m_mapData.occupancyGrid[GetTileIndex(p)] = false;
-}
-
-void Tilemap::FreePosition(const MapPosition p)
-{
-    m_mapData.occupancyGrid[GetTileIndex(p)] = true;
-}
-
-int Tilemap::GetGridSize() const
-{
-    return m_mapData.size.x*m_mapData.size.y;
-}
-
-bool Tilemap::IsFreePosition(const MapPosition p)
-{
-    return m_mapData.occupancyGrid[GetTileIndex(p)];
+    return m_mapData.size;
 }
 
 size_t Tilemap::GetLayerCount() const
@@ -128,6 +71,79 @@ size_t Tilemap::GetLayerCount() const
 size_t Tilemap::GetCurrentMapIndex() const
 {
     return m_currentMap;
+}
+
+int Tilemap::GetTileSize() const
+{
+    return m_tileset.GetTileSize();
+}
+
+int Tilemap::GetGridSize() const
+{
+    return m_mapData.size.x*m_mapData.size.y;
+}
+
+unsigned int Tilemap::GetTileIndex(const MapPosition p) const
+{
+    return p.y*m_mapData.size.x+p.x;
+}
+
+bool Tilemap::IsPositionInTexture(const Vec2 sp) const
+{
+    const AreaSize as = m_mapData.size*m_tileset.GetTileSize(); // Do not use zoom here
+    return sp.x >= 0 && sp.y >= 0 && sp.x <= as.x && sp.y <= as.y;
+}
+
+bool Tilemap::IsFreePosition(const MapPosition p)
+{
+    return m_mapData.occupancyGrid[GetTileIndex(p)];
+}
+
+void Tilemap::TakePosition(const MapPosition p)
+{
+    m_mapData.occupancyGrid[GetTileIndex(p)] = false;
+}
+
+void Tilemap::FreePosition(const MapPosition p)
+{
+    m_mapData.occupancyGrid[GetTileIndex(p)] = true;
+}
+
+void Tilemap::SetTileAt(const size_t layer, const Tile newTile, const MapPosition p)
+{
+    m_mapData.map[layer].SetTile(GetTileIndex(p), newTile);
+}
+
+void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile newTile)
+{
+    if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
+        const int tileSize = m_tileset.GetTileSize();
+        int c = sp.x/tileSize;
+        int l = sp.y/tileSize;
+        SetTileAt(layer,newTile,{c,l});
+    }
+}
+
+void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
+{
+    // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
+    // Maps are supposed to be designed in such a way the player can't get out of the world.
+    switch (bound){
+        case MapBound::OutUp:
+            m_currentMap -= m_worldData.size.x;
+            break;
+        case MapBound::OutDown:
+            m_currentMap += m_worldData.size.x;
+            break;
+        case MapBound::OutRight:
+            m_currentMap += 1;
+            break;
+        case MapBound::OutLeft:
+            m_currentMap -= 1;
+            break;
+    }
+    LoadMap(m_worldData.maps[m_currentMap]);
+    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 
 void Tilemap::LoadMap(const std::string& path)
@@ -157,22 +173,6 @@ void Tilemap::LoadMap(const std::string& path)
         }
     }
     Notify(TilemapEvent::LoadingMap); // Update TileLayer used for rendering in TilemapScene
-}
-
-bool Tilemap::IsPositionInTexture(const Vec2 sp) const
-{
-    const AreaSize as = m_mapData.size*m_tileset.GetTileSize(); // Do not use zoom here
-    return sp.x >= 0 && sp.y >= 0 && sp.x <= as.x && sp.y <= as.y;
-}
-
-void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile newTile)
-{
-    if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
-        const int tileSize = m_tileset.GetTileSize();
-        int c = sp.x/tileSize;
-        int l = sp.y/tileSize;
-        SetTileAt(layer,newTile,{c,l});
-    }
 }
 
 void Tilemap::SaveMap(const std::string &mapFilepath) const

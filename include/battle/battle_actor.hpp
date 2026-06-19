@@ -40,11 +40,10 @@ class BattleActor
 
         Team GetTeam() const;
         LifeState GetLifeState() const;
-        const std::vector<MoveDefinition> GetMoves() const;
+        const std::vector<MoveDefinition>& GetMoves() const;
         MoveDefinition GetMove(const unsigned int index) const;
         float GetNextTurnTime() const;
         unsigned int GetStrength() const;
-        unsigned int GetNrMoves() const; // Should I have GetMoves() ?
         
         void ComputeNextTurnTime(const float turnTime); // turnTime is the global current time from BattleController
         void SetSpritePath(const std::string& path);

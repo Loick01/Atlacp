@@ -73,7 +73,7 @@ void FollowEntityBehaviour::OnStopCase(MapEntity& entity)
 GoToBehaviour::GoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap):
     m_pathIndex(0)
 {
-    m_path = Pathfind::GetInstance().ComputePath(startPosition, endPosition, tilemap);
+    m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
 }
 
 void GoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)

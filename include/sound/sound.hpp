@@ -6,17 +6,19 @@
 #include <SDL2/SDL_mixer.h>
 // Mix_FadeOutMusic(int ms), Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 
-class SoundController
+class SoundController // Singleton
 {
     private:
         std::unordered_map<std::string, Mix_Chunk*> m_chunks;
         Mix_Music* m_backgroundMusic;
 
+        SoundController();
+        ~SoundController();
+        
         void DeleteBackgroundMusic();
 
     public:
-        SoundController();
-        ~SoundController();
+        static SoundController& GetInstance();
 
         void SetBackgroundMusic(const std::string& filepath);
 

@@ -23,6 +23,11 @@ SoundController::~SoundController()
     Mix_Quit(); // Optionnal if use only Mix_OpenAudio, but required if use Mix_Init()
 }
 
+SoundController& SoundController::GetInstance() {
+    static SoundController instance; // Local static object, create an instance only when this is the first call
+    return instance;
+}
+
 void SoundController::DeleteBackgroundMusic()
 {
     Mix_HaltMusic();

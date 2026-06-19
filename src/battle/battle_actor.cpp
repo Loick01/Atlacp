@@ -31,7 +31,7 @@ LifeState BattleActor::GetLifeState() const
     return m_lifeState;
 }
 
-const std::vector<MoveDefinition> BattleActor::GetMoves() const
+const std::vector<MoveDefinition>& BattleActor::GetMoves() const
 {
     return m_moves;
 }

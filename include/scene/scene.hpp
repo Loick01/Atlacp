@@ -9,7 +9,6 @@
 #include "image/font.hpp"
 #include "image/texture.hpp"
 #include "map/entity_controller.hpp"
-#include "sound/sound.hpp"
 #include "core/camera.hpp"
 #include "core/file.hpp"
 #include "core/time.hpp"
@@ -28,7 +27,6 @@ struct GameContext
     Window& window;
     FontController& fontController;
     TextureController& textureController;
-    SoundController& soundController;
     FileReader& fileReader; 
     UiController& uiController;
 
@@ -108,7 +106,6 @@ class SceneController
 {
     private:
         Window m_window;
-        SoundController m_soundController;
         FontController m_fontController;
         TextureController m_textureController;
         FileReader m_fileReader;

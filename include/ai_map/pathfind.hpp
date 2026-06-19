@@ -6,12 +6,9 @@
 
 class Tilemap;
 
-class Pathfind // Singleton
+class Pathfind
 {
-    private:
-        Pathfind() = default;
-
     public:
-        static Pathfind& GetInstance();
-        std::vector<MapPosition> ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap) const;
+        // Don't pass MapPosition parameters as const&
+        static std::vector<MapPosition> ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap);
 };
