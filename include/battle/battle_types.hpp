@@ -33,4 +33,5 @@ struct MoveDefinition // Rename
     CommandType commandType;
     MoveType moveType;
     unsigned int value; // Rename
+    std::string sfxPath;
 };

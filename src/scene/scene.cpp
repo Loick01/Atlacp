@@ -220,7 +220,7 @@ BattleScene::BattleScene(GameContext& context):
    
     m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
     
-    // m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
+    m_context.soundController.SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     m_battleController.InitializeActors("../data/battle/battles/test");
     

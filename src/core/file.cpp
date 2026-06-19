@@ -57,6 +57,7 @@ std::vector<MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFile
         input >> s;
         m.moveType = ReadMoveType(s);
         input >> m.value;
+        input >> m.sfxPath;
         moves.push_back(m);
     }
     return moves;

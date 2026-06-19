@@ -51,7 +51,7 @@ void SoundController::PlayChunk(const std::string& path)
 void SoundController::LoadChunk(const std::string& path)
 {
     if (m_chunks.find(path) == m_chunks.end()) {
-        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/"+path).c_str());
+        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/sfx/"+path).c_str());
         if (chunk != nullptr) 
             m_chunks[path] = chunk;
         else

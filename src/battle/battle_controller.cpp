@@ -94,7 +94,7 @@ unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigne
 BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const
 {
     const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
-    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount); // Will not be LifeState::Alive
+    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath); // Will not be LifeState::Alive
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -247,12 +247,12 @@ void BattleController::HandleCurrentCommand()
 {
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
-            m_soundController.PlayChunk("Impact.wav"); // Will play the sound effect associated to the move. Will not be here ?
+            m_soundController.PlayChunk(m_currentCommand.sfx); // Will not be here ?
             ApplyDamage(*m_currentActor, *m_targetActor);
             break;
         }
         case CommandType::Heal : {
-            m_soundController.PlayChunk("Heal.wav"); // Will play the sound effect associated to the move. Will not be here ?
+            m_soundController.PlayChunk(m_currentCommand.sfx); // Will not be here ?
             ApplyHeal(*m_currentActor, *m_targetActor);
             break;
         }
@@ -276,10 +276,10 @@ void BattleController::InitializeActors(const std::string& battleFile)
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
 
 
-    const std::vector<MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list"); // For now, actors can command all moves
     // Will be removed --> Each BattleActor will have his own moves and will call SoundController::LoadChunk on each of them
-    m_soundController.LoadChunk("Impact.wav");
-    m_soundController.LoadChunk("Heal.wav");
+    const std::vector<MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list"); // For now, actors can command all moves
+    for (const MoveDefinition& m : moves)
+        m_soundController.LoadChunk(m.sfxPath);
 
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
     unsigned int countAlly = 0;

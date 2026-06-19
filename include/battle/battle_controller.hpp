@@ -35,6 +35,7 @@ struct BattleCommand
     Team targetTeam;
     LifeState targetLifeState;
     unsigned int moveValue; // Rename
+    std::string sfx;
 
     Team ComputeTargetTeam() const
     {
@@ -50,12 +51,13 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv) {
+    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv, const std::string& sfxPath) {
         commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
         targetLifeState = s;
         moveValue = mv;
+        sfx = sfxPath;
     }
 };
 
