@@ -3,6 +3,7 @@
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/ai_actor.hpp"
 #include "core/file.hpp"
+#include "sound/sound.hpp"
 #include "ui/ui_controller.hpp"
 
 namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
@@ -11,8 +12,8 @@ namespace { // These values must be the same as in the template file used for th
     const std::string prefixSprite = "actorSprite";
 }
 
-BattleController::BattleController(FileReader& fileReader, UiController& uiController):
-    m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
+BattleController::BattleController(FileReader& fileReader, SoundController& soundController, UiController& uiController):
+    m_uiController(uiController), m_soundController(soundController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_staticList(uiController, "../data/ui/file/action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
@@ -246,10 +247,12 @@ void BattleController::HandleCurrentCommand()
 {
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
+            m_soundController.PlayChunk("Impact.wav"); // Will play the sound effect associated to the move. Will not be here ?
             ApplyDamage(*m_currentActor, *m_targetActor);
             break;
         }
         case CommandType::Heal : {
+            m_soundController.PlayChunk("Heal.wav"); // Will play the sound effect associated to the move. Will not be here ?
             ApplyHeal(*m_currentActor, *m_targetActor);
             break;
         }
@@ -274,6 +277,9 @@ void BattleController::InitializeActors(const std::string& battleFile)
 
 
     const std::vector<MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list"); // For now, actors can command all moves
+    // Will be removed --> Each BattleActor will have his own moves and will call SoundController::LoadChunk on each of them
+    m_soundController.LoadChunk("Impact.wav");
+    m_soundController.LoadChunk("Heal.wav");
 
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
     unsigned int countAlly = 0;
@@ -296,7 +302,7 @@ void BattleController::InitializeActors(const std::string& battleFile)
             actor = std::make_unique<BattleActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
 
         actor->SetSpritePath(data.spritePath); // Sprite path should be in BattleActor constructor ?
-        actor->SetMoves(moves);
+        actor->SetMoves(moves); // Will be removed (for now all moves are available)
         
         actor->ComputeNextTurnTime(m_currentTime);
         m_turns.push(actor.get());

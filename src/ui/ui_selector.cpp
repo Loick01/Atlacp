@@ -48,10 +48,10 @@ unsigned int UiSelector::GetInstanceCount()
     return m_instanceCount++;
 }
 
-void UiSelector::VerticalNavigation(const UiDirection d)
+void UiSelector::VerticalNavigation(const Direction d)
 {
-    if (d == UiDirection::Down)
+    if (d == Direction::Down)
         Next();
-    else if (d == UiDirection::Up)
+    else if (d == Direction::Up)
         Previous();
 }

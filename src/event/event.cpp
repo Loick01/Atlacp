@@ -216,20 +216,20 @@ void BattleEventController::HandlePollEvents()
         } 
         if (m_actionController->IsMotionPoll(event)) {
             if (m_actionController->IsUpActionPoll(event)) {
-                m_eventState.uiDirection = UiDirection::Up;
+                m_eventState.uiDirection = Direction::Up;
                 return;
             } else if (m_actionController->IsDownActionPoll(event)) {
-                m_eventState.uiDirection = UiDirection::Down;
+                m_eventState.uiDirection = Direction::Down;
                 return;
             } else if (m_actionController->IsRightActionPoll(event)) {
-                m_eventState.uiDirection = UiDirection::Right;
+                m_eventState.uiDirection = Direction::Right;
                 return;
             } else if (m_actionController->IsLeftActionPoll(event)) {
-                m_eventState.uiDirection = UiDirection::Left;
+                m_eventState.uiDirection = Direction::Left;
                 return;
             }
         }
     }
     m_eventState.isAction = false;
-    m_eventState.uiDirection = UiDirection::None;
+    m_eventState.uiDirection = Direction::None;
 }

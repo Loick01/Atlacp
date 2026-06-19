@@ -47,7 +47,6 @@ void FontController::DeleteFont(const FontKey& key)
             it->second.count--;
         }
     } else {
-        std::cout << "Try to delete a font not in m_fonts : " << key << "\n";
-        // throw std::runtime_error("Try to delete a texture that don't exist in TextureController : " + key);
+        throw std::runtime_error("Try to delete a font not in FontController : " + key);
     }
 }

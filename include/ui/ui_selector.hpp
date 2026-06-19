@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "core/core_types.hpp" // Direction
 #include "ui/ui_component.hpp"
 #include "ui/ui_types.hpp" // UiKey
 
@@ -26,5 +27,5 @@ class UiSelector : public UiComponent
         void SetOptionKeys(std::vector<UiKey> optionKeys);
         void Previous();
         void Next();
-        void VerticalNavigation(const UiDirection d);
+        void VerticalNavigation(const Direction d);
 };

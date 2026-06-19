@@ -15,6 +15,7 @@
 
 class AiActor;
 class FileReader;
+class SoundController;
 class UiController;
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
@@ -80,6 +81,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         float m_currentTime;
         
         FileReader& m_fileReader;
+        SoundController& m_soundController;
 
         UiController& m_uiController;
         UiDynamicList m_allyList;
@@ -114,7 +116,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleCurrentCommand();
 
     public:
-        BattleController(FileReader& fileReader, UiController& uiController);
+        BattleController(FileReader& fileReader, SoundController& soundController, UiController& uiController);
         
         void InitializeActors(const std::string& battleFile); // Rename battleFile
         void PlayNextTurn();

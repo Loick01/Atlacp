@@ -74,3 +74,14 @@ std::ostream& operator<<(std::ostream& os, const Pair<T>& v) {
     os << "(x=" << v.x << ", y=" << v.y << ")\n";
     return os;
 }
+
+enum class Direction
+{
+    // Do not change the order (sprite animation is based on implicit int defined in this enum)
+    // Random::GetRandomDirection and MapMovement::GetOppositeDirection also use this order
+    Down, // 0
+    Right, // 1
+    Up, // 2
+    Left, // 3
+    None
+};
