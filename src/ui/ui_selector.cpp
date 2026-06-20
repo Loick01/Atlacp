@@ -1,5 +1,6 @@
 #include "ui/ui_selector.hpp"
 
+#include "sound/sound.hpp"
 #include "ui/ui_controller.hpp"
 
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
@@ -50,8 +51,11 @@ unsigned int UiSelector::GetInstanceCount()
 
 void UiSelector::VerticalNavigation(const Direction d)
 {
-    if (d == Direction::Down)
+    if (d == Direction::Down) {
+        SoundController::GetInstance().PlayChunk(moveSfx); // Should not be here ?
         Next();
-    else if (d == Direction::Up)
+    } else if (d == Direction::Up) {
+        SoundController::GetInstance().PlayChunk(moveSfx); // Should not be here ?
         Previous();
+    }
 }

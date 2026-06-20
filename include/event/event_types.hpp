@@ -3,20 +3,20 @@
 #include "map/map_types.hpp" // Direction
 #include "tile/tile_types.hpp" // Tile
 
-struct GameplayEventState
+struct GameMapEventState
 {
     Direction mapDirection;
     bool isInteracting;
     bool isRunning;
 
-    GameplayEventState() {
+    GameMapEventState() {
         mapDirection = Direction::None;
         isInteracting = false;
         isRunning = false;
     }
 };
 
-struct EditorEventState
+struct EditorMapEventState
 {
     Tile selectedTile;
     int selectedTileset;
@@ -25,7 +25,7 @@ struct EditorEventState
     bool isCameraMoving;
     bool isReplacingTile;
 
-    EditorEventState() {
+    EditorMapEventState() {
         selectedLayer = 0;
         isCameraMoving = false;
         selectedTile = 0;

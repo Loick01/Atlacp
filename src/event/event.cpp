@@ -1,6 +1,6 @@
 #include "event/event.hpp"
 
-// Because of EditorEventController
+// Because of EditorMapEventController
 #include "core/camera.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
@@ -31,7 +31,7 @@ void EventController::PollAllEvents()
     }
 }
 
-GameplayEventController::GameplayEventController():
+GameMapEventController::GameMapEventController():
     EventController()
 {
     if (JoystickActionController::IsJoystickAvailable()) {
@@ -41,7 +41,7 @@ GameplayEventController::GameplayEventController():
     }
 }
 
-void GameplayEventController::HandleStateEvents()
+void GameMapEventController::HandleStateEvents()
 {
     m_actionController->GetStateActions();
 
@@ -58,7 +58,7 @@ void GameplayEventController::HandleStateEvents()
         m_eventState.mapDirection = Direction::None;
 }
 
-void GameplayEventController::HandlePollEvents()
+void GameMapEventController::HandlePollEvents()
 {
     for (SDL_Event event : m_events){
         if (m_actionController->IsPressedPoll(event)) {
@@ -71,29 +71,29 @@ void GameplayEventController::HandlePollEvents()
     m_eventState.isInteracting = false;
 }
 
-EditorEventController::EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
+EditorMapEventController::EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
     m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
 {
     m_eventState.SetLayerSize(m_layerCount);
     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
 }
 
-ScreenPosition EditorEventController::GetMouseScreenPosition() const
+ScreenPosition EditorMapEventController::GetMouseScreenPosition() const
 {
     ScreenPosition sp;
     SDL_GetMouseState(&sp.x, &sp.y);
     return sp;
 }
 
-ScenePosition EditorEventController::GetMouseScenePosition() const
+ScenePosition EditorMapEventController::GetMouseScenePosition() const
 {
     return (m_camera.GetPosition()-m_camera.GetScreenOffset()+GetMouseScreenPosition())/m_camera.GetZoom();
 }
 
-void EditorEventController::HandleStateEvents()
+void EditorMapEventController::HandleStateEvents()
 {}
 
-void EditorEventController::HandlePollEvents()
+void EditorMapEventController::HandlePollEvents()
 {
     for (SDL_Event event : m_events){
         switch (event.type){

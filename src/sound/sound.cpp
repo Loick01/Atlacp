@@ -14,11 +14,19 @@ SoundController::SoundController()
         throw std::runtime_error("Failed to open audio\n" + std::string(Mix_GetError()));
 
     m_backgroundMusic = nullptr;
+
+    LoadBasicSound();
 }
 
 SoundController::~SoundController()
 {
     DeleteBackgroundMusic();
+
+    std::unordered_map<std::string, Mix_Chunk*>::iterator it;
+    for (it = m_chunks.begin() ; it != m_chunks.end() ; it++)
+        Mix_FreeChunk(it->second);
+    m_chunks.clear();
+
     Mix_CloseAudio();
     Mix_Quit(); // Optionnal if use only Mix_OpenAudio, but required if use Mix_Init()
 }
@@ -26,6 +34,13 @@ SoundController::~SoundController()
 SoundController& SoundController::GetInstance() {
     static SoundController instance; // Local static object, create an instance only when this is the first call
     return instance;
+}
+
+void SoundController::LoadBasicSound()
+{
+    LoadChunk(acceptSfx);
+    LoadChunk(moveSfx);
+    LoadChunk(nextSfx);
 }
 
 void SoundController::DeleteBackgroundMusic()
@@ -56,7 +71,7 @@ void SoundController::PlayChunk(const std::string& path)
 void SoundController::LoadChunk(const std::string& path)
 {
     if (m_chunks.find(path) == m_chunks.end()) {
-        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/sfx/"+path).c_str());
+        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/sfx/"+path+".wav").c_str());
         if (chunk != nullptr) 
             m_chunks[path] = chunk;
         else

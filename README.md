@@ -8,8 +8,8 @@ mkdir build
 cd build
 cmake ..
 make
-./atlacp 0 # Run the game
-./atlacp 1 # Run the tilemap editor
+./atlacp 0 # Run the world map
+./atlacp 1 # Run the map editor
 ./atlacp 2 # Run the battle mode
 ```
 ### Demo videos

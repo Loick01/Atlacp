@@ -19,7 +19,7 @@
 
 enum class SwitchEvent
 {
-    ToGameplay, ToEditor, ToBattle
+    ToGameMap, ToEditorMap, ToBattle
 };
 
 struct GameContext
@@ -64,30 +64,30 @@ class TilemapScene : public Scene
         TilemapScene(GameContext& context, const bool shouldCulling);
 };
 
-class GameplayTilemapScene : public TilemapScene
+class GameMapScene : public TilemapScene
 {
     private:
         Time m_time;
         EntityController m_entities; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
 
-        // In GameplayTilemapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
+        // In GameMapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
         const size_t m_layersSplitIndex; // Should not be const ?
         
     public:
-        GameplayTilemapScene(GameContext& context);
-        ~GameplayTilemapScene() = default;
+        GameMapScene(GameContext& context);
+        ~GameMapScene() = default;
         void Gameloop() override;
         void HandleTilemapEvent(const TilemapEvent e) override;
 };
 
-class EditorTilemapScene : public TilemapScene
+class EditorMapScene : public TilemapScene
 {
     private:
         int m_lastLayer; // UiValue ?
         
     public:
-        EditorTilemapScene(GameContext& context);
+        EditorMapScene(GameContext& context);
         void Gameloop() override;
 };
 

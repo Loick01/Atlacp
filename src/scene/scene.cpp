@@ -19,9 +19,9 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
 {
     switch (mode){
         case 0:
-            return SwitchEvent::ToGameplay;
+            return SwitchEvent::ToGameMap;
         case 1:
-            return SwitchEvent::ToEditor;
+            return SwitchEvent::ToEditorMap;
         case 2:
             return SwitchEvent::ToBattle;
         default:
@@ -33,12 +33,12 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
 {
     m_uiController.ClearAll();
     switch(e){
-        case SwitchEvent::ToGameplay: {
-            m_currentScene = std::make_unique<GameplayTilemapScene>(m_context);
+        case SwitchEvent::ToGameMap: {
+            m_currentScene = std::make_unique<GameMapScene>(m_context);
             break;
         } 
-        case SwitchEvent::ToEditor: {
-            m_currentScene = std::make_unique<EditorTilemapScene>(m_context);
+        case SwitchEvent::ToEditorMap: {
+            m_currentScene = std::make_unique<EditorMapScene>(m_context);
             break;
         }
         case SwitchEvent::ToBattle: {
@@ -118,18 +118,18 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 
-GameplayTilemapScene::GameplayTilemapScene(GameContext& context):
+GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_entities(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
-    m_context.eventController = std::make_unique<GameplayEventController>();
+    m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     m_context.window.HideCursor();
 }
 
-void GameplayTilemapScene::Gameloop()
+void GameMapScene::Gameloop()
 {
     m_time.Update();
     const float deltaTime = m_time.GetDeltaTime();
@@ -149,7 +149,7 @@ void GameplayTilemapScene::Gameloop()
     for (size_t i=m_layersSplitIndex ; i<m_layers.size() ; i++)
         m_layers[i]->DrawTexture();
 
-    m_entities.Update(static_cast<GameplayEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
+    m_entities.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
     m_context.uiController.Draw();
     
@@ -157,7 +157,7 @@ void GameplayTilemapScene::Gameloop()
     m_context.window.UpdateRender();
 }
 
-void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
+void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
 {
     switch(e) {
         case TilemapEvent::LoadingMap : {
@@ -171,30 +171,30 @@ void GameplayTilemapScene::HandleTilemapEvent(const TilemapEvent e)
     }
 }
 
-EditorTilemapScene::EditorTilemapScene(GameContext& context):
-    TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorEventState::selectedLayer ?
+EditorMapScene::EditorMapScene(GameContext& context):
+    TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
-    m_context.eventController = std::make_unique<EditorEventController>(m_tileset, m_camera, m_tilemap);
+    m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
     
     m_context.uiController.BuildUiFile("../data/ui/file/editor_scene.uif");
     
     m_drawables.push_back(&m_tileset);
 }
 
-void EditorTilemapScene::Gameloop()
+void EditorMapScene::Gameloop()
 {
     m_context.window.ClearRenderer();
     
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandlePollEvents(); 
-    // For now, I don't have any state event, so no call to EditorEventController::HandleStateEvents()
+    // For now, I don't have any state event, so no call to EditorMapEventController::HandleStateEvents()
 
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
-    const EditorEventState eventState = static_cast<EditorEventController*>(m_context.eventController.get())->GetEventState(); 
+    const EditorMapEventState eventState = static_cast<EditorMapEventController*>(m_context.eventController.get())->GetEventState(); 
     
-    for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameplayTilemapScene, TileLayer are rendered all at once
+    for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameMapScene, TileLayer are rendered all at once
         if (eventState.isLayerRendered[i])
             m_layers[i]->DrawTexture();
     }
@@ -252,7 +252,7 @@ void BattleScene::Gameloop()
 void BattleScene::Exit(const ExitEvent e) {
     switch(e) {
         case ExitEvent::ExitWin : {
-            Notify(SwitchEvent::ToGameplay);
+            Notify(SwitchEvent::ToGameMap);
             break;
         }
         case ExitEvent::ExitLost : {

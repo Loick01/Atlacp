@@ -6,9 +6,9 @@
 #include <SDL2/SDL.h>
 
 #include "event/action.hpp"
-#include "event/event_types.hpp" // GameplayEventState, EditorEventState, BattleEventState
+#include "event/event_types.hpp" // GameMapEventState, EditorMapEventState, BattleEventState
 
-// Because of EditorEventController (Remove ?)
+// Because of EditorMapEventController (Remove ?)
 class Camera;
 class Tilemap;
 class Tileset;
@@ -27,19 +27,19 @@ class EventController
         void PollAllEvents();
 };
 
-class GameplayEventController : public EventController, public EventStateHolder<GameplayEventState>
+class GameMapEventController : public EventController, public EventStateHolder<GameMapEventState>
 {
     private:
-        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ? (but EditorEventController should not have it)
+        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ? (but EditorMapEventController should not have it)
 
     public:
-        GameplayEventController();
+        GameMapEventController();
 
         void HandleStateEvents() override;
         void HandlePollEvents() override;
 };
 
-class EditorEventController : public EventController, public EventStateHolder<EditorEventState>
+class EditorMapEventController : public EventController, public EventStateHolder<EditorMapEventState>
 {
     private:
         ScreenPosition GetMouseScreenPosition() const;
@@ -54,7 +54,7 @@ class EditorEventController : public EventController, public EventStateHolder<Ed
         size_t m_layerCount; // Remove ?
 
     public:
-        EditorEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
+        EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
 
         void HandleStateEvents() override;
         void HandlePollEvents() override;

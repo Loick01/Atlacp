@@ -61,6 +61,7 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
 {
     m_selector.VerticalNavigation(m_eventState.uiDirection);
     if (m_eventState.isAction) {
+        SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
         m_textSeries.Close();
         m_selector.Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
@@ -340,16 +341,20 @@ void BattleController::PlayNextTurn()
                 HandleAiActionSelection(*aiActor);
             } else {
                 m_selector.VerticalNavigation(m_eventState.uiDirection);
-                if (m_eventState.isAction)
+                if (m_eventState.isAction) {
+                    SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
                     HandleActionSelection(m_selector.GetOptionIndex());
+                }
             }
             break;
         }
 
         case TurnState::MoveSelection : {
             m_selector.VerticalNavigation(m_eventState.uiDirection);
-            if (m_eventState.isAction)
+            if (m_eventState.isAction) {
+                SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
                 HandleMoveSelection(m_selector.GetOptionIndex());
+            }
             break;
         }
 
@@ -367,6 +372,7 @@ void BattleController::PlayNextTurn()
         
         case TurnState::Waiting : {
             if (m_eventState.isAction) {
+                SoundController::GetInstance().PlayChunk(nextSfx); // Should not be here ?
                 if (!m_textSeries.NextText()) {
                     m_textSeries.Close();
                     m_turnState = TurnState::End; // ?
