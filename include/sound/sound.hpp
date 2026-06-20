@@ -6,10 +6,11 @@
 #include <SDL2/SDL_mixer.h>
 // Mix_FadeOutMusic(int ms), Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 
-namespace {
-    const std::string acceptSfx = "Accept";
-    const std::string moveSfx = "Move";
-    const std::string nextSfx = "Next";
+namespace BaseSfx{
+    // Should be inline constexpr std::string_view ?
+    inline const std::string Accept = "Accept";
+    inline const std::string Move = "Move";
+    inline const std::string Next = "Next";
 }
 
 class SoundController // Singleton
@@ -21,7 +22,7 @@ class SoundController // Singleton
         SoundController();
         ~SoundController();
         
-        void LoadBasicSound();
+        void LoadBaseSfx();
         void DeleteBackgroundMusic();
 
     public:

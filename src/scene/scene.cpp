@@ -94,7 +94,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
 
-    // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
+    SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
 void TilemapScene::UpdateTilemapLayer()

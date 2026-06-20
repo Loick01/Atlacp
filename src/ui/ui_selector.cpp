@@ -52,10 +52,10 @@ unsigned int UiSelector::GetInstanceCount()
 void UiSelector::VerticalNavigation(const Direction d)
 {
     if (d == Direction::Down) {
-        SoundController::GetInstance().PlayChunk(moveSfx); // Should not be here ?
+        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Next() ?
         Next();
     } else if (d == Direction::Up) {
-        SoundController::GetInstance().PlayChunk(moveSfx); // Should not be here ?
+        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Previous() ?
         Previous();
     }
 }

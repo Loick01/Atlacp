@@ -15,7 +15,7 @@ SoundController::SoundController()
 
     m_backgroundMusic = nullptr;
 
-    LoadBasicSound();
+    LoadBaseSfx();
 }
 
 SoundController::~SoundController()
@@ -36,11 +36,11 @@ SoundController& SoundController::GetInstance() {
     return instance;
 }
 
-void SoundController::LoadBasicSound()
+void SoundController::LoadBaseSfx()
 {
-    LoadChunk(acceptSfx);
-    LoadChunk(moveSfx);
-    LoadChunk(nextSfx);
+    LoadChunk(BaseSfx::Accept);
+    LoadChunk(BaseSfx::Move);
+    LoadChunk(BaseSfx::Next);
 }
 
 void SoundController::DeleteBackgroundMusic()

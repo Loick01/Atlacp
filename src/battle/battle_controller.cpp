@@ -7,6 +7,7 @@
 #include "ui/ui_controller.hpp"
 
 namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
+    // Should be constexpr std::string_view ?
     const std::string prefixName = "actorName";
     const std::string prefixHealth = "actorHealth";
     const std::string prefixSprite = "actorSprite";
@@ -60,8 +61,7 @@ BattleActor* BattleController::PopNextTurn()
 BattleActor* BattleController::GetActorSelection() // Could return BattleActor index in m_actors ?
 {
     m_selector.VerticalNavigation(m_eventState.uiDirection);
-    if (m_eventState.isAction) {
-        SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
+    if (IsEventAction()) {
         m_textSeries.Close();
         m_selector.Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
@@ -96,6 +96,14 @@ BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const
 {
     const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
     return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath); // Will not be LifeState::Alive
+}
+
+bool BattleController::IsEventAction() const
+{
+    if (!m_eventState.isAction)
+        return false;
+    SoundController::GetInstance().PlayChunk(BaseSfx::Accept);
+    return true;
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -248,19 +256,18 @@ void BattleController::HandleCurrentCommand()
 {
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
-            SoundController::GetInstance().PlayChunk(m_currentCommand.sfx); // Will not be here ?
             ApplyDamage(*m_currentActor, *m_targetActor);
             break;
         }
         case CommandType::Heal : {
-            SoundController::GetInstance().PlayChunk(m_currentCommand.sfx); // Will not be here ?
             ApplyHeal(*m_currentActor, *m_targetActor);
             break;
         }
         default : 
             throw std::runtime_error("Unknown CommandType value"); 
     }
-    m_turnState = TurnState::Waiting; // Should not be here ?
+    SoundController::GetInstance().PlayChunk(m_currentCommand.sfx);
+    m_turnState = TurnState::Waiting;
 }
 
 void BattleController::InitializeActors(const std::string& battleFile)
@@ -341,20 +348,16 @@ void BattleController::PlayNextTurn()
                 HandleAiActionSelection(*aiActor);
             } else {
                 m_selector.VerticalNavigation(m_eventState.uiDirection);
-                if (m_eventState.isAction) {
-                    SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
+                if (IsEventAction())
                     HandleActionSelection(m_selector.GetOptionIndex());
-                }
             }
             break;
         }
 
         case TurnState::MoveSelection : {
             m_selector.VerticalNavigation(m_eventState.uiDirection);
-            if (m_eventState.isAction) {
-                SoundController::GetInstance().PlayChunk(acceptSfx); // Should not be here ?
+            if (IsEventAction())
                 HandleMoveSelection(m_selector.GetOptionIndex());
-            }
             break;
         }
 
@@ -371,8 +374,7 @@ void BattleController::PlayNextTurn()
         }
         
         case TurnState::Waiting : {
-            if (m_eventState.isAction) {
-                SoundController::GetInstance().PlayChunk(nextSfx); // Should not be here ?
+            if (IsEventAction()) {
                 if (!m_textSeries.NextText()) {
                     m_textSeries.Close();
                     m_turnState = TurnState::End; // ?
