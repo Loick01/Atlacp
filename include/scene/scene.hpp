@@ -19,7 +19,7 @@
 
 enum class SwitchEvent
 {
-    ToGameMap, ToEditorMap, ToBattle
+    ToMainMenu, ToGameMap, ToEditorMap, ToBattle
 };
 
 struct GameContext
@@ -48,6 +48,13 @@ class Scene : public Notifier<SwitchEvent>
         
         virtual void Gameloop() = 0;
         bool GetGameloop() const;
+};
+
+class MainMenuScene : public Scene
+{
+    public:
+        MainMenuScene(GameContext& context);
+        void Gameloop() override;
 };
 
 class TilemapScene : public Scene

@@ -27,6 +27,18 @@ class EventController
         void PollAllEvents();
 };
 
+class MainMenuEventController : public EventController, public EventStateHolder<MainMenuEventState>
+{
+    private:
+        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
+
+    public:
+        MainMenuEventController();
+
+        void HandleStateEvents() override;
+        void HandlePollEvents() override;
+};
+
 class GameMapEventController : public EventController, public EventStateHolder<GameMapEventState>
 {
     private:

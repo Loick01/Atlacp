@@ -3,6 +3,17 @@
 #include "map/map_types.hpp" // Direction
 #include "tile/tile_types.hpp" // Tile
 
+struct MainMenuEventState
+{
+    Direction uiDirection;
+    bool isAction;
+
+    MainMenuEventState() {
+        uiDirection = Direction::None;
+        isAction = false;
+    }
+};
+
 struct GameMapEventState
 {
     Direction mapDirection;

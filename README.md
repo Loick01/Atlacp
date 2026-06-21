@@ -84,3 +84,4 @@ make
 - https://willibab.itch.io/willibabs-free-pixel-battle-backgrounds
 - https://themightypalm.itch.io/mighty-battle-pack-addon
 - https://hydrogene.itch.io/high-quality-16-bit-music
+- https://free-game-assets.itch.io/nature-landscapes-free-pixel-art

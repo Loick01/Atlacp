@@ -31,6 +31,47 @@ void EventController::PollAllEvents()
     }
 }
 
+MainMenuEventController::MainMenuEventController() 
+{
+    if (JoystickActionController::IsJoystickAvailable()) {
+        m_actionController = std::make_unique<JoystickActionController>();
+    } else {
+        m_actionController = std::make_unique<KeyboardActionController>();
+    }
+}
+
+void MainMenuEventController::HandleStateEvents()
+{}
+
+void MainMenuEventController::HandlePollEvents()
+{
+    for (SDL_Event event : m_events){
+        if (m_actionController->IsPressedPoll(event)) {
+            if (m_actionController->IsPrimaryActionPoll(event)) {
+                m_eventState.isAction = true;
+                return;
+            }
+        } 
+        if (m_actionController->IsMotionPoll(event)) {
+            if (m_actionController->IsUpActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Up;
+                return;
+            } else if (m_actionController->IsDownActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Down;
+                return;
+            } else if (m_actionController->IsRightActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Right;
+                return;
+            } else if (m_actionController->IsLeftActionPoll(event)) {
+                m_eventState.uiDirection = Direction::Left;
+                return;
+            }
+        }
+    }
+    m_eventState.isAction = false;
+    m_eventState.uiDirection = Direction::None;
+}
+
 GameMapEventController::GameMapEventController():
     EventController()
 {
@@ -201,9 +242,7 @@ BattleEventController::BattleEventController()
 }
 
 void BattleEventController::HandleStateEvents()
-{
-    // m_actionController->GetStateActions();
-}
+{}
 
 void BattleEventController::HandlePollEvents()
 {

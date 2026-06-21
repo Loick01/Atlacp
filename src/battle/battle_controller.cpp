@@ -17,7 +17,7 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_staticList(uiController, "../data/ui/file/action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
+    m_staticList(uiController, "../data/ui/file/battle_action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
     m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
 {}
 

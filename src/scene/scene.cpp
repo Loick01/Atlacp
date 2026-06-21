@@ -19,11 +19,13 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
 {
     switch (mode){
         case 0:
-            return SwitchEvent::ToGameMap;
+            return SwitchEvent::ToMainMenu;
         case 1:
-            return SwitchEvent::ToEditorMap;
+            return SwitchEvent::ToGameMap;
         case 2:
             return SwitchEvent::ToBattle;
+        case 3:
+            return SwitchEvent::ToEditorMap;
         default:
             throw std::invalid_argument("Unknown mode\n");
     };
@@ -43,6 +45,10 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
         }
         case SwitchEvent::ToBattle: {
             m_currentScene = std::make_unique<BattleScene>(m_context);
+            break;
+        }
+        case SwitchEvent::ToMainMenu: {
+            m_currentScene = std::make_unique<MainMenuScene>(m_context);
             break;
         }
         default:{
@@ -79,6 +85,38 @@ Scene::Scene(GameContext& context):
 bool Scene::GetGameloop() const
 {
     return m_gameloop;
+}
+
+MainMenuScene::MainMenuScene(GameContext& context):
+    Scene(context)
+{
+    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
+    // if I put camera in GameContext, I could avoid calling these setters ?
+    m_context.uiController.SetSize(m_camera.GetViewport());
+    m_context.uiController.SetPosition(m_camera.GetScreenOffset());
+    
+    m_context.eventController = std::make_unique<MainMenuEventController>();
+   
+    m_context.uiController.BuildUiFile("../data/ui/file/main_menu_scene.uif");
+    SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
+
+    m_context.window.HideCursor();
+}
+
+void MainMenuScene::Gameloop()
+{
+    m_context.window.ClearRenderer();
+    
+    m_context.eventController->PollAllEvents();
+    m_gameloop = m_context.eventController->HandleWindowEvents();
+    m_context.eventController->HandlePollEvents();
+    m_context.eventController->HandleStateEvents();
+
+    const MainMenuEventState eventState = static_cast<MainMenuEventController*>(m_context.eventController.get())->GetEventState();
+
+    m_context.uiController.Draw();
+    m_context.window.DrawBoxing();
+    m_context.window.UpdateRender();
 }
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
@@ -221,13 +259,12 @@ BattleScene::BattleScene(GameContext& context):
     m_context.eventController = std::make_unique<BattleEventController>();
    
     m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
-    
     SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     m_battleController.InitializeActors("../data/battle/battles/test");
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
-    m_context.window.HideCursor(); // Mouse will not be used for events
+    m_context.window.HideCursor();
 }
 
 void BattleScene::Gameloop()
@@ -256,9 +293,8 @@ void BattleScene::Exit(const ExitEvent e) {
             break;
         }
         case ExitEvent::ExitLost : {
-            throw std::runtime_error("ExitEvent::ExitLost is undefined for now\n"); 
-            // Notify(SwitchEvent::ToMenu);
-            // break;
+            Notify(SwitchEvent::ToMainMenu);
+            break;
         }
     }
 }

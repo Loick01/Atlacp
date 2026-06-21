@@ -1,0 +1,11 @@
+root
+background
+uielement
+../assets/menu/nature_background.png
+scale root height 1.
+scaleAxis height
+xAnchor left_in
+yAnchor top_in
+###
+load ../data/ui/file/menu_selection.uif
+###
