@@ -141,7 +141,8 @@ void BattleController::OpenActionSelection()
     m_selector.Open();
     m_selector.SetOptionKeys(m_staticList.GetItemsKey());
     // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 0.8f}); 
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 1.f}); 
+    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_staticList.GetKey(), Axis::Width, -0.05f), Axis::Width);
 }
 
 void BattleController::CloseActionSelection()
@@ -156,8 +157,8 @@ void BattleController::OpenMoveSelection()
     m_dynamicList.SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.5f)), Axis::Width, // Scale
         Anchor::LeftIn, Anchor::TopIn, // Anchor
-        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.05f)), // Padding
-        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f))));
+        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.06f)), // Padding
+        m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.25f))));
     m_dynamicList.SetNrItem(moves.size());
     m_dynamicList.Open();
     
@@ -167,7 +168,8 @@ void BattleController::OpenMoveSelection()
 
     m_selector.Open();
     m_selector.SetOptionKeys(keys);
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_dynamicList.GetKey(), Axis::Height, 0.8f});
+    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_dynamicList.GetKey(), Axis::Height, 1.f});
+    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_dynamicList.GetKey(), Axis::Width, -0.05f), Axis::Width);
 }
 
 void BattleController::CloseMoveSelection()
@@ -185,6 +187,7 @@ void BattleController::OpenSelectorOnActors()
         keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList/m_opponentList
     m_selector.SetOptionKeys(keys);
     m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
+    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_currentActor->GetSpritePath().id, Axis::Width, 0.2f), Axis::Width);
 
     m_textSeries.Open();
     m_textSeries.AddText({"Select a BattleActor"}); // TODO

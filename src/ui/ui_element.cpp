@@ -66,6 +66,18 @@ void UiElement::SetParamsScale(const float scale)
     m_params.scale = scale;
 }
 
+void UiElement::SetParamsPadding(const Axis axis, const float value)
+{
+    switch (axis) {
+        case Axis::Width:
+            m_params.xPadding = value;
+            break;
+        case Axis::Height:
+            m_params.yPadding = value;
+            break;
+    }
+}
+
 void UiElement::DrawTexture() const
 {
     ScreenDrawable::DrawTexture();
@@ -152,7 +164,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
     SetLocalPosition(localPosition);
 }
 
-void UiElement::SetPadding(const float xPadding, const float yPadding)
+void UiElement::UsePaddingOnPosition(const float xPadding, const float yPadding)
 {
     AddLocalPosition({xPadding,yPadding}); // AddLocal ???
 }
@@ -187,7 +199,7 @@ void UiElement::ComputeFinal()
 {
     ComputeZoom(m_params.scale, m_params.scaleAxis);
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
-    SetPadding(m_params.xPadding, m_params.yPadding);
+    UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }
 
 UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, const std::string& fontFilepath, const SDL_Color color):
@@ -226,5 +238,5 @@ void UiTextElement::ComputeFinal()
     SetMaxWidth(m_params.scale);
     GenerateText();
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
-    SetPadding(m_params.xPadding, m_params.yPadding);
+    UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }

@@ -35,6 +35,9 @@ class UiController
 
         std::string GetFileExtension(const std::string& filepath) const; // Will be a static function in FileReader
 
+        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // Rename
+        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
+        
         // Add/Remove in UiController::m_elements
         void AddElement(const UiKey& key, UiElement* element);
         void RemoveElement(const UiKey& key);
@@ -56,8 +59,6 @@ class UiController
 
         std::unordered_map<UiKey, UiElement*>::const_iterator GetIteratorOnElement(const UiKey& key) const;
         UiElement* GetElement(const UiKey& key) const;
-        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // Rename
-        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
         float GetResultFromPartialSize(const PartialSize& ps) const;
         
         bool IsBaseUiFile(const std::string& filepath) const;
@@ -79,6 +80,7 @@ class UiController
         void UpdateParent(const UiKey& key, const UiKey& parent);
         void UpdateScalingSize(const UiKey& key, const PartialSize ps); // Should use UiKey+Axis+float, instead of PartialSize (which is from file.hpp)
         // Should add UpdateScalingAxis ?
+        void UpdatePadding(const UiKey& key, const PartialSize ps, const Axis axis);
         void UpdateKey(const UiKey& key, const UiKey& newKey); // Used for ui template instanciation (uit file)
         void UpdateParams(const UiKey& key, const UiParams& params);
 

@@ -58,10 +58,11 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         void SetParentPosition(const ScreenPosition parentPosition);
         void SetParams(const UiParams& params);
         void SetParamsScale(const float scale);
+        void SetParamsPadding(const Axis axis, const float value);
         
         void ComputeZoom(const float scale, const Axis axis); // scale in [0, +inf]
         void ComputePosition(const Anchor xAnchor, const Anchor yAnchor); // Must be called after ComputeZoom
-        void SetPadding(const float xPadding, const float yPadding);
+        void UsePaddingOnPosition(const float xPadding, const float yPadding);
         void DrawTexture() const override; 
         void UpdatePosition(); // Update position on current UiElement and each children
         void SetLocalPosition(const ScreenPosition localPosition); // To move a UiElement, use this function, and not ScreenDrawable::SetScreenPosition()

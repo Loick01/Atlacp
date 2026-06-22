@@ -106,7 +106,8 @@ MainMenuScene::MainMenuScene(GameContext& context):
     m_staticList.Open();
     m_selector.Open();
     m_selector.SetOptionKeys(m_staticList.GetItemsKey());
-    m_context.uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 0.8f}); 
+    m_context.uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 1.f}); 
+    m_context.uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_staticList.GetKey(), Axis::Width, -0.05f), Axis::Width);
 }
 
 void MainMenuScene::Gameloop()

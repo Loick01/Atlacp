@@ -299,6 +299,15 @@ void UiController::UpdateScalingSize(const UiKey& key, const PartialSize ps)
     e->UpdatePosition();
 }
 
+void UiController::UpdatePadding(const UiKey& key, const PartialSize ps, const Axis axis)
+{
+    const float result = GetResultFromPartialSize(ps);
+    UiElement* e = GetElement(key);
+    e->SetParamsPadding(axis, result);
+    e->ComputeFinal();
+    e->UpdatePosition();
+}
+
 void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
 {
     UiElement* element = GetElement(key);

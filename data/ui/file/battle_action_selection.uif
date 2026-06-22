@@ -5,8 +5,8 @@ PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor top_in
-xPadding frame width 0.05
-yPadding frame height 0.2
+xPadding frame width 0.06
+yPadding frame height 0.25
 text Fight
 ###
 option0

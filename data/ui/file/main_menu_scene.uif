@@ -7,3 +7,33 @@ scaleAxis height
 xAnchor left_in
 yAnchor top_in
 ###
+background
+frame0
+uielement
+../assets/ui/box.png
+scale background height 0.1
+scaleAxis height
+xAnchor center
+yAnchor top_in
+yPadding background height 0.2
+###
+frame0
+frame1
+uielement
+../assets/ui/box.png
+scale background height 0.1
+scaleAxis height
+xAnchor center
+yAnchor bottom_out
+yPadding background height 0.05
+###
+frame1
+frame2
+uielement
+../assets/ui/box.png
+scale background height 0.1
+scaleAxis height
+xAnchor center
+yAnchor bottom_out
+yPadding background height 0.05
+###
