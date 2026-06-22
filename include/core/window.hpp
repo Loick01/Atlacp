@@ -35,5 +35,6 @@ class Window
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bgColor);
         void DrawBoxing();
+        void ShowCursor();
         void HideCursor();
 };

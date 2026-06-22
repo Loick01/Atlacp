@@ -69,6 +69,11 @@ void Window::SetBackgroundColor(const SDL_Color bgColor)
     SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
 }
 
+void Window::ShowCursor()
+{
+    SDL_ShowCursor(SDL_ENABLE); 
+}
+
 void Window::HideCursor()
 {
     SDL_ShowCursor(SDL_DISABLE); 

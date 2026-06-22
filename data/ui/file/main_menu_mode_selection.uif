@@ -1,0 +1,28 @@
+background
+option0
+textelement
+PixelOperator8
+scale background width 0.5
+xAnchor left_in
+yAnchor top_in
+xPadding background width 0.05
+yPadding background height 0.2
+text GameMap
+###
+option0
+option1
+textelement
+PixelOperator8
+scale background width 0.5
+xAnchor left_in
+yAnchor bottom_out
+text EditorMap
+###
+option1
+option2
+textelement
+PixelOperator8
+scale background width 0.5
+xAnchor left_in
+yAnchor bottom_out
+text Battle

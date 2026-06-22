@@ -88,7 +88,8 @@ bool Scene::GetGameloop() const
 }
 
 MainMenuScene::MainMenuScene(GameContext& context):
-    Scene(context)
+    Scene(context), 
+    m_selector(m_context.uiController, "../data/ui/template/selector.uit"), m_staticList(m_context.uiController, "../data/ui/file/main_menu_mode_selection.uif")
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -101,6 +102,11 @@ MainMenuScene::MainMenuScene(GameContext& context):
     SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
 
     m_context.window.HideCursor();
+
+    m_staticList.Open();
+    m_selector.Open();
+    m_selector.SetOptionKeys(m_staticList.GetItemsKey());
+    m_context.uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 0.8f}); 
 }
 
 void MainMenuScene::Gameloop()
@@ -114,6 +120,24 @@ void MainMenuScene::Gameloop()
 
     const MainMenuEventState eventState = static_cast<MainMenuEventController*>(m_context.eventController.get())->GetEventState();
 
+    if (m_selector.VerticalNavigation(eventState.uiDirection, eventState.isAction)) {
+        SwitchEvent se;
+        switch(m_selector.GetOptionIndex()) { // Must be the same order as in main_menu_mode_selection.uif
+            case 0:
+                se = SwitchEvent::ToGameMap;
+                break;
+            case 1:
+                se = SwitchEvent::ToEditorMap;
+                break;
+            case 2:
+                se = SwitchEvent::ToBattle;
+                break;
+            default:
+                throw std::runtime_error("Selector is not supposed to be on this index : " + m_selector.GetOptionIndex());
+        }
+        Notify(se);
+    }
+    
     m_context.uiController.Draw();
     m_context.window.DrawBoxing();
     m_context.window.UpdateRender();
@@ -131,8 +155,6 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     // if I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
-
-    SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -164,6 +186,8 @@ GameMapScene::GameMapScene(GameContext& context):
     
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+    
+    SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
 }
 
@@ -213,10 +237,10 @@ EditorMapScene::EditorMapScene(GameContext& context):
     TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
-    
     m_context.uiController.BuildUiFile("../data/ui/file/editor_scene.uif");
-    
     m_drawables.push_back(&m_tileset);
+    m_context.window.ShowCursor();
+    // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
 }
 
 void EditorMapScene::Gameloop()

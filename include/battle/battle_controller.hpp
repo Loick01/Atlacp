@@ -99,7 +99,6 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         ExitEvent CheckBattleEnd() const;
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const; // Should remove srcActor ?
         unsigned int ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
-        bool IsEventAction() const;
         bool HasAliveActor(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);

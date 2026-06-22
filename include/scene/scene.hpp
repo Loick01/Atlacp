@@ -52,6 +52,10 @@ class Scene : public Notifier<SwitchEvent>
 
 class MainMenuScene : public Scene
 {
+    private:
+        UiList m_staticList;
+        UiSelector m_selector;
+
     public:
         MainMenuScene(GameContext& context);
         void Gameloop() override;

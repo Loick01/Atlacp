@@ -23,9 +23,9 @@ class UiSelector : public UiComponent
         unsigned int GetInstanceCount() override;
         
         int GetOptionIndex() const;
+        bool VerticalNavigation(const Direction d, const bool isAction);
         void Reset();
         void SetOptionKeys(std::vector<UiKey> optionKeys);
         void Previous();
         void Next();
-        void VerticalNavigation(const Direction d);
 };

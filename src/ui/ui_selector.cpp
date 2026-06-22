@@ -12,6 +12,21 @@ int UiSelector::GetOptionIndex() const
     return m_optionIndex;
 }
 
+bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
+{
+    if (isAction) {
+        SoundController::GetInstance().PlayChunk(BaseSfx::Accept);
+        return true;
+    } else if (d == Direction::Down) {
+        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Next() ?
+        Next();
+    } else if (d == Direction::Up) {
+        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Previous() ?
+        Previous();
+    }
+    return false;
+}
+
 void UiSelector::UpdateToOptionIndex()
 {
     const UiKey& parentKey = m_optionKeys[m_optionIndex];
@@ -47,15 +62,4 @@ void UiSelector::Next()
 unsigned int UiSelector::GetInstanceCount()
 {
     return m_instanceCount++;
-}
-
-void UiSelector::VerticalNavigation(const Direction d)
-{
-    if (d == Direction::Down) {
-        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Next() ?
-        Next();
-    } else if (d == Direction::Up) {
-        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Previous() ?
-        Previous();
-    }
 }

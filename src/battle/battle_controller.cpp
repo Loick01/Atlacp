@@ -60,8 +60,7 @@ BattleActor* BattleController::PopNextTurn()
 
 BattleActor* BattleController::GetActorSelection() // Could return BattleActor index in m_actors ?
 {
-    m_selector.VerticalNavigation(m_eventState.uiDirection);
-    if (IsEventAction()) {
+    if (m_selector.VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction)) {
         m_textSeries.Close();
         m_selector.Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
@@ -96,14 +95,6 @@ BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const
 {
     const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
     return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath); // Will not be LifeState::Alive
-}
-
-bool BattleController::IsEventAction() const
-{
-    if (!m_eventState.isAction)
-        return false;
-    SoundController::GetInstance().PlayChunk(BaseSfx::Accept);
-    return true;
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -219,7 +210,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
             break;
             
         case 2: {
-            Notify(ExitEvent::ExitWin); // Not ExitWin
+            Notify(ExitEvent::ExitLost);
             break;
         }
 
@@ -347,16 +338,14 @@ void BattleController::PlayNextTurn()
             if (aiActor != nullptr) {
                 HandleAiActionSelection(*aiActor);
             } else {
-                m_selector.VerticalNavigation(m_eventState.uiDirection);
-                if (IsEventAction())
+                if (m_selector.VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
                     HandleActionSelection(m_selector.GetOptionIndex());
             }
             break;
         }
 
         case TurnState::MoveSelection : {
-            m_selector.VerticalNavigation(m_eventState.uiDirection);
-            if (IsEventAction())
+            if (m_selector.VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
                 HandleMoveSelection(m_selector.GetOptionIndex());
             break;
         }
@@ -374,7 +363,8 @@ void BattleController::PlayNextTurn()
         }
         
         case TurnState::Waiting : {
-            if (IsEventAction()) {
+            if (m_eventState.isAction) {
+                SoundController::GetInstance().PlayChunk(BaseSfx::Next);
                 if (!m_textSeries.NextText()) {
                     m_textSeries.Close();
                     m_turnState = TurnState::End; // ?
