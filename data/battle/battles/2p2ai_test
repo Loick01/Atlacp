@@ -1,0 +1,24 @@
+ally player
+Howler
+400
+10
+../assets/battle/ally_sprite/werewolf.png
+###
+ally player
+Mage
+200
+15
+../assets/battle/ally_sprite/mage.png
+###
+opponent ai
+Bone_Appetit
+300
+8
+../assets/battle/opponent_sprite/bone_appetit.png
+###
+opponent ai
+Slime
+150
+15
+../assets/battle/opponent_sprite/slime.png
+###

@@ -13,7 +13,10 @@ class UiDynamicList : public UiList
     public:
         UiDynamicList(UiController& uiController, const std::string& uiFilepath);
         
+        // Should be static ?
         unsigned int GetInstanceCount() override;
+        void ResetInstanceCount(); // Should be virtual in UiComponent ?
+        
         void Open() override;
         void Close() override;
         

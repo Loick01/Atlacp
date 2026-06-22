@@ -117,6 +117,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
         m_textSeries.AddText({targetActor.GetName().value + " fainted !"});
         targetActor.SetSpritePath("../assets/battle/gravestone.png");    
         m_uiController.UpdatePath(targetActor.GetSpritePath());
+        SoundController::GetInstance().PlayChunk(BaseSfx::Death);
     }
     
     m_textSeries.NextText(); // Should not be here ?
@@ -213,7 +214,8 @@ void BattleController::HandleActionSelection(const int selectorIndex)
             break;
             
         case 2: {
-            Notify(ExitEvent::ExitLost);
+            m_exitEvent = ExitEvent::ExitLost;
+            m_turnState = TurnState::End;
             break;
         }
 
@@ -378,6 +380,7 @@ void BattleController::PlayNextTurn()
 
         case TurnState::End : {
             if (m_exitEvent != ExitEvent::None) {
+                m_allyList.ResetInstanceCount(); // Should not be here ?
                 Notify(m_exitEvent);
             } else {
                 m_exitEvent = CheckBattleEnd();

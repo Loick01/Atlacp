@@ -15,6 +15,10 @@ SoundController::SoundController()
 
     m_backgroundMusic = nullptr;
 
+    // Volume setting will not be here
+    Mix_VolumeMusic(50 * MIX_MAX_VOLUME / 100); // For the background music (played with Mix_PlayMusic())
+    Mix_Volume(-1, 100 * MIX_MAX_VOLUME / 100); // For the sound effects (played with Mix_PlayChannel())
+
     LoadBaseSfx();
 }
 
@@ -38,9 +42,11 @@ SoundController& SoundController::GetInstance() {
 
 void SoundController::LoadBaseSfx()
 {
+    // ?
     LoadChunk(BaseSfx::Accept);
     LoadChunk(BaseSfx::Move);
     LoadChunk(BaseSfx::Next);
+    LoadChunk(BaseSfx::Death);
 }
 
 void SoundController::DeleteBackgroundMusic()

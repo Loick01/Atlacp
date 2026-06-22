@@ -8,9 +8,11 @@ mkdir build
 cd build
 cmake ..
 make
-./atlacp 0 # Run the world map
-./atlacp 1 # Run the map editor
+./atlacp # Run from the main menu
+./atlacp 0 # Same as ./atlacp
+./atlacp 1 # Run the world map
 ./atlacp 2 # Run the battle mode
+./atlacp 3 # Run the map editor
 ```
 ### Demo videos
 

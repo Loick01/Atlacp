@@ -286,7 +286,7 @@ BattleScene::BattleScene(GameContext& context):
     m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
     SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
-    m_battleController.InitializeActors("../data/battle/battles/test");
+    m_battleController.InitializeActors("../data/battle/battles/2p2ai_test");
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor();

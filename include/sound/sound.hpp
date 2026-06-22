@@ -11,6 +11,7 @@ namespace BaseSfx{
     inline const std::string Accept = "Accept";
     inline const std::string Move = "Move";
     inline const std::string Next = "Next";
+    inline const std::string Death = "Death"; // Should not be here (only used for BattleScene) ?
 }
 
 class SoundController // Singleton

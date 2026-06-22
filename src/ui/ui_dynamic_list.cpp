@@ -13,6 +13,11 @@ unsigned int UiDynamicList::GetInstanceCount()
 {
     return m_instanceCount++;
 }
+
+void UiDynamicList::ResetInstanceCount()
+{
+    m_instanceCount = 0;
+}
         
 void UiDynamicList::Open()
 {   
