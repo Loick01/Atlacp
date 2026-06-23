@@ -19,6 +19,7 @@ class SoundController // Singleton
     private:
         std::unordered_map<std::string, Mix_Chunk*> m_chunks; // string as key ?
         Mix_Music* m_backgroundMusic;
+        std::string m_requestedChunk;
 
         SoundController();
         ~SoundController();
@@ -31,6 +32,9 @@ class SoundController // Singleton
 
         void SetBackgroundMusic(const std::string& filepath);
 
+        void RequestChunk(const std::string& path);
+        void PlayRequestedChunk();
+        
         void PlayChunk(const std::string& path);
         void LoadChunk(const std::string& path);
         void DeleteChunk(const std::string& path);

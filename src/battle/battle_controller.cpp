@@ -117,7 +117,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
         m_textSeries.AddText({targetActor.GetName().value + " fainted !"});
         targetActor.SetSpritePath("../assets/battle/gravestone.png");    
         m_uiController.UpdatePath(targetActor.GetSpritePath());
-        SoundController::GetInstance().PlayChunk(BaseSfx::Death);
+        SoundController::GetInstance().RequestChunk(BaseSfx::Death);
     }
     
     m_textSeries.NextText(); // Should not be here ?
@@ -250,6 +250,7 @@ void BattleController::HandleMoveSelection(const int moveIndex)
 
 void BattleController::HandleCurrentCommand()
 {
+    SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
             ApplyDamage(*m_currentActor, *m_targetActor);
@@ -262,7 +263,6 @@ void BattleController::HandleCurrentCommand()
         default : 
             throw std::runtime_error("Unknown CommandType value"); 
     }
-    SoundController::GetInstance().PlayChunk(m_currentCommand.sfx);
     m_turnState = TurnState::Waiting;
 }
 
@@ -345,6 +345,7 @@ void BattleController::PlayNextTurn()
             } else {
                 if (m_selector.VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
                     HandleActionSelection(m_selector.GetOptionIndex());
+                SoundController::GetInstance().PlayRequestedChunk();
             }
             break;
         }
@@ -352,29 +353,36 @@ void BattleController::PlayNextTurn()
         case TurnState::MoveSelection : {
             if (m_selector.VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
                 HandleMoveSelection(m_selector.GetOptionIndex());
+            SoundController::GetInstance().PlayRequestedChunk();
             break;
         }
 
         case TurnState::ActorSelection : {
             m_targetActor = GetActorSelection();
-            if (m_targetActor != nullptr)
+            if (m_targetActor != nullptr) {
                 m_turnState = TurnState::HandleCommand;
+                break; // Will not play BaseSfx::Accept at the same time as m_currentCommand.sfx
+            }
+            SoundController::GetInstance().PlayRequestedChunk();
             break;
         }
 
         case TurnState::HandleCommand : {
             HandleCurrentCommand();
+            SoundController::GetInstance().PlayRequestedChunk();
             break;
         }
         
         case TurnState::Waiting : {
             if (m_eventState.isAction) {
-                SoundController::GetInstance().PlayChunk(BaseSfx::Next);
+                SoundController::GetInstance().RequestChunk(BaseSfx::Next);
                 if (!m_textSeries.NextText()) {
                     m_textSeries.Close();
-                    m_turnState = TurnState::End; // ?
+                    m_turnState = TurnState::End;
+                } else {
+                    SoundController::GetInstance().PlayRequestedChunk();
                 }
-            } 
+            }
             break;
         }
 

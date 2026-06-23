@@ -15,13 +15,13 @@ int UiSelector::GetOptionIndex() const
 bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
 {
     if (isAction) {
-        SoundController::GetInstance().PlayChunk(BaseSfx::Accept);
+        SoundController::GetInstance().RequestChunk(BaseSfx::Accept);
         return true;
     } else if (d == Direction::Down) {
-        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Next() ?
+        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Next() ?
         Next();
     } else if (d == Direction::Up) {
-        SoundController::GetInstance().PlayChunk(BaseSfx::Move); // Should be in Previous() ?
+        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Previous() ?
         Previous();
     }
     return false;

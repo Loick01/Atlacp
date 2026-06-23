@@ -17,9 +17,10 @@ SoundController::SoundController()
 
     // Volume setting will not be here
     Mix_VolumeMusic(50 * MIX_MAX_VOLUME / 100); // For the background music (played with Mix_PlayMusic())
-    Mix_Volume(-1, 100 * MIX_MAX_VOLUME / 100); // For the sound effects (played with Mix_PlayChannel())
+    Mix_Volume(-1, MIX_MAX_VOLUME); // For the sound effects (played with Mix_PlayChannel())
 
     LoadBaseSfx();
+    m_requestedChunk.clear();
 }
 
 SoundController::~SoundController()
@@ -65,6 +66,19 @@ void SoundController::SetBackgroundMusic(const std::string& filepath)
     if (Mix_PlayMusic(m_backgroundMusic, -1) == -1) 
         throw std::runtime_error("Failed to play audio\n" + std::string(Mix_GetError()));
 }
+
+void SoundController::RequestChunk(const std::string& path)
+{
+    m_requestedChunk = path;
+}
+
+void SoundController::PlayRequestedChunk()
+{
+    if (!m_requestedChunk.empty()) {
+        PlayChunk(m_requestedChunk);
+        m_requestedChunk.clear();
+    }
+}   
 
 void SoundController::PlayChunk(const std::string& path)
 {

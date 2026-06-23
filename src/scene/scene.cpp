@@ -138,6 +138,7 @@ void MainMenuScene::Gameloop()
         }
         Notify(se);
     }
+    SoundController::GetInstance().PlayRequestedChunk(); 
     
     m_context.uiController.Draw();
     m_context.window.DrawBoxing();
