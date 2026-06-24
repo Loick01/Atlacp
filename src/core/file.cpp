@@ -79,6 +79,10 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
         // No verification yet on what is read 
         data.sprite = s;
         input >> data.position.x; input >> data.position.y;
+
+        input >> s;
+        data.mapBehaviour = ReadMapBehaviour(s);
+        
         input >> data.walkSpeed;
         input >> data.runSpeed;
         npcsData.push_back(data);
@@ -295,6 +299,21 @@ MoveType FileReader::ReadMoveType(const std::string& s) const
         return it->second;
 
     throw std::runtime_error("Unknown value read as MoveType");
+}
+
+MapBehaviour FileReader::ReadMapBehaviour(const std::string& s) const
+{
+    static const std::unordered_map<std::string, MapBehaviour> axis = {
+        {"random", MapBehaviour::Random},
+        {"follow", MapBehaviour::Follow},
+        {"goto", MapBehaviour::GoTo}
+    };
+
+    std::unordered_map<std::string, MapBehaviour>::const_iterator it = axis.find(s);
+    if (it != axis.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as MapBehaviour");
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const

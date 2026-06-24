@@ -14,22 +14,6 @@ Camera& camera, Tilemap& tilemap):
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
     m_renderedEntities = {&m_player}; // ?
-    
-    // Testing my NPC, will be removed (they will be load from the tilemap header)
-    // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_fileReader, tilemap, textureController, nullptr, "../assets/sprites/npc16_inverted", camera, 4.f, 6.f);
-    //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-    //     m_renderedEntities.push_back(npc);
-    // }
-    
-    // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
-    // MapEntity* trackedEntity = &m_player;
-    // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_context.m_fileReader, tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", camera, 4.f, 6.f);
-    //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-    //     m_renderedEntities.push_back(npc);
-    //     trackedEntity = npc;
-    // }
 
     m_updatedEntities = m_renderedEntities;
     SortRenderedEntities(); // ?
@@ -108,8 +92,8 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
     const std::vector<DataNPC> npcsData = m_fileReader.ReadNPCsFile(filepath, mapIndex);
 
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
-        DataNPC currentData = npcsData[i];
-        const MapPosition npcPosition = currentData.position;
+        DataNPC data = npcsData[i];
+        const MapPosition npcPosition = data.position;
         if (!tilemap.IsFreePosition(npcPosition))
             throw std::runtime_error("NPC can only spawn on free position"); 
         
@@ -118,13 +102,22 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
             tilemap, 
             textureController, 
             nullptr,
-            "../assets/sprites/" + currentData.sprite, // TODO
-            camera, npcPosition,
-            currentData.walkSpeed, currentData.runSpeed
+            "../assets/sprites/" + data.sprite, // TODO : Filepath
+            camera, npcPosition, data.mapBehaviour,
+            data.walkSpeed, data.runSpeed
         );
         npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
         m_renderedEntities.push_back(npc);
     }
+    
+    // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
+    // MapEntity* trackedEntity = &m_player;
+    // for (unsigned int i = 0 ; i < 10 ; i++){
+    //     NPC* npc = new NPC(m_context.m_fileReader, tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", camera, 4.f, 6.f);
+    //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
+    //     m_renderedEntities.push_back(npc);
+    //     trackedEntity = npc;
+    // }
     
     m_updatedEntities = m_renderedEntities;
     SortRenderedEntities();

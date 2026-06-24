@@ -4,12 +4,12 @@
 #include "map/map_entity.hpp"
 #include "tile/tilemap.hpp"
 
-RandomBehaviour::RandomBehaviour()
+MapRandomBehaviour::MapRandomBehaviour()
 {
     m_delay = m_random.GetRandomFloat(0.5f, 5.f);
 }
 
-void RandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
+void MapRandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_delay > 0.f) m_delay -= deltaTime;
     else{
@@ -21,27 +21,27 @@ void RandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     }
 }
 
-void RandomBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
+void MapRandomBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void RandomBehaviour::OnStopCase(MapEntity& entity)
+void MapRandomBehaviour::OnStopCase(MapEntity& entity)
 {
     entity.Reset(entity.GetCurrentMovement().GetDirection()); // Set state to Free where a new delay will be generated
 }
 
-FollowEntityBehaviour::FollowEntityBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed):
+MapFollowBehaviour::MapFollowBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed):
     m_trackedEntity(trackedEntity)
 {
     if (trackedEntity == nullptr)
         throw std::invalid_argument("Tracked entity is nullptr\n");
     // Should also test m_runSpeed
     if (trackedEntity->GetWalkSpeed() > followerWalkSpeed) // Tracked entity should not be faster than the entity who own this behaviour
-        throw std::invalid_argument("FollowEntityBehaviour should not be used if tracked entity is faster than follower\n");
+        throw std::invalid_argument("MapFollowBehaviour should not be used if tracked entity is faster than follower\n");
 }
 
-void FollowEntityBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
+void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_trackedEntity->GetState() != EntityState::Free){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
@@ -52,12 +52,12 @@ void FollowEntityBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     }
 }
 
-void FollowEntityBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
+void MapFollowBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void FollowEntityBehaviour::OnStopCase(MapEntity& entity)
+void MapFollowBehaviour::OnStopCase(MapEntity& entity)
 {
     if (m_trackedEntity->GetState() != EntityState::Free){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
@@ -70,13 +70,13 @@ void FollowEntityBehaviour::OnStopCase(MapEntity& entity)
     }
 }
 
-GoToBehaviour::GoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap):
+MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap):
     m_pathIndex(0)
 {
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
 }
 
-void GoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
+void MapGoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     if (m_pathIndex < m_path.size()){
         const MapPosition nextPosition = m_path[m_pathIndex];
@@ -87,12 +87,12 @@ void GoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     }
 }
 
-void GoToBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
+void MapGoToBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 {
     entity.OrderUpdateMovement(deltaTime);
 }
 
-void GoToBehaviour::OnStopCase(MapEntity& entity)
+void MapGoToBehaviour::OnStopCase(MapEntity& entity)
 {
     m_pathIndex++;
     if (m_pathIndex < m_path.size()){

@@ -1,18 +1,18 @@
 ###
 ###
 ###
-npc16 11 5 4. 6.
-npc16 12 5 4. 6.
-npc16 13 5 4. 6.
-npc16 14 5 4. 6.
+npc16 11 5 random 4. 6.
+npc16 12 5 random 4. 6.
+npc16 13 5 random 4. 6.
+npc16 14 5 random 4. 6.
 ###
-npc16_inverted 8 5 4. 6.
-npc16_inverted 9 5 4. 6.
-npc16_inverted 10 5 4. 6.
-npc16 11 5 4. 6.
-npc16 12 5 4. 6.
-npc16 13 5 4. 6.
-npc16 14 5 4. 6.
+npc16_inverted 8 5 random 4. 6.
+npc16_inverted 9 5 goto 4. 6.
+npc16_inverted 10 5 random 4. 6.
+npc16 11 5 random 4. 6.
+npc16 12 5 random 4. 6.
+npc16 13 5 goto 4. 6.
+npc16 14 5 random 4. 6.
 ###
 ###
 ###

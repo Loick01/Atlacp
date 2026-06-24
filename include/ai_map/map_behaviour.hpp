@@ -22,33 +22,33 @@ class MapEntityBehaviour // Should be call EntityMovementBehaviour or MovementBe
         virtual void OnStopCase(MapEntity& entity) = 0;
 };
 
-class RandomBehaviour : public MapEntityBehaviour // Always try to move in random direction 
+class MapRandomBehaviour : public MapEntityBehaviour // Always try to move in random direction 
 {
     private:
         float m_delay; // Remaining time before a new movement
 
     public:
-        RandomBehaviour();
+        MapRandomBehaviour();
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;
 };
 
-class FollowEntityBehaviour : public MapEntityBehaviour
+class MapFollowBehaviour : public MapEntityBehaviour // Rename MapFollowEntitybehaviour ?
 {
     // Assume the tracked entity is one tile away from the follower. Later I will make a follow behaviour with pathfiding
     private:
         const MapEntity* m_trackedEntity; // Could be MapEntity& when I remove trackedEntity from NPC constructor ?
 
     public:
-        FollowEntityBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed);
+        MapFollowBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed);
 
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;
 };
 
-class GoToBehaviour : public MapEntityBehaviour
+class MapGoToBehaviour : public MapEntityBehaviour
 {
     // MapEntity with this behaviour will go to a given position, following the MapPosition inside m_path
     private:
@@ -56,7 +56,7 @@ class GoToBehaviour : public MapEntityBehaviour
         unsigned int m_pathIndex;
 
     public:
-        GoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap);
+        MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap);
 
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;

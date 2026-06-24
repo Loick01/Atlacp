@@ -23,10 +23,13 @@ class FileReader
     private:
         static std::ifstream OpenFile(const std::string& filepath);
 
+        // Should not be here ?
         Axis ReadAxis(const std::string& s) const;
         Anchor ReadAnchor(const std::string& s) const;
         CommandType ReadCommandType(const std::string& s) const;
         MoveType ReadMoveType(const std::string& s) const;
+        MapBehaviour ReadMapBehaviour(const std::string& s) const;
+
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:

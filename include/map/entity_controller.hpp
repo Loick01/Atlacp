@@ -16,7 +16,7 @@ class EntityController
         
         // Will use unique_ptr<MapEntity> ?
         std::vector<MapEntity*> m_renderedEntities; // Sorted by y position
-        // A specific order could be necessary for MapEntity updating (for example with FollowEntityBehaviour), I use a second vector of MapEntity*
+        // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
 
         InteractionController m_interactionController;

@@ -15,6 +15,11 @@ struct MapPosition : public Vec2 // Rename GridPosition ?
     }
 };
 
+enum class MapBehaviour
+{
+    Random, Follow, GoTo
+};
+
 enum class MapBound
 {
     Inside,
@@ -27,6 +32,7 @@ enum class MapBound
 struct DataNPC // Rename
 {
     MapPosition position;
+    MapBehaviour mapBehaviour;
     std::string sprite;
     float walkSpeed;
     float runSpeed;
