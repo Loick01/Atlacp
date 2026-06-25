@@ -7,8 +7,9 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h> // TTF_RenderUTF8_Blended_Wrapped
 
-#include "image/font.hpp" // FontSize
-#include "image/image_types.hpp" // TextureKey
+#include "image/image_types.hpp" // TextureKey, FontSize
+
+class FontController;
 
 struct Texture
 {

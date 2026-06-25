@@ -106,7 +106,8 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         data.parentKey = s;
         input >> data.key; 
         input >> data.type; // Verification on type will be in UiController
-        input >> data.path;
+        if (data.type == "uielement") // Not for "textelement"
+            input >> data.imagePath;
         
         // Read optional data 
         while (input >> s && s != FILE_DELIMITER) {

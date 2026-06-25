@@ -12,7 +12,6 @@ yPadding root height 0.02
 frame
 boxText
 textelement
-NormalFont
 scale frame width 0.9
 xAnchor left_in
 yAnchor center

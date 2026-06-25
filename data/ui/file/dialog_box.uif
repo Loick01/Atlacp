@@ -22,7 +22,6 @@ yAnchor center
 faceset
 dialogText
 textelement
-PixelOperator8
 scale frame width 0.75
 xAnchor right_out
 yAnchor center

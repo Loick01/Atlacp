@@ -19,7 +19,6 @@ yAnchor bottom_in
 actorBox
 actorName
 textelement
-PixelOperator8
 scale actorBox width 1.
 xAnchor left_in
 yAnchor top_in
@@ -29,7 +28,6 @@ yPadding actorBox height 0.15
 actorName
 actorHealth
 textelement
-PixelOperator8
 scale actorName width 1.
 xAnchor left_in
 yAnchor bottom_out

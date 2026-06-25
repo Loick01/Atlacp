@@ -1,7 +1,6 @@
 frame0
 option0
 textelement
-PixelOperator8
 scale background width 0.8
 xAnchor center
 yAnchor center
@@ -10,7 +9,6 @@ text GameMap
 frame1
 option1
 textelement
-PixelOperator8
 scale background width 0.8
 xAnchor center
 yAnchor center
@@ -19,7 +17,6 @@ text EditorMap
 frame2
 option2
 textelement
-PixelOperator8
 scale background width 0.8
 xAnchor center
 yAnchor center

@@ -1,7 +1,6 @@
 frame
 move
 textelement
-PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out

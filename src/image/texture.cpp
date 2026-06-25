@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "image/font.hpp"
+
 TextureController::TextureController(FontController& fontController, SDL_Renderer* windowRenderer) :
     m_fontController(fontController), m_windowRenderer(windowRenderer)
 {

@@ -3,11 +3,10 @@
 #include <stdexcept>
 
 #include "core/file.hpp"
-#include "image/font.hpp"
 #include "image/texture.hpp"
 
-UiController::UiController(const FileReader& fileReader, FontController& fontController, TextureController& textureController, const std::string& fontFilepath):
-    m_fileReader(fileReader), m_fontController(fontController), m_textureController(textureController), m_fontFilepath(fontFilepath)
+UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
+    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
 std::string UiController::GetFileExtension(const std::string& filepath) const // Will be in FileReader
@@ -67,7 +66,7 @@ std::unique_ptr<UiElement> UiController::CreateElement(const UiKey& key, const s
 
 std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key)
 {
-    return std::make_unique<UiTextElement>(m_fontController, m_textureController, key, FontSize::Small);
+    return std::make_unique<UiTextElement>(m_textureController, key, FontSize::Small); // Not FontSize::Small
 }
 
 std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Same than UiElement::RemoveChild
@@ -87,9 +86,9 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
 {
     std::unique_ptr<UiElement> element;
     if (data.type == "uielement") {
-        element = CreateElement(data.key, data.path);
+        element = CreateElement(data.key, data.imagePath);
     } else if (data.type == "textelement") {
-        std::unique_ptr<UiTextElement> textElement = CreateTextElement(data.key); //, data.path);
+        std::unique_ptr<UiTextElement> textElement = CreateTextElement(data.key);
         textElement->SetText(data.text);
         element = std::move(textElement);
     } else {

@@ -1,7 +1,6 @@
 frame
 frameText
 textelement
-PixelOperator8
 scale frame width 0.9
 xAnchor left_in
 yAnchor center

@@ -7,6 +7,11 @@
 using FontKey = std::string;
 using TextureKey = std::string;
 
+enum class FontSize
+{
+    Small // Will have Medium, High, etc.
+};
+
 struct ScenePosition : public Vec2
 {
     ScenePosition() = default;

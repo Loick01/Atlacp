@@ -8,7 +8,6 @@
 #include "ui/ui_types.hpp"
 
 class FileReader;
-class FontController;
 class TextureController;
 
 class UiController
@@ -26,7 +25,6 @@ class UiController
         // be able to be found in m_elements
 
         const FileReader& m_fileReader;
-        FontController& m_fontController;
         TextureController& m_textureController;
         
         const std::string m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?)
@@ -47,7 +45,7 @@ class UiController
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
 
     public:
-        UiController(const FileReader& fileReader, FontController& fontController, TextureController& textureController, const std::string& fontFilepath); 
+        UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath); 
 
         std::unique_ptr<UiElement> CreateElement(const UiKey& key, const std::string& textureFilepath);
         std::unique_ptr<UiTextElement> CreateTextElement(const UiKey& key);

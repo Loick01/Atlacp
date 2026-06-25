@@ -1,7 +1,6 @@
 frame
 option0
 textelement
-PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor top_in
@@ -12,7 +11,6 @@ text Fight
 option0
 option1
 textelement
-PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
@@ -21,7 +19,6 @@ text Skip
 option1
 option2
 textelement
-PixelOperator8
 scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out

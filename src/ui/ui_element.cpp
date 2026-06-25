@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-#include "image/font.hpp"
 #include "image/texture.hpp"
 
 UiElement::UiElement(TextureController& textureController, const UiKey& key,
@@ -202,12 +201,9 @@ void UiElement::ComputeFinal()
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }
 
-UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, const FontSize fontSize, const SDL_Color color):
-    UiElement(textureController, key), m_fontController(fontController), m_textColor(color), m_text("No_Text"), m_fontSize(fontSize)
-{
-    // const unsigned int fontSize = fontController.GetSmallTextSize(); // Will be removed
-    // m_fontKey = fontFilepath + "_" + std::to_string(24); // fontFilepath is not the full path, just the filename in the font directory
-}
+UiTextElement::UiTextElement(TextureController& textureController, const UiKey& key, const FontSize fontSize, const SDL_Color color):
+    UiElement(textureController, key), m_textColor(color), m_text("No_Text"), m_fontSize(fontSize)
+{}
 
 void UiTextElement::SetText(const std::string& text)
 {
