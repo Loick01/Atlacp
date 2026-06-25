@@ -57,9 +57,7 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
     if (key == "") throw std::runtime_error("Texture key (string) is empty, text in UiTextElement should never be \"\"");
     
     if (m_textures.find(key) == m_textures.end()) {
-        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(m_fontController.GetFontForSize(fontSize), text.c_str(), textColor, maxWidth);
-        if (!surface) 
-            throw std::runtime_error("Failed to create a surface for this text : " + text + "\n" + std::string(IMG_GetError()));
+        SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
         CreateTextureFromSurface(surface, key, text, textureWidth, textureHeight);
     }else{ // Text has already been generated as a texture
         AddTexture(key, textureWidth, textureHeight);

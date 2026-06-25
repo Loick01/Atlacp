@@ -14,12 +14,13 @@ class FontController
         std::map<FontSize,TTF_Font*> m_fonts; // One font only, with different size
         unsigned int m_smallTextSize;
         
-        void LoadFontForSize(const std::string& fontFilepath, const FontSize fontSize);
+        TTF_Font* GetFontForSize(const FontSize fontSize) const;
+        void LoadFontForSize(const std::string& fontFilepath, const FontSize fontSize, const unsigned int textSize);
         
     public:
         FontController(const std::string& fontFilepath);  // fontFilepath is not the full path, just the filename in the font directory
         ~FontController();
 
-        TTF_Font* GetFontForSize(const FontSize fontSize) const;
+        SDL_Surface* GenerateSurfaceFromText(const FontSize fontSize, const std::string& text, const SDL_Color textColor, const unsigned int maxWidth) const;
 };
 
