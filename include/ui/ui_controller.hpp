@@ -51,7 +51,6 @@ class UiController
 
         std::unique_ptr<UiElement> CreateElement(const UiKey& key, const std::string& textureFilepath);
         std::unique_ptr<UiTextElement> CreateTextElement(const UiKey& key);
-        std::unique_ptr<UiTextElement> CreateTextElement(const UiKey& key, const std::string& fontFilepath); // Remove ?
         std::unique_ptr<UiElement> RemoveSubRoots(const UiKey& key);
 
         std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename

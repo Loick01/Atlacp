@@ -13,8 +13,9 @@ class NPC : public MapEntity
         std::unique_ptr<MapEntityBehaviour> m_behaviour;
 
     public:
-        NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const MapEntity* trackedEntity, // Remove tracked entity
-            const std::string& spriteFilepath, Camera& camera, const MapPosition position, const MapBehaviour mb, const float walkSpeed, const float runSpeed);
+        NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const std::string& spriteFilepath,
+            Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed);
 
         void Update(const float deltaTime) override;
+        void SetBehaviour(const MapBehaviour mb);
 };

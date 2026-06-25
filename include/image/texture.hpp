@@ -7,9 +7,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h> // TTF_RenderUTF8_Blended_Wrapped
 
+#include "image/font.hpp" // FontSize
 #include "image/image_types.hpp" // TextureKey
-
-class FontController;
 
 struct Texture
 {
@@ -37,7 +36,7 @@ class TextureController
         void AddTexture(const TextureKey& key, int& textureWidth, int& textureHeight); // Rename ?
 
         void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int &textureWidth, int& textureHeight);
-        void LoadTextureFromText(const TextureKey& fontKey, const TextureKey& key, const std::string& text, 
+        void LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
             int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth);
 
         void RenderTexture(const TextureKey& key, const SDL_Rect& src, const SDL_Rect& dst) const;

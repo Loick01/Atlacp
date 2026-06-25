@@ -2,8 +2,6 @@
 
 #include <stdexcept>
 
-#include "image/font.hpp"
-
 TextureController::TextureController(FontController& fontController, SDL_Renderer* windowRenderer) :
     m_fontController(fontController), m_windowRenderer(windowRenderer)
 {
@@ -51,13 +49,13 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
     }
 }
 
-void TextureController::LoadTextureFromText(const FontKey& fontKey, const TextureKey& key, const std::string& text, 
+void TextureController::LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
     int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
     if (key == "") throw std::runtime_error("Texture key (string) is empty, text in UiTextElement should never be \"\"");
     
     if (m_textures.find(key) == m_textures.end()) {
-        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(m_fontController.GetFont(fontKey), text.c_str(), textColor, maxWidth);
+        SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(m_fontController.GetFontForSize(fontSize), text.c_str(), textColor, maxWidth);
         if (!surface) 
             throw std::runtime_error("Failed to create a surface for this text : " + text + "\n" + std::string(IMG_GetError()));
         CreateTextureFromSurface(surface, key, text, textureWidth, textureHeight);

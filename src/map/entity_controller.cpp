@@ -100,10 +100,9 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
         NPC* npc = new NPC(
             m_fileReader, 
             tilemap, 
-            textureController, 
-            nullptr,
+            textureController,
             "../assets/sprites/" + data.sprite, // TODO : Filepath
-            camera, npcPosition, data.mapBehaviour,
+            camera, npcPosition,
             data.walkSpeed, data.runSpeed
         );
         npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});

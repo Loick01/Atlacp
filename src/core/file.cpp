@@ -79,12 +79,9 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
         // No verification yet on what is read 
         data.sprite = s;
         input >> data.position.x; input >> data.position.y;
-
-        input >> s;
-        data.mapBehaviour = ReadMapBehaviour(s);
-        
         input >> data.walkSpeed;
         input >> data.runSpeed;
+        // NPC always spawn with random behaviour
         npcsData.push_back(data);
     }
     return npcsData;

@@ -32,7 +32,6 @@ enum class MapBound
 struct DataNPC // Rename
 {
     MapPosition position;
-    MapBehaviour mapBehaviour;
     std::string sprite;
     float walkSpeed;
     float runSpeed;

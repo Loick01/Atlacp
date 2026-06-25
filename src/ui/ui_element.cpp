@@ -202,17 +202,11 @@ void UiElement::ComputeFinal()
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }
 
-UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, const std::string& fontFilepath, const SDL_Color color):
-    UiElement(textureController, key), m_fontController(fontController), m_textColor(color), m_text("No_Text")
+UiTextElement::UiTextElement(FontController& fontController, TextureController& textureController, const UiKey& key, const FontSize fontSize, const SDL_Color color):
+    UiElement(textureController, key), m_fontController(fontController), m_textColor(color), m_text("No_Text"), m_fontSize(fontSize)
 {
-    const unsigned int fontSize = 24;
-    m_fontKey = fontFilepath + "_" + std::to_string(fontSize); // fontFilepath is not the full path, just the filename in the font directory
-    fontController.LoadFontFromFile("../assets/ui/fonts/"+fontFilepath+".ttf", m_fontKey, fontSize);
-}
-
-UiTextElement::~UiTextElement()
-{
-    m_fontController.DeleteFont(m_fontKey); // Because LoadTextureFromText is in UiTextElement
+    // const unsigned int fontSize = fontController.GetSmallTextSize(); // Will be removed
+    // m_fontKey = fontFilepath + "_" + std::to_string(24); // fontFilepath is not the full path, just the filename in the font directory
 }
 
 void UiTextElement::SetText(const std::string& text)
@@ -223,7 +217,7 @@ void UiTextElement::SetText(const std::string& text)
 void UiTextElement::GenerateText() // Same than Drawable::LoadTexture(), will be improved
 {
     m_textureKey = m_text; // Will use something else than just text as texture key
-    m_textureController.LoadTextureFromText(m_fontKey, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
+    m_textureController.LoadTextureFromText(m_fontSize, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
 }
 
 void UiTextElement::SetMaxWidth(const float amount)
