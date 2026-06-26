@@ -9,22 +9,29 @@ FontController::FontController(const std::string& fontFilepath)
     
     // TTF_Font are now created and deleted from the FontController
     
+    const unsigned int maxAllowedWidth = 750; // Remove
+    const unsigned int minAllowedWidth = 735; // Remove
     unsigned int minBound = 1;
     unsigned int maxBound = 100; // How to get a max value ?
-    const std::string smallSizeExampleText = "Hello world Hello world Hello world He";
-    // while () {
+    const std::string smallSizeExampleText = "Hello world Hello world Hello world Hell";
+    while (maxBound - minBound > 1) {
         const unsigned int averageSize = (minBound+maxBound)/2;
-        // std::cout << "Trying " << averageSize << "\n";
         LoadFontForSize("../assets/ui/fonts/"+fontFilepath+".ttf", FontSize::Small, averageSize);
-        SDL_Surface* surface = GenerateSurfaceFromText(FontSize::Small, smallSizeExampleText, SDL_Color{0,0,0,255}, 1600); // Not 1600, will be window width I think ?
+        SDL_Surface* surface = GenerateSurfaceFromTextUnwrapped(FontSize::Small, smallSizeExampleText, SDL_Color{0,0,0,255});
         
-        std::cout << surface->w << "\n";
-    
+        if (surface->w > maxAllowedWidth)
+            maxBound = averageSize;
+        else if (surface->w < minAllowedWidth)
+            minBound = averageSize;
+        else {
+            m_smallTextSize = averageSize;
+            break;
+        }
         SDL_FreeSurface(surface); // Free the temp SDL_Surface
-    // }
+    }
 
-    m_smallTextSize = 24;
-    LoadFontForSize("../assets/ui/fonts/"+fontFilepath+".ttf", FontSize::Small, m_smallTextSize);
+    // Don't need to call LoadFontForSize, it has been already done in the while loop
+    std::cout << "Final size for FontSize::Small = " << m_smallTextSize << "\n";
 }
 
 FontController::~FontController()
@@ -52,7 +59,15 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
 
 SDL_Surface* FontController::GenerateSurfaceFromText(const FontSize fontSize, const std::string& text, const SDL_Color textColor, const unsigned int maxWidth) const
 {
-    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFontForSize(fontSize), text.c_str(), textColor, maxWidth); 
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFontForSize(fontSize), text.c_str(), textColor, maxWidth); // TTF_RenderUTF8_Solid_Wrapped
+    if (!surface) 
+            throw std::runtime_error("Failed to create a surface for this text : " + text + "\n" + std::string(SDL_GetError()));
+    return surface; // This surface is free when calling TextureController::CreateTextureFromSurface()
+}
+
+SDL_Surface* FontController::GenerateSurfaceFromTextUnwrapped(const FontSize fontSize, const std::string& text, const SDL_Color textColor) const
+{
+    SDL_Surface* surface = TTF_RenderUTF8_Blended(GetFontForSize(fontSize), text.c_str(), textColor); // TTF_RenderUTF8_Solid
     if (!surface) 
             throw std::runtime_error("Failed to create a surface for this text : " + text + "\n" + std::string(SDL_GetError()));
     return surface; // This surface is free when calling TextureController::CreateTextureFromSurface()

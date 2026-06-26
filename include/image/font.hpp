@@ -22,5 +22,6 @@ class FontController
         ~FontController();
 
         SDL_Surface* GenerateSurfaceFromText(const FontSize fontSize, const std::string& text, const SDL_Color textColor, const unsigned int maxWidth) const;
+        SDL_Surface* GenerateSurfaceFromTextUnwrapped(const FontSize fontSize, const std::string& text, const SDL_Color textColor) const;
 };
 
