@@ -48,7 +48,7 @@ void NPC::SetBehaviour(const MapBehaviour mb)
             m_behaviour = std::make_unique<MapRandomBehaviour>();
             break;
         // case MapBehaviour::Follow :
-        //     m_behaviour = std::make_unique<MapFollowBehaviour>(trackedEntity, GetWalkSpeed()); // const MapEntity* trackedEntity
+        //     m_behaviour = std::make_unique<MapFollowBehaviour>(this, trackedEntity); // const MapEntity* followerEntity, trackedEntity
         //     break;
         // case MapBehaviour::GoTo :
         //     m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), MapPosition{4, 1}, tilemap);

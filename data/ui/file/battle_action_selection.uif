@@ -7,6 +7,7 @@ yAnchor top_in
 xPadding frame width 0.06
 yPadding frame height 0.25
 text Fight
+textsize small
 ###
 option0
 option1
@@ -15,6 +16,7 @@ scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
 text Skip
+textsize small
 ###
 option1
 option2
@@ -23,3 +25,4 @@ scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
 text Leave
+textsize small

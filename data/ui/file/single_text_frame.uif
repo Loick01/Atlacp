@@ -5,3 +5,4 @@ scale frame width 0.9
 xAnchor left_in
 yAnchor center
 xPadding frame width 0.05
+textsize small

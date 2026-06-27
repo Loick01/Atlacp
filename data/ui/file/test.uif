@@ -26,4 +26,5 @@ xAnchor left_in
 yAnchor center
 xPadding frame2 width 0.1
 text This is my default text
+textsize small
 ###

@@ -29,6 +29,7 @@ class FileReader
         CommandType ReadCommandType(const std::string& s) const;
         MoveType ReadMoveType(const std::string& s) const;
         MapBehaviour ReadMapBehaviour(const std::string& s) const; // Will be used for cinematic files
+        FontSize ReadFontSize(const std::string& s) const;
 
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 

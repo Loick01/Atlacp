@@ -137,6 +137,9 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 input >> data.yPadding.amount;
             } else if (s == "text") {
                 std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream 
+            } else if (s == "textsize") {
+                input >> s;
+                data.textSize = ReadFontSize(s);
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }
@@ -273,13 +276,13 @@ Anchor FileReader::ReadAnchor(const std::string& s) const
 
 CommandType FileReader::ReadCommandType(const std::string& s) const
 {
-    static const std::unordered_map<std::string, CommandType> axis = {
+    static const std::unordered_map<std::string, CommandType> commands = {
         {"attack", CommandType::Attack},
         {"heal", CommandType::Heal}
     };
 
-    std::unordered_map<std::string, CommandType>::const_iterator it = axis.find(s);
-    if (it != axis.end())
+    std::unordered_map<std::string, CommandType>::const_iterator it = commands.find(s);
+    if (it != commands.end())
         return it->second;
 
     throw std::runtime_error("Unknown value read as CommandType");
@@ -287,13 +290,13 @@ CommandType FileReader::ReadCommandType(const std::string& s) const
 
 MoveType FileReader::ReadMoveType(const std::string& s) const
 {
-    static const std::unordered_map<std::string, MoveType> axis = {
+    static const std::unordered_map<std::string, MoveType> moves = {
         {"physical", MoveType::Physical},
         {"magic", MoveType::Magic}
     };
 
-    std::unordered_map<std::string, MoveType>::const_iterator it = axis.find(s);
-    if (it != axis.end())
+    std::unordered_map<std::string, MoveType>::const_iterator it = moves.find(s);
+    if (it != moves.end())
         return it->second;
 
     throw std::runtime_error("Unknown value read as MoveType");
@@ -301,17 +304,30 @@ MoveType FileReader::ReadMoveType(const std::string& s) const
 
 MapBehaviour FileReader::ReadMapBehaviour(const std::string& s) const
 {
-    static const std::unordered_map<std::string, MapBehaviour> axis = {
+    static const std::unordered_map<std::string, MapBehaviour> behaviours = {
         {"random", MapBehaviour::Random},
         {"follow", MapBehaviour::Follow},
         {"goto", MapBehaviour::GoTo}
     };
 
-    std::unordered_map<std::string, MapBehaviour>::const_iterator it = axis.find(s);
-    if (it != axis.end())
+    std::unordered_map<std::string, MapBehaviour>::const_iterator it = behaviours.find(s);
+    if (it != behaviours.end())
         return it->second;
 
     throw std::runtime_error("Unknown value read as MapBehaviour");
+}
+
+FontSize FileReader::ReadFontSize(const std::string& s) const
+{
+    static const std::unordered_map<std::string, FontSize> fontSizes = {
+        {"small", FontSize::Small}
+    };
+
+    std::unordered_map<std::string, FontSize>::const_iterator it = fontSizes.find(s);
+    if (it != fontSizes.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as FontSize");
 }
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const

@@ -2,15 +2,13 @@
 
 #include <stdexcept>
 
-FontController::FontController(const std::string& fontFilepath)
+FontController::FontController(const std::string& fontFilepath, const unsigned int targetWidthForSmallText)
 {
     if (TTF_Init() < 0) 
         throw std::runtime_error("Failed to initialize SDL font library\n" + std::string(TTF_GetError()));
     
     // TTF_Font are now created and deleted from the FontController
     
-    const unsigned int maxAllowedWidth = 750; // Remove
-    const unsigned int minAllowedWidth = 735; // Remove
     unsigned int minBound = 1;
     unsigned int maxBound = 100; // How to get a max value ?
     const std::string smallSizeExampleText = "Hello world Hello world Hello world Hell";
@@ -19,9 +17,9 @@ FontController::FontController(const std::string& fontFilepath)
         LoadFontForSize("../assets/ui/fonts/"+fontFilepath+".ttf", FontSize::Small, averageSize);
         SDL_Surface* surface = GenerateSurfaceFromTextUnwrapped(FontSize::Small, smallSizeExampleText, SDL_Color{0,0,0,255});
         
-        if (surface->w > maxAllowedWidth)
+        if (surface->w > targetWidthForSmallText*1.01f)
             maxBound = averageSize;
-        else if (surface->w < minAllowedWidth)
+        else if (surface->w < targetWidthForSmallText*0.99f)
             minBound = averageSize;
         else {
             m_smallTextSize = averageSize;

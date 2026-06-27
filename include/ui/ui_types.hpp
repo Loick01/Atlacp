@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "image/image_types.hpp" // FontSize
+
 using UiKey = std::string; // string ? Rename UiElementKey ?
 
 enum class UiElementEvent
@@ -76,6 +78,7 @@ struct DataUi // Rename + Should not be here ?
     std::string type; // "uielement" or "textelement"
     std::string imagePath; // Only used for UiElement, should not be here ?
     std::string text; // Only used for UiTextElement, should not be here ?
+    FontSize textSize; // Only used for UiTextElement, should not be here ? Rename ?
     // Can't use UiParams
     PartialSize scale;
     Axis dstScaleAxis; // Only use for UiElement (when type = "uielement"), should not be here ?

@@ -26,4 +26,5 @@ scale frame width 0.75
 xAnchor right_out
 yAnchor center
 xPadding faceset width 0.2
+textsize small
 ###

@@ -24,6 +24,7 @@ xAnchor left_in
 yAnchor top_in
 xPadding actorBox height 0.15
 yPadding actorBox height 0.15
+textsize small
 ###
 actorName
 actorHealth
@@ -31,4 +32,5 @@ textelement
 scale actorName width 1.
 xAnchor left_in
 yAnchor bottom_out
+textsize small
 ###

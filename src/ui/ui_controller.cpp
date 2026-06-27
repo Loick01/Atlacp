@@ -66,7 +66,7 @@ std::unique_ptr<UiElement> UiController::CreateElement(const UiKey& key, const s
 
 std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key)
 {
-    return std::make_unique<UiTextElement>(m_textureController, key, FontSize::Small); // Not FontSize::Small
+    return std::make_unique<UiTextElement>(m_textureController, key);
 }
 
 std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Same than UiElement::RemoveChild
@@ -90,6 +90,7 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     } else if (data.type == "textelement") {
         std::unique_ptr<UiTextElement> textElement = CreateTextElement(data.key);
         textElement->SetText(data.text);
+        textElement->SetTextSize(data.textSize);
         element = std::move(textElement);
     } else {
         throw std::runtime_error("Unknown element type : " + data.type);

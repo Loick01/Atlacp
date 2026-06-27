@@ -13,6 +13,11 @@ struct MapPosition : public Vec2 // Rename GridPosition ?
     {
         return ScenePosition{x, y}*tileSize;
     }
+
+    unsigned int GetManhattanDistance(const MapPosition& mp) const
+    {
+        return std::abs(x - mp.x) + std::abs(y - mp.y);
+    }
 };
 
 enum class MapBehaviour

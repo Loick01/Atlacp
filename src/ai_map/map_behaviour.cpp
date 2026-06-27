@@ -31,14 +31,18 @@ void MapRandomBehaviour::OnStopCase(MapEntity& entity)
     entity.Reset(entity.GetCurrentMovement().GetDirection()); // Set state to Free where a new delay will be generated
 }
 
-MapFollowBehaviour::MapFollowBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed):
+MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity):
     m_trackedEntity(trackedEntity)
 {
     if (trackedEntity == nullptr)
         throw std::invalid_argument("Tracked entity is nullptr\n");
-    // Should also test m_runSpeed
-    if (trackedEntity->GetWalkSpeed() > followerWalkSpeed) // Tracked entity should not be faster than the entity who own this behaviour
+    
+    // Should also test m_runSpeed ?
+    if (trackedEntity->GetWalkSpeed() > followerEntity->GetWalkSpeed()) // Tracked entity should not be faster than the entity who own this behaviour
         throw std::invalid_argument("MapFollowBehaviour should not be used if tracked entity is faster than follower\n");
+
+    if (followerEntity->GetMapPosition().GetManhattanDistance(trackedEntity->GetMapPosition()) != 1)
+        throw std::invalid_argument("MapFollowBehaviour can start only when the tracked entity is next to the follower\n"); // Will use follow with pathfinding
 }
 
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)

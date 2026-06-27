@@ -41,7 +41,7 @@ class MapFollowBehaviour : public MapEntityBehaviour // Rename MapFollowEntitybe
         const MapEntity* m_trackedEntity; // Could be MapEntity& when I remove trackedEntity from NPC constructor ?
 
     public:
-        MapFollowBehaviour(const MapEntity* trackedEntity, const float followerWalkSpeed);
+        MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity);
 
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;

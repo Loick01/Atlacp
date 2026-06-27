@@ -201,13 +201,18 @@ void UiElement::ComputeFinal()
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }
 
-UiTextElement::UiTextElement(TextureController& textureController, const UiKey& key, const FontSize fontSize, const SDL_Color color):
-    UiElement(textureController, key), m_textColor(color), m_text("No_Text"), m_fontSize(fontSize)
+UiTextElement::UiTextElement(TextureController& textureController, const UiKey& key, const SDL_Color color):
+    UiElement(textureController, key), m_textColor(color), m_text("No_Text") // Default value for m_fontSize ?
 {}
 
 void UiTextElement::SetText(const std::string& text)
 {
     m_text = text;
+}
+
+void UiTextElement::SetTextSize(const FontSize size)
+{
+    m_fontSize = size;
 }
 
 void UiTextElement::GenerateText() // Same than Drawable::LoadTexture(), will be improved

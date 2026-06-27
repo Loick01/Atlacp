@@ -5,3 +5,4 @@ scale frame width 0.5
 xAnchor left_in
 yAnchor bottom_out
 text Default
+textsize small

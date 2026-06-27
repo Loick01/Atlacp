@@ -5,6 +5,7 @@ scale background width 0.8
 xAnchor center
 yAnchor center
 text GameMap
+textsize small
 ###
 frame1
 option1
@@ -13,6 +14,7 @@ scale background width 0.8
 xAnchor center
 yAnchor center
 text EditorMap
+textsize small
 ###
 frame2
 option2
@@ -21,3 +23,4 @@ scale background width 0.8
 xAnchor center
 yAnchor center
 text Battle
+textsize small
