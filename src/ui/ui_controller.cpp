@@ -90,7 +90,7 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     } else if (data.type == "textelement") {
         std::unique_ptr<UiTextElement> textElement = CreateTextElement(data.key);
         textElement->SetText(data.text);
-        textElement->SetTextSize(data.textSize);
+        textElement->SetTextSize(data.fontSize);
         element = std::move(textElement);
     } else {
         throw std::runtime_error("Unknown element type : " + data.type);

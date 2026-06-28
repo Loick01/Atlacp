@@ -202,7 +202,7 @@ void UiElement::ComputeFinal()
 }
 
 UiTextElement::UiTextElement(TextureController& textureController, const UiKey& key, const SDL_Color color):
-    UiElement(textureController, key), m_textColor(color), m_text("No_Text") // Default value for m_fontSize ?
+    UiElement(textureController, key), m_textColor(color), m_text("No_Text") // By default, FontSize in DataUi (used for UiTextElement construction) is FontSize::Small
 {}
 
 void UiTextElement::SetText(const std::string& text)

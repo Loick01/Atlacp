@@ -139,7 +139,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream 
             } else if (s == "textsize") {
                 input >> s;
-                data.textSize = ReadFontSize(s);
+                data.fontSize = ReadFontSize(s);
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }

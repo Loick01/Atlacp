@@ -76,9 +76,11 @@ struct DataUi // Rename + Should not be here ?
     UiKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
     UiKey key;
     std::string type; // "uielement" or "textelement"
-    std::string imagePath; // Only used for UiElement, should not be here ?
-    std::string text; // Only used for UiTextElement, should not be here ?
-    FontSize textSize; // Only used for UiTextElement, should not be here ? Rename ?
+    std::string imagePath; // Only used for UiElement
+
+    std::string text; // Only used for UiTextElement
+    FontSize fontSize; // Only used for UiTextElement
+    
     // Can't use UiParams
     PartialSize scale;
     Axis dstScaleAxis; // Only use for UiElement (when type = "uielement"), should not be here ?
@@ -87,7 +89,8 @@ struct DataUi // Rename + Should not be here ?
     PartialSize xPadding;
     PartialSize yPadding;
 
-    DataUi() {
-        text = "invalid_text"; // Should not happen
+    DataUi() { // Should not happen
+        text = "invalid_text";
+        fontSize = FontSize::Small; // Small ?
     }
 };
