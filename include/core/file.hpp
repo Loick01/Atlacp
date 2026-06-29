@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "animation/animation_types.hpp" // AnimationData
@@ -36,8 +37,8 @@ class FileReader
     public:
         FileReader() = default;
 
+        std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const; // Rename
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const; // Rename
-        std::vector<MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const; // Rename + I will use a function that return a MoveDefinition associated to an ID 
         std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const; // Rename
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename
         

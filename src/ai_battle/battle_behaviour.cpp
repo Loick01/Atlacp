@@ -4,5 +4,5 @@
 
 BattleActor* BattleBehaviour::SelectTarget(const std::vector<BattleActor*> actors) const
 {
-    return actors[rand()%actors.size()];
+    return actors[rand()%actors.size()]; // TODO : Actor selection
 }

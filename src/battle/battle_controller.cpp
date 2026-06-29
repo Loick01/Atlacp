@@ -226,7 +226,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
 
 void BattleController::HandleAiActionSelection(AiActor& srcActor)
 {
-    const unsigned int moveIndex = 0; // TODO : Move selection
+    const unsigned int moveIndex = rand() % m_currentActor->GetMoves().size(); // TODO : Move selection in BattleBehaviour (will use Random)
     const MoveDefinition md = m_currentActor->GetMove(moveIndex);
     m_currentCommand = CreateCommand(m_currentActor, md);
 
@@ -279,11 +279,7 @@ void BattleController::InitializeActors(const std::string& battleFile)
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
 
-
-    // Will be removed --> Each BattleActor will have his own moves and will call SoundController::LoadChunk on each of them
-    const std::vector<MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list"); // For now, actors can command all moves
-    for (const MoveDefinition& m : moves)
-        SoundController::GetInstance().LoadChunk(m.sfxPath);
+    const std::unordered_map<unsigned int, MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list");
 
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
     unsigned int countAlly = 0;
@@ -306,7 +302,14 @@ void BattleController::InitializeActors(const std::string& battleFile)
             actor = std::make_unique<BattleActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
 
         actor->SetSpritePath(data.spritePath); // Sprite path should be in BattleActor constructor ?
-        actor->SetMoves(moves); // Will be removed (for now all moves are available)
+        
+        std::vector<MoveDefinition> currentMoves;
+        for (const unsigned int id : data.moveIds) {
+            const MoveDefinition m = moves.at(id);
+            SoundController::GetInstance().LoadChunk(m.sfxPath);
+            currentMoves.push_back(m);
+        }
+        actor->SetMoves(currentMoves);
         
         actor->ComputeNextTurnTime(m_currentTime);
         m_turns.push(actor.get());

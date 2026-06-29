@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 enum class CommandType // Rename
 {
@@ -19,6 +20,7 @@ enum class Team
 
 struct DataBattleActor
 {
+    std::vector<unsigned int> moveIds;
     std::string spritePath;
     std::string name;
     Team team;

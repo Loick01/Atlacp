@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/map_types.hpp" // Direction
+#include "core/core_types.hpp" // Direction
 
 struct Random
 {

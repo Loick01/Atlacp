@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "core/random.hpp"
+#include "map/map_types.hpp" // MapPosition
 
 class MapEntity;
 class Tilemap;

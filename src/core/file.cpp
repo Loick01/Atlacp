@@ -15,6 +15,26 @@ std::ifstream FileReader::OpenFile(const std::string& filepath)
     return input;
 }
 
+std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
+{
+    std::ifstream input = OpenFile(moveFilepath);
+    std::unordered_map<unsigned int, MoveDefinition> moves;
+    std::string s;
+    while (input >> s) {
+        MoveDefinition m;
+        const unsigned int moveId = std::stoi(s); // Should catch invalid_argument ?
+        input >> m.name;
+        input >> s;
+        m.commandType = ReadCommandType(s);
+        input >> s;
+        m.moveType = ReadMoveType(s);
+        input >> m.value;
+        input >> m.sfxPath;
+        moves[moveId] = m;
+    }
+    return moves;
+}
+
 std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
 {
     std::ifstream input = OpenFile(battleFilepath);
@@ -37,30 +57,13 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> data.health;
         input >> data.turnSpeed;
         input >> data.spritePath;
+        while (input >> s && s != FILE_DELIMITER)
+            data.moveIds.push_back(std::stoi(s)); // Should catch invalid_argument ? 
+        
         actorsData.push_back(data);
-        input >> s; // After a BattleActor construction, the last line must be FILE_DELIMITER
     }
     
     return actorsData;
-}
-
-std::vector<MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
-{
-    std::ifstream input = OpenFile(moveFilepath);
-    std::vector<MoveDefinition> moves;
-    std::string s;
-    while (input >> s) {
-        MoveDefinition m;
-        m.name = s;
-        input >> s;
-        m.commandType = ReadCommandType(s);
-        input >> s;
-        m.moveType = ReadMoveType(s);
-        input >> m.value;
-        input >> m.sfxPath;
-        moves.push_back(m);
-    }
-    return moves;
 }
 
 std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
