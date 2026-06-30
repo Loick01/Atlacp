@@ -23,14 +23,15 @@ class FileReader
 {
     private:
         static std::ifstream OpenFile(const std::string& filepath);
+        std::string ReadString(std::ifstream& input) const;
 
         // Should not be here ?
-        Axis ReadAxis(const std::string& s) const;
-        Anchor ReadAnchor(const std::string& s) const;
-        CommandType ReadCommandType(const std::string& s) const;
-        MoveType ReadMoveType(const std::string& s) const;
-        MapBehaviour ReadMapBehaviour(const std::string& s) const; // Will be used for cinematic files
-        FontSize ReadFontSize(const std::string& s) const;
+        Axis ReadAxis(std::ifstream& input) const;
+        Anchor ReadAnchor(std::ifstream& input) const;
+        CommandType ReadCommandType(std::ifstream& input) const;
+        MoveType ReadMoveType(std::ifstream& input) const;
+        MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
+        FontSize ReadFontSize(std::ifstream& input) const;
 
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 

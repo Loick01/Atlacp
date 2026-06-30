@@ -15,6 +15,14 @@ std::ifstream FileReader::OpenFile(const std::string& filepath)
     return input;
 }
 
+std::string FileReader::ReadString(std::ifstream& input) const 
+{
+    std::string s;
+    input >> s;
+    std::replace(s.begin(), s.end(), '_', ' ');
+    return s;
+}
+
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
 {
     std::ifstream input = OpenFile(moveFilepath);
@@ -23,11 +31,10 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
     while (input >> s) {
         MoveDefinition m;
         const unsigned int moveId = std::stoi(s); // Should catch invalid_argument ?
-        input >> m.name;
-        input >> s;
-        m.commandType = ReadCommandType(s);
-        input >> s;
-        m.moveType = ReadMoveType(s);
+        
+        m.name = ReadString(input);
+        m.commandType = ReadCommandType(input);
+        m.moveType = ReadMoveType(input);
         input >> m.value;
         input >> m.sfxPath;
         moves[moveId] = m;
@@ -51,9 +58,9 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> s;
         if (s == "ai") data.isAiActor = true;
         else if (s == "player") data.isAiActor = false;
-        else throw std::runtime_error("Error : Must be \"ai\" or \"player\"");
+        else throw std::runtime_error("Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\"");
         
-        input >> data.name;
+        data.name = ReadString(input);
         input >> data.health;
         input >> data.turnSpeed;
         input >> data.spritePath;
@@ -116,33 +123,26 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         while (input >> s && s != FILE_DELIMITER) {
             if (s == "scale") {
                 input >> data.scale.srcElement;
-                input >> s;
-                data.scale.axis = ReadAxis(s);
+                data.scale.axis = ReadAxis(input);
                 input >> data.scale.amount;
             } else if (s == "scaleAxis") {
-                input >> s;
-                data.dstScaleAxis = ReadAxis(s);
+                data.dstScaleAxis = ReadAxis(input);
             } else if (s == "xAnchor") {
-                input >> s;
-                data.xAnchor = ReadAnchor(s);
+                data.xAnchor = ReadAnchor(input);
             } else if (s == "yAnchor") {
-                input >> s;
-                data.yAnchor = ReadAnchor(s);
+                data.yAnchor = ReadAnchor(input);
             } else if (s == "xPadding") {
                 input >> data.xPadding.srcElement;
-                input >> s;
-                data.xPadding.axis = ReadAxis(s);
+                data.xPadding.axis = ReadAxis(input);
                 input >> data.xPadding.amount;
             } else if (s == "yPadding") {
                 input >> data.yPadding.srcElement;
-                input >> s;
-                data.yPadding.axis = ReadAxis(s);
+                data.yPadding.axis = ReadAxis(input);
                 input >> data.yPadding.amount;
             } else if (s == "text") {
-                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream 
+                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream (should use ReadString ?)
             } else if (s == "textsize") {
-                input >> s;
-                data.fontSize = ReadFontSize(s);
+                data.fontSize = ReadFontSize(input);
             } else  
                 throw std::runtime_error("UiParams has no member with this name");
         }
@@ -242,13 +242,15 @@ TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
     return data;
 }
 
-Axis FileReader::ReadAxis(const std::string& s) const
+Axis FileReader::ReadAxis(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, Axis> axis = {
         {"width", Axis::Width},
         {"height", Axis::Height}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, Axis>::const_iterator it = axis.find(s);
     if (it != axis.end())
         return it->second;
@@ -256,7 +258,7 @@ Axis FileReader::ReadAxis(const std::string& s) const
     throw std::runtime_error("Unknown value read as Axis");
 }
 
-Anchor FileReader::ReadAnchor(const std::string& s) const
+Anchor FileReader::ReadAnchor(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, Anchor> anchors = {
         {"left_in", Anchor::LeftIn},
@@ -270,6 +272,8 @@ Anchor FileReader::ReadAnchor(const std::string& s) const
         {"bottom_out", Anchor::BottomOut}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, Anchor>::const_iterator it = anchors.find(s);
     if (it != anchors.end())
         return it->second;
@@ -277,13 +281,15 @@ Anchor FileReader::ReadAnchor(const std::string& s) const
     throw std::runtime_error("Unknown value read as Anchor");
 }
 
-CommandType FileReader::ReadCommandType(const std::string& s) const
+CommandType FileReader::ReadCommandType(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, CommandType> commands = {
         {"attack", CommandType::Attack},
         {"heal", CommandType::Heal}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, CommandType>::const_iterator it = commands.find(s);
     if (it != commands.end())
         return it->second;
@@ -291,13 +297,15 @@ CommandType FileReader::ReadCommandType(const std::string& s) const
     throw std::runtime_error("Unknown value read as CommandType");
 }
 
-MoveType FileReader::ReadMoveType(const std::string& s) const
+MoveType FileReader::ReadMoveType(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, MoveType> moves = {
         {"physical", MoveType::Physical},
         {"magic", MoveType::Magic}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, MoveType>::const_iterator it = moves.find(s);
     if (it != moves.end())
         return it->second;
@@ -305,7 +313,7 @@ MoveType FileReader::ReadMoveType(const std::string& s) const
     throw std::runtime_error("Unknown value read as MoveType");
 }
 
-MapBehaviour FileReader::ReadMapBehaviour(const std::string& s) const
+MapBehaviour FileReader::ReadMapBehaviour(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, MapBehaviour> behaviours = {
         {"random", MapBehaviour::Random},
@@ -313,6 +321,8 @@ MapBehaviour FileReader::ReadMapBehaviour(const std::string& s) const
         {"goto", MapBehaviour::GoTo}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, MapBehaviour>::const_iterator it = behaviours.find(s);
     if (it != behaviours.end())
         return it->second;
@@ -320,12 +330,14 @@ MapBehaviour FileReader::ReadMapBehaviour(const std::string& s) const
     throw std::runtime_error("Unknown value read as MapBehaviour");
 }
 
-FontSize FileReader::ReadFontSize(const std::string& s) const
+FontSize FileReader::ReadFontSize(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, FontSize> fontSizes = {
         {"small", FontSize::Small}
     };
 
+    std::string s;
+    input >> s;
     std::unordered_map<std::string, FontSize>::const_iterator it = fontSizes.find(s);
     if (it != fontSizes.end())
         return it->second;
