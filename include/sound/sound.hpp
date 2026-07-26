@@ -9,6 +9,8 @@
 namespace BaseSfx{
     // Should be inline constexpr std::string_view ?
     inline const std::string Accept = "Accept";
+    inline const std::string Open = "Open";
+    inline const std::string Close = "Close";
     inline const std::string Move = "Move";
     inline const std::string Next = "Next";
     inline const std::string Death = "Death"; // Should not be here (only used for BattleScene) ?
@@ -35,7 +37,7 @@ class SoundController // Singleton
         void RequestChunk(const std::string& path);
         void PlayRequestedChunk();
         
-        void PlayChunk(const std::string& path);
+        void PlayChunk(const std::string& path); // private ?
         void LoadChunk(const std::string& path);
-        void DeleteChunk(const std::string& path);
+        void DeleteChunk(const std::string& path); // Unused ?
 };

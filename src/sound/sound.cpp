@@ -45,6 +45,8 @@ void SoundController::LoadBaseSfx()
 {
     // ?
     LoadChunk(BaseSfx::Accept);
+    LoadChunk(BaseSfx::Open);
+    LoadChunk(BaseSfx::Close);
     LoadChunk(BaseSfx::Move);
     LoadChunk(BaseSfx::Next);
     LoadChunk(BaseSfx::Death);

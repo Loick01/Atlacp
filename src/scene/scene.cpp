@@ -179,7 +179,6 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
     }
 }
 
-
 GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_entities(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
@@ -215,6 +214,7 @@ void GameMapScene::Gameloop()
 
     m_entities.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
+    SoundController::GetInstance().PlayRequestedChunk();
     m_context.uiController.Draw();
     
     m_context.window.DrawBoxing();
