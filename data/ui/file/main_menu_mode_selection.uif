@@ -24,3 +24,12 @@ xAnchor center
 yAnchor center
 text Battle
 textsize small
+###
+frame3
+option3
+textelement
+scale background width 0.8
+xAnchor center
+yAnchor center
+text Exit
+textsize small

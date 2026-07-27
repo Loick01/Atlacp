@@ -103,8 +103,10 @@ void SoundController::LoadChunk(const std::string& path)
 
 void SoundController::DeleteChunk(const std::string& path)
 {
-    if (m_chunks.find(path) != m_chunks.end())
-        Mix_FreeChunk(m_chunks[path]);
-    else
-        throw std::runtime_error("Try to delete a chunk not in SoundController : " + path + "\n" + std::string(Mix_GetError()));
+    std::unordered_map<std::string, Mix_Chunk*>::iterator it = m_chunks.find(path);
+    if (it != m_chunks.end()) {
+        Mix_FreeChunk(it->second);
+        m_chunks.erase(it);
+    } 
+    // else throw std::runtime_error("Try to delete a chunk not in SoundController : " + path + "\n" + std::string(Mix_GetError()));
 }

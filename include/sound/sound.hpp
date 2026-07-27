@@ -39,5 +39,5 @@ class SoundController // Singleton
         
         void PlayChunk(const std::string& path); // private ?
         void LoadChunk(const std::string& path);
-        void DeleteChunk(const std::string& path); // Unused ?
+        void DeleteChunk(const std::string& path); // Used only in BattleController::PlayNextTurn (TurnState::End) for now 
 };

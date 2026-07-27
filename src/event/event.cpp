@@ -33,11 +33,10 @@ void EventController::PollAllEvents()
 
 MainMenuEventController::MainMenuEventController() 
 {
-    if (JoystickActionController::IsJoystickAvailable()) {
+    if (JoystickActionController::IsJoystickAvailable())
         m_actionController = std::make_unique<JoystickActionController>();
-    } else {
+    else
         m_actionController = std::make_unique<KeyboardActionController>();
-    }
 }
 
 void MainMenuEventController::HandleStateEvents()
@@ -75,11 +74,10 @@ void MainMenuEventController::HandlePollEvents()
 GameMapEventController::GameMapEventController():
     EventController()
 {
-    if (JoystickActionController::IsJoystickAvailable()) {
+    if (JoystickActionController::IsJoystickAvailable())
         m_actionController = std::make_unique<JoystickActionController>();
-    } else {
+    else
         m_actionController = std::make_unique<KeyboardActionController>();
-    }
 }
 
 void GameMapEventController::HandleStateEvents()
@@ -234,11 +232,10 @@ void EditorMapEventController::HandlePollEvents()
 
 BattleEventController::BattleEventController() 
 {
-    if (JoystickActionController::IsJoystickAvailable()) {
+    if (JoystickActionController::IsJoystickAvailable())
         m_actionController = std::make_unique<JoystickActionController>();
-    } else {
+    else
         m_actionController = std::make_unique<KeyboardActionController>();
-    }
 }
 
 void BattleEventController::HandleStateEvents()

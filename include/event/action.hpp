@@ -57,7 +57,7 @@ class KeyboardActionController : public ActionController
 
 enum class JoystickState
 {
-    Active, Neutral
+    ActiveOnX, ActiveOnY, Neutral
 };
 
 class JoystickActionController : public ActionController

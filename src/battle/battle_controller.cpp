@@ -392,6 +392,13 @@ void BattleController::PlayNextTurn()
         case TurnState::End : {
             if (m_exitEvent != ExitEvent::None) {
                 m_allyList.ResetInstanceCount(); // Should not be here ?
+
+                for (const std::unique_ptr<BattleActor>& b : m_actors) {
+                    const std::vector<MoveDefinition>& moves = b->GetMoves();
+                    for (const MoveDefinition m : moves)
+                        SoundController::GetInstance().DeleteChunk(m.sfxPath);
+                }
+                
                 Notify(m_exitEvent);
             } else {
                 m_exitEvent = CheckBattleEnd();

@@ -37,3 +37,13 @@ xAnchor center
 yAnchor bottom_out
 yPadding background height 0.05
 ###
+frame2
+frame3
+uielement
+../assets/ui/box.png
+scale background height 0.1
+scaleAxis height
+xAnchor center
+yAnchor bottom_out
+yPadding background height 0.05
+###

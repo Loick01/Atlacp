@@ -117,7 +117,7 @@ void MainMenuScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandlePollEvents();
-    m_context.eventController->HandleStateEvents();
+    // m_context.eventController->HandleStateEvents();
 
     const MainMenuEventState eventState = static_cast<MainMenuEventController*>(m_context.eventController.get())->GetEventState();
 
@@ -133,6 +133,9 @@ void MainMenuScene::Gameloop()
             case 2:
                 se = SwitchEvent::ToBattle;
                 break;
+            case 3:
+                m_gameloop = false;
+                return;
             default:
                 throw std::runtime_error("Selector is not supposed to be on this index : " + m_selector.GetOptionIndex());
         }
@@ -252,7 +255,7 @@ void EditorMapScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandlePollEvents(); 
-    // For now, I don't have any state event, so no call to EditorMapEventController::HandleStateEvents()
+    // m_context.eventController->HandleStateEvents();
 
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
@@ -300,7 +303,7 @@ void BattleScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandlePollEvents();
-    m_context.eventController->HandleStateEvents();
+    // m_context.eventController->HandleStateEvents();
 
     const BattleEventState eventState = static_cast<BattleEventController*>(m_context.eventController.get())->GetEventState();
 

@@ -172,8 +172,11 @@ bool JoystickActionController::IsPressedPoll(const SDL_Event& event)
 bool JoystickActionController::IsMotionPoll(const SDL_Event& event)
 {
     if (m_joystickState != JoystickState::Neutral) {
-        if (std::abs(event.jaxis.value) < JOYSTICK_DEAD_ZONE) {
-            m_joystickState = JoystickState::Neutral; // Not working properly
+        // Be sure to reset to JoystickState::Neutral only when the value goes under the dead zone for the same axis than the one when the state switched to ActiveOnX/Y 
+        if (event.jaxis.axis == 0 && m_joystickState == JoystickState::ActiveOnX ||
+            event.jaxis.axis == 1 && m_joystickState == JoystickState::ActiveOnY) {
+            if (std::abs(event.jaxis.value) < JOYSTICK_DEAD_ZONE)
+                m_joystickState = JoystickState::Neutral;
         }
     }
     return m_joystickState == JoystickState::Neutral && event.type == SDL_JOYAXISMOTION;
@@ -182,7 +185,7 @@ bool JoystickActionController::IsMotionPoll(const SDL_Event& event)
 bool JoystickActionController::IsLeftActionPoll(const SDL_Event& event)
 {
     if (event.jaxis.axis == 0 && event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
-        m_joystickState = JoystickState::Active;
+        m_joystickState = JoystickState::ActiveOnX;
         return true;
     }
     return false;
@@ -191,7 +194,7 @@ bool JoystickActionController::IsLeftActionPoll(const SDL_Event& event)
 bool JoystickActionController::IsRightActionPoll(const SDL_Event& event)
 {
     if (event.jaxis.axis == 0 && event.jaxis.value > JOYSTICK_DEAD_ZONE) {
-        m_joystickState = JoystickState::Active;
+        m_joystickState = JoystickState::ActiveOnX;
         return true;
     }
     return false;
@@ -200,7 +203,7 @@ bool JoystickActionController::IsRightActionPoll(const SDL_Event& event)
 bool JoystickActionController::IsUpActionPoll(const SDL_Event& event)
 {
     if (event.jaxis.axis == 1 && event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
-        m_joystickState = JoystickState::Active;
+        m_joystickState = JoystickState::ActiveOnY;
         return true;
     }
     return false;
@@ -209,7 +212,7 @@ bool JoystickActionController::IsUpActionPoll(const SDL_Event& event)
 bool JoystickActionController::IsDownActionPoll(const SDL_Event& event)
 {
     if (event.jaxis.axis == 1 && event.jaxis.value > JOYSTICK_DEAD_ZONE) {
-        m_joystickState = JoystickState::Active;
+        m_joystickState = JoystickState::ActiveOnY;
         return true;
     }
     return false;
