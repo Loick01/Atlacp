@@ -37,6 +37,7 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
         m.moveType = ReadMoveType(input);
         input >> m.value;
         input >> m.sfxPath;
+        input >> m.animationPath;
         moves[moveId] = m;
     }
     return moves;

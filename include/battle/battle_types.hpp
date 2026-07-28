@@ -36,4 +36,5 @@ struct MoveDefinition // Rename
     MoveType moveType;
     unsigned int value; // Rename
     std::string sfxPath;
+    std::string animationPath;
 };

@@ -1,7 +1,7 @@
-0 Hit attack physical 5 Hit
-1 Strike attack physical 10 Impact
-2 Heal heal magic 8 Heal
-3 Burst attack physical 12 Explosion
-4 Fire_Throw attack physical 6 Fire
-5 Cut attack physical 4 Slash
-6 Double_Kick attack physical 7 Sword
+0 Hit attack physical 5 Hit healing
+1 Strike attack physical 10 Impact healing
+2 Heal heal magic 8 Heal healing
+3 Burst attack physical 12 Explosion healing
+4 Fire_Throw attack physical 6 Fire healing
+5 Cut attack physical 4 Slash healing
+6 Double_Kick attack physical 7 Sword healing

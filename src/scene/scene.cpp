@@ -6,12 +6,11 @@
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
-    m_window("Atlacp", {25,25,25}), m_fontController("PixelOperator8", m_window.GetSize().x * 0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
+    m_window("Atlacp", {25,25,25}), m_fontController("PixelOperator8", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
     m_uiController(m_fileReader, m_textureController, "PixelOperator8"),
     m_context{m_window, m_fontController, m_textureController, m_fileReader, m_uiController},
     m_pendingSwitch(std::nullopt)
 {
-    std::cout << m_window.GetSize().x << "\n"; // Remove
     const SwitchEvent e = GetSwitchEventFromMode(mode);
     SetCurrentScene(e);
 }

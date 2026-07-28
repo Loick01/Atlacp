@@ -4,6 +4,7 @@
 #include <queue>
 #include <string>
 
+// #include "animation/animation.hpp"
 #include "battle/battle_actor.hpp"
 #include "battle/battle_types.hpp" // Team
 #include "core/notifier.hpp"
@@ -35,6 +36,8 @@ struct BattleCommand
     LifeState targetLifeState;
     unsigned int moveValue; // Rename
     std::string sfx;
+    // Animation animation;
+    std::string animation;
 
     Team ComputeTargetTeam() const
     {
@@ -50,13 +53,14 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv, const std::string& sfxPath) {
+    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv, const std::string& sfxPath, const std::string& animationPath) {
         commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
         targetLifeState = s;
         moveValue = mv;
         sfx = sfxPath;
+        animation = animationPath;
     }
 };
 

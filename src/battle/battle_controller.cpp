@@ -94,7 +94,7 @@ unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigne
 BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const
 {
     const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
-    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath); // Will not be LifeState::Alive
+    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath, md.animationPath); // Will not be LifeState::Alive
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -251,6 +251,7 @@ void BattleController::HandleMoveSelection(const int moveIndex)
 void BattleController::HandleCurrentCommand()
 {
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
+    // std::cout << m_currentCommand.animation << "\n";
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
             ApplyDamage(*m_currentActor, *m_targetActor);
