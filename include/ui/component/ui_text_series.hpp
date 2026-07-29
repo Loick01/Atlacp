@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <queue>
 
-#include "ui/ui_component.hpp"
+#include "ui/component/ui_component.hpp"
 #include "ui/ui_types.hpp"
 
 class UiTextSeries : public UiComponent

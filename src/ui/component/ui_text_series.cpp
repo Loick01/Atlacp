@@ -1,4 +1,4 @@
-#include "ui/ui_text_series.hpp"
+#include "ui/component/ui_text_series.hpp"
 
 #include "ui/ui_controller.hpp"
 

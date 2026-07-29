@@ -1,4 +1,4 @@
-#include "ui/ui_selector.hpp"
+#include "ui/component/ui_selector.hpp"
 
 #include "sound/sound.hpp"
 #include "ui/ui_controller.hpp"

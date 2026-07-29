@@ -1,6 +1,6 @@
 #include "map/map_entity.hpp"
 
-#include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_rect.h> // Should be in animation/animation.hpp ?
 
 #include "core/camera.hpp"
 #include "image/texture.hpp"

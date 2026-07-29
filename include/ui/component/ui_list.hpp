@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "ui/ui_component.hpp"
+#include "ui/component/ui_component.hpp"
 #include "ui/ui_types.hpp" // UiKey
 
 class UiList : public UiComponent

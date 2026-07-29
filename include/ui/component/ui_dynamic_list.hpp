@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/ui_list.hpp"
+#include "ui/component/ui_list.hpp"
 
 class UiDynamicList : public UiList
 {

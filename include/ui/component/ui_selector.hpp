@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "core/core_types.hpp" // Direction
-#include "ui/ui_component.hpp"
+#include "ui/component/ui_component.hpp"
 #include "ui/ui_types.hpp" // UiKey
 
 class UiSelector : public UiComponent

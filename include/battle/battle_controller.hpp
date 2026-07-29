@@ -4,15 +4,15 @@
 #include <queue>
 #include <string>
 
-// #include "animation/animation.hpp"
 #include "battle/battle_actor.hpp"
 #include "battle/battle_types.hpp" // Team
 #include "core/notifier.hpp"
 #include "event/event_types.hpp" // BattleEventState
-#include "ui/ui_dynamic_list.hpp"
-#include "ui/ui_list.hpp"
-#include "ui/ui_selector.hpp"
-#include "ui/ui_text_series.hpp"
+#include "ui/component/ui_dynamic_list.hpp"
+#include "ui/component/ui_list.hpp"
+#include "ui/component/ui_selector.hpp"
+#include "ui/component/ui_text_series.hpp"
+// #include "ui/ui_animated_element.hpp"
 
 class AiActor;
 class FileReader;
@@ -36,7 +36,7 @@ struct BattleCommand
     LifeState targetLifeState;
     unsigned int moveValue; // Rename
     std::string sfx;
-    // Animation animation;
+    // UiAnimatedElement animated;
     std::string animation;
 
     Team ComputeTargetTeam() const

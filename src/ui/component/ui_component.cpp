@@ -1,4 +1,4 @@
-#include "ui/ui_component.hpp"
+#include "ui/component/ui_component.hpp"
 
 #include "ui/ui_controller.hpp"
 
