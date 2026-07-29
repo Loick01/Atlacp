@@ -3,6 +3,7 @@
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/ai_actor.hpp"
 #include "core/file.hpp"
+#include "core/time.hpp"
 #include "sound/sound.hpp"
 #include "ui/ui_controller.hpp"
 
@@ -13,13 +14,13 @@ namespace { // These values must be the same as in the template file used for th
     const std::string prefixSprite = "actorSprite";
 }
 
-BattleController::BattleController(FileReader& fileReader, UiController& uiController):
+BattleController::BattleController(const Time& time, FileReader& fileReader, UiController& uiController):
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_staticList(uiController, "../data/ui/file/battle_action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
     m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif"),
-    m_moveAnimation(uiController, "../data/ui/template/move_animation.uit")
+    m_moveAnimation(time, uiController, "../data/ui/template/move_animation.uit")
 {}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
@@ -204,7 +205,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
             m_textSeries.Open();
             m_textSeries.AddText({"This turn has been skipped"});
             m_textSeries.NextText();
-            m_turnState = TurnState::Waiting;
+            m_turnState = TurnState::WaitingForText;
             break;
             
         case 2: {
@@ -261,8 +262,7 @@ void BattleController::HandleCurrentCommand()
         default : 
             throw std::runtime_error("Unknown CommandType value"); 
     }
-    // m_moveAnimation.Close();
-    m_turnState = TurnState::Waiting;
+    m_turnState = TurnState::WaitingForAnimation;
 }
 
 void BattleController::InitializeActors(const std::string& battleFile)
@@ -375,7 +375,19 @@ void BattleController::PlayNextTurn()
             break;
         }
         
-        case TurnState::Waiting : {
+        case TurnState::WaitingForAnimation : {
+            // if (m_moveAnimation.IsDone()) {
+            //     m_moveAnimation.Close();
+            //     m_turnState = TurnState::WaitingForText;
+            //     break;
+            // }
+            // m_moveAnimation.ContinueAnimation();
+
+            m_moveAnimation.Close();
+            m_turnState = TurnState::WaitingForText;
+        }
+
+        case TurnState::WaitingForText : {
             if (m_eventState.isAction) {
                 SoundController::GetInstance().RequestChunk(BaseSfx::Next);
                 if (!m_textSeries.NextText()) {
@@ -408,7 +420,7 @@ void BattleController::PlayNextTurn()
                     else if (m_exitEvent == ExitEvent::ExitLost)
                         m_textSeries.AddText({"You no longer have any living fighters !", "You lose !"});
                     m_textSeries.NextText();
-                    m_turnState = TurnState::Waiting;
+                    m_turnState = TurnState::WaitingForText;
                 } else {   
                     m_turnState = TurnState::Init;
                 } 

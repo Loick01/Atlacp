@@ -276,7 +276,7 @@ void EditorMapScene::Gameloop()
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
-    m_battleController(m_context.fileReader, m_context.uiController)
+    m_battleController(m_time, m_context.fileReader, m_context.uiController)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -296,6 +296,7 @@ BattleScene::BattleScene(GameContext& context):
 
 void BattleScene::Gameloop()
 {
+    m_time.Update();
     m_context.window.ClearRenderer();
     
     m_context.eventController->PollAllEvents();

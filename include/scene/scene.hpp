@@ -105,6 +105,7 @@ class EditorMapScene : public TilemapScene
 class BattleScene : public Scene
 {
     private:
+        Time m_time;
         BattleController m_battleController;
 
     public:

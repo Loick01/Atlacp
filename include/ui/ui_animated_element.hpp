@@ -11,5 +11,6 @@ class UiAnimatedElement : public UiElement
     public:
         UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath);
 
+        Animation& GetAnimation();
         void DrawTexture() const override;
 };

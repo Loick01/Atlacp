@@ -14,6 +14,7 @@
 #include "ui/component/ui_selector.hpp"
 #include "ui/component/ui_text_series.hpp"
 
+struct Time;
 class AiActor;
 class FileReader;
 class UiController;
@@ -25,7 +26,7 @@ enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
 
 enum class TurnState
 {
-    Init, ActionSelection, MoveSelection, ActorSelection, HandleCommand, Waiting, End
+    Init, ActionSelection, MoveSelection, ActorSelection, HandleCommand, WaitingForText, WaitingForAnimation, End
 };
 
 struct BattleCommand
@@ -82,7 +83,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         TurnState m_turnState;
         ExitEvent m_exitEvent;
         BattleCommand m_currentCommand;
-        float m_currentTime;
+        float m_currentTime; // Rename
         
         FileReader& m_fileReader;
 
@@ -120,7 +121,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleCurrentCommand();
 
     public:
-        BattleController(FileReader& fileReader, UiController& uiController);
+        BattleController(const Time& time, FileReader& fileReader, UiController& uiController);
         
         void InitializeActors(const std::string& battleFile); // Rename battleFile
         void PlayNextTurn();

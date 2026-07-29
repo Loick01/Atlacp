@@ -13,6 +13,11 @@ UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureContro
     std::cout << "Animation tilesheet sprite size = " << spriteSize << "\n"; // Remove
 }
 
+Animation& UiAnimatedElement::GetAnimation()
+{
+    return m_animation;
+}
+
 void UiAnimatedElement::DrawTexture() const
 {
     // Do not add children UiAnimatedElement (?)
