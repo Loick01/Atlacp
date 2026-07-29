@@ -40,11 +40,14 @@ void UiSelector::Reset()
     UpdateToOptionIndex();
 }
 
-void UiSelector::SetOptionKeys(std::vector<UiKey> optionKeys)
+void UiSelector::SetOptionKeys(std::vector<UiKey> optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue)
 {
     if (optionKeys.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_optionKeys");
     m_optionKeys = optionKeys;
     Reset(); 
+    // When selector file is build, scale is based on root element, and there is no padding
+    m_uiController.UpdateScalingSize(GetKey(), PartialSize{optionKeys[0], scaleAxis, scaleValue}); 
+    m_uiController.UpdatePadding(GetKey(), PartialSize(optionKeys[0], padAxis, padValue), padAxis);
 }
 
 void UiSelector::Previous()

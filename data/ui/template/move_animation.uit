@@ -1,0 +1,8 @@
+root
+anim
+uielement
+../assets/battle/actor_placeholder.png
+scale root width 1.
+scaleAxis width
+xAnchor center
+yAnchor center

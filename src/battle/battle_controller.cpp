@@ -18,7 +18,8 @@ BattleController::BattleController(FileReader& fileReader, UiController& uiContr
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
     m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
     m_staticList(uiController, "../data/ui/file/battle_action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
-    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif")
+    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif"),
+    m_moveAnimation(uiController, "../data/ui/template/move_animation.uit")
 {}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
@@ -140,10 +141,7 @@ void BattleController::OpenActionSelection()
 {
     m_staticList.Open();
     m_selector.Open();
-    m_selector.SetOptionKeys(m_staticList.GetItemsKey());
-    // When selector file is build, scale is based on root element
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_staticList.GetKey(), Axis::Height, 1.f}); 
-    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_staticList.GetKey(), Axis::Width, -0.05f), Axis::Width);
+    m_selector.SetOptionKeys(m_staticList.GetItemsKey(), Axis::Height, Axis::Width, 1.f, -0.05f);
 }
 
 void BattleController::CloseActionSelection()
@@ -168,9 +166,7 @@ void BattleController::OpenMoveSelection()
         m_uiController.UpdateText(keys[i], moves[i].name);
 
     m_selector.Open();
-    m_selector.SetOptionKeys(keys);
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_dynamicList.GetKey(), Axis::Height, 1.f});
-    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_dynamicList.GetKey(), Axis::Width, -0.05f), Axis::Width);
+    m_selector.SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
 }
 
 void BattleController::CloseMoveSelection()
@@ -186,12 +182,10 @@ void BattleController::OpenSelectorOnActors()
     std::vector<UiKey> keys;
     for (const BattleActor* actor : aliveActors)
         keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in m_allyList/m_opponentList
-    m_selector.SetOptionKeys(keys);
-    m_uiController.UpdateScalingSize(m_selector.GetKey(), PartialSize{m_currentActor->GetSpritePath().id, Axis::Height, 0.2f}); // m_currentActor ?
-    m_uiController.UpdatePadding(m_selector.GetKey(), PartialSize(m_currentActor->GetSpritePath().id, Axis::Width, 0.2f), Axis::Width);
+    m_selector.SetOptionKeys(keys, Axis::Height, Axis::Width, 0.2f, 0.2f);
 
     m_textSeries.Open();
-    m_textSeries.AddText({"Select a BattleActor"}); // TODO
+    m_textSeries.AddText({"Select a BattleActor"});
     m_textSeries.NextText();
 }
 
@@ -251,7 +245,10 @@ void BattleController::HandleMoveSelection(const int moveIndex)
 void BattleController::HandleCurrentCommand()
 {
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
-    // std::cout << m_currentCommand.animation << "\n";
+    // std::cout << m_currentCommand.animation << "\n"; // Remove
+    m_moveAnimation.SetTargetElement(m_targetActor->GetSpritePath().id);
+    m_moveAnimation.Open();
+
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
             ApplyDamage(*m_currentActor, *m_targetActor);
@@ -264,6 +261,7 @@ void BattleController::HandleCurrentCommand()
         default : 
             throw std::runtime_error("Unknown CommandType value"); 
     }
+    // m_moveAnimation.Close();
     m_turnState = TurnState::Waiting;
 }
 
