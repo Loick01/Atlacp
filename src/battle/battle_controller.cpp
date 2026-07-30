@@ -246,7 +246,7 @@ void BattleController::HandleMoveSelection(const int moveIndex)
 void BattleController::HandleCurrentCommand()
 {
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
-    // std::cout << m_currentCommand.animation << "\n"; // Remove
+    m_moveAnimation.SetAnimationPath(m_currentCommand.animation);
     m_moveAnimation.SetTargetElement(m_targetActor->GetSpritePath().id);
     m_moveAnimation.Open();
 
@@ -382,6 +382,7 @@ void BattleController::PlayNextTurn()
                 break;
             }
             m_moveAnimation.ContinueAnimation();
+            break;
         }
 
         case TurnState::WaitingForText : {
