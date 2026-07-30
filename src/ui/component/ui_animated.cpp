@@ -18,10 +18,12 @@ void UiAnimated::Open()
     UiComponent::Open();
     // Need to check if a UiAnimatedElement is read in the ui file ?
     
-    // m_uiController.UpdatePath(m_uiKey, "../assets/battle/move_animation/"+m_animationPath+".png"); // TODO
     // UpdatePath calls Drawable::LoadTexture and will write on m_textureWidth and m_textureHeight
+    // That's why I must call UiAnimatedElement::GetSpriteSizeFromAnimation
+    m_uiController.UpdatePath(m_uiKey, "../assets/battle/move_animation/"+m_animationPath+".png"); // Will use Filepath class
     m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // static_cast ?
     if (m_animated == nullptr) throw std::runtime_error("This UiElement must be a UiAnimatedElement");
+    m_animated->GetAnimation().GetAnimationData("../assets/battle/move_animation/"+m_animationPath); // Will use Filepath class. Must be called before GetSpriteSizeFromAnimation
     m_animated->GetSpriteSizeFromAnimation(); // Must be called after UpdatePath() and before UpdateScalingSize()
     
     m_uiController.UpdateParent(m_uiKey, m_targetElement);

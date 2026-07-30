@@ -3,10 +3,14 @@
 #include "core/file.hpp"
 
 Animation::Animation(const FileReader& fileReader, const std::string& path):
-    m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
+    m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
 {
-    m_animationData = fileReader.GetAnimationFromFile(path);
+    GetAnimationData(path);
 }
+
+Animation::Animation(const FileReader& fileReader):
+    m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
+{}
 
 Vec2 Animation::GetCurrentSprite() const
 {
@@ -21,6 +25,11 @@ AreaSize Animation::GetSpriteSize() const
 bool Animation::IsDone() const
 {
     return m_isDone;
+}
+
+void Animation::GetAnimationData(const std::string& path)
+{
+    m_animationData = m_fileReader.GetAnimationFromFile(path);
 }
 
 void Animation::Continue(const float deltaTime)
