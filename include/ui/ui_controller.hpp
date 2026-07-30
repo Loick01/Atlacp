@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "ui/ui_animated_element.hpp"
 #include "ui/ui_element.hpp"
 #include "ui/ui_types.hpp"
 
@@ -49,6 +50,7 @@ class UiController
 
         std::unique_ptr<UiElement> CreateElement(const UiKey& key, const std::string& textureFilepath);
         std::unique_ptr<UiTextElement> CreateTextElement(const UiKey& key);
+        std::unique_ptr<UiAnimatedElement> CreateAnimatedElement(const UiKey& key, const std::string& animationPath);
         std::unique_ptr<UiElement> RemoveSubRoots(const UiKey& key);
 
         std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename
@@ -69,7 +71,7 @@ class UiController
         void SetPosition(const ScreenPosition position);
 
         // Rename these functions, I should not use Update in the name
-        // void UpdatePath(const UiKey& key, const std::string& path);
+        void UpdatePath(const UiKey& key, const std::string& path);
         void UpdatePath(const UiValue<std::string>& path);
         void UpdateText(const UiKey& key, const std::string& text);
         void UpdateText(const UiValue<std::string>& uiv);

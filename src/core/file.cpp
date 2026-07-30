@@ -117,7 +117,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         data.parentKey = s;
         input >> data.key; 
         input >> data.type; // Verification on type will be in UiController
-        if (data.type == "uielement") // Not for "textelement"
+        if (data.type == "uielement" || data.type == "animatedelement") // Not for "textelement"
             input >> data.imagePath;
         
         // Read optional data 
@@ -145,7 +145,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
             } else if (s == "textsize") {
                 data.fontSize = ReadFontSize(input);
             } else  
-                throw std::runtime_error("UiParams has no member with this name");
+                throw std::runtime_error("UiParams has no member with this name " + s);
         }
         uisData.push_back(data);
     }

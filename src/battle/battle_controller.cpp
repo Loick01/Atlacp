@@ -376,15 +376,12 @@ void BattleController::PlayNextTurn()
         }
         
         case TurnState::WaitingForAnimation : {
-            // if (m_moveAnimation.IsDone()) {
-            //     m_moveAnimation.Close();
-            //     m_turnState = TurnState::WaitingForText;
-            //     break;
-            // }
-            // m_moveAnimation.ContinueAnimation();
-
-            m_moveAnimation.Close();
-            m_turnState = TurnState::WaitingForText;
+            if (m_moveAnimation.IsDone()) {
+                m_moveAnimation.Close();
+                m_turnState = TurnState::WaitingForText;
+                break;
+            }
+            m_moveAnimation.ContinueAnimation();
         }
 
         case TurnState::WaitingForText : {

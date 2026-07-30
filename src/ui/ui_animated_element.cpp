@@ -10,7 +10,6 @@ UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureContro
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;
     m_textureHeight = spriteSize.y;
-    std::cout << "Animation tilesheet sprite size = " << spriteSize << "\n"; // Remove
 }
 
 Animation& UiAnimatedElement::GetAnimation()
@@ -22,6 +21,7 @@ void UiAnimatedElement::DrawTexture() const
 {
     // Do not add children UiAnimatedElement (?)
     // if (m_shouldDraw) ? (from ScreenDrawable::DrawTexture)
+    // std::cout << "key = " << m_textureKey << "\n"; // Remove 
     const Vec2 sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_textureWidth, m_textureHeight};
     const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_textureWidth*m_zoom), static_cast<int>(m_textureHeight*m_zoom)};

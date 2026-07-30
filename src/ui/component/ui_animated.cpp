@@ -8,12 +8,18 @@ UiAnimated::UiAnimated(const Time& time, UiController& uiController, const std::
     UiComponent(uiController, uiFilepath), m_time(time), m_animated(nullptr)
 {}
 
+bool UiAnimated::IsDone() const
+{
+    return m_animated->GetAnimation().IsDone();
+}
+
 void UiAnimated::Open()
 {
     UiComponent::Open();
     // Need to check if a UiAnimatedElement is read in the ui file ?
     
     // Should not be in Open() ?
+    m_uiController.UpdatePath(m_uiKey, "../assets/battle/actor_placeholder.png");
     m_uiController.UpdateParent(m_uiKey, m_targetElement);
     m_uiController.UpdateScalingSize(m_uiKey, PartialSize{m_targetElement, Axis::Width, 0.8f});
 
@@ -28,7 +34,7 @@ void UiAnimated::SetTargetElement(const UiKey& key)
 
 void UiAnimated::ContinueAnimation()
 {
-    m_animated->GetAnimation().ContinueAnimation(m_time.GetDeltaTime());
+    m_animated->GetAnimation().Continue(m_time.GetDeltaTime());
 }
 
 unsigned int UiAnimated::GetInstanceCount()

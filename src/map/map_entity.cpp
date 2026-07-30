@@ -91,7 +91,7 @@ void MapEntity::LeaveInteraction()
 ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 {
     m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
-    m_animation.ContinueAnimation(deltaTime);
+    m_animation.Continue(deltaTime);
     return m_currentMovement.GetScenePosition();
 }
 

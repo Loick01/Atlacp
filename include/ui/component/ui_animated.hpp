@@ -19,6 +19,7 @@ class UiAnimated : public UiComponent
 
         unsigned int GetInstanceCount() override;
         
+        bool IsDone() const;
         void Open() override;
         void SetTargetElement(const UiKey& key);
         void ContinueAnimation();

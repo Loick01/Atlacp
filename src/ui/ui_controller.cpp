@@ -69,6 +69,11 @@ std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key)
     return std::make_unique<UiTextElement>(m_textureController, key);
 }
 
+std::unique_ptr<UiAnimatedElement> UiController::CreateAnimatedElement(const UiKey& key, const std::string& animationPath)
+{
+    return std::make_unique<UiAnimatedElement>(m_fileReader, m_textureController, key, animationPath);
+}
+
 std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Same than UiElement::RemoveChild
 {
     std::vector<std::unique_ptr<UiElement>>::iterator it;
@@ -92,8 +97,10 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
         textElement->SetText(data.text);
         textElement->SetTextSize(data.fontSize);
         element = std::move(textElement);
+    } else if (data.type == "animatedelement") {
+        element = CreateAnimatedElement(data.key, data.imagePath);
     } else {
-        throw std::runtime_error("Unknown element type : " + data.type);
+        throw std::runtime_error("Unknown UI element type : " + data.type);
     }
 
     UiParams& params = element->GetParams();
@@ -239,13 +246,18 @@ void UiController::SetPosition(const ScreenPosition position)
     m_position = position;
 }
 
-void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
+void UiController::UpdatePath(const UiKey& key, const std::string& path)
 {
-    UiElement* element = GetElement(path.id);
+    UiElement* element = GetElement(key);
     element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
-    element->LoadTexture(path.value);
+    element->LoadTexture(path);
     element->ComputeFinal();
     element->UpdatePosition();
+}
+
+void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
+{
+    UpdatePath(path.id, path.value);
 }
 
 void UiController::UpdateText(const UiKey& key, const std::string& text)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "animation/animation.hpp"
+#include "animation/map_entity_animation.hpp"
 #include "image/drawable.hpp"
 #include "map/map_element.hpp"
 #include "map/map_movement.hpp"
@@ -19,7 +19,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 {
     private:
         MapMovement m_currentMovement;
-        Animation m_animation;
+        MapEntityAnimation m_animation;
         EntityState m_state;
         float m_walkSpeed;
         float m_runSpeed;
