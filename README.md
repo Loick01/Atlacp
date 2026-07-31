@@ -32,8 +32,6 @@ make
       <br>
       <strong>Random NPC</strong>
     </td>
-  </tr>
-  <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
         <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="200">
@@ -41,6 +39,8 @@ make
       <br>
       <strong>Map Navigation</strong>
     </td>
+  </tr>
+  <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=gSUQSt18fMc">
         <img src="https://img.youtube.com/vi/gSUQSt18fMc/maxresdefault.jpg" height="200">
@@ -48,8 +48,6 @@ make
       <br>
       <strong>NPC Behaviours</strong>
     </td>
-  </tr>
-  <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=6ae6qKwDAPM">
         <img src="https://img.youtube.com/vi/6ae6qKwDAPM/maxresdefault.jpg" height="200">
@@ -79,6 +77,13 @@ make
       </a>
       <br>
       <strong>Main Menu, Music and Sound Effects</strong>
+    </td>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=2j6m4lXyyoE">
+        <img src="https://img.youtube.com/vi/2j6m4lXyyoE/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Move Animations</strong>
     </td>
   </tr>
 </table>
