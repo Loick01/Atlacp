@@ -3,26 +3,26 @@ Howler
 400
 10
 ../assets/battle/ally_sprite/werewolf.png
-6 5 1 2
+2 8 7 3
 ###
 ally player
 Mage
 200
 15
 ../assets/battle/ally_sprite/mage.png
-0 4 3
+4 9 10 12
 ###
 opponent ai
 Bone_Appetit
 300
 8
 ../assets/battle/opponent_sprite/bone_appetit.png
-5 4 0 2
+11 13 1 5
 ###
 opponent ai
 Slime
 150
 15
 ../assets/battle/opponent_sprite/slime.png
-5 0 1
+0 2 4 5
 ###
