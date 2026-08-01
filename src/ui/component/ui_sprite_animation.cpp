@@ -1,51 +1,51 @@
-#include "ui/component/ui_animated.hpp"
+#include "ui/component/ui_sprite_animation.hpp"
 
 #include "core/time.hpp"
 #include "ui/ui_animated_element.hpp"
 #include "ui/ui_controller.hpp"
 
-UiAnimated::UiAnimated(const Time& time, UiController& uiController, const std::string& uiFilepath) :
+UiSpriteAnimation::UiSpriteAnimation(const Time& time, UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_time(time), m_animated(nullptr), m_animationPath("invalid")
 {}
 
-bool UiAnimated::IsDone() const
+bool UiSpriteAnimation::IsDone() const
 {
     return m_animated->GetAnimation().IsDone();
 }
 
-void UiAnimated::Open()
+void UiSpriteAnimation::Open()
 {
     UiComponent::Open();
     // Need to check if a UiAnimatedElement is read in the ui file ?
     
     // UpdatePath calls Drawable::LoadTexture and will write on m_textureWidth and m_textureHeight
-    // That's why I must call UiAnimatedElement::GetSpriteSizeFromAnimation
+    // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
     m_uiController.UpdatePath(m_uiKey, "../assets/battle/move_animation/"+m_animationPath+".png"); // Will use Filepath class
     m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // static_cast ?
     if (m_animated == nullptr) throw std::runtime_error("This UiElement must be a UiAnimatedElement");
-    m_animated->GetAnimation().GetAnimationData("../assets/battle/move_animation/"+m_animationPath); // Will use Filepath class. Must be called before GetSpriteSizeFromAnimation
-    m_animated->GetSpriteSizeFromAnimation(); // Must be called after UpdatePath() and before UpdateScalingSize()
+    m_animated->GetAnimation().UpdateAnimationData("../assets/battle/move_animation/"+m_animationPath); // Will use Filepath class. Must be called before UpdateSpriteSizeFromAnimation
+    m_animated->UpdateSpriteSizeFromAnimation(); // Must be called after UpdatePath() and before UpdateScalingSize()
     
     m_uiController.UpdateParent(m_uiKey, m_targetElement);
     m_uiController.UpdateScalingSize(m_uiKey, PartialSize{m_targetElement, Axis::Width, 0.8f});
 }
 
-void UiAnimated::SetAnimationPath(const std::string animationPath)
+void UiSpriteAnimation::SetAnimationPath(const std::string animationPath)
 {
     m_animationPath = animationPath;
 }
 
-void UiAnimated::SetTargetElement(const UiKey& key)
+void UiSpriteAnimation::SetTargetElement(const UiKey& key)
 {
     m_targetElement = key;
 }
 
-void UiAnimated::ContinueAnimation()
+void UiSpriteAnimation::ContinueAnimation()
 {
     m_animated->GetAnimation().Continue(m_time.GetDeltaTime());
 }
 
-unsigned int UiAnimated::GetInstanceCount()
+unsigned int UiSpriteAnimation::GetInstanceCount()
 {
     return m_instanceCount++;
 }

@@ -20,7 +20,9 @@ class Animation
 
         Vec2 GetCurrentSprite() const;
         AreaSize GetSpriteSize() const;
+        
         bool IsDone() const;
-        void GetAnimationData(const std::string& path); // Rename
+        void UpdateAnimationData(const std::string& path);
+
         virtual void Continue(const float deltaTime);
 };

@@ -8,10 +8,10 @@
 #include "battle/battle_types.hpp" // Team
 #include "core/notifier.hpp"
 #include "event/event_types.hpp" // BattleEventState
-#include "ui/component/ui_animated.hpp"
 #include "ui/component/ui_dynamic_list.hpp"
 #include "ui/component/ui_list.hpp"
 #include "ui/component/ui_selector.hpp"
+#include "ui/component/ui_sprite_animation.hpp"
 #include "ui/component/ui_text_series.hpp"
 
 struct Time;
@@ -94,7 +94,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiDynamicList m_dynamicList; // Used for move selection
         UiSelector m_selector;
         UiTextSeries m_textSeries;
-        UiAnimated m_moveAnimation; // Should be in BattleCommand ?
+        UiSpriteAnimation m_moveAnimation; // Should be in BattleCommand ?
 
         std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
         std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;

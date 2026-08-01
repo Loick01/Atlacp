@@ -19,7 +19,7 @@ Tileset::~Tileset()
 // Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 {
-    TilesetData data = fileReader.GetTilesetFromFile(path);
+    TilesetData data = fileReader.ReadTilesetFile(path);
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
     else if (data.tileSize != m_tileSize) 

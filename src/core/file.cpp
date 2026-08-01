@@ -182,7 +182,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         data.tilesets.push_back(s);
 }
 
-MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, TextureController& textureController, 
+MapData FileReader::ReadMapFile(const std::string& path, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
     std::ifstream input = OpenFile("../data/maps/" + path); // Create a function to get full path in FilepathManager ?
@@ -207,7 +207,7 @@ MapData FileReader::GetMapFromFile(const std::string& path, Camera& camera, Text
     return data;
 }
 
-AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
+AnimationData FileReader::ReadAnimationFile(const std::string& path) const
 {
     std::ifstream input = OpenFile(path);
     AnimationData data;
@@ -226,7 +226,7 @@ AnimationData FileReader::GetAnimationFromFile(const std::string& path) const
     return data;
 }
 
-TilesetData FileReader::GetTilesetFromFile(const std::string& path) const
+TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 {
     std::ifstream input = OpenFile("../assets/tilesets/" + path);
     TilesetData data;

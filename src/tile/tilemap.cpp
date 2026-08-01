@@ -152,9 +152,9 @@ void Tilemap::LoadMap(const std::string& path)
     // Instead, I could only delete the unused one
     m_tileset.CleanTilesets(true); // Delete tilesets used for the previous map
 
-    // TileLayer are created in GetMapFromFile. Because they are SceneDrawable, they need camera and texture controller
+    // TileLayer are created in ReadMapFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered
-    m_mapData = m_fileReader.GetMapFromFile(path, m_camera, m_textureController, m_tileset);
+    m_mapData = m_fileReader.ReadMapFile(path, m_camera, m_textureController, m_tileset);
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_mapData.tilesets)

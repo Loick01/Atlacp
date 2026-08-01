@@ -3,7 +3,7 @@
 #include "animation/animation.hpp"
 #include "ui/ui_element.hpp"
 
-class UiAnimatedElement : public UiElement
+class UiAnimatedElement : public UiElement // Rename UiAnimationElement ?
 {
     private:    
         Animation m_animation;
@@ -12,6 +12,6 @@ class UiAnimatedElement : public UiElement
         UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath);
 
         Animation& GetAnimation();
-        void GetSpriteSizeFromAnimation();
+        void UpdateSpriteSizeFromAnimation();
         void DrawTexture() const override;
 };

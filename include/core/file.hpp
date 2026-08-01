@@ -38,16 +38,16 @@ class FileReader
     public:
         FileReader() = default;
 
-        std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const; // Rename
-        std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const; // Rename
-        std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const; // Rename
-        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename
+        std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
+        std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
+        std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const;
+        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const;
         
-        WorldData ReadWorldFile(const std::string& worldFilepath) const; // Rename
-        MapData GetMapFromFile(const std::string& path, Camera& camera, TextureController& textureController, // Rename
+        WorldData ReadWorldFile(const std::string& worldFilepath) const;
+        MapData ReadMapFile(const std::string& path, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
-        TilesetData GetTilesetFromFile(const std::string& path) const; // Rename
-        AnimationData GetAnimationFromFile(const std::string& path) const; // Rename
+        TilesetData ReadTilesetFile(const std::string& path) const;
+        AnimationData ReadAnimationFile(const std::string& path) const;
         
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 };

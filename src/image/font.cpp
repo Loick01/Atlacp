@@ -29,7 +29,6 @@ FontController::FontController(const std::string& fontFilepath, const unsigned i
     }
 
     // Don't need to call LoadFontForSize, it has been already done in the while loop
-    // std::cout << "Final size for FontSize::Small = " << m_smallTextSize << "\n";
 }
 
 FontController::~FontController()

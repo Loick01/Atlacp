@@ -5,7 +5,7 @@
 Animation::Animation(const FileReader& fileReader, const std::string& path):
     m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
 {
-    GetAnimationData(path);
+    UpdateAnimationData(path);
 }
 
 Animation::Animation(const FileReader& fileReader):
@@ -27,9 +27,9 @@ bool Animation::IsDone() const
     return m_isDone;
 }
 
-void Animation::GetAnimationData(const std::string& path)
+void Animation::UpdateAnimationData(const std::string& path)
 {
-    m_animationData = m_fileReader.GetAnimationFromFile(path);
+    m_animationData = m_fileReader.ReadAnimationFile(path);
 }
 
 void Animation::Continue(const float deltaTime)

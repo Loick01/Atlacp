@@ -1,6 +1,6 @@
 #include "ui/ui_animated_element.hpp"
 
-#include <SDL2/SDL_rect.h> // Should be in animation/animation.hpp ?
+#include <SDL2/SDL_rect.h> 
 
 #include "image/texture.hpp" // Try to remove ? (TextureController::RenderTexture should not be call directly in UiAnimatedElement::DrawTexture() ?)
 
@@ -13,7 +13,7 @@ Animation& UiAnimatedElement::GetAnimation()
     return m_animation;
 }
 
-void UiAnimatedElement::GetSpriteSizeFromAnimation()
+void UiAnimatedElement::UpdateSpriteSizeFromAnimation()
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;
