@@ -44,10 +44,10 @@ class FileReader
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const;
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;
-        MapData ReadMapFile(const std::string& path, Camera& camera, TextureController& textureController,
+        MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
         TilesetData ReadTilesetFile(const std::string& path) const;
-        AnimationData ReadAnimationFile(const std::string& path) const;
+        AnimationData ReadAnimationFile(const std::string& animationFilepath) const;
         
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 };

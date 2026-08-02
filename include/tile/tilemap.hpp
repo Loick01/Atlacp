@@ -28,7 +28,7 @@ class Tilemap : public Notifier<TilemapEvent>
         size_t m_currentMap;
         const bool m_shouldCulling;
 
-        void LoadMap(const std::string& path);
+        void LoadMap(const std::string& mapFilepath);
 
     public:
         Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 

@@ -14,7 +14,7 @@ FontController::FontController(const std::string& fontFilepath, const unsigned i
     const std::string smallSizeExampleText = "Hello world Hello world Hello world Hell";
     while (maxBound - minBound > 1) {
         const unsigned int averageSize = (minBound+maxBound)/2;
-        LoadFontForSize("../assets/ui/fonts/"+fontFilepath+".ttf", FontSize::Small, averageSize);
+        LoadFontForSize(fontFilepath, FontSize::Small, averageSize);
         SDL_Surface* surface = GenerateSurfaceFromTextUnwrapped(FontSize::Small, smallSizeExampleText, SDL_Color{0,0,0,255});
         
         if (surface->w > targetWidthForSmallText*1.01f)
@@ -48,7 +48,7 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
     if (m_fonts.find(fontSize) != m_fonts.end())
         TTF_CloseFont(m_fonts[fontSize]);
 
-    TTF_Font* font = TTF_OpenFont(fontFilepath.c_str(), textSize);
+    TTF_Font* font = TTF_OpenFont(("../assets/ui/fonts/" + fontFilepath).c_str(), textSize);
     if (!font) 
         throw std::runtime_error("Failed to load this font : " + fontFilepath + "\n" + std::string(TTF_GetError()));
     m_fonts[fontSize] = font;

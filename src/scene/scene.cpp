@@ -6,7 +6,7 @@
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
-    m_window("Atlacp", {25,25,25}), m_fontController("PixelOperator8", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
+    m_window("Atlacp", {25,25,25}), m_fontController("PixelOperator8.ttf", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
     m_uiController(m_fileReader, m_textureController, "PixelOperator8"),
     m_context{m_window, m_fontController, m_textureController, m_fileReader, m_uiController},
     m_pendingSwitch(std::nullopt)
@@ -148,7 +148,7 @@ void MainMenuScene::Gameloop()
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
-    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "../data/worlds/z_world", m_camera, shouldCulling)
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "z_world", m_camera, shouldCulling)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
@@ -187,7 +187,7 @@ GameMapScene::GameMapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                "z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
     
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
@@ -228,7 +228,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
             m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "../data/npcs/z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                "z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
             break;
         }
         default:
@@ -288,7 +288,7 @@ BattleScene::BattleScene(GameContext& context):
     m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
     SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
-    m_battleController.InitializeActors("../data/battle/battles/2p2ai_test");
+    m_battleController.InitializeActors("2p2ai_test");
     
     m_battleController.AddCallback([this](ExitEvent e){Exit(e);});
     m_context.window.HideCursor();

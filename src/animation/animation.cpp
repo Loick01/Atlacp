@@ -2,10 +2,10 @@
 
 #include "core/file.hpp"
 
-Animation::Animation(const FileReader& fileReader, const std::string& path):
+Animation::Animation(const FileReader& fileReader, const std::string& animationFilepath):
     m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
 {
-    UpdateAnimationData(path);
+    UpdateAnimationData(animationFilepath);
 }
 
 Animation::Animation(const FileReader& fileReader):
@@ -27,9 +27,9 @@ bool Animation::IsDone() const
     return m_isDone;
 }
 
-void Animation::UpdateAnimationData(const std::string& path)
+void Animation::UpdateAnimationData(const std::string& animationFilepath)
 {
-    m_animationData = m_fileReader.ReadAnimationFile(path);
+    m_animationData = m_fileReader.ReadAnimationFile(animationFilepath);
 }
 
 void Animation::Continue(const float deltaTime)

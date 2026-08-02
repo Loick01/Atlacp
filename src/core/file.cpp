@@ -7,6 +7,20 @@
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
+namespace AssetDirectory {
+    const std::string Tileset = "../assets/tilesets/";
+}
+
+namespace DataDirectory {
+    // Should be constexpr std::string_view ?
+    const std::string Map = "../data/maps/";
+    const std::string Move = "../data/battle/moves/";
+    const std::string Battle = "../data/battle/battles/";
+    const std::string NPC = "../data/npcs/";
+    const std::string World = "../data/worlds/";
+    const std::string Animation = "../assets/battle/move_animation/";
+}
+
 std::ifstream FileReader::OpenFile(const std::string& filepath)
 {
     std::ifstream input;
@@ -25,7 +39,7 @@ std::string FileReader::ReadString(std::ifstream& input) const
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
 {
-    std::ifstream input = OpenFile(moveFilepath);
+    std::ifstream input = OpenFile(DataDirectory::Move + moveFilepath);
     std::unordered_map<unsigned int, MoveDefinition> moves;
     std::string s;
     while (input >> s) {
@@ -45,7 +59,7 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
 
 std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
 {
-    std::ifstream input = OpenFile(battleFilepath);
+    std::ifstream input = OpenFile(DataDirectory::Battle + battleFilepath);
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
@@ -76,7 +90,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
 
 std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
-    std::ifstream input = OpenFile(npcsFilepath);
+    std::ifstream input = OpenFile(DataDirectory::NPC + npcsFilepath);
     std::vector<DataNPC> npcsData;
     unsigned int currentIndex = 0;
     std::string s;
@@ -100,7 +114,7 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
-    std::ifstream input = OpenFile(uiFilepath);
+    std::ifstream input = OpenFile(uiFilepath); // TODO
     std::vector<DataUi> uisData;
     
     std::string s;
@@ -154,7 +168,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 
 WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
-    std::ifstream input = OpenFile(worldFilepath);
+    std::ifstream input = OpenFile(DataDirectory::World + worldFilepath);
     WorldData data;
     
     input >> data.startMap;
@@ -182,10 +196,10 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         data.tilesets.push_back(s);
 }
 
-MapData FileReader::ReadMapFile(const std::string& path, Camera& camera, TextureController& textureController, 
+MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
-    std::ifstream input = OpenFile("../data/maps/" + path); // Create a function to get full path in FilepathManager ?
+    std::ifstream input = OpenFile(DataDirectory::Map + mapFilepath);
     MapData data;
 
     ReadHeaderMapFile(input, data);
@@ -207,9 +221,9 @@ MapData FileReader::ReadMapFile(const std::string& path, Camera& camera, Texture
     return data;
 }
 
-AnimationData FileReader::ReadAnimationFile(const std::string& path) const
+AnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
-    std::ifstream input = OpenFile(path);
+    std::ifstream input = OpenFile(/*DataDirectory::Animation + */animationFilepath); // TODO
     AnimationData data;
 
     input >> data.spriteSize.x;
@@ -228,7 +242,7 @@ AnimationData FileReader::ReadAnimationFile(const std::string& path) const
 
 TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 {
-    std::ifstream input = OpenFile("../assets/tilesets/" + path);
+    std::ifstream input = OpenFile(AssetDirectory::Tileset + path);
     TilesetData data;
 
     input >> data.size.x;
@@ -348,7 +362,7 @@ FontSize FileReader::ReadFontSize(std::ifstream& input) const
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
-    std::ofstream mapFile("../data/maps/"+mapFilepath); // Create a function in file
+    std::ofstream mapFile(DataDirectory::Map + mapFilepath);
     const int width = mapData.size.x;
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 

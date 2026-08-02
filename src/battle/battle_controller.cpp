@@ -9,9 +9,9 @@
 
 namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
     // Should be constexpr std::string_view ?
-    const std::string prefixName = "actorName";
-    const std::string prefixHealth = "actorHealth";
-    const std::string prefixSprite = "actorSprite";
+    const std::string PrefixName = "actorName";
+    const std::string PrefixHealth = "actorHealth";
+    const std::string PrefixSprite = "actorSprite";
 }
 
 BattleController::BattleController(const Time& time, FileReader& fileReader, UiController& uiController):
@@ -278,7 +278,7 @@ void BattleController::InitializeActors(const std::string& battleFile)
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Height, 0.05f))));
 
-    const std::unordered_map<unsigned int, MoveDefinition> moves = m_fileReader.ReadMoveFile("../data/battle/moves/move_list");
+    const std::unordered_map<unsigned int, MoveDefinition> moves = m_fileReader.ReadMoveFile("move_list");
 
     std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
     unsigned int countAlly = 0;
@@ -296,9 +296,9 @@ void BattleController::InitializeActors(const std::string& battleFile)
         }
         
         if (data.isAiActor)
-            actor = std::make_unique<AiActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
+            actor = std::make_unique<AiActor>(data.team, PrefixName+suffixKey, PrefixHealth+suffixKey, PrefixSprite+suffixKey, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
         else
-            actor = std::make_unique<BattleActor>(data.team, prefixName+suffixKey, prefixHealth+suffixKey, prefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
+            actor = std::make_unique<BattleActor>(data.team, PrefixName+suffixKey, PrefixHealth+suffixKey, PrefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
 
         actor->SetSpritePath(data.spritePath); // Sprite path should be in BattleActor constructor ?
         

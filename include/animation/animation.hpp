@@ -15,14 +15,14 @@ class Animation
         bool m_isDone;
 
     public:
-        Animation(const FileReader& fileReader, const std::string& path);
+        Animation(const FileReader& fileReader, const std::string& animationFilepath);
         Animation(const FileReader& fileReader);
 
         Vec2 GetCurrentSprite() const;
         AreaSize GetSpriteSize() const;
         
         bool IsDone() const;
-        void UpdateAnimationData(const std::string& path);
+        void UpdateAnimationData(const std::string& animationFilepath);
 
         virtual void Continue(const float deltaTime);
 };
