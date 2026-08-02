@@ -13,12 +13,32 @@ namespace AssetDirectory {
 
 namespace DataDirectory {
     // Should be constexpr std::string_view ?
+    const std::string Animation = "../assets/battle/move_animation/";
+    const std::string Battle = "../data/battle/battles/";
     const std::string Map = "../data/maps/";
     const std::string Move = "../data/battle/moves/";
-    const std::string Battle = "../data/battle/battles/";
     const std::string NPC = "../data/npcs/";
     const std::string World = "../data/worlds/";
-    const std::string Animation = "../assets/battle/move_animation/";
+    const std::string UiFile = "../data/ui/file/";
+    const std::string UiTemplate = "../data/ui/template/";
+}
+
+std::string FileReader::GetFileExtension(const std::string& filepath) const 
+{
+    size_t pos = filepath.rfind('.');
+    if (pos == std::string::npos)
+        throw std::runtime_error("This UI file has no extension : " + filepath);
+    return filepath.substr(pos + 1);
+}
+
+bool FileReader::IsBaseUiFile(const std::string& filepath) const
+{
+    return GetFileExtension(filepath) == "uif";
+}
+
+bool FileReader::IsTemplateUiFile(const std::string& filepath) const
+{
+    return GetFileExtension(filepath) == "uit";
 }
 
 std::ifstream FileReader::OpenFile(const std::string& filepath)
@@ -114,9 +134,13 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
-    std::ifstream input = OpenFile(uiFilepath); // TODO
+    std::ifstream input;
+    if (IsBaseUiFile(uiFilepath))
+        input = OpenFile(DataDirectory::UiFile + uiFilepath);
+    else if (IsTemplateUiFile(uiFilepath))
+        input = OpenFile(DataDirectory::UiTemplate + uiFilepath);
+
     std::vector<DataUi> uisData;
-    
     std::string s;
     while (input >> s && s != FILE_DELIMITER) {
         if (s == "load") {

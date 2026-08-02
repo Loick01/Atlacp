@@ -32,8 +32,6 @@ class UiController
         ScreenPosition m_position; // Initialized with the viewport position
         AreaSize m_size; // Initialized with the viewport size
 
-        std::string GetFileExtension(const std::string& filepath) const; // Will be a static function in FileReader
-
         float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // Rename
         float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
         

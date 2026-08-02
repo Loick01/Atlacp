@@ -41,13 +41,17 @@ class FileReader
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
         std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const;
-        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const;
+        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename ? (because UiFile != UiTemplate)
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;
         MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
         TilesetData ReadTilesetFile(const std::string& path) const;
         AnimationData ReadAnimationFile(const std::string& animationFilepath) const;
+        
+        std::string GetFileExtension(const std::string& filepath) const; // static ?
+        bool IsBaseUiFile(const std::string& filepath) const;
+        bool IsTemplateUiFile(const std::string& filepath) const;
         
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 };

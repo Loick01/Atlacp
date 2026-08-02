@@ -17,10 +17,10 @@ namespace { // These values must be the same as in the template file used for th
 BattleController::BattleController(const Time& time, FileReader& fileReader, UiController& uiController):
     m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
     m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f),
-    m_allyList(uiController, "../data/ui/template/battle_actor.uit"), m_opponentList(uiController, "../data/ui/template/battle_actor.uit"),
-    m_staticList(uiController, "../data/ui/file/battle_action_selection.uif"), m_dynamicList(uiController, "../data/ui/template/move_text.uit"), 
-    m_selector(uiController, "../data/ui/template/selector.uit"), m_textSeries(uiController, "../data/ui/file/single_text_frame.uif"),
-    m_moveAnimation(time, uiController, "../data/ui/template/move_animation.uit")
+    m_allyList(uiController, "battle_actor.uit"), m_opponentList(uiController, "battle_actor.uit"),
+    m_staticList(uiController, "battle_action_selection.uif"), m_dynamicList(uiController, "move_text.uit"), 
+    m_selector(uiController, "selector.uit"), m_textSeries(uiController, "single_text_frame.uif"),
+    m_moveAnimation(time, uiController, "move_animation.uit")
 {}
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const

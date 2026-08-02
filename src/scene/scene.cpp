@@ -89,7 +89,7 @@ bool Scene::GetGameloop() const
 
 MainMenuScene::MainMenuScene(GameContext& context):
     Scene(context), 
-    m_selector(m_context.uiController, "../data/ui/template/selector.uit"), m_staticList(m_context.uiController, "../data/ui/file/main_menu_mode_selection.uif")
+    m_selector(m_context.uiController, "selector.uit"), m_staticList(m_context.uiController, "main_menu_mode_selection.uif")
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -98,7 +98,7 @@ MainMenuScene::MainMenuScene(GameContext& context):
     
     m_context.eventController = std::make_unique<MainMenuEventController>();
    
-    m_context.uiController.BuildUiFile("../data/ui/file/main_menu_scene.uif");
+    m_context.uiController.BuildUiFile("main_menu_scene.uif");
     SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
 
     m_context.window.HideCursor();
@@ -240,7 +240,7 @@ EditorMapScene::EditorMapScene(GameContext& context):
     TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
-    m_context.uiController.BuildUiFile("../data/ui/file/editor_scene.uif");
+    m_context.uiController.BuildUiFile("editor_scene.uif");
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
@@ -285,7 +285,7 @@ BattleScene::BattleScene(GameContext& context):
     
     m_context.eventController = std::make_unique<BattleEventController>();
    
-    m_context.uiController.BuildUiFile("../data/ui/file/battle_scene.uif");
+    m_context.uiController.BuildUiFile("battle_scene.uif");
     SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
 
     m_battleController.InitializeActors("2p2ai_test");

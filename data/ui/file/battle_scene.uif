@@ -7,5 +7,5 @@ scaleAxis height
 xAnchor left_in
 yAnchor top_in
 ###
-load ../data/ui/file/main_frame.uif
+load main_frame.uif
 ###
