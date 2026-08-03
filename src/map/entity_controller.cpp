@@ -8,7 +8,7 @@
 
 EntityController::EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
 Camera& camera, Tilemap& tilemap):
-    m_player(fileReader, tilemap, textureController, "../assets/sprites/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file)
+    m_player(fileReader, tilemap, textureController, "map_entity/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file)
     m_fileReader(fileReader), m_interactionController(uiController)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
@@ -101,7 +101,7 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
             m_fileReader, 
             tilemap, 
             textureController,
-            "../assets/sprites/" + data.sprite, // TODO : Filepath
+            "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
             camera, npcPosition,
             data.walkSpeed, data.runSpeed
         );
@@ -112,7 +112,7 @@ void EntityController::LoadNPCs(TextureController& textureController, Camera& ca
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
     // MapEntity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_context.m_fileReader, tilemap, m_context.textureController, trackedEntity, "../assets/sprites/npc16", camera, 4.f, 6.f);
+    //     NPC* npc = new NPC(m_fileReader, tilemap, textureController, trackedEntity, "map_entity/" + data.sprite, camera, 4.f, 6.f);
     //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     //     m_renderedEntities.push_back(npc);
     //     trackedEntity = npc;

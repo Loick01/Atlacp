@@ -1,7 +1,7 @@
 root
 anim
 animatedelement
-../assets/battle/actor_placeholder
+battle_move/move_placeholder
 scale root width 1.
 scaleAxis width
 xAnchor center

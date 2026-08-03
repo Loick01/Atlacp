@@ -29,7 +29,7 @@ class FileReader
         Axis ReadAxis(std::ifstream& input) const;
         Anchor ReadAnchor(std::ifstream& input) const;
         CommandType ReadCommandType(std::ifstream& input) const;
-        MoveType ReadMoveType(std::ifstream& input) const;
+        MoveType ReadMoveType(std::ifstream& input) const; // Rename ?
         MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
         FontSize ReadFontSize(std::ifstream& input) const;
 

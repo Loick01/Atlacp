@@ -7,20 +7,19 @@
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
-namespace AssetDirectory {
-    const std::string Tileset = "../assets/tilesets/";
-}
-
 namespace DataDirectory {
     // Should be constexpr std::string_view ?
-    const std::string Animation = "../assets/battle/move_animation/";
+    const std::string Animation = "../data/animation/";
     const std::string Battle = "../data/battle/battles/";
     const std::string Map = "../data/maps/";
     const std::string Move = "../data/battle/moves/";
     const std::string NPC = "../data/npcs/";
-    const std::string World = "../data/worlds/";
+    const std::string Tileset = "../data/tileset/";
     const std::string UiFile = "../data/ui/file/";
     const std::string UiTemplate = "../data/ui/template/";
+    const std::string World = "../data/worlds/";
+
+    const std::string BattleMoveDirectory = "battle_move/";
 }
 
 std::string FileReader::GetFileExtension(const std::string& filepath) const 
@@ -71,7 +70,8 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
         m.moveType = ReadMoveType(input);
         input >> m.value;
         input >> m.sfxPath;
-        input >> m.animationPath;
+        input >> s;
+        m.animationPath = DataDirectory::BattleMoveDirectory+s;
         moves[moveId] = m;
     }
     return moves;
@@ -247,7 +247,7 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
 
 AnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
-    std::ifstream input = OpenFile(/*DataDirectory::Animation + */animationFilepath); // TODO
+    std::ifstream input = OpenFile(DataDirectory::Animation + animationFilepath);
     AnimationData data;
 
     input >> data.spriteSize.x;
@@ -266,7 +266,7 @@ AnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath
 
 TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 {
-    std::ifstream input = OpenFile(AssetDirectory::Tileset + path);
+    std::ifstream input = OpenFile(DataDirectory::Tileset + path);
     TilesetData data;
 
     input >> data.size.x;
