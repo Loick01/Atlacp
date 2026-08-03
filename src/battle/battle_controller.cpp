@@ -117,7 +117,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
     
     if (targetActor.GetLifeState() == LifeState::Dead) {
         m_textSeries.AddText({targetActor.GetName().value + " fainted !"});
-        targetActor.SetSpritePath("../assets/battle/gravestone.png");    
+        targetActor.SetSpritePath("battle/gravestone.png");    
         m_uiController.UpdatePath(targetActor.GetSpritePath());
         SoundController::GetInstance().RequestChunk(BaseSfx::Death);
     }

@@ -19,6 +19,13 @@ class Tileset;
 
 struct MapData;
 
+namespace AssetDirectory {
+    // Should be constexpr std::string_view ?
+    const std::string Asset = "../assets/";
+    const std::string Spritesheet = "../assets/spritesheet/";
+    const std::string Tileset = "../assets/tileset/";
+}
+
 class FileReader
 {
     private:

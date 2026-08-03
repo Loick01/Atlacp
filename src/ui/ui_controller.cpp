@@ -242,7 +242,7 @@ void UiController::UpdatePath(const UiKey& key, const std::string& path)
 {
     UiElement* element = GetElement(key);
     element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
-    element->LoadTexture(path);
+    element->LoadTexture(AssetDirectory::Asset+path);
     element->ComputeFinal();
     element->UpdatePosition();
 }

@@ -20,6 +20,9 @@ Drawable::~Drawable()
 
 void Drawable::LoadTexture(const std::string& textureFilepath)
 {
+    // const std::string finalPath = "../assets/"+textureFilepath;
+    // m_textureKey = finalPath;
+    // m_textureController.LoadTextureFromFile(finalPath, ...);
     m_textureKey = textureFilepath; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
     m_textureController.LoadTextureFromFile(textureFilepath, m_textureKey, m_textureWidth, m_textureHeight); 
 }
