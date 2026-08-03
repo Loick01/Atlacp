@@ -8,9 +8,8 @@
 
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
-    SceneDrawable(textureController, "../assets/spritesheet/"+spriteFilepath+".png", camera, ScenePosition{0,0}), MapElement(tilemap), // AssetDirectory::Spritesheet+spriteFilepath+".png"
+    SceneDrawable(textureController, "spritesheet/"+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap), // TODO -> AssetDirectory::Spritesheet+spriteFilepath
     m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
-    // Remove +".png" if I create RessourceFile struct ?
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;

@@ -1,7 +1,7 @@
 root
 selector
 uielement
-../assets/ui/arrow.png
+ui/arrow
 scale root height 0.8
 scaleAxis width
 xAnchor left_out

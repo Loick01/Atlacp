@@ -48,7 +48,7 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
     if (m_fonts.find(fontSize) != m_fonts.end())
         TTF_CloseFont(m_fonts[fontSize]);
 
-    TTF_Font* font = TTF_OpenFont(("../assets/ui/fonts/" + fontFilepath).c_str(), textSize);
+    TTF_Font* font = TTF_OpenFont(("../assets/ui/fonts/" + fontFilepath).c_str(), textSize); // TODO Filepath
     if (!font) 
         throw std::runtime_error("Failed to load this font : " + fontFilepath + "\n" + std::string(TTF_GetError()));
     m_fonts[fontSize] = font;

@@ -19,10 +19,16 @@ class Tileset;
 
 struct MapData;
 
+namespace FileExtension {
+    const std::string Image = ".png";
+    const std::string UiTemplate = ".uit";
+    const std::string UiFile = ".uif";
+}
+
 namespace AssetDirectory {
     // Should be constexpr std::string_view ?
-    const std::string Asset = "../assets/";
-    const std::string Spritesheet = "../assets/spritesheet/";
+    const std::string Root = "../assets/";
+    const std::string Spritesheet = "spritesheet/";
     const std::string Tileset = "../assets/tileset/";
 }
 

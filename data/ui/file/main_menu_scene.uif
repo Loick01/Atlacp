@@ -1,7 +1,7 @@
 root
 background
 uielement
-../assets/menu/nature_background.png
+menu/nature_background
 scale root height 1.
 scaleAxis height
 xAnchor left_in
@@ -10,7 +10,7 @@ yAnchor top_in
 background
 frame0
 uielement
-../assets/ui/box.png
+ui/box
 scale background height 0.1
 scaleAxis height
 xAnchor center
@@ -20,7 +20,7 @@ yPadding background height 0.2
 frame0
 frame1
 uielement
-../assets/ui/box.png
+ui/box
 scale background height 0.1
 scaleAxis height
 xAnchor center
@@ -30,7 +30,7 @@ yPadding background height 0.05
 frame1
 frame2
 uielement
-../assets/ui/box.png
+ui/box
 scale background height 0.1
 scaleAxis height
 xAnchor center
@@ -40,7 +40,7 @@ yPadding background height 0.05
 frame2
 frame3
 uielement
-../assets/ui/box.png
+ui/box
 scale background height 0.1
 scaleAxis height
 xAnchor center

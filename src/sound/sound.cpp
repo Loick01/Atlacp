@@ -64,7 +64,7 @@ void SoundController::SetBackgroundMusic(const std::string& filepath)
     if (m_backgroundMusic != nullptr)
         DeleteBackgroundMusic();
     
-    m_backgroundMusic = Mix_LoadMUS(("../assets/sound/music/"+filepath).c_str());
+    m_backgroundMusic = Mix_LoadMUS(("../assets/sound/music/"+filepath).c_str()); // TODO Filepath
     if (Mix_PlayMusic(m_backgroundMusic, -1) == -1) 
         throw std::runtime_error("Failed to play audio\n" + std::string(Mix_GetError()));
 }
@@ -93,7 +93,7 @@ void SoundController::PlayChunk(const std::string& path)
 void SoundController::LoadChunk(const std::string& path)
 {
     if (m_chunks.find(path) == m_chunks.end()) {
-        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/sfx/"+path+".wav").c_str());
+        Mix_Chunk* chunk = Mix_LoadWAV(("../assets/sound/sfx/"+path+".wav").c_str()); // TODO Filepath
         if (chunk != nullptr) 
             m_chunks[path] = chunk;
         else

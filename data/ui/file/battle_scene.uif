@@ -1,7 +1,7 @@
 root
 background
 uielement
-../assets/battle/backgrounds/cavern.png
+battle/backgrounds/cavern
 scale root height 1.
 scaleAxis height
 xAnchor left_in

@@ -5,7 +5,7 @@
 #include "image/texture.hpp" // Try to remove ? (TextureController::RenderTexture should not be call directly in UiAnimatedElement::DrawTexture() ?)
 
 UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath):
-    UiElement(textureController, key, "../assets/spritesheet/"+animationPath+".png"), m_animation(fileReader, animationPath) // AssetDirectory::Spritesheet+animationPath+".png"
+    UiElement(textureController, key, "spritesheet/"+animationPath), m_animation(fileReader, animationPath) // TODO -> AssetDirectory::Spritesheet+animationPath
 {}
 
 Animation& UiAnimatedElement::GetAnimation()

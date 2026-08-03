@@ -1,7 +1,7 @@
 root
 frame
 uielement
-../assets/ui/box.png
+ui/box
 scale root width 0.5
 scaleAxis width
 xAnchor center
@@ -11,7 +11,7 @@ yPadding root height -0.05
 frame
 frame2
 uielement
-../assets/ui/box.png
+ui/box
 scale frame width 0.8
 scaleAxis width
 xAnchor left_in

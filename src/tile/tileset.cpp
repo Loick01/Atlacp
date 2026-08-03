@@ -25,8 +25,8 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
     else if (data.tileSize != m_tileSize) 
         throw std::runtime_error("Try to load a tileset with a different tileSize\n"); // Will not be a runtime_error
 
-    m_textureKey = path; // Use hash function to get a key from the filepath (unless TextureKey is already std::string)
-    const std::string tilesetFilepath = AssetDirectory::Tileset + path + ".png"; // ? 
+    m_textureKey = path; // File extension is not in TextureKey ?
+    const std::string tilesetFilepath = AssetDirectory::Tileset + path + FileExtension::Image; 
     m_textureController.LoadTextureFromFile(tilesetFilepath, m_textureKey, m_textureWidth, m_textureHeight);
     data.tilesetKey = m_textureKey;
     if (m_tilesets.empty()){

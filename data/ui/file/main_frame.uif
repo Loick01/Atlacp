@@ -1,7 +1,7 @@
 root
 frame
 uielement
-../assets/ui/box.png
+ui/box
 scale root width 0.5
 scaleAxis width
 xAnchor center

@@ -1,7 +1,7 @@
 background
 actorSprite
 uielement
-../assets/battle/actor_placeholder.png
+battle/actor_placeholder
 scale background width 0.2
 scaleAxis width
 xAnchor center
@@ -10,7 +10,7 @@ yAnchor bottom_out
 actorSprite
 actorBox
 uielement
-../assets/ui/box.png
+ui/box
 scale actorSprite width 1.
 scaleAxis width
 xAnchor center

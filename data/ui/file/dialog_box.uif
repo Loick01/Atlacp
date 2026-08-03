@@ -3,7 +3,7 @@ load main_frame.uif
 frame
 faceset
 uielement
-../assets/ui/faceset.png
+ui/faceset
 scale frame height 0.7
 scaleAxis height
 xAnchor left_in
@@ -13,7 +13,7 @@ xPadding frame height 0.15
 faceset
 face
 uielement
-../assets/ui/hunter_face.png
+ui/hunter_face
 scale faceset width 0.8
 scaleAxis width
 xAnchor center
