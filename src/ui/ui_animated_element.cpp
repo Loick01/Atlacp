@@ -2,10 +2,11 @@
 
 #include <SDL2/SDL_rect.h> 
 
+#include "core/path.hpp"
 #include "image/texture.hpp" // Try to remove ? (TextureController::RenderTexture should not be call directly in UiAnimatedElement::DrawTexture() ?)
 
 UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath):
-    UiElement(textureController, key, "spritesheet/"+animationPath), m_animation(fileReader, animationPath) // TODO -> AssetDirectory::Spritesheet+animationPath
+    UiElement(textureController, key, AssetDirectory::Spritesheet+animationPath), m_animation(fileReader, animationPath)
 {}
 
 Animation& UiAnimatedElement::GetAnimation()

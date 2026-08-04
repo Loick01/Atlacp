@@ -2,6 +2,7 @@
 
 #include "image/texture.hpp"
 #include "core/camera.hpp"
+#include "core/path.hpp"
 
 Drawable::Drawable(TextureController& textureController, const std::string& textureFilepath):
     m_textureController(textureController)
@@ -20,7 +21,7 @@ Drawable::~Drawable()
 
 void Drawable::LoadTexture(const std::string& textureFilepath)
 {
-    const std::string finalPath = "../assets/"+textureFilepath+".png"; // TODO -> AssetDirectory::Root + textureFilepath + FileExtension::Image
+    const std::string finalPath = AssetDirectory::Root+textureFilepath+FileExtension::Image;
     m_textureKey = textureFilepath;
     m_textureController.LoadTextureFromFile(finalPath, m_textureKey, m_textureWidth, m_textureHeight); 
 }

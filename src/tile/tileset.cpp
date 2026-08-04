@@ -4,6 +4,7 @@
 // I had : tileset.hpp > file.hpp > layer.hpp > tileset.hpp > ... 
 // Because I need a FileReader in Tileset::LoadTileset, I use a forward declaration in tileset.hpp, and I include file.hpp here
 #include "core/file.hpp"
+#include "core/path.hpp"
 
 Tileset::Tileset(TextureController& textureController):
     ScreenDrawable(textureController, ScreenPosition{0,0})

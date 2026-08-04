@@ -4,10 +4,11 @@
 
 #include "image/texture.hpp"
 #include "core/camera.hpp"
+#include "core/path.hpp"
 #include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
-namespace DataDirectory {
+namespace DataDirectory { // Should be in core/path.hpp ?
     // Should be constexpr std::string_view ?
     const std::string Animation = "../data/animation/";
     const std::string Battle = "../data/battle/battles/";

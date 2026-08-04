@@ -1,5 +1,6 @@
 #include "ui/component/ui_sprite_animation.hpp"
 
+#include "core/path.hpp"
 #include "core/time.hpp"
 #include "ui/ui_animated_element.hpp"
 #include "ui/ui_controller.hpp"
@@ -20,7 +21,7 @@ void UiSpriteAnimation::Open()
     
     // UpdatePath calls Drawable::LoadTexture and will write on m_textureWidth and m_textureHeight
     // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
-    m_uiController.UpdatePath(m_uiKey, "spritesheet/"+m_animationPath); // TODO -> AssetDirectory::Spritesheet+m_animationPath
+    m_uiController.UpdatePath(m_uiKey, AssetDirectory::Spritesheet+m_animationPath);
     m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // static_cast ?
     if (m_animated == nullptr) throw std::runtime_error("This UiElement must be a UiAnimatedElement");
     m_animated->GetAnimation().UpdateAnimationData(m_animationPath); // Must be called before UpdateSpriteSizeFromAnimation

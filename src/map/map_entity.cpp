@@ -3,12 +3,13 @@
 #include <SDL2/SDL_rect.h>
 
 #include "core/camera.hpp"
+#include "core/path.hpp"
 #include "image/texture.hpp"
 #include "tile/tilemap.hpp"
 
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
-    SceneDrawable(textureController, "spritesheet/"+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap), // TODO -> AssetDirectory::Spritesheet+spriteFilepath
+    SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap),
     m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();

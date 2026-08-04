@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "core/path.hpp"
+
 FontController::FontController(const std::string& fontFilepath, const unsigned int targetWidthForSmallText)
 {
     if (TTF_Init() < 0) 
@@ -48,7 +50,7 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
     if (m_fonts.find(fontSize) != m_fonts.end())
         TTF_CloseFont(m_fonts[fontSize]);
 
-    TTF_Font* font = TTF_OpenFont(("../assets/ui/fonts/" + fontFilepath).c_str(), textSize); // TODO Filepath
+    TTF_Font* font = TTF_OpenFont((AssetDirectory::Font+fontFilepath).c_str(), textSize);
     if (!font) 
         throw std::runtime_error("Failed to load this font : " + fontFilepath + "\n" + std::string(TTF_GetError()));
     m_fonts[fontSize] = font;
