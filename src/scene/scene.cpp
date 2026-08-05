@@ -187,7 +187,7 @@ GameMapScene::GameMapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
     
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
@@ -228,7 +228,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
             m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
-                "z_npcs", m_tilemap.GetCurrentMapIndex()); // NPC filepath will be read in WorldData
+                m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
             break;
         }
         default:

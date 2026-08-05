@@ -31,7 +31,7 @@ void InteractionController::StartInteraction(std::vector<MapEntity*> entities)
         m_dstEntity->SetState(EntityState::Interacting); // Targeted entity will not move
         m_uiController.OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // Will be removed
         SoundController::GetInstance().RequestChunk(BaseSfx::Open); // Should not be here ?
-    } else { // Will be removed
+    } else {
         m_srcEntity->SetState(EntityState::Free);
     }
 }

@@ -36,7 +36,8 @@ class Tilemap : public Notifier<TilemapEvent>
         
         const std::vector<TileLayer>& GetLayers() const;
         const std::vector<bool>& GetOccupancyGrid() const;
-        
+        const WorldData& GetWorldData() const;
+
         MapBound IsOutOfMap(const MapPosition p) const;
         MapPosition GetSpawnPosition() const;
         MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound) const;

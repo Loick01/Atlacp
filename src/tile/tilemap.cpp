@@ -24,6 +24,11 @@ const std::vector<bool>& Tilemap::GetOccupancyGrid() const
     return m_mapData.occupancyGrid;
 }
 
+const WorldData& Tilemap::GetWorldData() const
+{
+    return m_worldData;
+}
+
 MapBound Tilemap::IsOutOfMap(const MapPosition p) const
 {
     if (p.x < 0) return MapBound::OutLeft;

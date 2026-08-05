@@ -12,6 +12,7 @@ using Tile = unsigned int; // Use a struct ?
 struct WorldData
 {
     std::vector<std::string> maps;
+    std::string npcsFile;
     GridSize size;
     size_t startMap;
 };

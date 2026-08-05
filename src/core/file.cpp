@@ -118,7 +118,7 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
     while(currentIndex < mapIndex && input >> s) { // Skip to the data associated with the chosen map
         if (s == FILE_DELIMITER) currentIndex++;
     }
-    if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid");
+    if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid : " + npcsFilepath);
 
     while (input >> s && s != FILE_DELIMITER) {
         DataNPC data;
@@ -199,6 +199,7 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
     input >> data.startMap;
     input >> data.size.x;
     input >> data.size.y;
+    input >> data.npcsFile;
     
     std::string s;
     data.maps.reserve(data.size.x*data.size.y);

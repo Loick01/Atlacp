@@ -8,7 +8,7 @@ class FileReader;
 class MapEntity;
 class Tilemap;
 
-class EntityController
+class MapElementController
 {
     private:
         const FileReader& m_fileReader;
@@ -22,12 +22,12 @@ class EntityController
         InteractionController m_interactionController;
     
     public:
-        EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+        MapElementController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
             Camera& camera, Tilemap& tilemap);
-        ~EntityController();
+        ~MapElementController();
 
         void Draw() const;
-        void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before EntityController::Update()) 
+        void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before MapElementController::Update()) 
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 

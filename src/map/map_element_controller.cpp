@@ -1,4 +1,4 @@
-#include "map/entity_controller.hpp"
+#include "map/map_element_controller.hpp"
 
 #include "map/map_entity.hpp"
 #include "map/npc.hpp"
@@ -6,7 +6,7 @@
 #include "core/file.hpp"
 #include "tile/tilemap.hpp"
 
-EntityController::EntityController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+MapElementController::MapElementController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
 Camera& camera, Tilemap& tilemap):
     m_player(fileReader, tilemap, textureController, "map_entity/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file) ?
     m_fileReader(fileReader), m_interactionController(uiController)
@@ -19,12 +19,12 @@ Camera& camera, Tilemap& tilemap):
     SortRenderedEntities(); // ?
 }
 
-EntityController::~EntityController()
+MapElementController::~MapElementController()
 {
     DeleteNPCs();
 }
 
-void EntityController::DeleteNPCs()
+void MapElementController::DeleteNPCs()
 {
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
     for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
@@ -35,13 +35,13 @@ void EntityController::DeleteNPCs()
     // Warning : NPC adress are still in m_renderedEntities
 }
 
-void EntityController::Draw() const
+void MapElementController::Draw() const
 {
     for (MapEntity* e : m_renderedEntities)
         e->DrawTexture();
 }
 
-void EntityController::Update(const GameMapEventState& playerEventState, const float deltaTime)
+void MapElementController::Update(const GameMapEventState& playerEventState, const float deltaTime)
 {
     m_player.SetEventState(playerEventState);
     
@@ -51,7 +51,7 @@ void EntityController::Update(const GameMapEventState& playerEventState, const f
     }
 }
 
-void EntityController::SortRenderedEntities()
+void MapElementController::SortRenderedEntities()
 {
     // m_renderedEntities is sorted each time an MapEntity ends its movement (remove then insert the moving entity at the correct index instead ?)
     // It would be even better to sort only once when several entities end their movement in the same frame
@@ -61,7 +61,7 @@ void EntityController::SortRenderedEntities()
         });
 }
 
-void EntityController::HandleEntityEvent(const EntityEvent e)
+void MapElementController::HandleEntityEvent(const EntityEvent e)
 {
     switch(e) {
         case EntityEvent::SortEntity : {
@@ -81,12 +81,12 @@ void EntityController::HandleEntityEvent(const EntityEvent e)
     }
 }
 
-void EntityController::LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap,
+void MapElementController::LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap,
     const std::string& filepath, const unsigned int mapIndex)
 {
     DeleteNPCs();
 
-    // Same code in EntityController constructor, try to merge it
+    // Same code in MapElementController constructor, try to merge it
     m_renderedEntities = {&m_player}; // Clear this vector and keep only the player
 
     const std::vector<DataNPC> npcsData = m_fileReader.ReadNPCsFile(filepath, mapIndex);
