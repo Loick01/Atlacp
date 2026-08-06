@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/map_types.hpp" // MapPosition
+#include "map/map_types.hpp" // MapPosition, Direction
 
 class Tilemap;
 
@@ -21,4 +21,7 @@ class MapElement
         MapPosition GetTargetPosition() const;
         void SetMapPosition(const MapPosition mp);
         void SetTargetPosition(const MapPosition target);
+
+        virtual void OnInteracting(const Direction direction);
+        virtual void ReleaseInteracting();
 };

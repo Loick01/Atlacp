@@ -56,4 +56,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         void SetIsRunning(const bool isRunning);
         void SetOrientation(const Direction direction);
         void Reset(const Direction direction);
+
+        void OnInteracting(const Direction direction) override;
+        void ReleaseInteracting() override;
 };

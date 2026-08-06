@@ -25,3 +25,9 @@ void MapElement::SetTargetPosition(const MapPosition target)
 {
     m_targetPosition = target;
 }
+
+void MapElement::OnInteracting(const Direction direction)
+{}
+
+void MapElement::ReleaseInteracting()
+{}

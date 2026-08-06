@@ -161,3 +161,14 @@ void MapEntity::SetIsRunning(const bool isRunning)
 {
     m_isRunning = isRunning;
 }
+
+void MapEntity::OnInteracting(const Direction direction)
+{
+    SetOrientation(direction);
+    SetState(EntityState::Interacting); // Targeted entity will not move
+}
+
+void MapEntity::ReleaseInteracting()
+{
+    SetState(EntityState::Free);
+}
