@@ -181,13 +181,14 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_entities(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
+    TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameMapEventController>();
     
-    m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+    m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+    m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
     
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
@@ -208,12 +209,12 @@ void GameMapScene::Gameloop()
     for (size_t i=0 ; i<m_layersSplitIndex ; i++)
         m_layers[i]->DrawTexture();
     
-    m_entities.Draw();
+    m_elementsController.Draw();
     
     for (size_t i=m_layersSplitIndex ; i<m_layers.size() ; i++)
         m_layers[i]->DrawTexture();
 
-    m_entities.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
+    m_elementsController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
     SoundController::GetInstance().PlayRequestedChunk();
     m_context.uiController.Draw();
@@ -227,8 +228,9 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_entities.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+            m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+            m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
             break;
         }
         default:

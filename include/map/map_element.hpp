@@ -12,12 +12,13 @@ class MapElement
 
     protected:
         Tilemap& m_tilemap;
-        
-        MapElement(Tilemap& tilemap);
-        void SetMapPosition(const MapPosition mp);
 
     public:
+        MapElement(Tilemap& tilemap); // Will be protected ?
+        virtual ~MapElement() = default;
+
         MapPosition GetMapPosition() const;
         MapPosition GetTargetPosition() const;
+        void SetMapPosition(const MapPosition mp);
         void SetTargetPosition(const MapPosition target);
 };

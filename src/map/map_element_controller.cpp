@@ -69,7 +69,8 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::EnterInteraction : {
-            m_interactionController.StartInteraction(m_updatedEntities); // m_updatedEntities ?
+            m_interactionController.StartInteraction(m_updatedEntities, m_mapElements); // m_updatedEntities ?
+            m_interactionController.ProcessInteraction(); // Will check if a MapEntity/MapElement has been found
             break;
         }
         case EntityEvent::LeaveInteraction : {
@@ -97,7 +98,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
         if (!tilemap.IsFreePosition(npcPosition))
             throw std::runtime_error("NPC can only spawn on free position"); 
         
-        NPC* npc = new NPC(
+        NPC* npc = new NPC( // TODO
             m_fileReader, 
             tilemap, 
             textureController,
@@ -120,4 +121,13 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
     
     m_updatedEntities = m_renderedEntities;
     SortRenderedEntities();
+}
+
+void MapElementController::LoadElements(const std::vector<DataMapElement>& elements, Tilemap& tilemap)
+{
+    for (const DataMapElement& data : elements) {
+        MapElement* e = new MapElement(tilemap); // TODO
+        e->SetMapPosition(data.position);
+        m_mapElements.push_back(e);
+    }
 }

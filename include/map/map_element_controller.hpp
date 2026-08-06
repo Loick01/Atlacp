@@ -19,6 +19,8 @@ class MapElementController
         // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
 
+        std::vector<MapElement*> m_mapElements; // ?
+
         InteractionController m_interactionController;
     
     public:
@@ -31,7 +33,8 @@ class MapElementController
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
-        void DeleteNPCs(); // Rename DeleteNPCs
-        void LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap, // These 3 paramaters should not be here ?
-            const std::string& filepath, const unsigned int mapIndex); // Rename LoadNPCs
+        void DeleteNPCs();
+        void LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap, // These 3 parameters should not be here ?
+            const std::string& filepath, const unsigned int mapIndex);
+        void LoadElements(const std::vector<DataMapElement>& elements, Tilemap& tilemap);
 };

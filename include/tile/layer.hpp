@@ -28,12 +28,13 @@ class TileLayer
         void SetTile(const size_t index, const Tile t);
 };
 
-struct MapData
+struct MapData // Should be in map/map_types.hpp ?
 {
     size_t layerCount;
     std::vector<TileLayer> map; // Rename layers ?
     std::vector<bool> occupancyGrid; // Could be a TileLayer ?
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
+    std::vector<DataMapElement> elements;
     MapPosition spawnPosition; // Position where the player will start when loading the associated map (-1 if no specific position)
     GridSize size; // Should not be here, and only in TileLayer ?
 };

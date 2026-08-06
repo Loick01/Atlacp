@@ -14,6 +14,11 @@ Tilemap::Tilemap(TextureController& textureController, const FileReader& fileRea
     LoadMap(m_worldData.maps[m_currentMap]); 
 }
 
+const std::vector<DataMapElement>& Tilemap::GetElementsData() const
+{
+    return m_mapData.elements;
+}
+
 const std::vector<TileLayer>& Tilemap::GetLayers() const
 {
     return m_mapData.map;

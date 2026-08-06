@@ -79,7 +79,7 @@ class GameMapScene : public TilemapScene
 {
     private:
         Time m_time;
-        MapElementController m_entities; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
+        MapElementController m_elementsController; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
 
         // In GameMapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
         // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?

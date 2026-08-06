@@ -220,6 +220,13 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     std::string s;
     while (input >> s && s != FILE_DELIMITER)
         data.tilesets.push_back(s);
+
+    while (input >> s && s != FILE_DELIMITER) { // Should not be in ReadHeaderMapFile ?
+        DataMapElement e;
+        e.position.x = std::stoi(s); // Will be removed
+        input >> e.position.y;
+        data.elements.push_back(e);
+    }
 }
 
 MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 

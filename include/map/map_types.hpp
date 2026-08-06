@@ -34,10 +34,15 @@ enum class MapBound
     OutLeft
 };
 
-struct DataNPC // Rename
+struct DataNPC // Rename ?
 {
     MapPosition position;
     std::string sprite;
     float walkSpeed;
     float runSpeed;
+};
+
+struct DataMapElement // Rename ?
+{
+    MapPosition position;
 };
