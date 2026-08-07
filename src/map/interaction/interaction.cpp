@@ -1,4 +1,4 @@
-#include "map/interaction.hpp"
+#include "map/interaction/interaction.hpp"
 
 #include "map/map_element.hpp"
 #include "map/map_entity.hpp"
@@ -40,11 +40,6 @@ void InteractionController::ProcessInteraction()
         m_srcEntity->SetState(EntityState::Free);
         return;
     }
-
-    // switch (orderType) {
-    //     case OrderType::FrameText :
-    //     case OrderType::DialogText :
-    // }
 
     m_dstElement->OnInteracting(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
     m_uiController.OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // TODO : Play order(s)

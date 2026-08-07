@@ -26,6 +26,12 @@ void MapElement::SetTargetPosition(const MapPosition target)
     m_targetPosition = target;
 }
 
+// Should have instead SetOrders(std::vector<Order> orders) { m_orders = std::move(orders); } ? 
+void MapElement::SetOrders(const std::vector<Order>& orders)
+{
+    m_orders = orders;
+}
+
 void MapElement::OnInteracting(const Direction direction)
 {}
 

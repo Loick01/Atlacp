@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+
+#include "map/interaction/order.hpp"
 #include "map/map_types.hpp" // MapPosition, Direction
 
 class Tilemap;
@@ -14,6 +17,7 @@ class MapElement
         Tilemap& m_tilemap;
 
     public:
+        std::vector<Order> m_orders;
         MapElement(Tilemap& tilemap); // Will be protected ?
         virtual ~MapElement() = default;
 
@@ -21,6 +25,7 @@ class MapElement
         MapPosition GetTargetPosition() const;
         void SetMapPosition(const MapPosition mp);
         void SetTargetPosition(const MapPosition target);
+        void SetOrders(const std::vector<Order>& orders);
 
         virtual void OnInteracting(const Direction direction);
         virtual void ReleaseInteracting();

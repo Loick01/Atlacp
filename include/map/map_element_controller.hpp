@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/interaction.hpp"
+#include "map/interaction/interaction.hpp"
 #include "map/player.hpp"
 
 class Camera;

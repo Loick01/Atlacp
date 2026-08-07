@@ -128,6 +128,7 @@ void MapElementController::LoadElements(const std::vector<DataMapElement>& eleme
     for (const DataMapElement& data : elements) {
         MapElement* e = new MapElement(tilemap); // TODO
         e->SetMapPosition(data.position);
+        e->SetOrders(data.orders);
         m_mapElements.push_back(e);
     }
 }

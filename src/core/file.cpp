@@ -228,12 +228,14 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         input >> e.position.y;
 
         input >> s;
-        if (s == "frame_text")
-            e.orders.push_back(OrderType::FrameText);
-        else if (s == "dialog_text")
-            e.orders.push_back(OrderType::DialogText);
-        else
+        if (s == "frame_text") {
+            input >> s;
+            e.orders.push_back(FrameTextOrder{s});
+        } else if (s == "dialog_text") {
+            e.orders.push_back(DialogTextOrder{});
+        } else {
             throw std::runtime_error("Unknow order type : " + s);
+        }
 
         data.elements.push_back(e);
     }
