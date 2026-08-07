@@ -30,8 +30,12 @@ class OrderController // Should be in order_controller.hpp ?
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
 
+        void StopOrder(const FrameTextOrder& o);
+        void StopOrder(const DialogTextOrder& o);
+
     public:
         OrderController(UiController& uiController);
 
         void Execute(const Order& order);
+        void Stop(const Order& order); // Rename ?
 };

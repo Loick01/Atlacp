@@ -69,11 +69,15 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::EnterInteraction : {
-            m_interactionController.StartInteraction(m_updatedEntities, m_mapElements); // m_updatedEntities ?
-            m_interactionController.ProcessInteraction(); // Will check if a MapEntity/MapElement has been found
+            m_interactionController.InitializeInteraction(m_updatedEntities, m_mapElements); // m_updatedEntities ?
+            m_interactionController.StartInteraction(); // Will check if a MapEntity/MapElement has been found
             break;
         }
-        case EntityEvent::LeaveInteraction : {
+        case EntityEvent::ContinueInteraction : {
+            m_interactionController.NextOrder();
+            break;
+        }
+        case EntityEvent::LeaveInteraction : { // Should not happen ?
             m_interactionController.EndInteraction();
             break;
         }

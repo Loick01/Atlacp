@@ -8,7 +8,7 @@ InteractionController::InteractionController(OrderController& orderController) :
     m_orderController(orderController), m_srcEntity(nullptr), m_dstElement(nullptr)
 {}
 
-void InteractionController::StartInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements)
+void InteractionController::InitializeInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements)
 {
     for (MapEntity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
         // Only one interaction at a time
@@ -33,7 +33,7 @@ void InteractionController::StartInteraction(std::vector<MapEntity*> entities, s
     }
 }
 
-void InteractionController::ProcessInteraction()
+void InteractionController::StartInteraction()
 {
     if (m_dstElement == nullptr) { // No target MapElement or MapEntity has been found
         m_srcEntity->SetState(EntityState::Free);
@@ -41,18 +41,30 @@ void InteractionController::ProcessInteraction()
     }
     
     m_dstElement->OnInteracting(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
-    m_orderController.Execute(m_dstElement->GetOrders()[0]); // TODO : Not only the first Order
+    m_nrOrder = m_dstElement->GetOrders().size();
+    m_currentIndexOrder = 0;
+    NextOrder();
     // Do not interact with NPC, they don't have order for now
+}
+
+void InteractionController::NextOrder()
+{
+    if (m_currentIndexOrder >= m_nrOrder) {
+        EndInteraction();
+        return;
+    }
+    if (m_currentIndexOrder != 0 ) // Nothing to stop if the first Order has not yet been executed
+        m_orderController.Stop(m_dstElement->GetOrders()[m_currentIndexOrder-1]);
+
+    m_orderController.Execute(m_dstElement->GetOrders()[m_currentIndexOrder++]);
 }
 
 void InteractionController::EndInteraction()
 {
     m_srcEntity->SetState(EntityState::Free);
     m_dstElement->ReleaseInteracting();
+    // Should test if m_currentIndexOrder != 0 ? (should not occured, because NextOrder is necessarily called at least once before EndInteraction())
+    m_orderController.Stop(m_dstElement->GetOrders()[m_currentIndexOrder-1]);
     m_srcEntity = nullptr;
     m_dstElement = nullptr;
-
-    // Will be in OrderController
-    // m_uiController.DeleteElement("frame");
-    // SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }

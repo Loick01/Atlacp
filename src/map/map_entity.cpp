@@ -82,9 +82,14 @@ void MapEntity::TryStartInteraction(const MapPosition targetPosition)
     }
 }
 
+void MapEntity::ContinueInteraction()
+{
+    Notify(EntityEvent::ContinueInteraction);
+}
+
 void MapEntity::LeaveInteraction()
 {
-    // SetState(Free) should be here rather than inside InteractionController::EndInteraction()
+    // SetState(Free) should be here rather than inside InteractionController::EndInteraction() ?
     Notify(EntityEvent::LeaveInteraction);
 }
 

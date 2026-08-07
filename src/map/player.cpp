@@ -71,7 +71,7 @@ void Player::Update(const float deltaTime)
 
         case EntityState::Interacting: {
             if (m_eventState.isInteracting){
-                LeaveInteraction();
+                ContinueInteraction();
                 break;
             }
             break;
