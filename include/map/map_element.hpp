@@ -10,6 +10,7 @@ class Tilemap;
 class MapElement
 {
     private:
+        std::vector<Order> m_orders;
         MapPosition m_mapPosition;
         MapPosition m_targetPosition; // Should use orientation instead ? 
 
@@ -17,10 +18,10 @@ class MapElement
         Tilemap& m_tilemap;
 
     public:
-        std::vector<Order> m_orders;
         MapElement(Tilemap& tilemap); // Will be protected ?
         virtual ~MapElement() = default;
 
+        const std::vector<Order>& GetOrders() const;
         MapPosition GetMapPosition() const;
         MapPosition GetTargetPosition() const;
         void SetMapPosition(const MapPosition mp);

@@ -181,7 +181,8 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.uiController, m_context.textureController, m_camera, m_tilemap),
+    TilemapScene(context, true), m_orderController(m_context.uiController), 
+    m_elementsController(m_context.fileReader, m_orderController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameMapEventController>();

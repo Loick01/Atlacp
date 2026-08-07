@@ -1,12 +1,11 @@
 #include "map/interaction/interaction.hpp"
 
+#include "map/interaction/order.hpp"
 #include "map/map_element.hpp"
 #include "map/map_entity.hpp"
-#include "sound/sound.hpp"
-#include "ui/ui_controller.hpp"
 
-InteractionController::InteractionController(UiController& uiController) :
-    m_uiController(uiController), m_srcEntity(nullptr), m_dstElement(nullptr)
+InteractionController::InteractionController(OrderController& orderController) :
+    m_orderController(orderController), m_srcEntity(nullptr), m_dstElement(nullptr)
 {}
 
 void InteractionController::StartInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements)
@@ -40,10 +39,10 @@ void InteractionController::ProcessInteraction()
         m_srcEntity->SetState(EntityState::Free);
         return;
     }
-
+    
     m_dstElement->OnInteracting(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
-    m_uiController.OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // TODO : Play order(s)
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open); // Should not be here ?
+    m_orderController.Execute(m_dstElement->GetOrders()[0]); // TODO : Not only the first Order
+    // Do not interact with NPC, they don't have order for now
 }
 
 void InteractionController::EndInteraction()
@@ -52,6 +51,8 @@ void InteractionController::EndInteraction()
     m_dstElement->ReleaseInteracting();
     m_srcEntity = nullptr;
     m_dstElement = nullptr;
-    m_uiController.DeleteElement("frame"); // Should not be here ?
-    SoundController::GetInstance().RequestChunk(BaseSfx::Close); // Should not be here ?
+
+    // Will be in OrderController
+    // m_uiController.DeleteElement("frame");
+    // SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }

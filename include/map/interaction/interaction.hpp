@@ -4,17 +4,17 @@
 
 class MapElement;
 class MapEntity;
-class UiController;
+class OrderController;
 
 class InteractionController
 {
     private:
-        UiController& m_uiController;
+        OrderController& m_orderController;
         MapEntity* m_srcEntity;
         MapElement* m_dstElement;
     
     public: 
-        InteractionController(UiController& uiController);
+        InteractionController(OrderController& orderController);
 
         void StartInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements); // NPCs are not in elements (even if they could because MapEntity inherits from MapElement)
         void ProcessInteraction();

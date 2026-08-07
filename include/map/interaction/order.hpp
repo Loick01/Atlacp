@@ -20,10 +20,18 @@ using Order = std::variant<
     DialogTextOrder
 >;
 
+class UiController; 
+
 class OrderController // Should be in order_controller.hpp ?
 {
     private:
-    
+        UiController& m_uiController;
+
+        void ExecuteOrder(const FrameTextOrder& o);
+        void ExecuteOrder(const DialogTextOrder& o);
+
     public:
-        OrderController();
+        OrderController(UiController& uiController);
+
+        void Execute(const Order& order);
 };

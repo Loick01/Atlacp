@@ -24,7 +24,7 @@ class MapElementController
         InteractionController m_interactionController;
     
     public:
-        MapElementController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+        MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,
             Camera& camera, Tilemap& tilemap);
         ~MapElementController();
 

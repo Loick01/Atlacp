@@ -6,10 +6,10 @@
 #include "core/file.hpp"
 #include "tile/tilemap.hpp"
 
-MapElementController::MapElementController(const FileReader& fileReader, UiController& uiController, TextureController& textureController,
+MapElementController::MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,
 Camera& camera, Tilemap& tilemap):
     m_player(fileReader, tilemap, textureController, "map_entity/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file) ?
-    m_fileReader(fileReader), m_interactionController(uiController)
+    m_fileReader(fileReader), m_interactionController(orderController)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
