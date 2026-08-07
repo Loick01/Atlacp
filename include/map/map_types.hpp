@@ -1,7 +1,10 @@
 #pragma once
 
+#include <vector> // Will be removed ? (used for DataMapElement::orders)
+
 #include "core/core_types.hpp" // Vec2
 #include "image/image_types.hpp" // ScenePosition
+#include "map/order.hpp" // OrderType
 
 struct MapPosition : public Vec2 // Rename GridPosition ?
 {
@@ -45,4 +48,5 @@ struct DataNPC // Rename ?
 struct DataMapElement // Rename ?
 {
     MapPosition position;
+    std::vector<OrderType> orders; // Will also be in DataNPC
 };

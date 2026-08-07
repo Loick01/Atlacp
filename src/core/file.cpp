@@ -221,10 +221,20 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     while (input >> s && s != FILE_DELIMITER)
         data.tilesets.push_back(s);
 
-    while (input >> s && s != FILE_DELIMITER) { // Should not be in ReadHeaderMapFile ?
+    // Will not be in ReadHeaderMapFile
+    while (input >> s && s != FILE_DELIMITER) {
         DataMapElement e;
         e.position.x = std::stoi(s); // Will be removed
         input >> e.position.y;
+
+        input >> s;
+        if (s == "frame_text")
+            e.orders.push_back(OrderType::FrameText);
+        else if (s == "dialog_text")
+            e.orders.push_back(OrderType::DialogText);
+        else
+            throw std::runtime_error("Unknow order type : " + s);
+
         data.elements.push_back(e);
     }
 }

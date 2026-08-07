@@ -41,11 +41,15 @@ void InteractionController::ProcessInteraction()
         return;
     }
 
+    // switch (orderType) {
+    //     case OrderType::FrameText :
+    //     case OrderType::DialogText :
+    // }
+
     m_dstElement->OnInteracting(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
     m_uiController.OpenDialogBox("Hello world ! This is an example of a long sentence to test how the text is wrapped by SDL_ttf..."); // TODO : Play order(s)
     SoundController::GetInstance().RequestChunk(BaseSfx::Open); // Should not be here ?
 }
-
 
 void InteractionController::EndInteraction()
 {
