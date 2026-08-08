@@ -1,6 +1,6 @@
 #include "animation/map_entity_animation.hpp"
 
-#include "core/file.hpp"
+#include "core/file/file.hpp"
 
 MapEntityAnimation::MapEntityAnimation(const FileReader& fileReader, const std::string& path):
     Animation(fileReader, path)

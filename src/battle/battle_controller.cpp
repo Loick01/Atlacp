@@ -2,7 +2,7 @@
 
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/ai_actor.hpp"
-#include "core/file.hpp"
+#include "core/file/file.hpp"
 #include "core/time.hpp"
 #include "sound/sound.hpp"
 #include "ui/ui_controller.hpp"

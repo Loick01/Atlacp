@@ -1,6 +1,6 @@
 #include "animation/animation.hpp"
 
-#include "core/file.hpp"
+#include "core/file/file.hpp"
 
 Animation::Animation(const FileReader& fileReader, const std::string& animationFilepath):
     m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)

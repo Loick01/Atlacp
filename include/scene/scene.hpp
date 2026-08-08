@@ -10,7 +10,7 @@
 #include "image/texture.hpp"
 #include "map/map_element_controller.hpp"
 #include "core/camera.hpp"
-#include "core/file.hpp"
+#include "core/file/file.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"
 #include "tile/tilemap.hpp"

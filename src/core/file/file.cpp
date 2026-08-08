@@ -1,12 +1,11 @@
-#include "core/file.hpp"
+#include "core/file/file.hpp"
 
 #include <unordered_map>
 
-#include "image/texture.hpp"
-#include "core/camera.hpp"
-#include "core/path.hpp"
+#include "image/texture.hpp" // ?
+#include "core/camera.hpp" // ?
 #include "tile/layer.hpp"
-#include "tile/tileset.hpp"
+#include "tile/tileset.hpp" // ?
 
 namespace DataDirectory { // Should be in core/path.hpp ?
     // Should be constexpr std::string_view ?
@@ -21,40 +20,6 @@ namespace DataDirectory { // Should be in core/path.hpp ?
     const std::string World = "../data/worlds/";
 
     const std::string BattleMoveDirectory = "battle_move/";
-}
-
-std::string FileReader::GetFileExtension(const std::string& filepath) const 
-{
-    size_t pos = filepath.rfind('.');
-    if (pos == std::string::npos)
-        throw std::runtime_error("This UI file has no extension : " + filepath);
-    return filepath.substr(pos);
-}
-
-bool FileReader::IsBaseUiFile(const std::string& filepath) const
-{
-    return GetFileExtension(filepath) == FileExtension::UiFile;
-}
-
-bool FileReader::IsTemplateUiFile(const std::string& filepath) const
-{
-    return GetFileExtension(filepath) == FileExtension::UiTemplate;
-}
-
-std::ifstream FileReader::OpenFile(const std::string& filepath)
-{
-    std::ifstream input;
-    input.open(filepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + filepath);
-    return input;
-}
-
-std::string FileReader::ReadString(std::ifstream& input) const 
-{
-    std::string s;
-    input >> s;
-    std::replace(s.begin(), s.end(), '_', ' ');
-    return s;
 }
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
@@ -84,7 +49,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
-    while (input >> s && s != FILE_DELIMITER) {
+    while (input >> s && s != SECTION_DELIMITER) {
         DataBattleActor data;
         data.isAiActor = true;
         if (s == "ally") data.team = Team::Ally;
@@ -100,7 +65,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> data.health;
         input >> data.turnSpeed;
         input >> data.spritePath;
-        while (input >> s && s != FILE_DELIMITER)
+        while (input >> s && s != SECTION_DELIMITER)
             data.moveIds.push_back(std::stoi(s)); // Should catch invalid_argument ? 
         
         actorsData.push_back(data);
@@ -116,11 +81,11 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
     unsigned int currentIndex = 0;
     std::string s;
     while(currentIndex < mapIndex && input >> s) { // Skip to the data associated with the chosen map
-        if (s == FILE_DELIMITER) currentIndex++;
+        if (s == SECTION_DELIMITER) currentIndex++;
     }
     if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid : " + npcsFilepath);
 
-    while (input >> s && s != FILE_DELIMITER) {
+    while (input >> s && s != SECTION_DELIMITER) {
         DataNPC data;
         // No verification yet on what is read 
         data.sprite = s;
@@ -143,12 +108,12 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 
     std::vector<DataUi> uisData;
     std::string s;
-    while (input >> s && s != FILE_DELIMITER) {
+    while (input >> s && s != SECTION_DELIMITER) {
         if (s == "load") {
             input >> s;
             std::vector<DataUi> load = ReadUiFile(s);
             uisData.insert(std::end(uisData), std::begin(load), std::end(load));
-            input >> s; // After the load line, the next line must be FILE_DELIMITER
+            input >> s; // After the load line, the next line must be SECTION_DELIMITER
             continue;
         }
         DataUi data;
@@ -160,7 +125,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
             input >> data.imagePath;
         
         // Read optional data 
-        while (input >> s && s != FILE_DELIMITER) {
+        while (input >> s && s != SECTION_DELIMITER) {
             if (s == "scale") {
                 input >> data.scale.srcElement;
                 data.scale.axis = ReadAxis(input);
@@ -217,12 +182,11 @@ DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
     input >> e.position.y;
 
     std::string s;
-    while (input >> s && s != MAP_ELEMENT_DELIMITER) {
+    while (input >> s && s != MAP_ELEMENT_DELIMITER) { // Multiple orders
         if (s == "frame_text") {
-            input >> s;
-            e.orders.push_back(FrameTextOrder{s});
+            e.orders.push_back(ReadFrameTextOrder(input));
         } else if (s == "dialog_text") {
-            e.orders.push_back(DialogTextOrder{});
+            e.orders.push_back(DialogTextOrder{}); // TODO : ReadDialogTextOrder
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }
@@ -239,10 +203,10 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     input >> data.spawnPosition.y;
     
     std::string s;
-    while (input >> s && s != FILE_DELIMITER)
+    while (input >> s && s != SECTION_DELIMITER)
         data.tilesets.push_back(s);
 
-    while (input >> s && s != FILE_DELIMITER) {
+    while (input >> s && s != SECTION_DELIMITER) {
         const DataMapElement e = ReadMapElement(input);
         data.elements.push_back(e);
     }
@@ -309,109 +273,6 @@ TilesetData FileReader::ReadTilesetFile(const std::string& path) const
     return data;
 }
 
-Axis FileReader::ReadAxis(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, Axis> axis = {
-        {"width", Axis::Width},
-        {"height", Axis::Height}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, Axis>::const_iterator it = axis.find(s);
-    if (it != axis.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as Axis");
-}
-
-Anchor FileReader::ReadAnchor(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, Anchor> anchors = {
-        {"left_in", Anchor::LeftIn},
-        {"left_out", Anchor::LeftOut},
-        {"right_in", Anchor::RightIn},
-        {"right_out", Anchor::RightOut},
-        {"center", Anchor::Center},
-        {"top_in", Anchor::TopIn},
-        {"top_out", Anchor::TopOut},
-        {"bottom_in", Anchor::BottomIn},
-        {"bottom_out", Anchor::BottomOut}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, Anchor>::const_iterator it = anchors.find(s);
-    if (it != anchors.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as Anchor");
-}
-
-CommandType FileReader::ReadCommandType(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, CommandType> commands = {
-        {"attack", CommandType::Attack},
-        {"heal", CommandType::Heal}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, CommandType>::const_iterator it = commands.find(s);
-    if (it != commands.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as CommandType");
-}
-
-MoveType FileReader::ReadMoveType(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, MoveType> moves = {
-        {"physical", MoveType::Physical},
-        {"magic", MoveType::Magic}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, MoveType>::const_iterator it = moves.find(s);
-    if (it != moves.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as MoveType");
-}
-
-MapBehaviour FileReader::ReadMapBehaviour(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, MapBehaviour> behaviours = {
-        {"random", MapBehaviour::Random},
-        {"follow", MapBehaviour::Follow},
-        {"goto", MapBehaviour::GoTo}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, MapBehaviour>::const_iterator it = behaviours.find(s);
-    if (it != behaviours.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as MapBehaviour");
-}
-
-FontSize FileReader::ReadFontSize(std::ifstream& input) const
-{
-    static const std::unordered_map<std::string, FontSize> fontSizes = {
-        {"small", FontSize::Small}
-    };
-
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, FontSize>::const_iterator it = fontSizes.find(s);
-    if (it != fontSizes.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as FontSize");
-}
-
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
     std::ofstream mapFile(DataDirectory::Map + mapFilepath);
@@ -426,7 +287,7 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     for (const TextureKey& k : mapData.tilesets){ // Tileset filepath must be write in order
         mapFile << k << "\n"; // TilesetKey need definition for operator<<
     }
-    mapFile << FILE_DELIMITER << "\n";
+    mapFile << SECTION_DELIMITER << "\n";
     
     // Map layers
     for (unsigned int layer=0 ; layer < layerCount ; layer++){
