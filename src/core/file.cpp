@@ -210,24 +210,14 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
     return data;
 }
 
-void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
+DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
 {
-    input >> data.layerCount;
-    input >> data.size.x;
-    input >> data.size.y;
-    input >> data.spawnPosition.x;
-    input >> data.spawnPosition.y;
+    DataMapElement e;
+    input >> e.position.x;
+    input >> e.position.y;
+
     std::string s;
-    while (input >> s && s != FILE_DELIMITER)
-        data.tilesets.push_back(s);
-
-    // Will not be in ReadHeaderMapFile
-    while (input >> s && s != FILE_DELIMITER) {
-        DataMapElement e;
-        e.position.x = std::stoi(s); // Will be removed
-        input >> e.position.y;
-
-        input >> s;
+    while (input >> s && s != MAP_ELEMENT_DELIMITER) {
         if (s == "frame_text") {
             input >> s;
             e.orders.push_back(FrameTextOrder{s});
@@ -236,7 +226,24 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }
+    }
+    return e;
+}
 
+void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
+{
+    input >> data.layerCount;
+    input >> data.size.x;
+    input >> data.size.y;
+    input >> data.spawnPosition.x;
+    input >> data.spawnPosition.y;
+    
+    std::string s;
+    while (input >> s && s != FILE_DELIMITER)
+        data.tilesets.push_back(s);
+
+    while (input >> s && s != FILE_DELIMITER) {
+        const DataMapElement e = ReadMapElement(input);
         data.elements.push_back(e);
     }
 }

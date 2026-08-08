@@ -12,7 +12,8 @@
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
 
-#define FILE_DELIMITER "###" // Will be removed ?
+#define FILE_DELIMITER "###" // define ? Rename
+#define MAP_ELEMENT_DELIMITER "#" // define ? Rename
 
 class Camera;
 class TextureController;
@@ -34,6 +35,7 @@ class FileReader
         MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
         FontSize ReadFontSize(std::ifstream& input) const;
 
+        DataMapElement ReadMapElement(std::ifstream& input) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:

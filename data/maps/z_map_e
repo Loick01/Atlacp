@@ -2,7 +2,14 @@
 zoria
 zoria_2
 ###
-16 7 frame_text This_is_a_text_without_space
+#
+16 7 
+frame_text This_is_a_text_without_space
+frame_text This_is_a_second_text
+# #
+17 7
+frame_text This_map_element_must_be_removed 
+#
 ###
 1 0 0 0 0 0 6 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 39 0 0 73 0 37 5 0 0 37 0 0 300 302 0 0 37 0 0 0 0 0 0 0 73 0 0 
