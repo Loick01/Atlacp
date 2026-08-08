@@ -39,6 +39,7 @@ enum class MapBound
 
 struct DataNPC // Rename ?
 {
+    std::vector<Order> orders;
     MapPosition position;
     std::string sprite;
     float walkSpeed;
@@ -47,6 +48,6 @@ struct DataNPC // Rename ?
 
 struct DataMapElement // Rename ?
 {
+    std::vector<Order> orders;
     MapPosition position;
-    std::vector<Order> orders; // Will also be in DataNPC
 };

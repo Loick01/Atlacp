@@ -110,6 +110,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
             camera, npcPosition,
             data.walkSpeed, data.runSpeed
         );
+        npc->SetOrders(data.orders);
         npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
         m_renderedEntities.push_back(npc);
     }

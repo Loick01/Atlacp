@@ -93,6 +93,18 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
         input >> data.walkSpeed;
         input >> data.runSpeed;
         // NPC always spawn with random behaviour
+
+        while (input >> s && s != MAP_ELEMENT_DELIMITER) {
+            // Merge with FileReader::ReadMapElement()
+            if (s == "frame_text") {
+                data.orders.push_back(ReadFrameTextOrder(input));
+            } else if (s == "dialog_text") {
+                data.orders.push_back(DialogTextOrder{}); // TODO : ReadDialogTextOrder
+            } else {
+                throw std::runtime_error("Unknow order type : " + s);
+            }
+        }
+
         npcsData.push_back(data);
     }
     return npcsData;

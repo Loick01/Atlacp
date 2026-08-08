@@ -35,7 +35,8 @@ void InteractionController::InitializeInteraction(std::vector<MapEntity*> entiti
 
 void InteractionController::StartInteraction()
 {
-    if (m_dstElement == nullptr) { // No target MapElement or MapEntity has been found
+    if (m_dstElement == nullptr || m_dstElement->GetOrders().size() == 0) {
+        // No target MapElement or MapEntity has been found OR no order to execute (only for NPC, if a MapElement is declared it must have at least one order)
         m_srcEntity->SetState(EntityState::Free);
         return;
     }
@@ -44,7 +45,6 @@ void InteractionController::StartInteraction()
     m_nrOrder = m_dstElement->GetOrders().size();
     m_currentIndexOrder = 0;
     NextOrder();
-    // Do not interact with NPC, they don't have order for now
 }
 
 void InteractionController::NextOrder()
@@ -63,7 +63,7 @@ void InteractionController::EndInteraction()
 {
     m_srcEntity->SetState(EntityState::Free);
     m_dstElement->ReleaseInteracting();
-    // Should test if m_currentIndexOrder != 0 ? (should not occured, because NextOrder is necessarily called at least once before EndInteraction())
+    // NextOrder is necessarily called at least once before EndInteraction(), because m_dstElement->GetOrders().size() > 0 (InteractionController::StartInteraction())
     m_orderController.Stop(m_dstElement->GetOrders()[m_currentIndexOrder-1]);
     m_srcEntity = nullptr;
     m_dstElement = nullptr;
