@@ -4,14 +4,15 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ui/ui_animated_element.hpp"
-#include "ui/ui_element.hpp"
+#include "ui/element/ui_animated_element.hpp"
+#include "ui/element/ui_element.hpp"
+#include "ui/element/ui_text_element.hpp"
 #include "ui/ui_types.hpp"
 
 class FileReader;
 class TextureController;
 
-class UiController
+class UiController // Rename
 {       
     private:
         // UiElement are not marked as root, but I don't want it to be possible to delete the root

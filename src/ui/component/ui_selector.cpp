@@ -1,7 +1,7 @@
 #include "ui/component/ui_selector.hpp"
 
 #include "sound/sound.hpp"
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 UiSelector::UiSelector(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_optionIndex(0)

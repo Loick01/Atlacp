@@ -1,6 +1,6 @@
 #include "ui/component/ui_text_series.hpp"
 
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 UiTextSeries::UiTextSeries(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)

@@ -1,6 +1,6 @@
 #include "ui/component/ui_component.hpp"
 
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 UiComponent::UiComponent(UiController& uiController, const std::string& uiFilepath) :
     m_uiController(uiController), m_uiFilepath(uiFilepath)

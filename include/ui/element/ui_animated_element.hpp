@@ -1,7 +1,7 @@
 #pragma once
 
 #include "animation/animation.hpp"
-#include "ui/ui_element.hpp"
+#include "ui/element/ui_element.hpp"
 
 class UiAnimatedElement : public UiElement // Rename UiAnimationElement ?
 {

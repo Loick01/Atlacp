@@ -1,7 +1,7 @@
 #include "map/interaction/order.hpp"
 
 #include "sound/sound.hpp"
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 OrderController::OrderController(UiController& uiController) :
     m_uiController(uiController)

@@ -2,8 +2,8 @@
 
 #include "core/path.hpp"
 #include "core/time.hpp"
-#include "ui/ui_animated_element.hpp"
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_animated_element.hpp"
+#include "ui/element/ui_controller.hpp"
 
 UiSpriteAnimation::UiSpriteAnimation(const Time& time, UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath), m_time(time), m_animated(nullptr), m_animationPath("invalid")

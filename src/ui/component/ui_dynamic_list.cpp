@@ -1,6 +1,6 @@
 #include "ui/component/ui_dynamic_list.hpp"
 
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFilepath):
     UiList(uiController, uiFilepath)

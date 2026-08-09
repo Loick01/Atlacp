@@ -15,7 +15,7 @@
 #include "core/window.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 enum class SwitchEvent
 {

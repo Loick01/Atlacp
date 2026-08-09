@@ -3,9 +3,9 @@
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/ai_actor.hpp"
 #include "core/file/file.hpp"
-#include "core/time.hpp"
+#include "core/time.hpp" // Remove (will be provided for UiSpriteAnimation in UiComponentController)
 #include "sound/sound.hpp"
-#include "ui/ui_controller.hpp"
+#include "ui/element/ui_controller.hpp"
 
 namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
     // Should be constexpr std::string_view ?

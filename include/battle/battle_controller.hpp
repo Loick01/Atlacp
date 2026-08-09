@@ -14,7 +14,7 @@
 #include "ui/component/ui_sprite_animation.hpp"
 #include "ui/component/ui_text_series.hpp"
 
-struct Time;
+struct Time; // Remove
 class AiActor;
 class FileReader;
 class UiController;

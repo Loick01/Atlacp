@@ -1,4 +1,4 @@
-#include "ui/ui_animated_element.hpp"
+#include "ui/element/ui_animated_element.hpp"
 
 #include <SDL2/SDL_rect.h> 
 
