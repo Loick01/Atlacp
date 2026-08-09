@@ -14,7 +14,6 @@
 #include "ui/component/ui_sprite_animation.hpp"
 #include "ui/component/ui_text_series.hpp"
 
-struct Time; // Remove
 class AiActor;
 class FileReader;
 class UiComponentController;
@@ -116,7 +115,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleCurrentCommand();
 
     public:
-        BattleController(const Time& time, FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
+        BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
         
         void InitializeActors(const std::string& battleFile); // Rename battleFile
         void PlayNextTurn();

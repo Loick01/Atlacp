@@ -18,21 +18,25 @@ class UiComponentController // Rename
         Time& m_time;
         UiController& m_uiController;
 
-        void CheckKeyAvailable(const ComponentKey& componentKey) const;
+        void CheckKeyAvailable(const ComponentKey& key) const;
+        void CheckKeyUsed(const ComponentKey& key) const;
     
     public:
         UiComponentController(Time& time, UiController& uiController);
 
-        UiComponent* GetComponent(const ComponentKey& componentKey);
-        void DeleteComponent(const ComponentKey& componentKey);
+        UiComponent* GetComponent(const ComponentKey& key);
+        void DeleteComponent(const ComponentKey& key);
 
-        void OpenComponent(const ComponentKey& componentKey);
-        void CloseComponent(const ComponentKey& componentKey);
+        // Two way to Open/Close a UiComponent :
+        //     Use UiComponentController::OpenComponent(key)/UiComponentController::CloseComponent(key)
+        //     Get the UiComponent (with GetComponent(key) and then use UiComponent::Open()/UiComponent::Close())
+        void OpenComponent(const ComponentKey& key);
+        void CloseComponent(const ComponentKey& key);
         
         // Each UiComponent must have its function here, add it in m_components
-        void CreateDynamicList(const ComponentKey& componentKey, const std::string& templatePath);
-        void CreateList(const ComponentKey& componentKey, const std::string& filePath);
-        void CreateSelector(const ComponentKey& componentKey, const std::string& templatePath);
-        void CreateSpriteAnimation(const ComponentKey& componentKey, const std::string& templatePath);
-        void CreateTextSeries(const ComponentKey& componentKey, const std::string& filePath);
+        void CreateDynamicList(const ComponentKey& key, const std::string& templatePath);
+        void CreateList(const ComponentKey& key, const std::string& filePath);
+        void CreateSelector(const ComponentKey& key, const std::string& templatePath);
+        void CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath);
+        void CreateTextSeries(const ComponentKey& key, const std::string& filePath);
 };

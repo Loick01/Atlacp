@@ -3,7 +3,6 @@
 #include "ai_battle/battle_behaviour.hpp"
 #include "battle/ai_actor.hpp"
 #include "core/file/file.hpp"
-#include "core/time.hpp" // Remove (will be provided for UiSpriteAnimation in UiComponentController)
 #include "sound/sound.hpp"
 #include "ui/component/ui_component_controller.hpp"
 #include "ui/element/ui_controller.hpp"
@@ -15,9 +14,10 @@ namespace { // These values must be the same as in the template file used for th
     const std::string PrefixSprite = "actorSprite";
 }
 
-BattleController::BattleController(const Time& time, FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController):
-    m_uiComponentController(uiComponentController), m_uiController(uiController), m_fileReader(fileReader), m_currentActor(nullptr), m_targetActor(nullptr),
-    m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None), m_currentTime(0.f)
+BattleController::BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController):
+    m_uiComponentController(uiComponentController), m_uiController(uiController), m_fileReader(fileReader), 
+    m_currentActor(nullptr), m_targetActor(nullptr), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None),
+    m_currentTime(0.f)
 {
     m_uiComponentController.CreateDynamicList("allyList", "battle_actor.uit");
     m_uiComponentController.CreateDynamicList("opponentList", "battle_actor.uit");
@@ -70,7 +70,7 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction)) {
         m_uiComponentController.CloseComponent("textSeries");
-        m_uiComponentController.CloseComponent("selector");
+        selector->Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
         BattleActor* targetActor = actors[selector->GetOptionIndex()];
         return targetActor;
@@ -118,7 +118,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
     m_uiController.UpdateText(targetActor.GetHealth());
     
     UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    m_uiComponentController.OpenComponent("textSeries");
+    textSeries->Open();
     textSeries->AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
     
@@ -139,7 +139,7 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
     m_uiController.UpdateText(targetActor.GetHealth());
     
     UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    m_uiComponentController.OpenComponent("textSeries");
+    textSeries->Open();
     textSeries->AddText({srcActor.GetName().value + " gives a potion to " + targetActor.GetName().value + ".",
                           targetActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
 
@@ -151,8 +151,8 @@ void BattleController::OpenActionSelection()
     UiList* actionSelectionList = dynamic_cast<UiList*>(m_uiComponentController.GetComponent("actionSelectionList"));
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
 
-    m_uiComponentController.OpenComponent("actionSelectionList");
-    m_uiComponentController.OpenComponent("selector");
+    actionSelectionList->Open();
+    selector->Open();
     selector->SetOptionKeys(actionSelectionList->GetItemsKey(), Axis::Height, Axis::Width, 1.f, -0.05f);
 }
 
@@ -175,14 +175,14 @@ void BattleController::OpenMoveSelection()
         m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.06f)), // Padding
         m_uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.25f))));
     moveSelection->SetNrItem(moves.size());
-    m_uiComponentController.OpenComponent("moveSelection");
+    moveSelection->Open();
     
     const std::vector<UiKey> keys = moveSelection->GetItemsKey();
     for (unsigned int i = 0 ; i < keys.size() ; i++) // keys.size = moves.size()
         m_uiController.UpdateText(keys[i], moves[i].name);
 
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
-    m_uiComponentController.OpenComponent("selector");
+    selector->Open();
     selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
 }
 
@@ -197,7 +197,7 @@ void BattleController::CloseMoveSelection()
 void BattleController::OpenSelectorOnActors()
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
-    m_uiComponentController.OpenComponent("selector");
+    selector->Open();
     std::vector<BattleActor*> aliveActors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
     std::vector<UiKey> keys;
     for (const BattleActor* actor : aliveActors)
@@ -205,7 +205,7 @@ void BattleController::OpenSelectorOnActors()
     selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 0.2f, 0.2f);
 
     UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    m_uiComponentController.OpenComponent("textSeries");
+    textSeries->Open();
     textSeries->AddText({"Select a BattleActor"});
     textSeries->NextText();
 }
@@ -223,7 +223,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
 
         case 1: {
             UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-            m_uiComponentController.OpenComponent("textSeries");
+            textSeries->Open();
             textSeries->AddText({"This turn has been skipped"});
             textSeries->NextText();
             m_turnState = TurnState::WaitingForText;
@@ -272,7 +272,7 @@ void BattleController::HandleCurrentCommand()
     UiSpriteAnimation* moveAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
     moveAnimation->SetAnimationPath(m_currentCommand.animation);
     moveAnimation->SetTargetElement(m_targetActor->GetSpritePath().id);
-    m_uiComponentController.OpenComponent("moveAnimation");
+    moveAnimation->Open();
 
     switch (m_currentCommand.commandType) {
         case CommandType::Attack : {
@@ -347,9 +347,9 @@ void BattleController::InitializeActors(const std::string& battleFile)
     }
 
     allyList->SetNrItem(countAlly);
+    allyList->Open();
     opponentList->SetNrItem(countOpponent);
-    m_uiComponentController.OpenComponent("allyList");
-    m_uiComponentController.OpenComponent("opponentList");
+    opponentList->Open();
 
     for (const std::unique_ptr<BattleActor>& b : m_actors) {
         m_uiController.UpdateText(b->GetName());
@@ -407,7 +407,7 @@ void BattleController::PlayNextTurn()
         case TurnState::WaitingForAnimation : {
             UiSpriteAnimation* moveAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
             if (moveAnimation->IsDone()) {
-                m_uiComponentController.CloseComponent("moveAnimation");
+                moveAnimation->Close();
                 m_turnState = TurnState::WaitingForText;
                 break;
             }
@@ -420,7 +420,7 @@ void BattleController::PlayNextTurn()
                 SoundController::GetInstance().RequestChunk(BaseSfx::Next);
                 UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
                 if (!textSeries->NextText()) {
-                    m_uiComponentController.CloseComponent("textSeries");
+                    textSeries->Close();
                     m_turnState = TurnState::End;
                 } else {
                     SoundController::GetInstance().PlayRequestedChunk();
@@ -444,7 +444,7 @@ void BattleController::PlayNextTurn()
                 m_exitEvent = CheckBattleEnd();
                 if (m_exitEvent != ExitEvent::None) {
                     UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-                    m_uiComponentController.OpenComponent("textSeries");
+                    textSeries->Open();
                     if (m_exitEvent == ExitEvent::ExitWin)
                         textSeries->AddText({"You have defeated all the opponents !", "You win !"});
                     else if (m_exitEvent == ExitEvent::ExitLost)

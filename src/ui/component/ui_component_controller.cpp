@@ -12,72 +12,73 @@ UiComponentController::UiComponentController(Time& time, UiController& uiControl
     m_time(time), m_uiController(uiController)
 {}
 
-UiComponent* UiComponentController::GetComponent(const ComponentKey& componentKey)
+void UiComponentController::CheckKeyAvailable(const ComponentKey& key) const
 {
-    if (m_components.find(componentKey) == m_components.end())
-        throw std::runtime_error("This key is not used for a component in UiComponentController : " + componentKey);
-    return (m_components[componentKey]).get();
+    if (m_components.find(key) != m_components.end())
+        throw std::runtime_error("This key is already used for a component in UiComponentController : " + key);
 }
 
-void UiComponentController::CheckKeyAvailable(const ComponentKey& componentKey) const
+void UiComponentController::CheckKeyUsed(const ComponentKey& key) const
 {
-    if (m_components.find(componentKey) != m_components.end())
-        throw std::runtime_error("This key is already used for a component in UiComponentController : " + componentKey);
+    if (m_components.find(key) == m_components.end())
+        throw std::runtime_error("This key is not used for a component in UiComponentController : " + key);
 }
 
-void UiComponentController::DeleteComponent(const ComponentKey& componentKey)
+UiComponent* UiComponentController::GetComponent(const ComponentKey& key)
 {
-    std::unordered_map<ComponentKey, std::unique_ptr<UiComponent>>::iterator it = m_components.find(componentKey);
-    if (it == m_components.end())
-        throw std::runtime_error("This key is not used for a component in UiComponentController : " + componentKey); // ?
-    m_components.erase(it);
+    CheckKeyUsed(key);
+    return (m_components[key]).get();
 }
 
-void UiComponentController::OpenComponent(const ComponentKey& componentKey)
+void UiComponentController::DeleteComponent(const ComponentKey& key)
 {
-    if (m_components.find(componentKey) == m_components.end())
-        throw std::runtime_error("This key is not used for a component in UiComponentController : " + componentKey);
-    m_components[componentKey]->Open();
+    CheckKeyUsed(key); // ?
+    m_components.erase(m_components.find(key));
 }
 
-void UiComponentController::CloseComponent(const ComponentKey& componentKey)
+void UiComponentController::OpenComponent(const ComponentKey& key)
 {
-    if (m_components.find(componentKey) == m_components.end())
-        throw std::runtime_error("This key is not used for a component in UiComponentController : " + componentKey);
-    m_components[componentKey]->Close();
+    CheckKeyUsed(key);
+    m_components[key]->Open();
 }
 
-void UiComponentController::CreateDynamicList(const ComponentKey& componentKey, const std::string& templatePath)
+void UiComponentController::CloseComponent(const ComponentKey& key)
+{
+    CheckKeyUsed(key);
+    m_components[key]->Close();
+}
+
+void UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiDynamicList> c = std::make_unique<UiDynamicList>(m_uiController, templatePath);
-    CheckKeyAvailable(componentKey);
-    m_components[componentKey] = std::move(c);
+    CheckKeyAvailable(key);
+    m_components[key] = std::move(c);
 }
 
-void UiComponentController::CreateList(const ComponentKey& componentKey, const std::string& filePath)
+void UiComponentController::CreateList(const ComponentKey& key, const std::string& filePath)
 {
     std::unique_ptr<UiList> c = std::make_unique<UiList>(m_uiController, filePath);
-    CheckKeyAvailable(componentKey);
-    m_components[componentKey] = std::move(c);
+    CheckKeyAvailable(key);
+    m_components[key] = std::move(c);
 }
 
-void UiComponentController::CreateSelector(const ComponentKey& componentKey, const std::string& templatePath)
+void UiComponentController::CreateSelector(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiSelector> c = std::make_unique<UiSelector>(m_uiController, templatePath);
-    CheckKeyAvailable(componentKey);
-    m_components[componentKey] = std::move(c);
+    CheckKeyAvailable(key);
+    m_components[key] = std::move(c);
 }
 
-void UiComponentController::CreateSpriteAnimation(const ComponentKey& componentKey, const std::string& templatePath)
+void UiComponentController::CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_time, m_uiController, templatePath);
-    CheckKeyAvailable(componentKey);
-    m_components[componentKey] = std::move(c);
+    CheckKeyAvailable(key);
+    m_components[key] = std::move(c);
 }
 
-void UiComponentController::CreateTextSeries(const ComponentKey& componentKey, const std::string& filePath)
+void UiComponentController::CreateTextSeries(const ComponentKey& key, const std::string& filePath)
 {
     std::unique_ptr<UiTextSeries> c = std::make_unique<UiTextSeries>(m_uiController, filePath);
-    CheckKeyAvailable(componentKey);
-    m_components[componentKey] = std::move(c);
+    CheckKeyAvailable(key);
+    m_components[key] = std::move(c);
 }
