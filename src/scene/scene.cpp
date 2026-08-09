@@ -7,8 +7,8 @@
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
     m_window("Atlacp", {25,25,25}), m_fontController("PixelOperator8.ttf", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
-    m_uiController(m_fileReader, m_textureController, "PixelOperator8"),
-    m_context{m_window, m_fontController, m_textureController, m_fileReader, m_uiController},
+    m_uiController(m_fileReader, m_textureController, "PixelOperator8"), m_uiComponentController(m_time, m_uiController),
+    m_context{m_window, m_time, m_fontController, m_textureController, m_fileReader, m_uiController, m_uiComponentController},
     m_pendingSwitch(std::nullopt)
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
@@ -197,8 +197,8 @@ GameMapScene::GameMapScene(GameContext& context):
 
 void GameMapScene::Gameloop()
 {
-    m_time.Update();
-    const float deltaTime = m_time.GetDeltaTime();
+    m_context.time.Update();
+    const float deltaTime = m_context.time.GetDeltaTime();
     m_context.window.ClearRenderer();
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
@@ -279,7 +279,7 @@ void EditorMapScene::Gameloop()
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
-    m_battleController(m_time, m_context.fileReader, m_context.uiController)
+    m_battleController(m_context.time, m_context.fileReader, m_context.uiComponentController, m_context.uiController)
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
     // if I put camera in GameContext, I could avoid calling these setters ?
@@ -299,7 +299,7 @@ BattleScene::BattleScene(GameContext& context):
 
 void BattleScene::Gameloop()
 {
-    m_time.Update();
+    m_context.time.Update();
     m_context.window.ClearRenderer();
     
     m_context.eventController->PollAllEvents();

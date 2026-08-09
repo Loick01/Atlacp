@@ -21,6 +21,7 @@ class UiSelector : public UiComponent
         UiSelector(UiController& uiController, const std::string& uiFilepath);
 
         unsigned int GetInstanceCount() override;
+        void ResetInstanceCount() override;
         
         int GetOptionIndex() const;
         bool VerticalNavigation(const Direction d, const bool isAction);

@@ -21,6 +21,7 @@ class UiSpriteAnimation : public UiComponent
         UiSpriteAnimation(const Time& time, UiController& uiController, const std::string& uiFilepath);
 
         unsigned int GetInstanceCount() override;
+        void ResetInstanceCount() override;
         
         bool IsDone() const;
         void Open() override;

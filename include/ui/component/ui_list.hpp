@@ -18,6 +18,7 @@ class UiList : public UiComponent
         UiList(UiController& uiController, const std::string& uiFilepath);
 
         unsigned int GetInstanceCount() override;
+        void ResetInstanceCount() override;
         void Open() override;
         
         std::vector<UiKey> GetItemsKey() const;

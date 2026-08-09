@@ -17,10 +17,18 @@ class UiComponentController // Rename
         std::unordered_map<ComponentKey, std::unique_ptr<UiComponent>> m_components;
         Time& m_time;
         UiController& m_uiController;
+
+        void CheckKeyAvailable(const ComponentKey& componentKey) const;
     
     public:
         UiComponentController(Time& time, UiController& uiController);
 
+        UiComponent* GetComponent(const ComponentKey& componentKey);
+        void DeleteComponent(const ComponentKey& componentKey);
+
+        void OpenComponent(const ComponentKey& componentKey);
+        void CloseComponent(const ComponentKey& componentKey);
+        
         // Each UiComponent must have its function here, add it in m_components
         void CreateDynamicList(const ComponentKey& componentKey, const std::string& templatePath);
         void CreateList(const ComponentKey& componentKey, const std::string& filePath);

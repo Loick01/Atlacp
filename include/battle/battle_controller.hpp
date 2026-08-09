@@ -17,6 +17,7 @@
 struct Time; // Remove
 class AiActor;
 class FileReader;
+class UiComponentController;
 class UiController;
 
 enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
@@ -85,16 +86,10 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleCommand m_currentCommand;
         float m_currentTime; // Rename
         
+        UiComponentController& m_uiComponentController;
         FileReader& m_fileReader;
 
-        UiController& m_uiController;
-        UiDynamicList m_allyList;
-        UiDynamicList m_opponentList;
-        UiList m_staticList; // Used for action selection
-        UiDynamicList m_dynamicList; // Used for move selection
-        UiSelector m_selector;
-        UiTextSeries m_textSeries;
-        UiSpriteAnimation m_moveAnimation; // Should be in BattleCommand ?
+        UiController& m_uiController; // Remove ?
 
         std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
         std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;
@@ -121,7 +116,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleCurrentCommand();
 
     public:
-        BattleController(const Time& time, FileReader& fileReader, UiController& uiController);
+        BattleController(const Time& time, FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
         
         void InitializeActors(const std::string& battleFile); // Rename battleFile
         void PlayNextTurn();

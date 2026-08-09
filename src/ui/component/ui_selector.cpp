@@ -66,3 +66,8 @@ unsigned int UiSelector::GetInstanceCount()
 {
     return m_instanceCount++;
 }
+
+void UiSelector::ResetInstanceCount()
+{
+    m_instanceCount = 0;
+}

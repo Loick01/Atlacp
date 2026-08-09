@@ -17,6 +17,7 @@ class UiComponent
         UiComponent(UiController& uiController, const std::string& uiFilepath);
 
         virtual unsigned int GetInstanceCount() = 0;
+        virtual void ResetInstanceCount() = 0;
         virtual void Open();
         virtual void Close();
 

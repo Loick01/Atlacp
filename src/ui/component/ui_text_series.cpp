@@ -24,3 +24,8 @@ unsigned int UiTextSeries::GetInstanceCount()
 {
     return m_instanceCount++;
 }
+
+void UiTextSeries::ResetInstanceCount()
+{
+    m_instanceCount = 0;
+}

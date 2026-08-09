@@ -15,7 +15,7 @@ class UiDynamicList : public UiList
         
         // Should be static ?
         unsigned int GetInstanceCount() override;
-        void ResetInstanceCount(); // Should be virtual in UiComponent ?
+        void ResetInstanceCount() override;
         
         void Open() override;
         void Close() override;

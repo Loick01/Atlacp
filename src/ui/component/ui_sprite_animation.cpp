@@ -50,3 +50,8 @@ unsigned int UiSpriteAnimation::GetInstanceCount()
 {
     return m_instanceCount++;
 }
+
+void UiSpriteAnimation::ResetInstanceCount()
+{
+    m_instanceCount = 0;
+}

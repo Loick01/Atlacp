@@ -26,3 +26,8 @@ unsigned int UiList::GetInstanceCount()
 {
     return m_instanceCount++;
 }
+
+void UiList::ResetInstanceCount()
+{
+    m_instanceCount = 0;
+}

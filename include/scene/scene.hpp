@@ -15,6 +15,7 @@
 #include "core/window.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
+#include "ui/component/ui_component_controller.hpp"
 #include "ui/element/ui_controller.hpp"
 
 enum class SwitchEvent
@@ -25,10 +26,12 @@ enum class SwitchEvent
 struct GameContext
 {
     Window& window;
+    Time& time;
     FontController& fontController;
     TextureController& textureController;
     FileReader& fileReader; 
-    UiController& uiController;
+    UiController& uiController; // Remove ?
+    UiComponentController& uiComponentController;
 
     std::unique_ptr<EventController> eventController;
 };
@@ -78,7 +81,6 @@ class TilemapScene : public Scene
 class GameMapScene : public TilemapScene
 {
     private:
-        Time m_time;
         OrderController m_orderController;
         MapElementController m_elementsController; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
 
@@ -106,7 +108,6 @@ class EditorMapScene : public TilemapScene
 class BattleScene : public Scene
 {
     private:
-        Time m_time;
         BattleController m_battleController;
 
     public:
@@ -119,10 +120,12 @@ class SceneController
 {
     private:
         Window m_window;
+        Time m_time;
         FontController m_fontController;
         TextureController m_textureController;
         FileReader m_fileReader;
         UiController m_uiController;
+        UiComponentController m_uiComponentController;
 
         GameContext m_context;
         std::unique_ptr<Scene> m_currentScene;
