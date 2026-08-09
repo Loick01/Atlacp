@@ -6,26 +6,33 @@ npc16 12 5 4. 6. ##
 npc16 13 5 4. 6. ##
 npc16 14 5 4. 6. ##
 ###
-npc16_inverted 8 5 4. 6. ##
-
-npc16_inverted 9 5 4. 6. 
-frame_text My spawn position is 9, 5;#;
-frame_text Second text for this NPC Second text for this NPC Second text for this NPC Second text for this NPC;#;
+npc16_inverted 8 5 4. 6.
+dialog_text ui/face/hunter_face My spawn position is 8, 5;#;
 ##
 
-npc16_inverted 10 5 4. 6. ##
-npc16 11 5 4. 6. ##
+npc16_inverted 9 5 4. 6. 
+dialog_text ui/face/knight_face My spawn position is 9, 5;#;
+dialog_text ui/face/knight_face Second text for this NPC Second text for this NPC Second text for this NPC Second text for this NPC;#;
+##
+
+npc16_inverted 10 5 4. 6.
+dialog_text ui/face/skeleton_face My spawn position is 10, 5;#;
+##
+
+npc16 11 5 4. 6.
+dialog_text ui/face/villager_face My spawn position is 11, 5;#;
+##
 
 npc16 12 5 4. 6. 
-frame_text My spawn position is 12, 5;#;
+dialog_text ui/face/dog_face My spawn position is 12, 5;#;
 ##
 
 npc16 13 5 4. 6. 
-frame_text My spawn position is 13, 5;#;
+dialog_text ui/face/dragon_face My spawn position is 13, 5;#;
 ##
 
 npc16 14 5 4. 6. 
-frame_text My spawn position is 14, 5;#;
+dialog_text ui/face/eskimo_face My spawn position is 14, 5;#;
 ##
 
 ###

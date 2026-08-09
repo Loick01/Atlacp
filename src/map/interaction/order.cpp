@@ -31,22 +31,22 @@ void OrderController::Stop(const Order& order)
 
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
 {
-    m_uiController.OpenDialogBox(o.text);
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    // TODO
 }
 
 void OrderController::ExecuteOrder(const DialogTextOrder& o)
 {
-    // TODO
+    m_uiController.OpenDialogBox(o.text, o.facePath);
+    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)
 {
-    m_uiController.DeleteElement("frame"); // TODO : Do not use "frame" directly
-    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+    // TODO
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)
 {
-    // TODO
+    m_uiController.CloseDialogBox(); // TODO : DialogBox should be a UiComponent
+    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }

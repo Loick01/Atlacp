@@ -339,8 +339,14 @@ void UiController::Draw() const
         e->DrawTexture();
 }
 
-void UiController::OpenDialogBox(const std::string& text) // DialogBox should be a UiComponent ?
+void UiController::OpenDialogBox(const std::string& text, const std::string& facePath) // DialogBox should be a UiComponent ?
 {
     BuildUiFile("dialog_box.uif");
     UpdateText("dialogText", text);
+    UpdatePath("face", facePath);
+}
+
+void UiController::CloseDialogBox()
+{
+    DeleteElement("frame"); // TODO : Do not use "frame" directly
 }

@@ -9,7 +9,7 @@ struct FrameTextOrder {
 
 struct DialogTextOrder {
     std::string text;
-    std::string facesetPath;
+    std::string facePath;
 };
 
 // struct AddInventoryOrder {};

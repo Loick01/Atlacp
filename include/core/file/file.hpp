@@ -38,6 +38,7 @@ class FileReader
         FontSize ReadFontSize(std::ifstream& input) const;
 
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
+        DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
         DataMapElement ReadMapElement(std::ifstream& input) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
