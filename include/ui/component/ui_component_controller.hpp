@@ -15,7 +15,7 @@ class UiDynamicList;
 class UiList;
 class UiSelector;
 class UiSpriteAnimation;
-class UiTextSeries;
+class UiFrameText;
 
 class UiComponentController // Rename
 {
@@ -46,5 +46,5 @@ class UiComponentController // Rename
         UiList* CreateList(const ComponentKey& key, const std::string& filePath);
         UiSelector* CreateSelector(const ComponentKey& key, const std::string& templatePath);
         UiSpriteAnimation* CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath);
-        UiTextSeries* CreateTextSeries(const ComponentKey& key, const std::string& filePath);
+        UiFrameText* CreateFrameText(const ComponentKey& key, const std::string& filePath);
 };

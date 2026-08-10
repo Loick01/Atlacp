@@ -22,6 +22,7 @@ using Order = std::variant<
 
 class UiComponentController;
 class UiDialogBox;
+class UiFrameText;
 
 class OrderController
 {

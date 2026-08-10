@@ -12,7 +12,7 @@
 #include "ui/component/ui_list.hpp"
 #include "ui/component/ui_selector.hpp"
 #include "ui/component/ui_sprite_animation.hpp"
-#include "ui/component/ui_text_series.hpp"
+#include "ui/component/ui_frame_text.hpp"
 
 class AiActor;
 class FileReader;

@@ -4,8 +4,7 @@ zoria_2
 ###
 ##
 16 7 
-dialog_text ui/face/dog_face First frame --> First text;FirstFrame --> Second text;#;
-dialog_text ui/face/dog_face Second frame --> First text;#;
+frame_text First frame --> First text;FirstFrame --> Second text;#;
 ## ##
 17 7
 dialog_text ui/face/hunter_face This map element will be removed;#;

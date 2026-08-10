@@ -3,6 +3,7 @@
 #include "sound/sound.hpp"
 #include "ui/component/ui_component_controller.hpp"
 #include "ui/component/ui_dialog_box.hpp"
+#include "ui/component/ui_frame_text.hpp"
 
 OrderController::OrderController(UiComponentController& uiComponentController) :
     m_uiComponentController(uiComponentController)
@@ -32,7 +33,14 @@ void OrderController::Stop(const Order& order)
 
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
 {
-    // TODO
+    UiFrameText* boxText = m_uiComponentController.CreateFrameText("boxText", "frame_text.uif");
+    boxText->Open();
+    
+    // TODO : Multiple text
+    boxText->AddText({o.text});
+    // boxText->NextText();
+
+    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
 }
 
 void OrderController::ExecuteOrder(const DialogTextOrder& o)
@@ -47,7 +55,9 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 
 void OrderController::StopOrder(const FrameTextOrder& o)
 {
-    // TODO
+    m_uiComponentController.CloseComponent("boxText");
+    m_uiComponentController.DeleteComponent("boxText");
+    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)

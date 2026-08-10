@@ -6,7 +6,7 @@
 #include "ui/component/ui_list.hpp"
 #include "ui/component/ui_selector.hpp"
 #include "ui/component/ui_sprite_animation.hpp"
-#include "ui/component/ui_text_series.hpp"
+#include "ui/component/ui_frame_text.hpp"
 #include "ui/element/ui_controller.hpp"
 
 UiComponentController::UiComponentController(Time& time, UiController& uiController) :
@@ -99,11 +99,11 @@ UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentK
     return r;
 }
 
-UiTextSeries* UiComponentController::CreateTextSeries(const ComponentKey& key, const std::string& filePath)
+UiFrameText* UiComponentController::CreateFrameText(const ComponentKey& key, const std::string& filePath)
 {
-    std::unique_ptr<UiTextSeries> c = std::make_unique<UiTextSeries>(m_uiController, filePath);
+    std::unique_ptr<UiFrameText> c = std::make_unique<UiFrameText>(m_uiController, filePath);
     CheckKeyAvailable(key);
-    UiTextSeries* r = c.get();
+    UiFrameText* r = c.get();
     m_components[key] = std::move(c);
     return r;
 }

@@ -6,14 +6,14 @@
 #include "ui/component/ui_component.hpp"
 #include "ui/ui_types.hpp"
 
-class UiTextSeries : public UiComponent
+class UiFrameText : public UiComponent
 {
     private:
         static inline unsigned int m_instanceCount;
         std::queue<std::string> m_texts;
     
     public:
-        UiTextSeries(UiController& uiController, const std::string& uiFilepath);
+        UiFrameText(UiController& uiController, const std::string& uiFilepath);
 
         unsigned int GetInstanceCount() override;
         void ResetInstanceCount() override;

@@ -3,7 +3,7 @@
 #include "ui/component/ui_component.hpp"
 #include "ui/ui_types.hpp"
 
-class UiDialogBox : public UiComponent // Will inherits from TextSeries ?
+class UiDialogBox : public UiComponent // Will inherits from UiFrameText ?
 {
     private:
         static inline unsigned int m_instanceCount;

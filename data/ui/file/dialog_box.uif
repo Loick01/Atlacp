@@ -1,4 +1,4 @@
-load main_frame.uif
+load frame.uif
 ### 
 frame
 faceset

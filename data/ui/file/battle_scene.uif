@@ -7,5 +7,5 @@ scaleAxis height
 xAnchor left_in
 yAnchor top_in
 ###
-load main_frame.uif
+load frame.uif
 ###

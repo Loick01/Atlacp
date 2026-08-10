@@ -25,7 +25,7 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
     m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit");
     m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif");
     m_uiComponentController.CreateSelector("selector", "selector.uit"); // Should have optionKey in its constructor ?
-    m_uiComponentController.CreateTextSeries("textSeries", "single_text_frame.uif");
+    m_uiComponentController.CreateFrameText("frameText", "frame_text.uif");
     m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit"); // Could have animationPath and targetElement in its constructor ? 
 }
 
@@ -121,19 +121,19 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
     targetActor.RemoveHealth(damage);
     m_uiController.UpdateText(targetActor.GetHealth());
     
-    UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    textSeries->Open();
-    textSeries->AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
+    UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+    frameText->Open();
+    frameText->AddText({srcActor.GetName().value + " attacks " + targetActor.GetName().value + " !",
                         targetActor.GetName().value + " lost " + std::to_string(damage) + " HP !"});
     
     if (targetActor.GetLifeState() == LifeState::Dead) {
-        textSeries->AddText({targetActor.GetName().value + " fainted !"});
+        frameText->AddText({targetActor.GetName().value + " fainted !"});
         targetActor.SetSpritePath("battle/gravestone");   
         m_uiController.UpdatePath(targetActor.GetSpritePath());
         SoundController::GetInstance().RequestChunk(BaseSfx::Death);
     }
     
-    textSeries->NextText(); // Should not be here ?
+    frameText->NextText(); // Should not be here ?
 }
 
 void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor)
@@ -142,12 +142,12 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
     targetActor.AddHealth(hp);
     m_uiController.UpdateText(targetActor.GetHealth());
     
-    UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    textSeries->Open();
-    textSeries->AddText({srcActor.GetName().value + " gives a potion to " + targetActor.GetName().value + ".",
+    UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+    frameText->Open();
+    frameText->AddText({srcActor.GetName().value + " gives a potion to " + targetActor.GetName().value + ".",
                           targetActor.GetName().value + " recovered " + std::to_string(hp) + " HP !"});
 
-    textSeries->NextText();
+    frameText->NextText();
 }
 
 void BattleController::OpenActionSelection()
@@ -204,15 +204,15 @@ void BattleController::OpenActorSelection()
         keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in allyList/opponentList
     selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 0.2f, 0.2f);
 
-    UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-    textSeries->Open();
-    textSeries->AddText({"Select a BattleActor"});
-    textSeries->NextText();
+    UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+    frameText->Open();
+    frameText->AddText({"Select a BattleActor"});
+    frameText->NextText();
 }
 
 void BattleController::CloseActorSelection()
 {
-    m_uiComponentController.CloseComponent("textSeries");
+    m_uiComponentController.CloseComponent("frameText");
     m_uiComponentController.CloseComponent("selector");
 }
 
@@ -228,10 +228,10 @@ void BattleController::HandleActionSelection(const int selectorIndex)
         }
 
         case 1: {
-            UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-            textSeries->Open();
-            textSeries->AddText({"This turn has been skipped"});
-            textSeries->NextText();
+            UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+            frameText->Open();
+            frameText->AddText({"This turn has been skipped"});
+            frameText->NextText();
             m_turnState = TurnState::WaitingForText;
             break;
         }
@@ -426,9 +426,9 @@ void BattleController::PlayNextTurn()
         case TurnState::WaitingForText : {
             if (m_eventState.isAction) {
                 SoundController::GetInstance().RequestChunk(BaseSfx::Next);
-                UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-                if (!textSeries->NextText()) {
-                    textSeries->Close();
+                UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+                if (!frameText->NextText()) {
+                    frameText->Close();
                     m_turnState = TurnState::End;
                 } else {
                     SoundController::GetInstance().PlayRequestedChunk();
@@ -451,13 +451,13 @@ void BattleController::PlayNextTurn()
             } else {
                 m_exitEvent = CheckBattleEnd();
                 if (m_exitEvent != ExitEvent::None) {
-                    UiTextSeries* textSeries = dynamic_cast<UiTextSeries*>(m_uiComponentController.GetComponent("textSeries"));
-                    textSeries->Open();
+                    UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+                    frameText->Open();
                     if (m_exitEvent == ExitEvent::ExitWin)
-                        textSeries->AddText({"You have defeated all the opponents !", "You win !"});
+                        frameText->AddText({"You have defeated all the opponents !", "You win !"});
                     else if (m_exitEvent == ExitEvent::ExitLost)
-                        textSeries->AddText({"You no longer have any living fighters !", "You lose !"});
-                    textSeries->NextText();
+                        frameText->AddText({"You no longer have any living fighters !", "You lose !"});
+                    frameText->NextText();
                     m_turnState = TurnState::WaitingForText;
                 } else {   
                     m_turnState = TurnState::Init;
