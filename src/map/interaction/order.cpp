@@ -35,10 +35,8 @@ void OrderController::ExecuteOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = m_uiComponentController.CreateFrameText("boxText", "frame_text.uif");
     boxText->Open();
-    
-    // TODO : Multiple text
-    boxText->AddText({o.text});
-    // boxText->NextText();
+    boxText->AddText(o.texts);
+    boxText->NextText();
 
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
 }

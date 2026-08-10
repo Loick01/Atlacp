@@ -19,5 +19,5 @@ class UiFrameText : public UiComponent
         void ResetInstanceCount() override;
         
         bool NextText(); // Must be called after texts have been added (but I can't do it in AddText)
-        void AddText(std::initializer_list<std::string> texts);
+        void AddText(const std::vector<std::string>& texts);
 };

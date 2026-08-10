@@ -9,7 +9,7 @@ FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const
         texts.push_back(s);
         std::getline(input >> std::ws, s, TEXT_DELIMITER);
     }
-    return FrameTextOrder{texts[0]}; // TODO : Frame with multiple text
+    return FrameTextOrder{texts};
 }
 
 DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const

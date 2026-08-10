@@ -4,7 +4,7 @@ zoria_2
 ###
 ##
 16 7 
-frame_text First frame --> First text;FirstFrame --> Second text;#;
+frame_text This is not a sign;I am a sign;#;
 ## ##
 17 7
 dialog_text ui/face/hunter_face This map element will be removed;#;

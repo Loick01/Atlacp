@@ -2,9 +2,10 @@
 
 #include <string>
 #include <variant>
+#include <vector>
 
-struct FrameTextOrder {
-    std::string text;
+struct FrameTextOrder { // TODO : Multiple text
+    std::vector<std::string> texts;
 };
 
 struct DialogTextOrder {
