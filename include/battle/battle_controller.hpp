@@ -107,7 +107,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void CloseActionSelection();
         void OpenMoveSelection(); 
         void CloseMoveSelection();
-        void OpenSelectorOnActors();
+        void OpenActorSelection();
+        void CloseActorSelection();
         void HandleActionSelection(const int index);
         void HandleAiActionSelection(AiActor& srcActor); // Rename ?
         void HandleMoveSelection(const int moveIndex);
@@ -116,6 +117,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
     public:
         BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
+        ~BattleController();
         
         void InitializeActors(const std::string& battleFile); // Rename battleFile
         void PlayNextTurn();

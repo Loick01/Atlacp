@@ -36,6 +36,11 @@ void UiComponentController::DeleteComponent(const ComponentKey& key)
     m_components.erase(m_components.find(key));
 }
 
+void UiComponentController::DeleteAll()
+{
+    m_components.clear();
+}
+
 void UiComponentController::OpenComponent(const ComponentKey& key)
 {
     CheckKeyUsed(key);
@@ -48,37 +53,47 @@ void UiComponentController::CloseComponent(const ComponentKey& key)
     m_components[key]->Close();
 }
 
-void UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)
+UiDynamicList* UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiDynamicList> c = std::make_unique<UiDynamicList>(m_uiController, templatePath);
     CheckKeyAvailable(key);
+    UiDynamicList* r = c.get();
     m_components[key] = std::move(c);
+    return r;
 }
 
-void UiComponentController::CreateList(const ComponentKey& key, const std::string& filePath)
+UiList* UiComponentController::CreateList(const ComponentKey& key, const std::string& filePath)
 {
     std::unique_ptr<UiList> c = std::make_unique<UiList>(m_uiController, filePath);
     CheckKeyAvailable(key);
+    UiList* r = c.get();
     m_components[key] = std::move(c);
+    return r;
 }
 
-void UiComponentController::CreateSelector(const ComponentKey& key, const std::string& templatePath)
+UiSelector* UiComponentController::CreateSelector(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiSelector> c = std::make_unique<UiSelector>(m_uiController, templatePath);
     CheckKeyAvailable(key);
+    UiSelector* r = c.get();
     m_components[key] = std::move(c);
+    return r;
 }
 
-void UiComponentController::CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath)
+UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath)
 {
     std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_time, m_uiController, templatePath);
     CheckKeyAvailable(key);
+    UiSpriteAnimation* r = c.get();
     m_components[key] = std::move(c);
+    return r;
 }
 
-void UiComponentController::CreateTextSeries(const ComponentKey& key, const std::string& filePath)
+UiTextSeries* UiComponentController::CreateTextSeries(const ComponentKey& key, const std::string& filePath)
 {
     std::unique_ptr<UiTextSeries> c = std::make_unique<UiTextSeries>(m_uiController, filePath);
     CheckKeyAvailable(key);
+    UiTextSeries* r = c.get();
     m_components[key] = std::move(c);
+    return r;
 }

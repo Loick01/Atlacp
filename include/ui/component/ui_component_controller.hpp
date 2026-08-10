@@ -10,6 +10,11 @@ using ComponentKey = std::string;
 
 class Time;
 class UiController;
+class UiDynamicList;
+class UiList;
+class UiSelector;
+class UiSpriteAnimation;
+class UiTextSeries;
 
 class UiComponentController // Rename
 {
@@ -26,6 +31,7 @@ class UiComponentController // Rename
 
         UiComponent* GetComponent(const ComponentKey& key);
         void DeleteComponent(const ComponentKey& key);
+        void DeleteAll();
 
         // Two way to Open/Close a UiComponent :
         //     Use UiComponentController::OpenComponent(key)/UiComponentController::CloseComponent(key)
@@ -34,9 +40,9 @@ class UiComponentController // Rename
         void CloseComponent(const ComponentKey& key);
         
         // Each UiComponent must have its function here, add it in m_components
-        void CreateDynamicList(const ComponentKey& key, const std::string& templatePath);
-        void CreateList(const ComponentKey& key, const std::string& filePath);
-        void CreateSelector(const ComponentKey& key, const std::string& templatePath);
-        void CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath);
-        void CreateTextSeries(const ComponentKey& key, const std::string& filePath);
+        UiDynamicList* CreateDynamicList(const ComponentKey& key, const std::string& templatePath);
+        UiList* CreateList(const ComponentKey& key, const std::string& filePath);
+        UiSelector* CreateSelector(const ComponentKey& key, const std::string& templatePath);
+        UiSpriteAnimation* CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath);
+        UiTextSeries* CreateTextSeries(const ComponentKey& key, const std::string& filePath);
 };

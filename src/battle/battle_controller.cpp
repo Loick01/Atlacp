@@ -19,13 +19,19 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
     m_currentActor(nullptr), m_targetActor(nullptr), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None),
     m_currentTime(0.f)
 {
-    m_uiComponentController.CreateDynamicList("allyList", "battle_actor.uit");
-    m_uiComponentController.CreateDynamicList("opponentList", "battle_actor.uit");
-    m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif"); // Should not be here
-    m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit"); // Should not be here
-    m_uiComponentController.CreateSelector("selector", "selector.uit"); // Should not be here
-    m_uiComponentController.CreateTextSeries("textSeries", "single_text_frame.uif"); // Should not be here
+    // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 
+    // it anymore (until next time), I call these functions once here, and then I only use UiComponent::Open()/Close()
+    // I could do either one, but I prefer this solution 
+    m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit");
+    m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif");
+    m_uiComponentController.CreateSelector("selector", "selector.uit");
+    m_uiComponentController.CreateTextSeries("textSeries", "single_text_frame.uif");
     m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit");
+}
+
+BattleController::~BattleController()
+{
+    m_uiComponentController.DeleteAll();
 }
 
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
@@ -69,8 +75,6 @@ BattleActor* BattleController::GetActorSelection() // Could return BattleActor i
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction)) {
-        m_uiComponentController.CloseComponent("textSeries");
-        selector->Close();
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
         BattleActor* targetActor = actors[selector->GetOptionIndex()];
         return targetActor;
@@ -93,7 +97,7 @@ unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigne
         case MoveType::Physical :
             return baseValue * srcActor->GetStrength();
         case MoveType::Magic :
-            return baseValue * srcActor->GetStrength(); // Need a new field in BattleActor
+            return baseValue * srcActor->GetStrength(); // TODO : Need a new field in BattleActor
         default:
             throw std::runtime_error("Unknown MoveType value");
     }
@@ -159,9 +163,7 @@ void BattleController::OpenActionSelection()
 void BattleController::CloseActionSelection()
 {
     m_uiComponentController.CloseComponent("selector");
-    // m_uiComponentController.DeleteComponent("selector");
     m_uiComponentController.CloseComponent("actionSelectionList");
-    // m_uiComponentController.DeleteComponent("actionSelectionList");
 }
 
 void BattleController::OpenMoveSelection()
@@ -189,12 +191,10 @@ void BattleController::OpenMoveSelection()
 void BattleController::CloseMoveSelection()
 {
     m_uiComponentController.CloseComponent("selector");
-    // m_uiComponentController.DeleteComponent("selector");
     m_uiComponentController.CloseComponent("moveSelection");
-    // m_uiComponentController.DeleteComponent("moveSelection");
 }
 
-void BattleController::OpenSelectorOnActors()
+void BattleController::OpenActorSelection()
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     selector->Open();
@@ -210,6 +210,12 @@ void BattleController::OpenSelectorOnActors()
     textSeries->NextText();
 }
 
+void BattleController::CloseActorSelection()
+{
+    m_uiComponentController.CloseComponent("textSeries");
+    m_uiComponentController.CloseComponent("selector");
+}
+
 void BattleController::HandleActionSelection(const int selectorIndex)
 {
     CloseActionSelection();
@@ -217,7 +223,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
     switch (selectorIndex) {
         case 0: {
             OpenMoveSelection();
-            m_turnState = TurnState::MoveSelection;
+            m_turnState = TurnState::MoveSelection; // Should be in OpenMoveSelection() ?
             break;
         }
 
@@ -261,8 +267,8 @@ void BattleController::HandleMoveSelection(const int moveIndex)
     const MoveDefinition md = m_currentActor->GetMove(moveIndex);
     m_currentCommand = CreateCommand(m_currentActor, md);
 
-    OpenSelectorOnActors(); // Selectable actors are filtered with targetTeam and targetLifeState in m_currentCommand
-    m_turnState = TurnState::ActorSelection;
+    OpenActorSelection(); // Selectable actors are filtered with targetTeam and targetLifeState in m_currentCommand
+    m_turnState = TurnState::ActorSelection; // Should be in OpenActorSelection() ?
 }
 
 void BattleController::HandleCurrentCommand()
@@ -291,8 +297,8 @@ void BattleController::HandleCurrentCommand()
 
 void BattleController::InitializeActors(const std::string& battleFile)
 {
-    UiDynamicList* allyList = dynamic_cast<UiDynamicList*>(m_uiComponentController.GetComponent("allyList"));
-    UiDynamicList* opponentList = dynamic_cast<UiDynamicList*>(m_uiComponentController.GetComponent("opponentList"));
+    UiDynamicList* allyList = m_uiComponentController.CreateDynamicList("allyList", "battle_actor.uit");
+    UiDynamicList* opponentList = m_uiComponentController.CreateDynamicList("opponentList", "battle_actor.uit");
 
     allyList->SetFirstItemParams(
         UiParams(m_uiController.GetResultFromPartialSize(PartialSize("background", Axis::Width, 0.2f)), Axis::Width, // Scale
@@ -391,6 +397,7 @@ void BattleController::PlayNextTurn()
         case TurnState::ActorSelection : {
             m_targetActor = GetActorSelection();
             if (m_targetActor != nullptr) {
+                CloseActorSelection();
                 m_turnState = TurnState::HandleCommand;
                 break; // Will not play BaseSfx::Accept at the same time as m_currentCommand.sfx
             }

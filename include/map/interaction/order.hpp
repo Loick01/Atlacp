@@ -22,10 +22,10 @@ using Order = std::variant<
 
 class UiController; 
 
-class OrderController // Should be in order_controller.hpp ?
+class OrderController
 {
     private:
-        UiController& m_uiController;
+        UiController& m_uiController; // Remove and use UiComponentController instead
 
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
