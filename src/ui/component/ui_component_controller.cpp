@@ -1,6 +1,7 @@
 #include "ui/component/ui_component_controller.hpp"
 
 #include "core/time.hpp"
+#include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_dynamic_list.hpp"
 #include "ui/component/ui_list.hpp"
 #include "ui/component/ui_selector.hpp"
@@ -51,6 +52,15 @@ void UiComponentController::CloseComponent(const ComponentKey& key)
 {
     CheckKeyUsed(key);
     m_components[key]->Close();
+}
+
+UiDialogBox* UiComponentController::CreateDialogBox(const ComponentKey& key, const std::string& filePath)
+{
+    std::unique_ptr<UiDialogBox> c = std::make_unique<UiDialogBox>(m_uiController, filePath);
+    CheckKeyAvailable(key);
+    UiDialogBox* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiDynamicList* UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)

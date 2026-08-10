@@ -21,12 +21,12 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
 {
     // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 
     // it anymore (until next time), I call these functions once here, and then I only use UiComponent::Open()/Close()
-    // I could do either one, but I prefer this solution 
+    // I could do either one, but I prefer this solution  (for now)
     m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit");
     m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif");
-    m_uiComponentController.CreateSelector("selector", "selector.uit");
+    m_uiComponentController.CreateSelector("selector", "selector.uit"); // Should have optionKey in its constructor ?
     m_uiComponentController.CreateTextSeries("textSeries", "single_text_frame.uif");
-    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit");
+    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit"); // Could have animationPath and targetElement in its constructor ? 
 }
 
 BattleController::~BattleController()
@@ -275,6 +275,7 @@ void BattleController::HandleCurrentCommand()
 {
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
 
+    // Should call CreateSpriteAnimation() here, with animationPath and targetElement (instead of using setters) ?
     UiSpriteAnimation* moveAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
     moveAnimation->SetAnimationPath(m_currentCommand.animation);
     moveAnimation->SetTargetElement(m_targetActor->GetSpritePath().id);

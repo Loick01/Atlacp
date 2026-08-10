@@ -83,6 +83,4 @@ class UiController // Rename
         void UpdateParams(const UiKey& key, const UiParams& params);
 
         void Draw() const;
-        void OpenDialogBox(const std::string& text, const std::string& facePath);
-        void CloseDialogBox();
 };

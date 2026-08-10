@@ -20,12 +20,13 @@ using Order = std::variant<
     DialogTextOrder
 >;
 
-class UiController; 
+class UiComponentController;
+class UiDialogBox;
 
 class OrderController
 {
     private:
-        UiController& m_uiController; // Remove and use UiComponentController instead
+        UiComponentController& m_uiComponentController;
 
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
@@ -34,7 +35,7 @@ class OrderController
         void StopOrder(const DialogTextOrder& o);
 
     public:
-        OrderController(UiController& uiController);
+        OrderController(UiComponentController& uiComponentController);
 
         void Execute(const Order& order);
         void Stop(const Order& order); // Rename ?

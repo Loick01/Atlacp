@@ -1,10 +1,11 @@
 #include "map/interaction/order.hpp"
 
 #include "sound/sound.hpp"
-#include "ui/element/ui_controller.hpp"
+#include "ui/component/ui_component_controller.hpp"
+#include "ui/component/ui_dialog_box.hpp"
 
-OrderController::OrderController(UiController& uiController) :
-    m_uiController(uiController)
+OrderController::OrderController(UiComponentController& uiComponentController) :
+    m_uiComponentController(uiComponentController)
 {}
 
 void OrderController::Execute(const Order& order)
@@ -36,7 +37,11 @@ void OrderController::ExecuteOrder(const FrameTextOrder& o)
 
 void OrderController::ExecuteOrder(const DialogTextOrder& o)
 {
-    m_uiController.OpenDialogBox(o.text, o.facePath);
+    UiDialogBox* dialogBox = m_uiComponentController.CreateDialogBox("dialogBox", "dialog_box.uif");
+    dialogBox->Open();
+    dialogBox->SetText(o.text);
+    dialogBox->SetFacePath(o.facePath);
+
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
 }
 
@@ -47,6 +52,7 @@ void OrderController::StopOrder(const FrameTextOrder& o)
 
 void OrderController::StopOrder(const DialogTextOrder& o)
 {
-    m_uiController.CloseDialogBox(); // TODO : DialogBox should be a UiComponent
+    m_uiComponentController.CloseComponent("dialogBox");
+    m_uiComponentController.DeleteComponent("dialogBox");
     SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }

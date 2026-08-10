@@ -10,6 +10,7 @@ using ComponentKey = std::string;
 
 class Time;
 class UiController;
+class UiDialogBox;
 class UiDynamicList;
 class UiList;
 class UiSelector;
@@ -40,6 +41,7 @@ class UiComponentController // Rename
         void CloseComponent(const ComponentKey& key);
         
         // Each UiComponent must have its function here, add it in m_components
+        UiDialogBox* CreateDialogBox(const ComponentKey& key, const std::string& filePath);
         UiDynamicList* CreateDynamicList(const ComponentKey& key, const std::string& templatePath);
         UiList* CreateList(const ComponentKey& key, const std::string& filePath);
         UiSelector* CreateSelector(const ComponentKey& key, const std::string& templatePath);

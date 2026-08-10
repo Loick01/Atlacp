@@ -181,7 +181,7 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_orderController(m_context.uiController), 
+    TilemapScene(context, true), m_orderController(m_context.uiComponentController), 
     m_elementsController(m_context.fileReader, m_orderController, m_context.textureController, m_camera, m_tilemap),
     m_layersSplitIndex(1) 
 {
