@@ -14,12 +14,14 @@ class InteractionController
         MapElement* m_dstElement;
         unsigned int m_nrOrder;
         unsigned int m_currentIndexOrder;
+
+        bool HasOrder();
     
     public: 
         InteractionController(OrderController& orderController);
 
         void InitializeInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements); // NPCs are not in elements (even if they could because MapEntity inherits from MapElement)
         void StartInteraction();
-        void NextOrder();
+        void UpdateOrder();
         void EndInteraction();
 };

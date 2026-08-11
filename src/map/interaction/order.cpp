@@ -20,6 +20,18 @@ void OrderController::Execute(const Order& order)
     );
 }
 
+bool OrderController::Update(const Order& order)
+{
+    return std::visit(
+        [this](const auto& o)
+        {
+            return UpdateOrder(o);
+        },
+        order
+    );
+    throw std::runtime_error("No OrderController::UpdateOrder with this type of Order"); // ?
+}
+
 void OrderController::Stop(const Order& order)
 {
     std::visit(
@@ -45,10 +57,22 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 {
     UiDialogBox* dialogBox = m_uiComponentController.CreateDialogBox("dialogBox", "dialog_box.uif");
     dialogBox->Open();
-    dialogBox->SetText(o.text);
+    dialogBox->SetText(o.texts[0]); // TODO
     dialogBox->SetFacePath(o.facePath);
 
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+}
+
+bool OrderController::UpdateOrder(const FrameTextOrder& o)
+{
+    UiFrameText* boxText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("boxText"));
+    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    return !boxText->NextText();
+}
+
+bool OrderController::UpdateOrder(const DialogTextOrder& o)
+{
+    return true;
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)

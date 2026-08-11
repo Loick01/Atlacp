@@ -4,12 +4,12 @@
 #include <variant>
 #include <vector>
 
-struct FrameTextOrder { // TODO : Multiple text
+struct FrameTextOrder {
     std::vector<std::string> texts;
 };
 
-struct DialogTextOrder {
-    std::string text;
+struct DialogTextOrder { // TODO : Multiple text
+    std::vector<std::string> texts;
     std::string facePath;
 };
 
@@ -33,6 +33,9 @@ class OrderController
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
 
+        bool UpdateOrder(const FrameTextOrder& o);
+        bool UpdateOrder(const DialogTextOrder& o);
+
         void StopOrder(const FrameTextOrder& o);
         void StopOrder(const DialogTextOrder& o);
 
@@ -40,5 +43,6 @@ class OrderController
         OrderController(UiComponentController& uiComponentController);
 
         void Execute(const Order& order);
+        bool Update(const Order& order);
         void Stop(const Order& order); // Rename ?
 };

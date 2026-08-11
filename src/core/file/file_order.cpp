@@ -25,5 +25,5 @@ DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const
         std::getline(input >> std::ws, s, TEXT_DELIMITER);
     }
     
-    return DialogTextOrder{texts[0], facePath};
+    return DialogTextOrder{texts, facePath};
 }
