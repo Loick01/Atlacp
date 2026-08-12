@@ -8,7 +8,8 @@ struct FrameTextOrder {
     std::vector<std::string> texts;
 };
 
-struct DialogTextOrder { // TODO : Multiple text
+// UiDialogBox inherits from UiFrameText
+struct DialogTextOrder { 
     std::vector<std::string> texts;
     std::string facePath;
 };

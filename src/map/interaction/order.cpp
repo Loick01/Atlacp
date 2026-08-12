@@ -57,7 +57,8 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 {
     UiDialogBox* dialogBox = m_uiComponentController.CreateDialogBox("dialogBox", "dialog_box.uif");
     dialogBox->Open();
-    dialogBox->SetText(o.texts[0]); // TODO
+    dialogBox->AddText(o.texts);
+    dialogBox->NextText();
     dialogBox->SetFacePath(o.facePath);
 
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
@@ -72,7 +73,11 @@ bool OrderController::UpdateOrder(const FrameTextOrder& o)
 
 bool OrderController::UpdateOrder(const DialogTextOrder& o)
 {
-    return true;
+    UiDialogBox* dialogBox = dynamic_cast<UiDialogBox*>(m_uiComponentController.GetComponent("dialogBox"));
+    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    // Could the facepath be modified ?
+    
+    return !dialogBox->NextText();
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)

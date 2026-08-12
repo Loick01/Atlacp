@@ -20,7 +20,7 @@ xAnchor center
 yAnchor center
 ###
 faceset
-dialogText
+frameText
 textelement
 scale frame width 0.75
 xAnchor right_out

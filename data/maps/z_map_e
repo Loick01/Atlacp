@@ -4,17 +4,17 @@ zoria_2
 ###
 ##
 16 7 
-frame_text This is not a sign;I am a sign;#;
+frame_text (1-1) This is not a sign;#;
 ## ##
 17 7 
-frame_text Single text;#;
+frame_text (1-1) Why don’t graveyards ever get Wi-Fi ?; (1-2) Too many dead zones;#;
+frame_text (2-1) I like the one on my right;#;
 ## ##
 18 7
-frame_text First order --> First text;First order --> Second text;#;
-frame_text Second order --> First text;#;
+frame_text (1-1) I’ll never forget my granddad’s last words;(1-2) “Stop shaking the ladder!”;#;
 ## ##
 19 7
-dialog_text ui/face/hunter_face Why does a sign open a dialog box ?;#;
+dialog_text ui/face/hunter_face (1-1) Why does a sign open a dialog box ?;(1-2) I am just sign, please leave me;#;
 ##
 ###
 1 0 0 0 0 0 6 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 0 
