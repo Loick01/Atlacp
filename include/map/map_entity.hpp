@@ -1,10 +1,10 @@
 #pragma once
 
 #include "animation/map_entity_animation.hpp"
+#include "core/notifier.hpp"
 #include "image/drawable.hpp"
 #include "map/map_element.hpp"
 #include "map/map_movement.hpp"
-#include "core/notifier.hpp"
 
 class Camera;
 class TextureController;

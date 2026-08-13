@@ -24,6 +24,12 @@ MapElementController::~MapElementController()
     DeleteNPCs();
 }
 
+MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id) // Should return exclusively NPC ?
+{
+    // TODO : I haven't add yet id in NPC
+    return m_updatedEntities[id];
+}
+
 void MapElementController::DeleteNPCs()
 {
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)

@@ -21,7 +21,7 @@ class MapElementController
         // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
 
-        std::vector<MapElement*> m_mapElements; // ?
+        std::vector<MapElement*> m_mapElements; // Remove ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
 
         InteractionController m_interactionController;
     
@@ -29,6 +29,8 @@ class MapElementController
         MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,
             Camera& camera, Tilemap& tilemap);
         ~MapElementController();
+
+        MapEntity* GetMapEntityFromId(const unsigned int id);
 
         void Draw() const;
         void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before MapElementController::Update()) 

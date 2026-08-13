@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "map/npc.hpp" // Remove (used only for OrderEvent::NpcGoTo)
 #include "sound/sound.hpp"
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
@@ -193,6 +194,28 @@ GameMapScene::GameMapScene(GameContext& context):
     
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
+
+    m_orderController.AddCallback([this](OrderEvent e){HandleOrderEvent(e);});
+}
+
+
+void GameMapScene::HandleOrderEvent(const OrderEvent e)
+{
+    switch(e) {
+        case OrderEvent::NpcGoTo : {
+            // Will not be here
+            NpcGoToOrder o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
+            std::cout << "Move " << o.idNpc << " to " << o.targetPosition;
+            // const unsigned int id = o.idNpc;
+            // const MapPosition target = o.targetPosition; 
+            // GetMapEntityFromId is not implemented because NPCs do not have id for now. Do not use id = 0 (first element in m_updatedEntities is Player, not NPC)
+            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(1)); // Will be dynamic_cast, in case the order of the list changes
+            npc->SetBehaviour(MapBehaviour::Random);
+        }
+        default : {
+            break; // throw runtime_error ?
+        }
+    }
 }
 
 void GameMapScene::Gameloop()

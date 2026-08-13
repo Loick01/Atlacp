@@ -4,7 +4,13 @@
 #include <variant>
 #include <vector>
 
+#include "core/notifier.hpp"
 #include "map/map_types.hpp" // MapPosition
+
+enum class OrderEvent
+{
+    NpcGoTo // Should be MapEntityGoTo (NPC + Player) ?
+};
 
 struct FrameTextOrder {
     std::vector<std::string> texts;
@@ -36,10 +42,11 @@ class UiComponentController;
 class UiDialogBox;
 class UiFrameText;
 
-class OrderController
+class OrderController : public Notifier<OrderEvent>
 {
     private:
         UiComponentController& m_uiComponentController;
+        Order m_currentOrder;
 
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
@@ -56,6 +63,8 @@ class OrderController
     public:
         OrderController(UiComponentController& uiComponentController);
 
+        Order GetCurrentOrder() const;
+        
         void Execute(const Order& order);
         bool Update(const Order& order);
         void Stop(const Order& order); // Rename ?

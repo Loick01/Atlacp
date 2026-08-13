@@ -9,11 +9,17 @@ OrderController::OrderController(UiComponentController& uiComponentController) :
     m_uiComponentController(uiComponentController)
 {}
 
+Order OrderController::GetCurrentOrder() const
+{
+    return m_currentOrder;
+}
+
 void OrderController::Execute(const Order& order)
 {
     std::visit(
         [this](const auto& o)
         {
+            m_currentOrder = o; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
             ExecuteOrder(o);
         },
         order
@@ -66,8 +72,9 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 
 void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 {
-    // TODO
-    // std::cout << "Moving " << o.idNpc << " to " << o.targetPosition;
+    // Because OrderController can't have MapElementController&, I have no choice to use 
+    // my Notifier class when it comes to order that modify MapEntity states
+    Notify(OrderEvent::NpcGoTo);
 }
 
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
