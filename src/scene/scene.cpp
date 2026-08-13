@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "map/npc.hpp" // Remove (used only for OrderEvent::NpcGoTo)
+#include "map/npc.hpp" // Remove ? (used only for OrderEvent::NpcGoTo)
 #include "sound/sound.hpp"
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
@@ -202,15 +202,19 @@ GameMapScene::GameMapScene(GameContext& context):
 void GameMapScene::HandleOrderEvent(const OrderEvent e)
 {
     switch(e) {
-        case OrderEvent::NpcGoTo : {
-            // Will not be here
+        case OrderEvent::StartNpcGoTo : {
+            // Will not be here ?
             NpcGoToOrder o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
-            std::cout << "Move " << o.idNpc << " to " << o.targetPosition;
-            // const unsigned int id = o.idNpc;
             // const MapPosition target = o.targetPosition; 
-            // GetMapEntityFromId is not implemented because NPCs do not have id for now. Do not use id = 0 (first element in m_updatedEntities is Player, not NPC)
-            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(1)); // Will be dynamic_cast, in case the order of the list changes
+            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
             npc->SetBehaviour(MapBehaviour::Random);
+            npc->SetState(EntityState::Interacting); // Should be in SetBehaviour() ?
+        }
+        case OrderEvent::StopNpcGoTo : {
+            NpcGoToOrder o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
+            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+            npc->SetBehaviour(MapBehaviour::Random);
+            npc->SetState(EntityState::Free); // ?
         }
         default : {
             break; // throw runtime_error ?

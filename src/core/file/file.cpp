@@ -92,6 +92,7 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
         input >> data.position.x; input >> data.position.y;
         input >> data.walkSpeed;
         input >> data.runSpeed;
+        input >> data.id;
         // NPC always spawn with random behaviour
 
         while (input >> s && s != MAP_ELEMENT_DELIMITER) {

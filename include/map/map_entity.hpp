@@ -23,6 +23,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         EntityState m_state;
         float m_walkSpeed;
         float m_runSpeed;
+        unsigned int m_id;
         bool m_isRunning;
 
         ScenePosition ContinueMovement(const float deltaTime);
@@ -31,7 +32,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 
     protected:
         MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-            Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed);
+            Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const unsigned int id = 0); // For now, only Player has id = 0
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
@@ -52,6 +53,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         float GetWalkSpeed() const;
         float GetRunSpeed() const;
         float GetCurrentSpeed() const;
+        unsigned int GetId() const;
         bool GetIsRunning() const;
         void SetState(const EntityState state);
         void SetIsRunning(const bool isRunning);

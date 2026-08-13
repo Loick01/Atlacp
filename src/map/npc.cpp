@@ -2,9 +2,9 @@
 
 #include "tile/tilemap.hpp"
 
-NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
-    const std::string& spriteFilepath, Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed):
-    MapEntity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
+NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const std::string& spriteFilepath,
+    Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed, const unsigned int id):
+    MapEntity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed, id)
 {
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();

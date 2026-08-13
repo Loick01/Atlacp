@@ -9,7 +9,7 @@
 
 enum class OrderEvent
 {
-    NpcGoTo // Should be MapEntityGoTo (NPC + Player) ?
+    StartNpcGoTo, StopNpcGoTo // Should be MapEntityGoTo (NPC + Player) ?
 };
 
 struct FrameTextOrder {

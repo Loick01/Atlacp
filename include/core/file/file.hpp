@@ -29,6 +29,7 @@ struct DataNPC // Rename ? Should not be here ?
     std::string sprite;
     float walkSpeed;
     float runSpeed;
+    unsigned int id;
 };
 
 struct DataMapElement // Rename ? // Should not be here ?

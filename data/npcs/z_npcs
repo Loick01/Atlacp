@@ -1,38 +1,38 @@
 ###
 ###
 ###
-npc16 11 5 4. 6. ##
-npc16 12 5 4. 6. ##
-npc16 13 5 4. 6. ##
-npc16 14 5 4. 6. ##
+npc16 11 5 4. 6. 40 ##
+npc16 12 5 4. 6. 41 ##
+npc16 13 5 4. 6. 42 ##
+npc16 14 5 4. 6. 43 ##
 ###
-npc16_inverted 8 5 4. 6.
+npc16_inverted 8 5 4. 6. 50
 dialog_text ui/face/hunter_face My spawn position is 8, 5;#;
 ##
 
-npc16_inverted 9 5 4. 6. 
+npc16_inverted 9 5 4. 6. 51
 dialog_text ui/face/knight_face (1-1) My spawn position is 9, 5;#;
 dialog_text ui/face/knight_face (2-1) Second text for this NPC Second text for this NPC Second text for this NPC Second text for this NPC;#;
 ##
 
-npc16_inverted 10 5 4. 6.
+npc16_inverted 10 5 4. 6. 52
 dialog_text ui/face/skeleton_face (1-1) My spawn position is 10, 5; (1-2) Dialog boxes can now also have multiple texts in the same order;#;
 ##
 
-npc16 11 5 4. 6.
+npc16 11 5 4. 6. 53
 dialog_text ui/face/villager_face (1-1) My spawn position is 11, 5;(1-2) Lorem ipsum dolor sit amet. Nam quas mollitia ea quidem modi est veritatis rerum sit unde reprehenderit qui porro dicta aut quasi itaque sed similique veritatis.;#;
 dialog_text ui/face/villager_face (2-1) If I add line break to the text, they also appear in the generated image. That might be not what I want ?;#;
 ##
 
-npc16 12 5 4. 6. 
+npc16 12 5 4. 6. 54
 dialog_text ui/face/dog_face My spawn position is 12, 5;#;
 ##
 
-npc16 13 5 4. 6. 
-dialog_text ui/face/dragon_face My spawn position is 13, 5;#;
+npc16 13 5 4. 6. 55
+dialog_text ui/face/dragon_face My spawn position is 13, 5;IDs for NPC are structured as follows : the first number indicates the map the NPC belong, and the second one is their number (starting from 0);#;
 ##
 
-npc16 14 5 4. 6. 
+npc16 14 5 4. 6. 56
 dialog_text ui/face/eskimo_face My spawn position is 14, 5;#;
 ##
 

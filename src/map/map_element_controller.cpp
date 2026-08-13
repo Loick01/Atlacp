@@ -24,10 +24,16 @@ MapElementController::~MapElementController()
     DeleteNPCs();
 }
 
-MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id) // Should return exclusively NPC ?
+MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
 {
-    // TODO : I haven't add yet id in NPC
-    return m_updatedEntities[id];
+    if (id == 0) throw std::runtime_error("MapElementController::GetMapEntity() --> Do not use id = 0, this is reserved for the player"); // Will be removed
+    
+    // Should return exclusively NPC ? For now GetMapEntity is used only for NpcGoToOrder, but maybe I will change it to EntityGoToOrder
+    for (MapEntity* m : m_updatedEntities) {
+        if (m->GetId() == id)
+            return m;
+    }
+    throw std::runtime_error("This MapEntity was not found in MapElementController::m_updatedEntities : " + id);
 }
 
 void MapElementController::DeleteNPCs()
@@ -114,7 +120,8 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
             textureController,
             "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
             camera, npcPosition,
-            data.walkSpeed, data.runSpeed
+            data.walkSpeed, data.runSpeed,
+            data.id
         );
         npc->SetOrders(data.orders);
         npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});

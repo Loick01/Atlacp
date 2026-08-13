@@ -8,9 +8,10 @@
 #include "tile/tilemap.hpp"
 
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed):
+    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const unsigned int id):
     SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap),
-    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath)
+    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath),
+    m_id(id)
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;
@@ -150,6 +151,11 @@ float MapEntity::GetRunSpeed() const
 float MapEntity::GetCurrentSpeed() const
 {
     return m_isRunning ? m_runSpeed : m_walkSpeed;
+}
+
+unsigned int MapEntity::GetId() const
+{
+    return m_id;
 }
 
 bool MapEntity::GetIsRunning() const

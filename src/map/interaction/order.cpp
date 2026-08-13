@@ -74,7 +74,7 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 {
     // Because OrderController can't have MapElementController&, I have no choice to use 
     // my Notifier class when it comes to order that modify MapEntity states
-    Notify(OrderEvent::NpcGoTo);
+    Notify(OrderEvent::StartNpcGoTo);
 }
 
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
@@ -108,7 +108,7 @@ void OrderController::StopOrder(const FrameTextOrder& o)
 
 void OrderController::StopOrder(const NpcGoToOrder& o)
 {
-    // TODO
+    Notify(OrderEvent::StopNpcGoTo);
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)
