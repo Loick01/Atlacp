@@ -3,7 +3,7 @@
 #include "map/map_entity.hpp"
 #include "map/npc.hpp"
 #include "core/camera.hpp"
-#include "core/file/file.hpp"
+#include "core/file/file.hpp" // DataMapElement
 #include "tile/tilemap.hpp"
 
 MapElementController::MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,

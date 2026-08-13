@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/file/file.hpp" // DataMapElement
 #include "map/map_types.hpp" // MapPosition
 #include "tile/tile_types.hpp" // Tile
 

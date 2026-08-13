@@ -100,6 +100,8 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
                 data.orders.push_back(ReadFrameTextOrder(input));
             } else if (s == "dialog_text") {
                 data.orders.push_back(ReadDialogTextOrder(input));
+            } else if (s == "npc_goto") {
+                data.orders.push_back(ReadNpcGoToOrder(input));
             } else {
                 throw std::runtime_error("Unknow order type : " + s);
             }
@@ -199,6 +201,8 @@ DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
             e.orders.push_back(ReadFrameTextOrder(input));
         } else if (s == "dialog_text") {
             e.orders.push_back(ReadDialogTextOrder(input));
+        } else if (s == "npc_goto") {
+            e.orders.push_back(ReadNpcGoToOrder(input));
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }

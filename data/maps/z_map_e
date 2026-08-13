@@ -8,6 +8,7 @@ frame_text (1-1) This is not a sign;#;
 ## ##
 17 7 
 frame_text (1-1) Why don’t graveyards ever get Wi-Fi ?; (1-2) Too many dead zones;#;
+npc_goto 10 8 0
 frame_text (2-1) I like the one on my right;#;
 ## ##
 18 7

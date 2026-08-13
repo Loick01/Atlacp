@@ -27,3 +27,13 @@ DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const
     
     return DialogTextOrder{texts, facePath};
 }
+
+NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
+{
+    MapPosition targetPosition;
+    unsigned int id;
+    input >> targetPosition.x;
+    input >> targetPosition.y;
+    input >> id;
+    return NpcGoToOrder{targetPosition, id};
+}

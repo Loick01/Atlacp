@@ -3,6 +3,8 @@
 #include "map/interaction/interaction.hpp"
 #include "map/player.hpp"
 
+struct DataMapElement;
+
 class Camera;
 class FileReader;
 class MapEntity;

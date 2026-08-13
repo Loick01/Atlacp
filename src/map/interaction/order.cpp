@@ -64,6 +64,12 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
 }
 
+void OrderController::ExecuteOrder(const NpcGoToOrder& o)
+{
+    // TODO
+    // std::cout << "Moving " << o.idNpc << " to " << o.targetPosition;
+}
+
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("boxText"));
@@ -80,11 +86,22 @@ bool OrderController::UpdateOrder(const DialogTextOrder& o)
     return !dialogBox->NextText();
 }
 
+bool OrderController::UpdateOrder(const NpcGoToOrder& o)
+{
+    // TODO
+    return true;
+}
+
 void OrderController::StopOrder(const FrameTextOrder& o)
 {
     m_uiComponentController.CloseComponent("boxText");
     m_uiComponentController.DeleteComponent("boxText");
     SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+}
+
+void OrderController::StopOrder(const NpcGoToOrder& o)
+{
+    // TODO
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)

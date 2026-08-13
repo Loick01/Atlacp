@@ -4,7 +4,6 @@
 
 #include "core/core_types.hpp" // Vec2
 #include "image/image_types.hpp" // ScenePosition
-#include "map/interaction/order.hpp"
 
 struct MapPosition : public Vec2 // Rename GridPosition ?
 {
@@ -35,19 +34,4 @@ enum class MapBound
     OutDown,
     OutRight,
     OutLeft
-};
-
-struct DataNPC // Rename ?
-{
-    std::vector<Order> orders;
-    MapPosition position;
-    std::string sprite;
-    float walkSpeed;
-    float runSpeed;
-};
-
-struct DataMapElement // Rename ?
-{
-    std::vector<Order> orders;
-    MapPosition position;
 };

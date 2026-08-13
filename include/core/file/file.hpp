@@ -7,8 +7,7 @@
 
 #include "animation/animation_types.hpp" // AnimationData
 #include "battle/battle_types.hpp" // DataBattleActor
-#include "map/interaction/order.hpp"
-#include "map/map_types.hpp" // DataNPC, DataMapElement
+#include "map/interaction/order.hpp" // Order
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
 
@@ -22,6 +21,21 @@ class TextureController;
 class Tileset;
 
 struct MapData;
+
+struct DataNPC // Rename ? Should not be here ?
+{
+    std::vector<Order> orders;
+    MapPosition position;
+    std::string sprite;
+    float walkSpeed;
+    float runSpeed;
+};
+
+struct DataMapElement // Rename ? // Should not be here ?
+{
+    std::vector<Order> orders;
+    MapPosition position;
+};
 
 class FileReader
 {
@@ -39,6 +53,7 @@ class FileReader
 
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
         DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
+        NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;
         
         DataMapElement ReadMapElement(std::ifstream& input) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
