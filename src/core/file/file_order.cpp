@@ -35,5 +35,5 @@ NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
     input >> targetPosition.x;
     input >> targetPosition.y;
     input >> id;
-    return NpcGoToOrder{targetPosition, id};
+    return NpcGoToOrder{targetPosition, id, false};
 }

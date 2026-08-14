@@ -80,9 +80,14 @@ MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPos
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
 }
 
+bool MapGoToBehaviour::IsDone() const
+{
+    return m_pathIndex >= m_path.size();
+}
+
 void MapGoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
-    if (m_pathIndex < m_path.size()){
+    if (!IsDone()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
         const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
@@ -99,7 +104,7 @@ void MapGoToBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 void MapGoToBehaviour::OnStopCase(MapEntity& entity)
 {
     m_pathIndex++;
-    if (m_pathIndex < m_path.size()){
+    if (!IsDone()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
         const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?

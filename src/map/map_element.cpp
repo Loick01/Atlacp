@@ -6,7 +6,7 @@ MapElement::MapElement(Tilemap& tilemap):
     m_tilemap(tilemap)
 {}
 
-const std::vector<Order>& MapElement::GetOrders() const
+std::vector<Order>& MapElement::GetOrders()
 {
     return m_orders;
 }

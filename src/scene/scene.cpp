@@ -203,18 +203,28 @@ void GameMapScene::HandleOrderEvent(const OrderEvent e)
 {
     switch(e) {
         case OrderEvent::StartNpcGoTo : {
-            // Will not be here ?
-            NpcGoToOrder o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
-            // const MapPosition target = o.targetPosition; 
+            // Will not be here ? Some include of this file could be removed ?
+            const NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
             NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
-            npc->SetBehaviour(MapBehaviour::Random);
-            npc->SetState(EntityState::Interacting); // Should be in SetBehaviour() ?
+            npc->SetState(EntityState::Free); // Should be in SetGoToBehaviour() ? 
+            // It needs to be EntityState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
+            npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
+            break;
+        }
+        case OrderEvent::QueryGoToIsDone : {
+            NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
+            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+            const MapGoToBehaviour* goTo = dynamic_cast<const MapGoToBehaviour*>(npc->GetMapBehaviour());
+            o.isDone = goTo->IsDone();
+            break;
         }
         case OrderEvent::StopNpcGoTo : {
-            NpcGoToOrder o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
+            const NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
             NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
-            npc->SetBehaviour(MapBehaviour::Random);
-            npc->SetState(EntityState::Free); // ?
+            npc->SetRandomBehaviour();
+            // OrderEvent::StopNpcGoTo is notified only when GoToBehaviour is done, so the NPC has necessarily EntityState::Free. I don't think SetState(Free) is necessary 
+            // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
+            break;
         }
         default : {
             break; // throw runtime_error ?

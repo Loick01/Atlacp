@@ -21,7 +21,7 @@ class MapElement
         MapElement(Tilemap& tilemap); // Will be protected ?
         virtual ~MapElement() = default;
 
-        const std::vector<Order>& GetOrders() const;
+        std::vector<Order>& GetOrders(); // Should be const
         MapPosition GetMapPosition() const;
         MapPosition GetTargetPosition() const;
         void SetMapPosition(const MapPosition mp);

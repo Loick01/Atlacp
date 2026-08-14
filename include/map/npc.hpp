@@ -16,6 +16,9 @@ class NPC : public MapEntity
         NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const std::string& spriteFilepath,
             Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed, const unsigned int id);
 
+        const MapEntityBehaviour* GetMapBehaviour() const;
         void Update(const float deltaTime) override;
-        void SetBehaviour(const MapBehaviour mb);
+        
+        void SetRandomBehaviour();
+        void SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target);
 };

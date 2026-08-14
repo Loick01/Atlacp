@@ -59,6 +59,8 @@ class MapGoToBehaviour : public MapEntityBehaviour
     public:
         MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap);
 
+        bool IsDone() const;
+        
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;

@@ -13,6 +13,11 @@ NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& text
     m_behaviour = std::make_unique<MapRandomBehaviour>(); // NPC always spawn with random behaviour
 }
 
+const MapEntityBehaviour* NPC::GetMapBehaviour() const
+{
+    return m_behaviour.get();
+}
+
 void NPC::Update(const float deltaTime)
 {
     // Should test if m_behaviour != nullptr ?
@@ -41,19 +46,13 @@ void NPC::Update(const float deltaTime)
     }
 }
 
-void NPC::SetBehaviour(const MapBehaviour mb)
+// Instead of SetBehaviour(), I think I will create one function for each behaviour, like below
+void NPC::SetRandomBehaviour()
 {
-    switch (mb) {
-        case MapBehaviour::Random :
-            m_behaviour = std::make_unique<MapRandomBehaviour>();
-            break;
-        // case MapBehaviour::Follow :
-        //     m_behaviour = std::make_unique<MapFollowBehaviour>(this, trackedEntity); // const MapEntity* followerEntity, trackedEntity
-        //     break;
-        // case MapBehaviour::GoTo :
-        //     m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), MapPosition{4, 1}, tilemap);
-        //     break;
-        default :
-            throw std::runtime_error("Unknown MapBehaviour value");
-    }
+    m_behaviour = std::make_unique<MapRandomBehaviour>();
+}
+
+void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
+{
+    m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, tilemap);
 }

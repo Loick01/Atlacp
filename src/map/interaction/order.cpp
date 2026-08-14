@@ -6,20 +6,26 @@
 #include "ui/component/ui_frame_text.hpp"
 
 OrderController::OrderController(UiComponentController& uiComponentController) :
-    m_uiComponentController(uiComponentController)
+    m_uiComponentController(uiComponentController), m_currentOrder(nullptr)
 {}
 
-Order OrderController::GetCurrentOrder() const
+const Order& OrderController::GetCurrentOrder() const
 {
-    return m_currentOrder;
+    return *m_currentOrder;
 }
 
-void OrderController::Execute(const Order& order)
+Order& OrderController::GetCurrentOrder()
 {
+    return *m_currentOrder;
+}
+
+void OrderController::Execute(Order& order)
+{
+    m_currentOrder = &order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
+
     std::visit(
         [this](const auto& o)
         {
-            m_currentOrder = o; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
             ExecuteOrder(o);
         },
         order
@@ -95,8 +101,9 @@ bool OrderController::UpdateOrder(const DialogTextOrder& o)
 
 bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 {
-    // TODO
-    return true;
+    Notify(OrderEvent::QueryGoToIsDone); // GameMapScene will set NpcGoToOrder::isDone
+    // Thus InteractionController will continue with the next order only if the current GoToBehaviour is done (NPC has reached its target)
+    return o.isDone;
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)
