@@ -86,9 +86,8 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         float m_currentTime; // Rename
         
         UiComponentController& m_uiComponentController;
+        UiController& m_uiController;
         FileReader& m_fileReader;
-
-        UiController& m_uiController; // Remove ?
 
         std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
         std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;

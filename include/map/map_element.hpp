@@ -26,7 +26,7 @@ class MapElement
         MapPosition GetTargetPosition() const;
         void SetMapPosition(const MapPosition mp);
         void SetTargetPosition(const MapPosition target);
-        void SetOrders(const std::vector<Order>& orders);
+        void SetOrders(std::vector<Order> orders);
 
         virtual void OnInteracting(const Direction direction);
         virtual void ReleaseInteracting();

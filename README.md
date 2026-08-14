@@ -76,7 +76,7 @@ make
         <img src="https://img.youtube.com/vi/tqeDZGtkRpI/maxresdefault.jpg" height="200">
       </a>
       <br>
-      <strong>Main Menu, Music and Sound Effects</strong>
+      <strong>Menu, Music and Sound Effects</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=2j6m4lXyyoE">

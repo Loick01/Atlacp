@@ -30,7 +30,7 @@ struct GameContext
     FontController& fontController;
     TextureController& textureController;
     FileReader& fileReader; 
-    UiController& uiController; // Remove ?
+    UiController& uiController;
     UiComponentController& uiComponentController;
 
     std::unique_ptr<EventController> eventController;

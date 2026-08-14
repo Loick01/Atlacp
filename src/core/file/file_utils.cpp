@@ -1,5 +1,17 @@
 #include "core/file/file.hpp"
 
+template <typename T>
+T FileReader::ReadEnum(std::ifstream& input, const std::unordered_map<std::string,T>& values, const std::string& typeName) const
+{
+    std::string s;
+    input >> s;
+    typename std::unordered_map<std::string, T>::const_iterator it = values.find(s);
+    if (it != values.end())
+        return it->second;
+
+    throw std::runtime_error("Unknown value read as " + typeName);
+}
+
 Axis FileReader::ReadAxis(std::ifstream& input) const
 {
     static const std::unordered_map<std::string, Axis> axis = {
@@ -7,13 +19,7 @@ Axis FileReader::ReadAxis(std::ifstream& input) const
         {"height", Axis::Height}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, Axis>::const_iterator it = axis.find(s);
-    if (it != axis.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as Axis");
+    return ReadEnum(input, axis, "Axis");
 }
 
 Anchor FileReader::ReadAnchor(std::ifstream& input) const
@@ -30,13 +36,7 @@ Anchor FileReader::ReadAnchor(std::ifstream& input) const
         {"bottom_out", Anchor::BottomOut}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, Anchor>::const_iterator it = anchors.find(s);
-    if (it != anchors.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as Anchor");
+    return ReadEnum(input, anchors, "Anchor");
 }
 
 CommandType FileReader::ReadCommandType(std::ifstream& input) const
@@ -46,13 +46,7 @@ CommandType FileReader::ReadCommandType(std::ifstream& input) const
         {"heal", CommandType::Heal}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, CommandType>::const_iterator it = commands.find(s);
-    if (it != commands.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as CommandType");
+    return ReadEnum(input, commands, "CommandType");
 }
 
 MoveType FileReader::ReadMoveType(std::ifstream& input) const
@@ -62,13 +56,7 @@ MoveType FileReader::ReadMoveType(std::ifstream& input) const
         {"magic", MoveType::Magic}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, MoveType>::const_iterator it = moves.find(s);
-    if (it != moves.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as MoveType");
+    return ReadEnum(input, moves, "MoveType");
 }
 
 MapBehaviour FileReader::ReadMapBehaviour(std::ifstream& input) const
@@ -79,13 +67,7 @@ MapBehaviour FileReader::ReadMapBehaviour(std::ifstream& input) const
         {"goto", MapBehaviour::GoTo}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, MapBehaviour>::const_iterator it = behaviours.find(s);
-    if (it != behaviours.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as MapBehaviour");
+    return ReadEnum(input, behaviours, "MapBehaviour");
 }
 
 FontSize FileReader::ReadFontSize(std::ifstream& input) const
@@ -94,11 +76,5 @@ FontSize FileReader::ReadFontSize(std::ifstream& input) const
         {"small", FontSize::Small}
     };
 
-    std::string s;
-    input >> s;
-    std::unordered_map<std::string, FontSize>::const_iterator it = fontSizes.find(s);
-    if (it != fontSizes.end())
-        return it->second;
-
-    throw std::runtime_error("Unknown value read as FontSize");
+    return ReadEnum(input, fontSizes, "FontSize");
 }

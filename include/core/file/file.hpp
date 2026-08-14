@@ -12,8 +12,6 @@
 #include "ui/ui_types.hpp" // DataUi
 
 #define SECTION_DELIMITER "###" // define ? Rename
-#define MAP_ELEMENT_DELIMITER "##" // define ? Rename
-#define ORDER_DELIMITER "#" // define ? Rename
 #define TEXT_DELIMITER ';' // define ? Rename
 
 class Camera;
@@ -41,10 +39,14 @@ struct DataMapElement // Rename ? // Should not be here ?
 class FileReader
 {
     private:
+        // FileIO
         static std::ifstream OpenFile(const std::string& filepath);
         std::string ReadString(std::ifstream& input) const;
 
-        // Should not be here ?
+        // FileUtils
+        template <typename T>
+            T ReadEnum(std::ifstream& input, const std::unordered_map<std::string, T>& values, const std::string& typeName) const;
+
         Axis ReadAxis(std::ifstream& input) const;
         Anchor ReadAnchor(std::ifstream& input) const;
         CommandType ReadCommandType(std::ifstream& input) const;
@@ -52,16 +54,19 @@ class FileReader
         MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
         FontSize ReadFontSize(std::ifstream& input) const;
 
+        // FileOrder
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
         DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
         NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;
         
+        // File
         DataMapElement ReadMapElement(std::ifstream& input) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:
         FileReader() = default;
 
+        // File
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
         std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const;
@@ -72,10 +77,11 @@ class FileReader
             Tileset& tileset) const;
         TilesetData ReadTilesetFile(const std::string& path) const;
         AnimationData ReadAnimationFile(const std::string& animationFilepath) const;
+
+        void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
         
-        std::string GetFileExtension(const std::string& filepath) const; // static ?
+        // FileIO
+        std::string GetFileExtension(const std::string& filepath) const;
         bool IsBaseUiFile(const std::string& filepath) const;
         bool IsTemplateUiFile(const std::string& filepath) const;
-        
-        void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 };

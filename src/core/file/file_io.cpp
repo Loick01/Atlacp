@@ -4,6 +4,22 @@
 
 #include "core/path.hpp"
 
+std::ifstream FileReader::OpenFile(const std::string& filepath)
+{
+    std::ifstream input;
+    input.open(filepath);
+    if (!input) throw std::runtime_error("Can't open this file : " + filepath);
+    return input;
+}
+
+std::string FileReader::ReadString(std::ifstream& input) const 
+{
+    std::string s;
+    input >> s;
+    std::replace(s.begin(), s.end(), '_', ' ');
+    return s;
+}
+
 std::string FileReader::GetFileExtension(const std::string& filepath) const 
 {
     size_t pos = filepath.rfind('.');
@@ -20,20 +36,4 @@ bool FileReader::IsBaseUiFile(const std::string& filepath) const
 bool FileReader::IsTemplateUiFile(const std::string& filepath) const
 {
     return GetFileExtension(filepath) == FileExtension::UiTemplate;
-}
-
-std::ifstream FileReader::OpenFile(const std::string& filepath)
-{
-    std::ifstream input;
-    input.open(filepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + filepath);
-    return input;
-}
-
-std::string FileReader::ReadString(std::ifstream& input) const 
-{
-    std::string s;
-    input >> s;
-    std::replace(s.begin(), s.end(), '_', ' ');
-    return s;
 }

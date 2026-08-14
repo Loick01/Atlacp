@@ -1,23 +1,25 @@
-1 28 16 8 6
+1 28 16 8 6 
+
+tileset 2
 zoria
 zoria_2
-###
-##
-16 7 
-frame_text (1-1) This is not a sign;#;
-## ##
-17 7 
-frame_text (1-1) Why don’t graveyards ever get Wi-Fi ?; (1-2) Too many dead zones;#;
+
+element 4
+
+16 7 1
+frame_text 1 (1-1) This is not a sign;
+
+17 7 3
+frame_text 2 (1-1) Why don’t graveyards ever get Wi-Fi ?; (1-2) Too many dead zones;
 npc_goto 23 9 56
-frame_text (2-1) I like the one on my right;#;
-## ##
-18 7
-frame_text (1-1) I’ll never forget my granddad’s last words;(1-2) “Stop shaking the ladder!”;#;
-## ##
-19 7
-dialog_text ui/face/hunter_face (1-1) Why does a sign open a dialog box ?;(1-2) I am just sign, please leave me;#;
-##
-###
+frame_text 1 (2-1) I like the one on my right;
+
+18 7 1
+frame_text 2 (1-1) I’ll never forget my granddad’s last words;(1-2) “Stop shaking the ladder!”;
+
+19 7 1
+dialog_text 2 ui/face/hunter_face (1-1) Why does a sign open a dialog box ?;(1-2) I am just sign, please leave me;
+
 1 0 0 0 0 0 6 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 39 0 0 73 0 37 5 0 0 37 0 0 300 302 0 0 37 0 0 0 0 0 0 0 73 0 0 
 0 0 0 0 0 264 261 261 261 266 0 0 0 300 302 0 0 0 37 0 0 0 39 0 0 0 0 0 

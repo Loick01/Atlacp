@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 
-#include "image/texture.hpp" // ?
-#include "core/camera.hpp" // ?
-#include "tile/layer.hpp"
-#include "tile/tileset.hpp" // ?
+#include "image/texture.hpp"
+#include "core/camera.hpp"
+#include "tile/layer.hpp" // MapData, TileLayer
+#include "tile/tileset.hpp"
 
 namespace DataDirectory { // Should be in core/path.hpp ?
     // Should be constexpr std::string_view ?
@@ -78,25 +78,30 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
 {
     std::ifstream input = OpenFile(DataDirectory::NPC + npcsFilepath);
     std::vector<DataNPC> npcsData;
-    unsigned int currentIndex = 0;
+    unsigned int count = 0;
     std::string s;
-    while(currentIndex < mapIndex && input >> s) { // Skip to the data associated with the chosen map
-        if (s == SECTION_DELIMITER) currentIndex++;
+    while(count < mapIndex && input >> s) { // Skip to the data associated with the chosen map
+        if (s == SECTION_DELIMITER) count++;
     }
-    if (currentIndex != mapIndex) throw std::runtime_error("NPC file is invalid : " + npcsFilepath);
+    if (count != mapIndex) throw std::runtime_error("NPC file is invalid : " + npcsFilepath);
 
-    while (input >> s && s != SECTION_DELIMITER) {
+    input >> count;
+    for (unsigned int i = 0 ; i < count ; i++) {
         DataNPC data;
-        // No verification yet on what is read 
-        data.sprite = s;
+        unsigned int nrOrder;
+
+        input >> s;
+        data.sprite = s; 
         input >> data.position.x; input >> data.position.y;
         input >> data.walkSpeed;
         input >> data.runSpeed;
+        input >> nrOrder;
         input >> data.id;
         // NPC always spawn with random behaviour
 
-        while (input >> s && s != MAP_ELEMENT_DELIMITER) {
+        for (unsigned int j = 0 ; j < nrOrder ; j++) {
             // Merge with FileReader::ReadMapElement()
+            input >> s;
             if (s == "frame_text") {
                 data.orders.push_back(ReadFrameTextOrder(input));
             } else if (s == "dialog_text") {
@@ -105,11 +110,12 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
                 data.orders.push_back(ReadNpcGoToOrder(input));
             } else {
                 throw std::runtime_error("Unknow order type : " + s);
-            }
+            }   
         }
 
         npcsData.push_back(data);
     }
+    
     return npcsData;
 }
 
@@ -192,12 +198,15 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 
 DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
 {
+    std::string s;
     DataMapElement e;
+    unsigned int nrOrder;
+    
     input >> e.position.x;
     input >> e.position.y;
-
-    std::string s;
-    while (input >> s && s != MAP_ELEMENT_DELIMITER) { // Multiple orders
+    input >> nrOrder;
+    for (unsigned int i = 0 ; i < nrOrder ; i++) {
+        input >> s;
         if (s == "frame_text") {
             e.orders.push_back(ReadFrameTextOrder(input));
         } else if (s == "dialog_text") {
@@ -208,22 +217,31 @@ DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
             throw std::runtime_error("Unknow order type : " + s);
         }
     }
+    
     return e;
 }
 
 void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 {
+    std::string s;
+    unsigned int count = 0;
+    
     input >> data.layerCount;
     input >> data.size.x;
     input >> data.size.y;
     input >> data.spawnPosition.x;
     input >> data.spawnPosition.y;
-    
-    std::string s;
-    while (input >> s && s != SECTION_DELIMITER)
-        data.tilesets.push_back(s);
 
-    while (input >> s && s != SECTION_DELIMITER) {
+    input >> s; // Skip "tileset"
+    input >> count;
+    for (unsigned int i = 0 ; i < count ; i++) {
+        input >> s;
+        data.tilesets.push_back(s);
+    }
+
+    input >> s; // Skip "element"
+    input >> count;
+    for (unsigned int i = 0 ; i < count ; i++) {
         const DataMapElement e = ReadMapElement(input);
         data.elements.push_back(e);
     }
@@ -290,7 +308,7 @@ TilesetData FileReader::ReadTilesetFile(const std::string& path) const
     return data;
 }
 
-void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
+void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const // TODO : Not correct since I update how I read in map file
 {
     std::ofstream mapFile(DataDirectory::Map + mapFilepath);
     const int width = mapData.size.x;

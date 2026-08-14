@@ -12,7 +12,7 @@
 class FileReader;
 class TextureController;
 
-class UiController // Rename
+class UiController // Should be renamed UiElementController ?
 {       
     private:
         // UiElement are not marked as root, but I don't want it to be possible to delete the root

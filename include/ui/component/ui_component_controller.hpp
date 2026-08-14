@@ -17,7 +17,7 @@ class UiSelector;
 class UiSpriteAnimation;
 class UiFrameText;
 
-class UiComponentController // Rename
+class UiComponentController
 {
     private:
         std::unordered_map<ComponentKey, std::unique_ptr<UiComponent>> m_components;

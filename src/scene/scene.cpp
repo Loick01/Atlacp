@@ -28,7 +28,7 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
         case 3:
             return SwitchEvent::ToEditorMap;
         default:
-            throw std::invalid_argument("Unknown mode\n");
+            throw std::invalid_argument("Unknown mode");
     };
 }
 
@@ -53,7 +53,7 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             break;
         }
         default:{
-            throw std::invalid_argument("Unknown value\n");
+            throw std::invalid_argument("Unknown value");
         }
     }
     m_currentScene->AddCallback([this](SwitchEvent e){RequestSwitchScene(e);});
@@ -203,7 +203,7 @@ void GameMapScene::HandleOrderEvent(const OrderEvent e)
 {
     switch(e) {
         case OrderEvent::StartNpcGoTo : {
-            // Will not be here ? Some include of this file could be removed ?
+            // Will not be here ? Some include in this file could be removed ?
             const NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
             NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
             npc->SetState(EntityState::Free); // Should be in SetGoToBehaviour() ? 
@@ -227,7 +227,7 @@ void GameMapScene::HandleOrderEvent(const OrderEvent e)
             break;
         }
         default : {
-            break; // throw runtime_error ?
+            throw std::runtime_error("Unknown OrderEvent value");
         }
     }
 }
