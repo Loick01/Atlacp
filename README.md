@@ -76,7 +76,7 @@ make
         <img src="https://img.youtube.com/vi/tqeDZGtkRpI/maxresdefault.jpg" height="200">
       </a>
       <br>
-      <strong>Menu, Music and Sound Effects</strong>
+      <strong>Main Menu, Music and Sound Effects</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=2j6m4lXyyoE">
@@ -84,6 +84,15 @@ make
       </a>
       <br>
       <strong>Move Animations</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=BcvYCM1XcZs">
+        <img src="https://img.youtube.com/vi/BcvYCM1XcZs/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Orders : Frame Text, DialogText and NpcGoTo</strong>
     </td>
   </tr>
 </table>

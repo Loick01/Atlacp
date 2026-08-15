@@ -4,21 +4,26 @@ tileset 2
 zoria
 zoria_2
 
-element 4
+element 5
 
 16 7 1
-frame_text 1 (1-1) This is not a sign;
+frame_text 1 This is not a sign;
 
 17 7 3
-frame_text 2 (1-1) Why don’t graveyards ever get Wi-Fi ?; (1-2) Too many dead zones;
-npc_goto 23 9 56
-frame_text 1 (2-1) I like the one on my right;
+frame_text 1 An NPC will come next to you;
+npc_goto 18 9 57
+frame_text 1 The NPC has reached its target position;
 
 18 7 1
-frame_text 2 (1-1) I’ll never forget my granddad’s last words;(1-2) “Stop shaking the ladder!”;
+frame_text 2 I’ll never forget my granddad’s last words;“Stop shaking the ladder!”;
 
 19 7 1
-dialog_text 2 ui/face/hunter_face (1-1) Why does a sign open a dialog box ?;(1-2) I am just sign, please leave me;
+dialog_text 2 ui/face/hunter_face Why does a sign open a dialog box ?;I am just sign, please leave me;
+
+20 7 3
+frame_text 2 All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy All;work and no play makes Jack a dull boy All work and no play makes Jack a dull boy All work and no play makes Jack a dull boy...;
+npc_goto 19 8 50
+frame_text 1 Here's Johnny !;
 
 1 0 0 0 0 0 6 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 39 0 0 73 0 37 5 0 0 37 0 0 300 302 0 0 37 0 0 0 0 0 0 0 73 0 0 
@@ -27,7 +32,7 @@ dialog_text 2 ui/face/hunter_face (1-1) Why does a sign open a dialog box ?;(1-2
 0 73 37 0 0 292 293 293 293 293 294 0 37 300 302 0 0 73 0 0 0 0 0 73 0 5 6 0 
 0 0 0 0 0 292 293 293 293 293 294 0 0 300 302 0 0 37 73 0 257 258 258 259 0 0 0 0 
 0 37 5 37 0 328 325 325 325 325 330 37 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 6 0 0 0 0 0 0 0 0 0 300 302 0 3 3 3 3 0 268 269 269 269 269 269 269 
+0 0 0 6 0 0 0 0 0 0 0 0 0 300 302 0 3 3 3 3 3 268 269 269 269 269 269 269 
 0 0 0 0 0 268 269 269 269 269 269 269 269 384 384 269 269 269 269 269 269 384 384 384 333 333 333 333 
 269 269 269 269 269 384 384 384 333 333 333 333 333 333 384 384 333 333 333 333 333 333 333 334 73 0 0 0 
 333 333 333 333 333 333 333 334 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 

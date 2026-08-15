@@ -49,6 +49,10 @@ class OrderController : public Notifier<OrderEvent>
         UiComponentController& m_uiComponentController;
         Order* m_currentOrder;
 
+        static std::string GetStringFromOrder(const FrameTextOrder& o);
+        static std::string GetStringFromOrder(const DialogTextOrder& o);
+        static std::string GetStringFromOrder(const NpcGoToOrder& o);
+
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
         void ExecuteOrder(const NpcGoToOrder& o);
@@ -66,7 +70,8 @@ class OrderController : public Notifier<OrderEvent>
 
         const Order& GetCurrentOrder() const;
         Order& GetCurrentOrder();
-                
+        
+        static std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()
         void Execute(Order& order);
         bool Update(const Order& order); // Rename
         void Stop(const Order& order); // Rename ?

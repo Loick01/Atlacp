@@ -308,32 +308,41 @@ TilesetData FileReader::ReadTilesetFile(const std::string& path) const
     return data;
 }
 
-void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const // TODO : Not correct since I update how I read in map file
+void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
-    std::ofstream mapFile(DataDirectory::Map + mapFilepath);
+    std::ofstream output(DataDirectory::Map + "test");
     const int width = mapData.size.x;
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 
-    MapPosition spawn = MapPosition{-1, -1}; // Later, make something to select in editor the spawning tile
-    // Need to check if a file with the given name already exist
 
-    // Header
-    mapFile << layerCount << " " << width << " " << height << " " << spawn.x << " " << spawn.y << "\n";
-    for (const TextureKey& k : mapData.tilesets){ // Tileset filepath must be write in order
-        mapFile << k << "\n"; // TilesetKey need definition for operator<<
+    output << layerCount << " " << width << " " << height << " " << mapData.spawnPosition.x << " " << mapData.spawnPosition.y << "\n\n";
+    
+    // Tilesets
+    output << "tileset " << mapData.tilesets.size() << "\n";
+    for (const TextureKey& k : mapData.tilesets) { // Tileset filepath must be write in order
+        output << k << "\n"; // TilesetKey need definition for operator<<
     }
-    mapFile << SECTION_DELIMITER << "\n";
+    
+    // MapElement (with Orders)
+    output << "\nelement " << mapData.elements.size() << "\n\n";
+    for (const DataMapElement& me : mapData.elements) {
+        output << me.position.x << " " << me.position.y << " " << me.orders.size() << "\n";
+        for (const Order& o : me.orders)
+            output << OrderController::GetStringDescription(o) << "\n";
+
+        output << "\n";
+    }
     
     // Map layers
     for (unsigned int layer=0 ; layer < layerCount ; layer++){
         const std::vector<Tile> layer_tiles = mapData.map[layer].GetTiles();
         for (size_t j = 0 ; j < height ; j++){
             for (size_t i = 0 ; i < width ; i++){
-                mapFile << layer_tiles[j*width+i] << " ";
+                output << layer_tiles[j*width+i] << " ";
             }
-            mapFile << "\n";
+            output << "\n";
         }
-        mapFile << "\n";
+        output << "\n";
     }
-    mapFile.close();
+    output.close();
 }

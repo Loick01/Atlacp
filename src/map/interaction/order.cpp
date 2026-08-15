@@ -19,6 +19,18 @@ Order& OrderController::GetCurrentOrder()
     return *m_currentOrder;
 }
 
+std::string OrderController::GetStringDescription(const Order& order)
+{
+    return std::visit(
+        [](const auto& o)
+        {
+            return GetStringFromOrder(o);
+        },
+        order
+    );
+    throw std::runtime_error("No OrderController::GetStringFromOrder with this type of Order"); // ?
+}
+
 void OrderController::Execute(Order& order)
 {
     m_currentOrder = &order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
@@ -53,6 +65,28 @@ void OrderController::Stop(const Order& order)
         },
         order
     );
+}
+
+std::string OrderController::GetStringFromOrder(const FrameTextOrder& o)
+{
+    std::string res = "frame_text " + std::to_string(o.texts.size()) + " ";
+    for (const std::string& s : o.texts)
+        res += s + ";";
+    return res;
+}
+
+std::string OrderController::GetStringFromOrder(const DialogTextOrder& o)
+{
+    std::string res = "dialog_text " + std::to_string(o.texts.size()) + " " + o.facePath + " ";
+    for (const std::string& s : o.texts)
+        res += s + ";";
+    return res;
+}
+
+std::string OrderController::GetStringFromOrder(const NpcGoToOrder& o)
+{
+    std::string res = "npc_goto " + std::to_string(o.targetPosition.x) + " " + std::to_string(o.targetPosition.y) + " " + std::to_string(o.idNpc);
+    return res;
 }
 
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
