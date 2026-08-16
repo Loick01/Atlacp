@@ -13,7 +13,7 @@ bool InteractionController::HasOrder()
     return m_currentIndexOrder < m_nrOrder;
 }
 
-void InteractionController::InitializeInteraction(std::vector<MapEntity*> entities, std::vector<MapElement*> elements)
+void InteractionController::InitializeInteraction(const std::vector<MapEntity*>& entities, const std::vector<MapElement*>& elements)
 {
     for (MapEntity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
         // Only one interaction at a time

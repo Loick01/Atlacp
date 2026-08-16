@@ -10,5 +10,5 @@ class BattleBehaviour
     public:
         BattleBehaviour() = default;
 
-        BattleActor* SelectTarget(const std::vector<BattleActor*> actors) const;
+        BattleActor* SelectTarget(const std::vector<BattleActor*>& actors) const;
 };

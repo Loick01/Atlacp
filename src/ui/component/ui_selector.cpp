@@ -40,7 +40,7 @@ void UiSelector::Reset()
     UpdateToOptionIndex();
 }
 
-void UiSelector::SetOptionKeys(std::vector<UiKey> optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue)
+void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue)
 {
     if (optionKeys.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_optionKeys");
     m_optionKeys = optionKeys;

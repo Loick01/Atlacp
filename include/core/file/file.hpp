@@ -59,6 +59,7 @@ class FileReader
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
         DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
         NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;
+        PlayCinematicOrder ReadPlayCinematicOrder(std::ifstream& input) const;
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;

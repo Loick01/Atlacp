@@ -16,7 +16,9 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadDialogTextOrder(input));
         } else if (s == "npc_goto") {
             orders.push_back(ReadNpcGoToOrder(input));
-        } else {
+        } else if (s == "play_cinematic") {
+            orders.push_back(ReadPlayCinematicOrder(input));
+        }else {
             throw std::runtime_error("Unknow order type : " + s);
         }       
     }
@@ -64,4 +66,11 @@ NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
     input >> targetPosition.y;
     input >> id;
     return NpcGoToOrder{targetPosition, id, false};
+}
+
+PlayCinematicOrder FileReader::ReadPlayCinematicOrder(std::ifstream& input) const
+{
+    std::string s;
+    input >> s;
+    return PlayCinematicOrder{s};
 }

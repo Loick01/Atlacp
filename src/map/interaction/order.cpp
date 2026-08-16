@@ -89,6 +89,12 @@ std::string OrderController::GetStringFromOrder(const NpcGoToOrder& o)
     return res;
 }
 
+std::string OrderController::GetStringFromOrder(const PlayCinematicOrder& o)
+{
+    std::string res = "play_cinematic " + o.cinematicFilepath;
+    return res;
+}
+
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = m_uiComponentController.CreateFrameText("boxText", "frame_text.uif");
@@ -117,6 +123,11 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     Notify(OrderEvent::StartNpcGoTo);
 }
 
+void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
+{
+    // TODO
+}
+
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("boxText"));
@@ -140,6 +151,11 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
     return o.isDone;
 }
 
+bool OrderController::UpdateOrder(const PlayCinematicOrder& o)
+{
+    return true;
+}
+
 void OrderController::StopOrder(const FrameTextOrder& o)
 {
     m_uiComponentController.CloseComponent("boxText");
@@ -157,4 +173,9 @@ void OrderController::StopOrder(const DialogTextOrder& o)
     m_uiComponentController.CloseComponent("dialogBox");
     m_uiComponentController.DeleteComponent("dialogBox");
     SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+}
+
+void OrderController::StopOrder(const PlayCinematicOrder& o)
+{
+    // TODO
 }

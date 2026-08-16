@@ -90,7 +90,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         FileReader& m_fileReader;
 
         std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
-        std::vector<BattleActor*> FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const;
+        std::vector<BattleActor*> FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         BattleActor* GetActorSelection();

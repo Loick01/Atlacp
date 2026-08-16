@@ -26,7 +26,7 @@ class UiSelector : public UiComponent
         int GetOptionIndex() const;
         bool VerticalNavigation(const Direction d, const bool isAction);
         void Reset();
-        void SetOptionKeys(std::vector<UiKey> optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue);
+        void SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue); // Rename (DefineOptionKeys) ?
         void Previous();
         void Next();
 };

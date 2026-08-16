@@ -46,7 +46,7 @@ std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) con
     }
 }
 
-std::vector<BattleActor*> BattleController::FilterActorsByLifeState(std::vector<BattleActor*> actors, const LifeState lifeState) const
+std::vector<BattleActor*> BattleController::FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const
 {
     std::vector<BattleActor*> result;
     for (BattleActor* b : actors) {
