@@ -55,6 +55,7 @@ class FileReader
         FontSize ReadFontSize(std::ifstream& input) const;
 
         // FileOrder
+        std::vector<Order> ReadOrders(std::ifstream& input) const;
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
         DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
         NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;

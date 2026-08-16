@@ -1,5 +1,28 @@
 #include "core/file/file.hpp"
 
+std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
+{
+    std::vector<Order> orders;
+    std::string s;
+    unsigned int nrOrder;
+
+    input >> nrOrder;
+    orders.reserve(nrOrder);
+    for (unsigned int i = 0 ; i < nrOrder ; i++) {
+        input >> s;
+        if (s == "frame_text") {
+            orders.push_back(ReadFrameTextOrder(input));
+        } else if (s == "dialog_text") {
+            orders.push_back(ReadDialogTextOrder(input));
+        } else if (s == "npc_goto") {
+            orders.push_back(ReadNpcGoToOrder(input));
+        } else {
+            throw std::runtime_error("Unknow order type : " + s);
+        }       
+    }
+    return orders;
+}
+
 FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const
 {
     std::vector<std::string> texts;

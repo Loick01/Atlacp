@@ -87,31 +87,14 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
 
     input >> count;
     for (unsigned int i = 0 ; i < count ; i++) {
-        DataNPC data;
-        unsigned int nrOrder;
+        DataNPC data; // NPC always spawn with random behaviour
 
-        input >> s;
-        data.sprite = s; 
+        input >> data.sprite; 
         input >> data.position.x; input >> data.position.y;
         input >> data.walkSpeed;
         input >> data.runSpeed;
-        input >> nrOrder;
         input >> data.id;
-        // NPC always spawn with random behaviour
-
-        for (unsigned int j = 0 ; j < nrOrder ; j++) {
-            // Merge with FileReader::ReadMapElement()
-            input >> s;
-            if (s == "frame_text") {
-                data.orders.push_back(ReadFrameTextOrder(input));
-            } else if (s == "dialog_text") {
-                data.orders.push_back(ReadDialogTextOrder(input));
-            } else if (s == "npc_goto") {
-                data.orders.push_back(ReadNpcGoToOrder(input));
-            } else {
-                throw std::runtime_error("Unknow order type : " + s);
-            }   
-        }
+        data.orders = ReadOrders(input);
 
         npcsData.push_back(data);
     }
@@ -198,25 +181,11 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 
 DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
 {
-    std::string s;
     DataMapElement e;
-    unsigned int nrOrder;
-    
+   
     input >> e.position.x;
     input >> e.position.y;
-    input >> nrOrder;
-    for (unsigned int i = 0 ; i < nrOrder ; i++) {
-        input >> s;
-        if (s == "frame_text") {
-            e.orders.push_back(ReadFrameTextOrder(input));
-        } else if (s == "dialog_text") {
-            e.orders.push_back(ReadDialogTextOrder(input));
-        } else if (s == "npc_goto") {
-            e.orders.push_back(ReadNpcGoToOrder(input));
-        } else {
-            throw std::runtime_error("Unknow order type : " + s);
-        }
-    }
+    e.orders = ReadOrders(input);
     
     return e;
 }

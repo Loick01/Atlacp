@@ -8,30 +8,30 @@ npc16 13 5 4. 6. 0 42
 npc16 14 5 4. 6. 0 43
 ###
 8
-npc16 8 5 4. 6. 1 50
+npc16 8 5 4. 6. 50 1
 dialog_text 1 ui/face/hunter_face It's dangerous to go alone ! Take this.;
 
-npc16_inverted 9 5 4. 6. 1 51
+npc16_inverted 9 5 4. 6. 51 1
 dialog_text 1 ui/face/knight_face You're gonna need a bigger boat.;
 
-npc16_inverted 10 5 4. 6. 1 52
+npc16_inverted 10 5 4. 6. 52 1
 dialog_text 2 ui/face/skeleton_face Before we start, has anyone lost a large roll of 20 dollar bills in a rubber band ?;Because we found the rubber band.;
 
-npc16_inverted 11 5 4. 6. 2 53
+npc16_inverted 11 5 4. 6. 53 2
 dialog_text 2 ui/face/villager_face My spawn position is 11, 5;Lorem ipsum dolor sit amet. Nam quas mollitia ea quidem modi est veritatis rerum sit unde reprehenderit qui porro dicta aut quasi itaque sed similique veritatis.;
 dialog_text 1 ui/face/villager_face Here's a second order.;
 
-npc16 12 5 4. 6. 2 54
+npc16 12 5 4. 6. 54 2
 dialog_text 1 ui/face/dog_face My spawn position is 12, 5;
 dialog_text 1 ui/face/villager_face (2-1) If I add line break to the text, they also appear in the generated image. That might be not what I want ?;
 
-npc16 13 5 4. 6. 1 55
+npc16 13 5 4. 6. 55 1
 dialog_text 2 ui/face/dragon_face My spawn position is 13, 5;IDs for NPC are structured as follows : the first number indicates the map the NPC belong, and the second one is their number (starting from 0);
 
-npc16_inverted 14 5 4. 6. 1 56
+npc16_inverted 14 5 4. 6. 56 1
 dialog_text 3 ui/face/eskimo_face One Ring to rule them all,;One Ring to find them,;One Ring to bring them all and in the darkness bind them.;
 
-npc16 6 5 4. 6. 2 57
+npc16 6 5 4. 6. 57 2
 dialog_text 1 ui/face/knight_face (1-1) My spawn position is 9, 5;
 dialog_text 1 ui/face/knight_face (2-1) Second text for this NPC Second text for this NPC Second text for this NPC Second text for this NPC;
 ###
