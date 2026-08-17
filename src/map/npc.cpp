@@ -18,6 +18,11 @@ const MapEntityBehaviour* NPC::GetMapBehaviour() const
     return m_behaviour.get();
 }
 
+MapEntityBehaviour* NPC::GetMapBehaviour()
+{
+    return m_behaviour.get();
+}
+
 void NPC::Update(const float deltaTime)
 {
     // Should test if m_behaviour != nullptr ?

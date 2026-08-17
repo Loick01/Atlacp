@@ -111,6 +111,7 @@ void MapGoToBehaviour::OnStopCase(MapEntity& entity)
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, false);
     }else{
+        Notify(UselessEvent::None);
         entity.Reset(entity.GetCurrentMovement().GetDirection());
     }
 }

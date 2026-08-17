@@ -2,6 +2,11 @@
 
 #include <functional>
 
+enum UselessEvent // Rename
+{
+    None
+};
+
 // https://trussel.ch/cpp/design%20patterns/2020/11/11/observer-simple.html
 template<typename Event>
 class Notifier

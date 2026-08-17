@@ -77,13 +77,14 @@ class OrderController
         void StopOrder(const NpcGoToOrder& o);
         void StopOrder(const PlayCinematicOrder& o);
 
+        void Execute(Order& order);
+        bool Update(const Order& order); // Rename IsOrderDone() ?
+        void Stop(const Order& order); // Rename ?
+
     public:
         OrderController(MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController);
         
         static std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()
-        void Execute(Order& order);
-        bool Update(const Order& order); // Rename IsOrderDone() ?
-        void Stop(const Order& order); // Rename ?
 
         void AddOrders(const std::vector<Order>& orders);
         bool NextOrder();

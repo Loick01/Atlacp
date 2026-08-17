@@ -115,6 +115,8 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     npc->SetState(EntityState::Free); // Should be in SetGoToBehaviour() ? 
     // It needs to be EntityState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
+    MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());
+    goTo->AddCallback([this](UselessEvent e){NextOrder();});
 }
 
 void OrderController::ExecuteOrder(const PlayCinematicOrder& o)

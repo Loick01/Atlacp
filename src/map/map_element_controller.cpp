@@ -90,10 +90,7 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             SortRenderedEntities();
             break;
         }
-        case EntityEvent::EnterInteraction : {
-            Notify(e);
-            break;
-        }
+        case EntityEvent::EnterInteraction :
         case EntityEvent::ContinueInteraction : {
             Notify(e);
             break;

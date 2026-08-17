@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "core/notifier.hpp"
 #include "core/random.hpp"
 #include "map/map_types.hpp" // MapPosition
 
@@ -49,7 +50,7 @@ class MapFollowBehaviour : public MapEntityBehaviour // Rename MapFollowEntitybe
         void OnStopCase(MapEntity& entity) override;
 };
 
-class MapGoToBehaviour : public MapEntityBehaviour
+class MapGoToBehaviour : public MapEntityBehaviour, public Notifier<UselessEvent> // Will Notify when reaching target for Order execution
 {
     // MapEntity with this behaviour will go to a given position, following the MapPosition inside m_path
     private:

@@ -17,6 +17,8 @@ class NPC : public MapEntity // Should have a Tilemap& member ?
             Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed, const unsigned int id);
 
         const MapEntityBehaviour* GetMapBehaviour() const;
+        MapEntityBehaviour* GetMapBehaviour();
+
         void Update(const float deltaTime) override;
         
         void SetRandomBehaviour();
