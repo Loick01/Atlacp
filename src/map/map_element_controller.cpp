@@ -6,10 +6,10 @@
 #include "core/file/file.hpp" // DataMapElement
 #include "tile/tilemap.hpp"
 
-MapElementController::MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,
+MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
 Camera& camera, Tilemap& tilemap):
     m_player(fileReader, tilemap, textureController, "map_entity/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file) ?
-    m_fileReader(fileReader), m_interactionController(orderController)
+    m_fileReader(fileReader)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
@@ -22,6 +22,16 @@ Camera& camera, Tilemap& tilemap):
 MapElementController::~MapElementController()
 {
     DeleteNPCs();
+}
+
+std::vector<MapEntity*>& MapElementController::GetEntities()
+{
+    return m_updatedEntities; // m_updatedEntities ?
+}
+
+std::vector<MapElement*>& MapElementController::GetElements()
+{
+    return m_mapElements;
 }
 
 MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
@@ -81,12 +91,11 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::EnterInteraction : {
-            m_interactionController.InitializeInteraction(m_updatedEntities, m_mapElements); // m_updatedEntities ?
-            m_interactionController.StartInteraction(); // Will check if a MapEntity/MapElement has been found
+            Notify(e);
             break;
         }
         case EntityEvent::ContinueInteraction : {
-            m_interactionController.ContinueInteraction();
+            Notify(e);
             break;
         }
         default:

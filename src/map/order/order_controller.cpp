@@ -1,23 +1,16 @@
 #include "map/order/order_controller.hpp"
 
+#include "map/map_element_controller.hpp"
+#include "map/npc.hpp" // NPC, MapBehaviour
 #include "sound/sound.hpp"
+#include "tile/tilemap.hpp"
 #include "ui/component/ui_component_controller.hpp"
 #include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_frame_text.hpp"
 
-OrderController::OrderController(UiComponentController& uiComponentController) :
-    m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
+OrderController::OrderController(MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController) :
+    m_mapElementController(mapElementController), m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
-
-const Order& OrderController::GetCurrentOrder() const
-{
-    return m_currentOrder;
-}
-
-Order& OrderController::GetCurrentOrder()
-{
-    return m_currentOrder;
-}
 
 std::string OrderController::GetStringDescription(const Order& order)
 {
@@ -118,9 +111,10 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 
 void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 {
-    // Because OrderController can't have MapElementController&, I have no choice to use 
-    // my Notifier class when it comes to order that modify MapEntity states
-    Notify(OrderEvent::StartNpcGoTo);
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    npc->SetState(EntityState::Free); // Should be in SetGoToBehaviour() ? 
+    // It needs to be EntityState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
+    npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
 }
 
 void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
@@ -139,20 +133,20 @@ bool OrderController::UpdateOrder(const DialogTextOrder& o)
 {
     UiDialogBox* dialogBox = dynamic_cast<UiDialogBox*>(m_uiComponentController.GetComponent("dialogBox"));
     SoundController::GetInstance().RequestChunk(BaseSfx::Open);
-    // Could the facepath be modified ?
-    
+    // I suppose the faceset will never be modified
     return !dialogBox->NextText();
 }
 
 bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 {
-    Notify(OrderEvent::QueryGoToIsDone); // GameMapScene will set NpcGoToOrder::isDone
-    // Thus InteractionController will continue with the next order only if the current GoToBehaviour is done (NPC has reached its target)
-    return o.isDone;
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+    const MapGoToBehaviour* goTo = dynamic_cast<const MapGoToBehaviour*>(npc->GetMapBehaviour());
+    return goTo->IsDone();
 }
 
 bool OrderController::UpdateOrder(const PlayCinematicOrder& o)
 {
+    // TODO 
     return true;
 }
 
@@ -165,7 +159,10 @@ void OrderController::StopOrder(const FrameTextOrder& o)
 
 void OrderController::StopOrder(const NpcGoToOrder& o)
 {
-    Notify(OrderEvent::StopNpcGoTo);
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+    npc->SetRandomBehaviour();
+    // The NPC has necessarily EntityState::Free when he reached his target position, so I don't think SetState(Free) is necessary. 
+    // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)

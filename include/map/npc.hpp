@@ -7,7 +7,7 @@
 
 // Forward declaration of Tilemap is already in map_entity.hpp
 
-class NPC : public MapEntity
+class NPC : public MapEntity // Should have a Tilemap& member ?
 {
     private:
         std::unique_ptr<MapEntityBehaviour> m_behaviour;

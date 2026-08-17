@@ -65,7 +65,7 @@ NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
     input >> targetPosition.x;
     input >> targetPosition.y;
     input >> id;
-    return NpcGoToOrder{targetPosition, id, false};
+    return NpcGoToOrder{targetPosition, id};
 }
 
 PlayCinematicOrder FileReader::ReadPlayCinematicOrder(std::ifstream& input) const

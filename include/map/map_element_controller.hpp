@@ -1,7 +1,7 @@
 #pragma once
 
-#include "map/interaction/interaction.hpp"
-#include "map/player.hpp"
+#include "core/notifier.hpp"
+#include "map/player.hpp" // EntityEvent comes from map_entity.hpp <- player.hpp
 
 struct DataMapElement;
 
@@ -10,7 +10,7 @@ class FileReader;
 class MapEntity;
 class Tilemap;
 
-class MapElementController
+class MapElementController : public Notifier<EntityEvent>
 {
     private:
         const FileReader& m_fileReader;
@@ -22,14 +22,15 @@ class MapElementController
         std::vector<MapEntity*> m_updatedEntities;
 
         std::vector<MapElement*> m_mapElements; // Remove ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
-
-        InteractionController m_interactionController;
     
     public:
-        MapElementController(const FileReader& fileReader, OrderController& orderController, TextureController& textureController,
+        MapElementController(const FileReader& fileReader, TextureController& textureController,
             Camera& camera, Tilemap& tilemap);
         ~MapElementController();
-
+        
+        std::vector<MapEntity*>& GetEntities();
+        std::vector<MapElement*>& GetElements();
+        
         MapEntity* GetMapEntityFromId(const unsigned int id);
 
         void Draw() const;

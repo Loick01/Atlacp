@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-#include "map/npc.hpp" // Remove ? (used only for OrderEvent::NpcGoTo)
 #include "sound/sound.hpp"
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
@@ -182,8 +181,8 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_orderController(m_context.uiComponentController), 
-    m_elementsController(m_context.fileReader, m_orderController, m_context.textureController, m_camera, m_tilemap),
+    TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap),
+    m_orderController(m_elementsController, m_tilemap, m_context.uiComponentController), m_interactionController(m_orderController),
     m_layersSplitIndex(1) 
 {
     m_context.eventController = std::make_unique<GameMapEventController>();
@@ -195,40 +194,24 @@ GameMapScene::GameMapScene(GameContext& context):
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
 
-    m_orderController.AddCallback([this](OrderEvent e){HandleOrderEvent(e);});
+    m_elementsController.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
 }
 
 
-void GameMapScene::HandleOrderEvent(const OrderEvent e)
+void GameMapScene::HandleEntityEvent(const EntityEvent e)
 {
-    switch(e) {
-        case OrderEvent::StartNpcGoTo : {
-            // Will not be here ? Some include in this file could be removed ?
-            const NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
-            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
-            npc->SetState(EntityState::Free); // Should be in SetGoToBehaviour() ? 
-            // It needs to be EntityState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
-            npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
+    switch (e) {
+        case EntityEvent::EnterInteraction : {
+            m_interactionController.InitializeInteraction(m_elementsController.GetEntities(), m_elementsController.GetElements());
+            m_interactionController.StartInteraction();
             break;
         }
-        case OrderEvent::QueryGoToIsDone : {
-            NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
-            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
-            const MapGoToBehaviour* goTo = dynamic_cast<const MapGoToBehaviour*>(npc->GetMapBehaviour());
-            o.isDone = goTo->IsDone();
+        case EntityEvent::ContinueInteraction : {
+            m_interactionController.ContinueInteraction();
             break;
         }
-        case OrderEvent::StopNpcGoTo : {
-            const NpcGoToOrder& o = std::get<NpcGoToOrder>(m_orderController.GetCurrentOrder());
-            NPC* npc = static_cast<NPC*>(m_elementsController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
-            npc->SetRandomBehaviour();
-            // OrderEvent::StopNpcGoTo is notified only when GoToBehaviour is done, so the NPC has necessarily EntityState::Free. I don't think SetState(Free) is necessary 
-            // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
-            break;
-        }
-        default : {
-            throw std::runtime_error("Unknown OrderEvent value");
-        }
+        default:
+            throw std::runtime_error("GameMapScene::HandleEntityEvent() : Unknown EntityEvent value");
     }
 }
 

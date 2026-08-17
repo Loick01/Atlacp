@@ -5,13 +5,7 @@
 #include <variant>
 #include <vector>
 
-#include "core/notifier.hpp"
 #include "map/map_types.hpp" // MapPosition
-
-enum class OrderEvent
-{
-    StartNpcGoTo, QueryGoToIsDone, StopNpcGoTo // Should be MapEntityGoTo (NPC + Player) ? Rename QueryGoToIsDone ?
-};
 
 struct FrameTextOrder { // Display text in a frame
     std::vector<std::string> texts;
@@ -27,7 +21,7 @@ struct NpcGoToOrder { // Gives MapGoToBehaviour to an NPC, which makes it move t
     // Should be the same Order for Player (for now only NPC)
     MapPosition targetPosition;
     unsigned int idNpc;
-    bool isDone;
+    // bool isDone; // Useless ?
 };
 
 struct PlayCinematicOrder { // Execute Orders defined in a file given by cinematicFilepath
@@ -45,17 +39,21 @@ using Order = std::variant<
     PlayCinematicOrder
 >;
 
+class MapElementController;
+class Tilemap;
 class UiComponentController;
 class UiDialogBox;
 class UiFrameText;
 
-class OrderController : public Notifier<OrderEvent>
+class OrderController
 {
     private:
         std::queue<Order> m_orders;
         Order m_currentOrder;
         bool m_hasCurrentOrder;
 
+        MapElementController& m_mapElementController;
+        Tilemap& m_tilemap; // Should be in NPC instead of here ?
         UiComponentController& m_uiComponentController;
 
         static std::string GetStringFromOrder(const FrameTextOrder& o);
@@ -80,10 +78,7 @@ class OrderController : public Notifier<OrderEvent>
         void StopOrder(const PlayCinematicOrder& o);
 
     public:
-        OrderController(UiComponentController& uiComponentController);
-
-        const Order& GetCurrentOrder() const;
-        Order& GetCurrentOrder();
+        OrderController(MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController);
         
         static std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()
         void Execute(Order& order);
