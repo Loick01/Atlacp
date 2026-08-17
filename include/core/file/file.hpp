@@ -7,7 +7,7 @@
 
 #include "animation/animation_types.hpp" // AnimationData
 #include "battle/battle_types.hpp" // DataBattleActor
-#include "map/interaction/order.hpp" // Order
+#include "map/order/order_controller.hpp" // Order
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
 

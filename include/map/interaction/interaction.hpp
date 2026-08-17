@@ -23,5 +23,5 @@ class InteractionController
         void InitializeInteraction(const std::vector<MapEntity*>& entities, const std::vector<MapElement*>& elements); // NPCs are not in elements (even if they could because MapEntity inherits from MapElement)
         void StartInteraction();
         void UpdateOrder();
-        void EndInteraction();
+        void EndInteraction(); // private ?
 };

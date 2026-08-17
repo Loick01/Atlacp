@@ -89,10 +89,6 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             m_interactionController.UpdateOrder();
             break;
         }
-        case EntityEvent::LeaveInteraction : { // Could not happen ?
-            m_interactionController.EndInteraction();
-            break;
-        }
         default:
             break;
     }

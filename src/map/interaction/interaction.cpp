@@ -1,6 +1,6 @@
 #include "map/interaction/interaction.hpp"
 
-#include "map/interaction/order.hpp"
+#include "map/order/order_controller.hpp"
 #include "map/map_element.hpp"
 #include "map/map_entity.hpp"
 

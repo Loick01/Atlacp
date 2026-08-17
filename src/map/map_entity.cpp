@@ -88,12 +88,6 @@ void MapEntity::ContinueInteraction()
     Notify(EntityEvent::ContinueInteraction);
 }
 
-void MapEntity::LeaveInteraction()
-{
-    // SetState(Free) should be here rather than inside InteractionController::EndInteraction() ?
-    Notify(EntityEvent::LeaveInteraction);
-}
-
 ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 {
     m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
