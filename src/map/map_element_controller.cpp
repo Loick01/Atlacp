@@ -86,7 +86,7 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::ContinueInteraction : {
-            m_interactionController.UpdateOrder();
+            m_interactionController.ContinueInteraction();
             break;
         }
         default:

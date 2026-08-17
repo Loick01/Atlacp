@@ -6,17 +6,17 @@
 #include "ui/component/ui_frame_text.hpp"
 
 OrderController::OrderController(UiComponentController& uiComponentController) :
-    m_uiComponentController(uiComponentController), m_currentOrder(nullptr)
+    m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
 const Order& OrderController::GetCurrentOrder() const
 {
-    return *m_currentOrder;
+    return m_currentOrder;
 }
 
 Order& OrderController::GetCurrentOrder()
 {
-    return *m_currentOrder;
+    return m_currentOrder;
 }
 
 std::string OrderController::GetStringDescription(const Order& order)
@@ -33,7 +33,7 @@ std::string OrderController::GetStringDescription(const Order& order)
 
 void OrderController::Execute(Order& order)
 {
-    m_currentOrder = &order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
+    m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
 
     std::visit(
         [this](const auto& o)
@@ -178,4 +178,36 @@ void OrderController::StopOrder(const DialogTextOrder& o)
 void OrderController::StopOrder(const PlayCinematicOrder& o)
 {
     // TODO
+}
+
+void OrderController::AddOrders(const std::vector<Order>& orders)
+{
+    for (const Order& o : orders)
+        m_orders.push(o);
+}
+
+bool OrderController::NextOrder()
+{
+    if (m_hasCurrentOrder) {
+        const bool isOrderDone = Update(m_currentOrder);
+        if (isOrderDone && m_orders.empty()) {
+            Stop(m_currentOrder);
+            m_hasCurrentOrder = false;
+            return false;
+        }
+
+        if (!isOrderDone)
+            return true;
+        
+        Stop(m_currentOrder);
+    }
+
+    if (m_orders.empty()) // Remove
+        throw std::runtime_error("OrderController::m_orders should not be empty when reaching here");
+    
+    m_currentOrder = m_orders.front();
+    m_hasCurrentOrder = true;
+    m_orders.pop();
+    Execute(m_currentOrder);
+    return true;
 }

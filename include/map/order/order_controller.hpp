@@ -1,5 +1,6 @@
 #pragma once
 
+#include <queue>
 #include <string>
 #include <variant>
 #include <vector>
@@ -51,8 +52,11 @@ class UiFrameText;
 class OrderController : public Notifier<OrderEvent>
 {
     private:
+        std::queue<Order> m_orders;
+        Order m_currentOrder;
+        bool m_hasCurrentOrder;
+
         UiComponentController& m_uiComponentController;
-        Order* m_currentOrder;
 
         static std::string GetStringFromOrder(const FrameTextOrder& o);
         static std::string GetStringFromOrder(const DialogTextOrder& o);
@@ -64,7 +68,7 @@ class OrderController : public Notifier<OrderEvent>
         void ExecuteOrder(const NpcGoToOrder& o);
         void ExecuteOrder(const PlayCinematicOrder& o);
 
-        // Rename
+        // Rename IsOrderDone() ? Return true if the Order is done
         bool UpdateOrder(const FrameTextOrder& o);
         bool UpdateOrder(const DialogTextOrder& o);
         bool UpdateOrder(const NpcGoToOrder& o);
@@ -83,6 +87,9 @@ class OrderController : public Notifier<OrderEvent>
         
         static std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()
         void Execute(Order& order);
-        bool Update(const Order& order); // Rename
+        bool Update(const Order& order); // Rename IsOrderDone() ?
         void Stop(const Order& order); // Rename ?
+
+        void AddOrders(const std::vector<Order>& orders);
+        bool NextOrder();
 };
