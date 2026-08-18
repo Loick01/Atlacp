@@ -283,8 +283,13 @@ void UiController::UpdateParent(const UiKey& key, const UiKey& parent)
     else
         ownedElement = previousParent->RemoveChild(key);
 
-     // WARNING : currentElement has the same UiParams as with 
-     // the previous parent, which may be not wanted
+    // BuildChild will call ComputeFinal() -> GenerateText() for UiTextElement.
+    // Same problem in UiController::UpdateParams()
+    if (dynamic_cast<UiTextElement*>(currentElement) != nullptr)
+        currentElement->DeleteTexture();
+
+    // WARNING : currentElement has the same UiParams as with 
+    // the previous parent, which may be not wanted
     newParent->BuildChild(std::move(ownedElement));
 }
 
@@ -328,6 +333,15 @@ void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
 void UiController::UpdateParams(const UiKey& key, const UiParams& params)
 {
     UiElement* element = GetElement(key);
+
+    // UiTextElement::ComputeFinal() (override from UiElement) calls GenerateText() -> LoadTextureFromText()
+    // That's why the previously generated texture must be deleted. It can't be done in GenerateText() or 
+    // ComputeFinal() because it would also happen when creating the UiTextElement, while it's only needed when
+    // updating it. There is the same problem in UiController::UpdateParent() (and maybe in some other functions
+    // in this class ?) 
+    if (dynamic_cast<UiTextElement*>(element) != nullptr)
+        element->DeleteTexture();
+
     element->SetParams(params);
     element->ComputeFinal();
     element->UpdatePosition();    
