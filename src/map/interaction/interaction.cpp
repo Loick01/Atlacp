@@ -51,6 +51,10 @@ void InteractionController::ContinueInteraction()
 {
     if (!m_orderController.NextOrder())
         EndInteraction();
+    // TODO : EndInteraction() can only be called after player input (because the only call is in ContinueInteraction)
+    // If the last Order of an interaction is for example a NpcGoTo, EndInteraction is not called and both entities 
+    // involved in the interaction can't be released + NextOrder could be called even if the Order queue (in 
+    // OrderController) is empty, which results in a runtime_error
 }
 
 void InteractionController::EndInteraction()

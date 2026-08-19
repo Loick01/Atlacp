@@ -78,12 +78,15 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
     MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());
     goTo->AddCallback([this](UselessEvent e){NextOrder();});
+    // If the NPC is already at its target, the path is empty. In this scenario, the behaviour will never Notify() and Order execution will be blocked
+    if (goTo->IsDone()) NextOrder();
 }
 
 void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
 {
     std::vector<Order> orders = m_fileReader.ReadCinematicFile(o.cinematicFilepath);
     AddOrders(orders);
+    NextOrder(); // Because UpdateOrder(PlayCinematicOrder) returns true, NextOrder() will directly execute the first order in cinematic file 
 }
 
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
@@ -110,8 +113,7 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 
 bool OrderController::UpdateOrder(const PlayCinematicOrder& o)
 {
-    // TODO 
-    return true;
+    return true; // Do nothing else
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)
@@ -138,7 +140,7 @@ void OrderController::StopOrder(const DialogTextOrder& o)
 
 void OrderController::StopOrder(const PlayCinematicOrder& o)
 {
-    // TODO
+    return; // ExecuteOrder(PlayCinematic) just fills the Order queue, so nothing to stop or delete here
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)

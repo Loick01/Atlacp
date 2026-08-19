@@ -1,2 +1,5 @@
-1
-frame_text Cine01 - This a text;
+4
+frame_text 2 Cine01 Order 1 Text 1; Cine01 Order 1 Text 2;
+frame_text 1 Cine01 Order 2 Text 1;
+npc_goto 17 4 53
+frame_text 1 Cine01 Order 4 Text 1;
