@@ -2,43 +2,11 @@
 
 #include <queue>
 #include <string>
-#include <variant>
 #include <vector>
 
-#include "map/map_types.hpp" // MapPosition
+#include "map/order/order.hpp"
 
-struct FrameTextOrder { // Display text in a frame
-    std::vector<std::string> texts;
-};
-
-// UiDialogBox inherits from UiFrameText
-struct DialogTextOrder { // Display text in a frame with a faceset
-    std::vector<std::string> texts;
-    std::string facePath;
-};
-
-struct NpcGoToOrder { // Gives MapGoToBehaviour to an NPC, which makes it move toward its target position
-    // Should be the same Order for Player (for now only NPC)
-    MapPosition targetPosition;
-    unsigned int idNpc;
-    // bool isDone; // Useless ?
-};
-
-struct PlayCinematicOrder { // Execute Orders defined in a file given by cinematicFilepath
-    std::string cinematicFilepath;
-};
-
-// TODO :
-// struct AddInventoryOrder {};
-// Orders about camera
-
-using Order = std::variant<
-    FrameTextOrder,
-    DialogTextOrder,
-    NpcGoToOrder,
-    PlayCinematicOrder
->;
-
+class FileReader;
 class MapElementController;
 class Tilemap;
 class UiComponentController;
@@ -52,14 +20,10 @@ class OrderController
         Order m_currentOrder;
         bool m_hasCurrentOrder;
 
+        FileReader& m_fileReader;
         MapElementController& m_mapElementController;
         Tilemap& m_tilemap; // Should be in NPC instead of here ?
         UiComponentController& m_uiComponentController;
-
-        static std::string GetStringFromOrder(const FrameTextOrder& o);
-        static std::string GetStringFromOrder(const DialogTextOrder& o);
-        static std::string GetStringFromOrder(const NpcGoToOrder& o);
-        static std::string GetStringFromOrder(const PlayCinematicOrder& o);
 
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
@@ -82,9 +46,7 @@ class OrderController
         void Stop(const Order& order); // Rename ?
 
     public:
-        OrderController(MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController);
-        
-        static std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()
+        OrderController(FileReader& fileReader, MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController);
 
         void AddOrders(const std::vector<Order>& orders);
         bool NextOrder();

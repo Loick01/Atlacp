@@ -7,7 +7,7 @@
 
 #include "animation/animation_types.hpp" // AnimationData
 #include "battle/battle_types.hpp" // DataBattleActor
-#include "map/order/order_controller.hpp" // Order
+#include "map/order/order.hpp" // Order
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
 
@@ -81,6 +81,9 @@ class FileReader
         AnimationData ReadAnimationFile(const std::string& animationFilepath) const;
 
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
+
+        // FileOrder
+        std::vector<Order> ReadCinematicFile(const std::string& cinematicFilepath) const;
         
         // FileIO
         std::string GetFileExtension(const std::string& filepath) const;

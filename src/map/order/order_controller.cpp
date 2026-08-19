@@ -1,5 +1,6 @@
 #include "map/order/order_controller.hpp"
 
+#include "core/file/file.hpp"
 #include "map/map_element_controller.hpp"
 #include "map/npc.hpp" // NPC, MapBehaviour
 #include "sound/sound.hpp"
@@ -8,21 +9,9 @@
 #include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_frame_text.hpp"
 
-OrderController::OrderController(MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController) :
-    m_mapElementController(mapElementController), m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
+OrderController::OrderController(FileReader& fileReader, MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController) :
+    m_fileReader(fileReader), m_mapElementController(mapElementController), m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
-
-std::string OrderController::GetStringDescription(const Order& order)
-{
-    return std::visit(
-        [](const auto& o)
-        {
-            return GetStringFromOrder(o);
-        },
-        order
-    );
-    throw std::runtime_error("No OrderController::GetStringFromOrder with this type of Order"); // ?
-}
 
 void OrderController::Execute(Order& order)
 {
@@ -60,34 +49,6 @@ void OrderController::Stop(const Order& order)
     );
 }
 
-std::string OrderController::GetStringFromOrder(const FrameTextOrder& o)
-{
-    std::string res = "frame_text " + std::to_string(o.texts.size()) + " ";
-    for (const std::string& s : o.texts)
-        res += s + ";";
-    return res;
-}
-
-std::string OrderController::GetStringFromOrder(const DialogTextOrder& o)
-{
-    std::string res = "dialog_text " + std::to_string(o.texts.size()) + " " + o.facePath + " ";
-    for (const std::string& s : o.texts)
-        res += s + ";";
-    return res;
-}
-
-std::string OrderController::GetStringFromOrder(const NpcGoToOrder& o)
-{
-    std::string res = "npc_goto " + std::to_string(o.targetPosition.x) + " " + std::to_string(o.targetPosition.y) + " " + std::to_string(o.idNpc);
-    return res;
-}
-
-std::string OrderController::GetStringFromOrder(const PlayCinematicOrder& o)
-{
-    std::string res = "play_cinematic " + o.cinematicFilepath;
-    return res;
-}
-
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = m_uiComponentController.CreateFrameText("boxText", "frame_text.uif");
@@ -121,7 +82,8 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 
 void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
 {
-    // TODO
+    std::vector<Order> orders = m_fileReader.ReadCinematicFile(o.cinematicFilepath);
+    AddOrders(orders);
 }
 
 bool OrderController::UpdateOrder(const FrameTextOrder& o)

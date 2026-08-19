@@ -1,5 +1,7 @@
 #include "core/file/file.hpp"
 
+#include "core/path.hpp"
+
 std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
 {
     std::vector<Order> orders;
@@ -23,6 +25,12 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
         }       
     }
     return orders;
+}
+
+std::vector<Order> FileReader::ReadCinematicFile(const std::string& cinematicFilepath) const
+{
+    std::ifstream cinematicInput = OpenFile(DataDirectory::Cinematic + cinematicFilepath);
+    return ReadOrders(cinematicInput);
 }
 
 FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const

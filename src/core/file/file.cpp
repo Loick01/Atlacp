@@ -2,25 +2,11 @@
 
 #include <unordered_map>
 
-#include "image/texture.hpp"
 #include "core/camera.hpp"
+#include "core/path.hpp"
+#include "image/texture.hpp"
 #include "tile/layer.hpp" // MapData, TileLayer
 #include "tile/tileset.hpp"
-
-namespace DataDirectory { // Should be in core/path.hpp ?
-    // Should be constexpr std::string_view ?
-    const std::string Animation = "../data/animation/";
-    const std::string Battle = "../data/battle/battles/";
-    const std::string Map = "../data/maps/";
-    const std::string Move = "../data/battle/moves/";
-    const std::string NPC = "../data/npcs/";
-    const std::string Tileset = "../data/tileset/";
-    const std::string UiFile = "../data/ui/file/";
-    const std::string UiTemplate = "../data/ui/template/";
-    const std::string World = "../data/worlds/";
-
-    const std::string BattleMoveDirectory = "battle_move/";
-}
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
 {
@@ -297,7 +283,7 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     for (const DataMapElement& me : mapData.elements) {
         output << me.position.x << " " << me.position.y << " " << me.orders.size() << "\n";
         for (const Order& o : me.orders)
-            output << OrderController::GetStringDescription(o) << "\n";
+            output << GetStringDescription(o) << "\n";
 
         output << "\n";
     }
