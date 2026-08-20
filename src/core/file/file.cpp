@@ -154,6 +154,7 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
     input >> data.startMap;
     input >> data.size.x;
     input >> data.size.y;
+    input >> data.directoryPath;
     input >> data.npcsFile;
     
     std::string s;

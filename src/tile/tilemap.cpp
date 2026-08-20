@@ -11,7 +11,7 @@ Tilemap::Tilemap(TextureController& textureController, const FileReader& fileRea
     m_camera.SetShouldCulling(m_shouldCulling);
     m_worldData = m_fileReader.ReadWorldFile(worldFilepath);
     m_currentMap = m_worldData.startMap; // The first loaded map is specified in the world file
-    LoadMap(m_worldData.maps[m_currentMap]); 
+    LoadMap(m_worldData.directoryPath + m_worldData.maps[m_currentMap]); 
 }
 
 const std::vector<DataMapElement>& Tilemap::GetElementsData() const
@@ -152,7 +152,7 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
             m_currentMap -= 1;
             break;
     }
-    LoadMap(m_worldData.maps[m_currentMap]);
+    LoadMap(m_worldData.directoryPath + m_worldData.maps[m_currentMap]);
     m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 
