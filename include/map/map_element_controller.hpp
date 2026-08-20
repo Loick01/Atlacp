@@ -25,7 +25,7 @@ class MapElementController : public Notifier<EntityEvent>
     
     public:
         MapElementController(const FileReader& fileReader, TextureController& textureController,
-            Camera& camera, Tilemap& tilemap);
+            Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath);
         ~MapElementController();
         
         std::vector<MapEntity*>& GetEntities();

@@ -46,6 +46,7 @@ class Tilemap : public Notifier<TilemapEvent>
         
         size_t GetLayerCount() const;
         size_t GetCurrentMapIndex() const;
+        size_t GetLayerSplitIndex() const;
         int GetTileSize() const;
         int GetGridSize() const; // Should be removed and use instead GetLayerSize()
         unsigned int GetTileIndex(const MapPosition p) const;

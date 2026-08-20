@@ -7,8 +7,8 @@
 #include "tile/tilemap.hpp"
 
 MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
-Camera& camera, Tilemap& tilemap):
-    m_player(fileReader, tilemap, textureController, "map_entity/character16", camera, 4.f, 6.f), // Will be removed (player's sprite path will be read from a file) ?
+Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath):
+    m_player(fileReader, tilemap, textureController, spritePlayerPath, camera, 4.f, 6.f),
     m_fileReader(fileReader)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});

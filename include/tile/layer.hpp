@@ -32,6 +32,7 @@ class TileLayer
 struct MapData // Should be in map/map_types.hpp ?
 {
     size_t layerCount;
+    size_t layerSplitIndex; // TODO : Later, each MapEntity will have its own value so that it can be drawn independently 
     std::vector<TileLayer> map; // Rename layers ?
     std::vector<bool> occupancyGrid; // Could be a TileLayer ?
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map

@@ -86,10 +86,6 @@ class GameMapScene : public TilemapScene
         OrderController m_orderController;
         InteractionController m_interactionController; // Was in MapElementController, but I moved it here because I need to remove #include "interaction.hpp" from map_element_controller.hpp
 
-        // In GameMapScene, TileLayer are rendered in two part : low_layer then high_layer. So I can draw entities between layers
-        // It might be better to have 2 dinstinct vectors of TileLayer in TilemapScene ?
-        const size_t m_layersSplitIndex; // Should not be const ?
-
         void HandleEntityEvent(const EntityEvent e);
         
     public:

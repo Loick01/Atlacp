@@ -154,7 +154,8 @@ WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
     input >> data.startMap;
     input >> data.size.x;
     input >> data.size.y;
-    input >> data.directoryPath;
+    input >> data.mapDirectoryPath;
+    input >> data.spritePlayerPath;
     input >> data.npcsFile;
     
     std::string s;
@@ -183,6 +184,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     unsigned int count = 0;
     
     input >> data.layerCount;
+    input >> data.layerSplitIndex;
     input >> data.size.x;
     input >> data.size.y;
     input >> data.spawnPosition.x;
