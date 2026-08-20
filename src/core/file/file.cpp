@@ -190,6 +190,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 
     input >> s; // Skip "tileset"
     input >> count;
+    input >> data.tilesetDirectoryPath;
     for (unsigned int i = 0 ; i < count ; i++) {
         input >> s;
         data.tilesets.push_back(s);

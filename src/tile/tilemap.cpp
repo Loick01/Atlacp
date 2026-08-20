@@ -168,7 +168,7 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_mapData.tilesets)
-        m_tileset.LoadTileset(m_fileReader, p);
+        m_tileset.LoadTileset(m_fileReader, m_mapData.tilesetDirectoryPath + p);
 
     const GridSize map_size = m_mapData.size;
     for (size_t j=0 ; j<map_size.y ; j++){

@@ -1,6 +1,6 @@
 3 16 12 10 10
 
-tileset 6
+tileset 6 tx/
 tx_grass
 tx_plant
 tx_props

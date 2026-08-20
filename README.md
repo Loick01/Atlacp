@@ -108,3 +108,5 @@ make
 - https://themightypalm.itch.io/mighty-battle-pack-addon
 - https://hydrogene.itch.io/high-quality-16-bit-music
 - https://free-game-assets.itch.io/nature-landscapes-free-pixel-art
+- https://immunitys.itch.io/fm32x32
+- https://seliel-the-shaper.itch.io/character-base

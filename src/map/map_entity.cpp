@@ -17,7 +17,7 @@ MapEntity::MapEntity(TextureController& textureController, const std::string& sp
     m_textureWidth = spriteSize.x;
     m_textureHeight = spriteSize.y;
     // Sprites could have a different size than tiles
-    SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, (m_textureHeight-tilemap.GetTileSize())/2});
+    SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, m_textureHeight-tilemap.GetTileSize()});
     Reset(initialDirection);
 }
 
