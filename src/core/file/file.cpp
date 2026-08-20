@@ -267,7 +267,7 @@ TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
-    std::ofstream output(DataDirectory::Map + "test");
+    std::ofstream output(DataDirectory::Map + mapFilepath);
     const int width = mapData.size.x;
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 
@@ -275,7 +275,8 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     output << layerCount << " " << width << " " << height << " " << mapData.spawnPosition.x << " " << mapData.spawnPosition.y << "\n\n";
     
     // Tilesets
-    output << "tileset " << mapData.tilesets.size() << "\n";
+    output << "tileset " << mapData.tilesets.size() << " ";
+    output << mapData.tilesetDirectoryPath << "\n";
     for (const TextureKey& k : mapData.tilesets) { // Tileset filepath must be write in order
         output << k << "\n"; // TilesetKey need definition for operator<<
     }

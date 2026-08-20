@@ -148,9 +148,10 @@ void EditorMapEventController::HandlePollEvents()
                     case SDL_SCANCODE_L:
                     {
                         std::string savefile;
+                        std::cout << "Enter the file name : \n";
                         std::cin >> savefile;
                         m_tilemap.SaveMap(savefile);
-                        std::cout << "Map saved in assets/maps/" << savefile << "\n"; // Will be removed (avoid cout, should be displayed in the Ui frame)
+                        std::cout << "Map saved as " << savefile << "\n"; // Will be removed (avoid cout, should be displayed in the Ui frame)
                         break;
                     }
                     case SDL_SCANCODE_W:

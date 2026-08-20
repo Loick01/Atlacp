@@ -187,5 +187,5 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
 
 void Tilemap::SaveMap(const std::string &mapFilepath) const
 {
-    m_fileReader.SaveMapFile(mapFilepath, m_mapData);
+    m_fileReader.SaveMapFile(m_worldData.directoryPath + mapFilepath, m_mapData);
 }

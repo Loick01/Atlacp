@@ -183,7 +183,8 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap),
     m_orderController(m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), m_interactionController(m_orderController),
-    m_layersSplitIndex(1) 
+    m_layersSplitIndex(1) // TODO : Split index will be read in file
+    // 1 for z_world, 2 for fm_world
 {
     m_context.eventController = std::make_unique<GameMapEventController>();
     

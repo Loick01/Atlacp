@@ -17,13 +17,14 @@ void OrderController::Execute(Order& order)
 {
     m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
 
-    std::visit(
+    return std::visit( // Use return (even if void) to exit the function before reaching throw runtime_error
         [this](const auto& o)
         {
             ExecuteOrder(o);
         },
         order
     );
+    throw std::runtime_error("No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder 
 }
 
 bool OrderController::Update(const Order& order)
@@ -35,18 +36,19 @@ bool OrderController::Update(const Order& order)
         },
         order
     );
-    throw std::runtime_error("No OrderController::UpdateOrder with this type of Order"); // ?
+    UpdateOrder(order); // Call UpdateOrder(const Order&)
 }
 
 void OrderController::Stop(const Order& order)
 {
-    std::visit(
+    return std::visit( // Use return (even if void) to exit the function before calling StopOrder(const Order&)
         [this](const auto& o)
         {
             StopOrder(o);
         },
         order
     );
+    StopOrder(order); // Call StopOrder(const Order&)
 }
 
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
@@ -86,7 +88,14 @@ void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
 {
     std::vector<Order> orders = m_fileReader.ReadCinematicFile(o.cinematicFilepath);
     AddOrders(orders);
-    NextOrder(); // Because UpdateOrder(PlayCinematicOrder) returns true, NextOrder() will directly execute the first order in cinematic file 
+    NextOrder(); 
+    // Because UpdateOrder(PlayCinematicOrder) does not exist, it will use UpdateOrder(Order) that returns true
+    // So NextOrder() will directly execute the first order in cinematic file 
+}
+
+bool OrderController::UpdateOrder(const Order& o)
+{
+    return true; // Do nothing else
 }
 
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
@@ -111,9 +120,9 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
     return goTo->IsDone();
 }
 
-bool OrderController::UpdateOrder(const PlayCinematicOrder& o)
+void OrderController::StopOrder(const Order& o)
 {
-    return true; // Do nothing else
+    return; // When there is nothing to stop or delete
 }
 
 void OrderController::StopOrder(const FrameTextOrder& o)
@@ -136,11 +145,6 @@ void OrderController::StopOrder(const DialogTextOrder& o)
     m_uiComponentController.CloseComponent("dialogBox");
     m_uiComponentController.DeleteComponent("dialogBox");
     SoundController::GetInstance().RequestChunk(BaseSfx::Close);
-}
-
-void OrderController::StopOrder(const PlayCinematicOrder& o)
-{
-    return; // ExecuteOrder(PlayCinematic) just fills the Order queue, so nothing to stop or delete here
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)
