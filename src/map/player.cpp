@@ -52,7 +52,6 @@ void Player::Update(const float deltaTime)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
             const Direction direction = m_eventState.mapDirection;
             switch(direction){
                 case Direction::None:
@@ -66,12 +65,21 @@ void Player::Update(const float deltaTime)
                     LookMe(); // Same reason than case EntityState::Free
                     break;
             }
+            Notify(EntityEvent::HasMoved);
             break;
         }
 
         case EntityState::Interacting: {
             if (m_eventState.isInteracting){
                 ContinueInteraction();
+                break;
+            }
+            break;
+        }
+
+        case EntityState::Triggering: {
+            if (m_eventState.isInteracting){
+                ContinueTrigger();
                 break;
             }
             break;

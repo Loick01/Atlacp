@@ -41,7 +41,7 @@ void NPC::Update(const float deltaTime)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            Notify(EntityEvent::SortEntity); // Will sort the entities rendered by the Scene
+            // Notify(EntityEvent::HasMoved); For now I disable triggers for NPCs
             m_behaviour->OnStopCase(*this);
             break;
         }

@@ -35,6 +35,7 @@ class Tilemap : public Notifier<TilemapEvent>
             const std::string& worldFilepath, Camera& camera, const bool shouldCulling);
         
         const std::vector<DataMapElement>& GetElementsData() const;
+        const std::vector<DataMapElement>& GetTriggersData() const;
         const std::vector<TileLayer>& GetLayers() const;
         const std::vector<bool>& GetOccupancyGrid() const;
         const WorldData& GetWorldData() const;

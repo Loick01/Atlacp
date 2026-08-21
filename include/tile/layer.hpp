@@ -37,6 +37,7 @@ struct MapData // Should be in map/map_types.hpp ?
     std::vector<bool> occupancyGrid; // Could be a TileLayer ?
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     std::vector<DataMapElement> elements;
+    std::vector<DataMapElement> triggers;
     MapPosition spawnPosition; // Position where the player will start when loading the associated map (-1 if no specific position)
     GridSize size; // Should not be here, and only in TileLayer ?
     std::string tilesetDirectoryPath;

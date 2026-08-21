@@ -19,6 +19,11 @@ const std::vector<DataMapElement>& Tilemap::GetElementsData() const
     return m_mapData.elements;
 }
 
+const std::vector<DataMapElement>& Tilemap::GetTriggersData() const
+{
+    return m_mapData.triggers;
+}
+
 const std::vector<TileLayer>& Tilemap::GetLayers() const
 {
     return m_mapData.map;

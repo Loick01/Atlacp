@@ -182,13 +182,15 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 
 GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
-    m_orderController(m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), m_interactionController(m_orderController)
+    m_orderController(m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), 
+    m_interactionController(m_orderController), m_triggerController(m_orderController)
 {
     m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
     m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
+    m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
     
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
@@ -200,13 +202,23 @@ GameMapScene::GameMapScene(GameContext& context):
 void GameMapScene::HandleEntityEvent(const EntityEvent e)
 {
     switch (e) {
+        case EntityEvent::HasMoved : {
+            MapEntity* currentEntity = m_elementsController.GetCurrentMapEntityUpdated();
+            m_triggerController.LookForTrigger(currentEntity);
+            break;
+        }
         case EntityEvent::EnterInteraction : {
+            // Should use GetCurrentMapEntityUpdated() to get interacting entity ?
             m_interactionController.InitializeInteraction(m_elementsController.GetEntities(), m_elementsController.GetElements());
             m_interactionController.StartInteraction();
             break;
         }
         case EntityEvent::ContinueInteraction : {
             m_interactionController.ContinueInteraction();
+            break;
+        }
+        case EntityEvent::ContinueTrigger : {
+            m_triggerController.ContinueTrigger();
             break;
         }
         default:
@@ -252,6 +264,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
             m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
             m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
+            m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
             break;
         }
         default:

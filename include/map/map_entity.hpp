@@ -12,7 +12,7 @@ class Tilemap;
 
 enum class EntityEvent
 {
-    SortEntity, EnterInteraction, ContinueInteraction
+    HasMoved, EnterInteraction, ContinueInteraction, ContinueTrigger // Should merge ContinueInteraction with ContinueTrigger ?
 };
 
 class MapEntity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>
@@ -46,6 +46,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 
         void OrderInteraction(const Direction direction);
         void ContinueInteraction();
+        void ContinueTrigger();
         // void LeaveInteraction(); --> Notify(EntityEvent::LeaveInteraction);
 
         EntityState GetState() const;

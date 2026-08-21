@@ -3,9 +3,9 @@
 #include "map/map_types.hpp" // MapPosition, Direction
 #include "image/image_types.hpp" // ScenePosition
 
-enum class EntityState // Should be called MovementState (and I should add AnimationState ?). In any case, do not keep EntityState !!!
+enum class EntityState
 {
-    Free, Moving, OnStop, Interacting
+    Free, Moving, OnStop, Interacting, Triggering // Interacting and Triggering should be merged ?
 };
 
 class MapMovement

@@ -9,7 +9,7 @@
 MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
 Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath):
     m_player(fileReader, tilemap, textureController, spritePlayerPath, camera, 4.f, 6.f),
-    m_fileReader(fileReader)
+    m_fileReader(fileReader), m_currentMapEntityUpdated(nullptr)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
@@ -46,6 +46,11 @@ MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
     throw std::runtime_error("This MapEntity was not found in MapElementController::m_updatedEntities : " + id);
 }
 
+MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
+{
+    return m_currentMapEntityUpdated;
+}
+
 void MapElementController::DeleteNPCs()
 {
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
@@ -68,7 +73,8 @@ void MapElementController::Update(const GameMapEventState& playerEventState, con
     m_player.SetEventState(playerEventState);
     
     for (MapEntity* e : m_updatedEntities) {
-        if (e == nullptr) break; // I don't like that
+        // if (e == nullptr) break; // ???
+        m_currentMapEntityUpdated = e;
         e->Update(deltaTime);
     }
 }
@@ -86,12 +92,14 @@ void MapElementController::SortRenderedEntities()
 void MapElementController::HandleEntityEvent(const EntityEvent e)
 {
     switch(e) {
-        case EntityEvent::SortEntity : {
+        case EntityEvent::HasMoved : {
             SortRenderedEntities();
+            Notify(e);
             break;
         }
         case EntityEvent::EnterInteraction :
-        case EntityEvent::ContinueInteraction : {
+        case EntityEvent::ContinueInteraction :
+        case EntityEvent::ContinueTrigger : {
             Notify(e);
             break;
         }
@@ -143,9 +151,9 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
     SortRenderedEntities();
 }
 
-void MapElementController::LoadElements(const std::vector<DataMapElement>& elements, Tilemap& tilemap)
+void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap)
 {
-    for (const DataMapElement& data : elements) {
+    for (const DataMapElement& data : elementsData) {
         MapElement* e = new MapElement(tilemap); // TODO
         e->SetMapPosition(data.position);
         e->SetOrders(data.orders);

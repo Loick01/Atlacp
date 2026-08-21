@@ -88,6 +88,11 @@ void MapEntity::ContinueInteraction()
     Notify(EntityEvent::ContinueInteraction);
 }
 
+void MapEntity::ContinueTrigger()
+{
+    Notify(EntityEvent::ContinueTrigger);
+}
+
 ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 {
     m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);

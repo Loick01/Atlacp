@@ -9,6 +9,7 @@
 #include "image/font.hpp"
 #include "image/texture.hpp"
 #include "map/interaction/interaction.hpp"
+#include "map/interaction/trigger.hpp"
 #include "map/map_element_controller.hpp"
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
@@ -85,7 +86,8 @@ class GameMapScene : public TilemapScene
         MapElementController m_elementsController; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
         OrderController m_orderController;
         InteractionController m_interactionController; // Was in MapElementController, but I moved it here because I need to remove #include "interaction.hpp" from map_element_controller.hpp
-
+        TriggerController m_triggerController;
+        
         void HandleEntityEvent(const EntityEvent e);
         
     public:

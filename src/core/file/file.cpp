@@ -204,6 +204,13 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
         const DataMapElement e = ReadMapElement(input);
         data.elements.push_back(e);
     }
+
+    input >> s; // Skip "trigger"
+    input >> count;
+    for (unsigned int i = 0 ; i < count ; i++) {
+        const DataMapElement e = ReadMapElement(input); // Trigger are read in the same way as MapElement
+        data.triggers.push_back(e);
+    }
 }
 
 MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
@@ -274,7 +281,7 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 
 
-    output << layerCount << " " << width << " " << height << " " << mapData.spawnPosition.x << " " << mapData.spawnPosition.y << "\n\n";
+    output << layerCount << " " << mapData.layerSplitIndex << " " << width << " " << height << " " << mapData.spawnPosition.x << " " << mapData.spawnPosition.y << "\n\n";
     
     // Tilesets
     output << "tileset " << mapData.tilesets.size() << " ";
@@ -292,7 +299,17 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
 
         output << "\n";
     }
-    
+
+    // Trigger (with Orders)
+    output << "trigger " << mapData.triggers.size() << "\n\n";
+    for (const DataMapElement& me : mapData.triggers) {
+        output << me.position.x << " " << me.position.y << " " << me.orders.size() << "\n";
+        for (const Order& o : me.orders)
+            output << GetStringDescription(o) << "\n";
+
+        output << "\n";
+    }
+
     // Map layers
     for (unsigned int layer=0 ; layer < layerCount ; layer++){
         const std::vector<Tile> layer_tiles = mapData.map[layer].GetTiles();
