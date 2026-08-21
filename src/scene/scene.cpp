@@ -204,6 +204,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
     switch (e) {
         case EntityEvent::HasMoved : {
             MapEntity* currentEntity = m_elementsController.GetCurrentMapEntityUpdated();
+            if (currentEntity->GetId() != 0) break; // Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
             m_triggerController.LookForTrigger(currentEntity);
             break;
         }

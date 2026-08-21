@@ -41,7 +41,7 @@ void NPC::Update(const float deltaTime)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            // Notify(EntityEvent::HasMoved); For now I disable triggers for NPCs
+            Notify(EntityEvent::HasMoved); // Some triggers should be restricted for NPC (for example when a trigger start a cinematic)
             m_behaviour->OnStopCase(*this);
             break;
         }

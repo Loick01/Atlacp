@@ -8,9 +8,7 @@
 
 TriggerController::TriggerController(OrderController& orderController): 
     m_orderController(orderController), m_triggeringEntity(nullptr)
-{
-    
-}
+{}
 
 void TriggerController::SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap)
 {

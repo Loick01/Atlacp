@@ -52,7 +52,14 @@ void Player::Update(const float deltaTime)
 
         case EntityState::OnStop: // Enter this case at the end of the current movement
         {
-            const Direction direction = m_eventState.mapDirection;
+            Direction direction = m_eventState.mapDirection;
+            
+            Notify(EntityEvent::HasMoved); // Will set m_state to Triggering if the MapEntity is on a trigger tile
+            if (GetState() == EntityState::Triggering) {
+                SetOrientation(GetCurrentMovement().GetDirection()); // Reset the animation
+                break;
+            }
+
             switch(direction){
                 case Direction::None:
                 {
@@ -65,7 +72,6 @@ void Player::Update(const float deltaTime)
                     LookMe(); // Same reason than case EntityState::Free
                     break;
             }
-            Notify(EntityEvent::HasMoved);
             break;
         }
 
