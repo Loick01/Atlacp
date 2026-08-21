@@ -94,6 +94,13 @@ make
       <br>
       <strong>Orders : Frame Text, DialogText and NpcGoTo</strong>
     </td>
+    <td align="center">
+      <a href="https://www.youtube.com/watch?v=_pFn2lPQ8Gs">
+        <img src="https://img.youtube.com/vi/_pFn2lPQ8Gs/maxresdefault.jpg" height="200">
+      </a>
+      <br>
+      <strong>Triggers and PlayCinematicOrder</strong>
+    </td>
   </tr>
 </table>
 
