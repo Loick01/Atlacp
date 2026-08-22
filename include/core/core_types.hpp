@@ -85,3 +85,19 @@ enum class Direction
     Left, // 3
     None
 };
+
+inline std::string GetStringFromDirection(const Direction d) // Should be in file_utils.cpp ?
+{
+    switch (d) {
+        case Direction::Up :
+            return "up";
+        case Direction::Down :
+            return "down";
+        case Direction::Right :
+            return "right";
+        case Direction::Left :
+            return "left";
+        default:   
+            throw std::runtime_error("Unknown values as Direction");
+    }
+}

@@ -64,7 +64,7 @@ struct NpcIdleOrder { // Gives MapIdleBehaviour to an NPC, which makes it look i
 
     std::string GetString() const
     {
-        std::string res = "npc_idle " + std::to_string((int)direction) + " " + std::to_string(idNpc); // TODO : Direction should not be written that way
+        std::string res = "npc_idle " + GetStringFromDirection(direction) + " " + std::to_string(idNpc); // TODO : Direction should not be written that way
         return res;
     }
 };

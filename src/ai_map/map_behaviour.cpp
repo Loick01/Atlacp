@@ -48,7 +48,7 @@ MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const Ma
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
     const EntityState trackedEntityState = m_trackedEntity->GetState();
-    if (trackedEntityState != EntityState::Free && trackedEntityState != EntityState::Triggering && trackedEntityState != EntityState::Interacting){
+    if (trackedEntityState != EntityState::Free && trackedEntityState != EntityState::Triggering && trackedEntityState != EntityState::Interacting){ // ?
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
