@@ -23,4 +23,6 @@ class NPC : public MapEntity // Should have a Tilemap& member ?
         
         void SetRandomBehaviour();
         void SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target);
+        void SetFollowBehaviour(const MapEntity* trackedEntity);
+        void SetIdleBehaviour(const Direction direction);
 };

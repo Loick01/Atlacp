@@ -78,3 +78,15 @@ FontSize FileReader::ReadFontSize(std::ifstream& input) const
 
     return ReadEnum(input, fontSizes, "FontSize");
 }
+
+Direction FileReader::ReadDirection(std::ifstream& input) const
+{
+    static const std::unordered_map<std::string, Direction> directions = {
+        {"up", Direction::Up},
+        {"down", Direction::Down},
+        {"right", Direction::Right},
+        {"left", Direction::Left}
+    };
+
+    return ReadEnum(input, directions, "Direction");
+}

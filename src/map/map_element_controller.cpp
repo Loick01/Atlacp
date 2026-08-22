@@ -36,7 +36,7 @@ std::vector<MapElement*>& MapElementController::GetElements()
 
 MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
 {
-    if (id == 0) throw std::runtime_error("MapElementController::GetMapEntity() --> Do not use id = 0, this is reserved for the player"); // Will be removed
+    // if (id == 0) throw std::runtime_error("MapElementController::GetMapEntity() --> Do not use id = 0, this is reserved for the player"); // Will be removed
     
     // Should return exclusively NPC ? For now GetMapEntity is used only for NpcGoToOrder, but maybe I will change it to EntityGoToOrder
     for (MapEntity* m : m_updatedEntities) {

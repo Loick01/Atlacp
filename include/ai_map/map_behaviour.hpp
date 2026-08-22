@@ -66,3 +66,16 @@ class MapGoToBehaviour : public MapEntityBehaviour, public Notifier<UselessEvent
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;
 };
+
+class MapIdleBehaviour : public MapEntityBehaviour
+{
+    private:
+        Direction m_direction;
+
+    public:
+        MapIdleBehaviour(MapEntity& entity, const Direction direction);
+        // These three functions in MapBehaviour should not be pure virtual ?
+        void FreeCase(MapEntity& entity, const float deltaTime) override;
+        void MovingCase(MapEntity& entity, const float deltaTime) override;
+        void OnStopCase(MapEntity& entity) override;
+};

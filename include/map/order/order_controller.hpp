@@ -28,6 +28,8 @@ class OrderController
         void ExecuteOrder(const FrameTextOrder& o);
         void ExecuteOrder(const DialogTextOrder& o);
         void ExecuteOrder(const NpcGoToOrder& o);
+        void ExecuteOrder(const NpcFollowOrder& o);
+        void ExecuteOrder(const NpcIdleOrder& o);
         void ExecuteOrder(const PlayCinematicOrder& o);
 
         // Rename IsOrderDone() (return true if the Order is done) ?

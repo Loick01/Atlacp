@@ -42,12 +42,13 @@ MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const Ma
         throw std::invalid_argument("MapFollowBehaviour should not be used if tracked entity is faster than follower\n");
 
     if (followerEntity->GetMapPosition().GetManhattanDistance(trackedEntity->GetMapPosition()) != 1)
-        throw std::invalid_argument("MapFollowBehaviour can start only when the tracked entity is next to the follower\n"); // Will use follow with pathfinding
+        throw std::invalid_argument("MapFollowBehaviour can start only when the tracked entity is next to the follower\n"); // Will use follow with pathfinding in this case
 }
 
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
-    if (m_trackedEntity->GetState() != EntityState::Free){
+    const EntityState trackedEntityState = m_trackedEntity->GetState();
+    if (trackedEntityState != EntityState::Free && trackedEntityState != EntityState::Triggering && trackedEntityState != EntityState::Interacting){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
@@ -115,3 +116,18 @@ void MapGoToBehaviour::OnStopCase(MapEntity& entity)
         entity.Reset(entity.GetCurrentMovement().GetDirection());
     }
 }
+
+MapIdleBehaviour::MapIdleBehaviour(MapEntity& entity, const Direction direction):
+    m_direction(direction)
+{
+    entity.SetOrientation(m_direction);
+}
+
+void MapIdleBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
+{}
+
+void MapIdleBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
+{}
+
+void MapIdleBehaviour::OnStopCase(MapEntity& entity)
+{}

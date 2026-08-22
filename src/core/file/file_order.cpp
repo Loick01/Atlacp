@@ -18,6 +18,10 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadDialogTextOrder(input));
         } else if (s == "npc_goto") {
             orders.push_back(ReadNpcGoToOrder(input));
+        } else if (s == "npc_follow") {
+            orders.push_back(ReadNpcFollowOrder(input));
+        } else if (s == "npc_idle") {
+            orders.push_back(ReadNpcIdleOrder(input));
         } else if (s == "play_cinematic") {
             orders.push_back(ReadPlayCinematicOrder(input));
         }else {
@@ -74,6 +78,24 @@ NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
     input >> targetPosition.y;
     input >> id;
     return NpcGoToOrder{targetPosition, id};
+}
+
+NpcFollowOrder FileReader::ReadNpcFollowOrder(std::ifstream& input) const
+{
+    unsigned int idLeader;
+    unsigned int idFollower;
+    input >> idLeader;
+    input >> idFollower;
+    return NpcFollowOrder{idLeader, idFollower};
+}
+
+NpcIdleOrder FileReader::ReadNpcIdleOrder(std::ifstream& input) const
+{
+    Direction direction;
+    unsigned int id;
+    direction = ReadDirection(input);
+    input >> id;
+    return NpcIdleOrder{direction, id};
 }
 
 PlayCinematicOrder FileReader::ReadPlayCinematicOrder(std::ifstream& input) const

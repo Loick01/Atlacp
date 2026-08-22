@@ -9,18 +9,24 @@ element 2
 9 7 1
 frame_text 1 There is a trigger just on the left of this sign. Try it !;
 
-18 11 1
+18 11 4
 frame_text 1 Here is an example of a PlayCinematicOrder, with its Orders defined in a separate file;
+npc_goto 17 12 42
+npc_follow 0 42
+frame_text 1 Npc 42 will follow you; 
 
 trigger 2
 
-8 7 1
+8 7 4
 frame_text 4 
 This is an Order executed by a trigger;
 It can be any of the Orders, just like those used for MapElement or MapEntity interactions;
 Just make the player walk onto a tile where a trigger is defined, and it will execute the 
 list of Orders associated with that trigger;
 Here is a screenshot of how a trigger is defined in a data file;
+npc_goto 8 8 41
+npc_idle down 41
+frame_text 1 Npc 41 will not move;
 
 25 9 1
 play_cinematic cine02

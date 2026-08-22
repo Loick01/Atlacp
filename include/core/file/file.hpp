@@ -53,12 +53,15 @@ class FileReader
         MoveType ReadMoveType(std::ifstream& input) const; // Rename ?
         MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
         FontSize ReadFontSize(std::ifstream& input) const;
+        Direction ReadDirection(std::ifstream& input) const;
 
         // FileOrder
         std::vector<Order> ReadOrders(std::ifstream& input) const;
         FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
         DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
         NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;
+        NpcFollowOrder ReadNpcFollowOrder(std::ifstream& input) const;
+        NpcIdleOrder ReadNpcIdleOrder(std::ifstream& input) const;
         PlayCinematicOrder ReadPlayCinematicOrder(std::ifstream& input) const;
         
         // File

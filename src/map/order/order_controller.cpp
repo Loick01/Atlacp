@@ -84,6 +84,23 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     if (goTo->IsDone()) NextOrder();
 }
 
+void OrderController::ExecuteOrder(const NpcFollowOrder& o)
+{
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    MapEntity* trackedEntity = m_mapElementController.GetMapEntityFromId(o.idTrackedEntity);
+    npc->SetState(EntityState::Free); // Useless ?
+    npc->SetFollowBehaviour(trackedEntity);
+    NextOrder();
+}
+
+void OrderController::ExecuteOrder(const NpcIdleOrder& o)
+{
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    npc->SetState(EntityState::Free); // Useless ?
+    npc->SetIdleBehaviour(o.direction);
+    NextOrder();
+}
+
 void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
 {
     std::vector<Order> orders = m_fileReader.ReadCinematicFile(o.cinematicFilepath);

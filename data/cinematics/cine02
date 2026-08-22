@@ -1,4 +1,5 @@
-3
+4
 dialog_text 1 ui/face/villager_face Wait for me !;
 npc_goto 24 9 40
+npc_follow 0 40
 dialog_text 2 ui/face/villager_face Phew...;Alright ! We can go;
