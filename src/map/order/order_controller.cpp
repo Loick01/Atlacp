@@ -1,5 +1,6 @@
 #include "map/order/order_controller.hpp"
 
+#include "core/camera.hpp"
 #include "core/file/file.hpp"
 #include "map/map_element_controller.hpp"
 #include "map/npc.hpp" // NPC, MapBehaviour
@@ -9,8 +10,10 @@
 #include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_frame_text.hpp"
 
-OrderController::OrderController(FileReader& fileReader, MapElementController& mapElementController, Tilemap& tilemap, UiComponentController& uiComponentController) :
-    m_fileReader(fileReader), m_mapElementController(mapElementController), m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
+OrderController::OrderController(Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
+Tilemap& tilemap, UiComponentController& uiComponentController) :
+    m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
+    m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
 void OrderController::Execute(Order& order)
@@ -110,6 +113,13 @@ void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
     // So NextOrder() will directly execute the first order in cinematic file 
 }
 
+void OrderController::ExecuteOrder(const CameraSlideToOrder& o)
+{
+    m_camera.StartSlidingTo(o.endPosition);
+    m_camera.AddCallback([this](UselessEvent e){NextOrder();});
+    // if (m_camera.IsDone()) NextOrder(); // I think it's useless, even if the camera is already at its targeted position, Notify() will be called anyway // Remove
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else
@@ -137,6 +147,11 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
     return goTo->IsDone();
 }
 
+bool OrderController::UpdateOrder(const CameraSlideToOrder& o)
+{
+    return m_camera.GetAnimState() == CameraAnimState::Done;
+}
+
 void OrderController::StopOrder(const Order& o)
 {
     return; // When there is nothing to stop or delete
@@ -149,6 +164,13 @@ void OrderController::StopOrder(const FrameTextOrder& o)
     SoundController::GetInstance().RequestChunk(BaseSfx::Close);
 }
 
+void OrderController::StopOrder(const DialogTextOrder& o)
+{
+    m_uiComponentController.CloseComponent("dialogBox");
+    m_uiComponentController.DeleteComponent("dialogBox");
+    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+}
+
 void OrderController::StopOrder(const NpcGoToOrder& o)
 {
     NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
@@ -157,11 +179,9 @@ void OrderController::StopOrder(const NpcGoToOrder& o)
     // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
 }
 
-void OrderController::StopOrder(const DialogTextOrder& o)
+void OrderController::StopOrder(const CameraSlideToOrder& o) // Could be removed and use only CameraAnimState::Free/Sliding ?
 {
-    m_uiComponentController.CloseComponent("dialogBox");
-    m_uiComponentController.DeleteComponent("dialogBox");
-    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+    m_camera.SetAnimState(CameraAnimState::Free);
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)

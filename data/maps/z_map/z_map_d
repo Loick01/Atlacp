@@ -6,7 +6,8 @@ zoria_2
 
 element 2
 
-9 7 1
+9 7 2
+camera_slide_to 2000 1500
 frame_text 1 There is a trigger just on the left of this sign. Try it !;
 
 18 11 4

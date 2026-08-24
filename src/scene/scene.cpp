@@ -182,7 +182,7 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 
 GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
-    m_orderController(m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), 
+    m_orderController(m_camera, m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), 
     m_interactionController(m_orderController), m_triggerController(m_orderController)
 {
     m_context.eventController = std::make_unique<GameMapEventController>();
@@ -238,6 +238,7 @@ void GameMapScene::Gameloop()
     m_context.eventController->HandlePollEvents(); 
     m_context.eventController->HandleStateEvents(); 
     
+    m_camera.Update(deltaTime); // Here ?
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
     for (size_t i = 0 ; i < layerSplitIndex ; i++)

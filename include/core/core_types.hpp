@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath> // sqrt
 #include <iostream> // operator<<
 
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
@@ -63,6 +64,43 @@ struct Vec2 : public Pair<int>
     Pair<bool> operator>(const Vec2 rhs) const
     {
         return {x>rhs.x, y>rhs.y};
+    }
+
+    float Norm() const
+    {
+        return std::sqrt(x*x + y*y);
+    }
+};
+
+// TODO : Clean Vec2f
+struct Vec2f : public Pair<float>
+{
+    Vec2f() = default;
+    Vec2f(float px, float py) { x = px ; y = py; }
+    Vec2f(const Vec2& v) { x = v.x; y = v.y; }
+
+    Vec2f& operator+=(const Vec2f& rhs) 
+    {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+
+    Vec2f operator*(const float rhs) const
+    {
+        return {x*rhs, y*rhs};
+    }
+
+    Vec2f Normalize()
+    {
+        const float length = Norm();
+        if (length == 0.f) return {0.f, 0.f};
+        return {x/length, y/length};
+    }
+
+    float Norm() const
+    {
+        return std::sqrt(x*x + y*y);
     }
 };
 

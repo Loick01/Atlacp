@@ -3,7 +3,7 @@
 #include "core/window.hpp"
 
 Camera::Camera():
-    m_position(ScenePosition{0,0})
+    m_position(ScenePosition{0,0}), m_speed(0.05f), m_animState(CameraAnimState::Free)
 {}
 
 void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)
@@ -34,9 +34,24 @@ ScenePosition Camera::GetPosition() const
     return m_position;
 }
 
+ScenePosition Camera::GetConstrainedCameraPosition(const ScenePosition sp) const
+{
+    ScenePosition pos = sp - m_viewport/2;
+    if (m_isOffScreen.x) pos.x = std::clamp(pos.x, 0, m_tilemapSize.x - m_viewport.x); // Map must be render at ScenePosition{0,0}
+    else pos.x = m_tilemapSize.x/2 - m_viewport.x/2;
+    if (m_isOffScreen.y) pos.y = std::clamp(pos.y, 0, m_tilemapSize.y - m_viewport.y); // Map must be render at ScenePosition{0,0}
+    else pos.y = m_tilemapSize.y/2 - m_viewport.y/2;
+    return pos;
+}
+
 AreaSize Camera::GetViewport() const
 {
     return m_viewport;
+}
+
+CameraAnimState Camera::GetAnimState() const
+{
+    return m_animState;
 }
 
 Pair<int> Camera::GetStartIndex() const
@@ -64,6 +79,11 @@ void Camera::AddZoom(const float z)
     m_zoom += z;
 }   
 
+void Camera::SetAnimState(const CameraAnimState animState)
+{
+    m_animState = animState;
+}
+
 void Camera::SetTilemapInfo(const AreaSize tilemapSize)
 {
     m_tilemapSize = tilemapSize*m_zoom;
@@ -77,7 +97,12 @@ void Camera::SetCameraPosition(const ScenePosition sp)
 
 void Camera::MoveCameraPosition(const ScenePosition sp)
 {
-    m_position += sp;
+    m_position += static_cast<Vec2>(sp); // TODO : static_cast ?
+} 
+
+void Camera::MoveCameraPosition(const Vec2f v)
+{
+    m_position += v;
 } 
 
 void Camera::Reset() // Used in editor
@@ -89,12 +114,8 @@ void Camera::Reset() // Used in editor
 // Should use 2 different version of this : x axis / y axis
 void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene position with checking map bounds
 {
-    ScenePosition cameraPosition = sp - m_viewport/2;
-    if (m_isOffScreen.x) cameraPosition.x = std::clamp(cameraPosition.x, 0, m_tilemapSize.x - m_viewport.x); // Map must be render at ScenePosition{0,0}
-    else cameraPosition.x = m_tilemapSize.x/2 - m_viewport.x/2;
-    if (m_isOffScreen.y) cameraPosition.y = std::clamp(cameraPosition.y, 0, m_tilemapSize.y - m_viewport.y); // Map must be render at ScenePosition{0,0}
-    else cameraPosition.y = m_tilemapSize.y/2 - m_viewport.y/2;
-    SetCameraPosition(cameraPosition);
+    ScenePosition constrainedPosition = GetConstrainedCameraPosition(sp);
+    SetCameraPosition(constrainedPosition);
 }
 
 void Camera::SetShouldCulling(const bool shouldCulling)
@@ -118,4 +139,27 @@ void Camera::ComputeMapCulling(const GridSize layerSize, const int tileSize)
             m_endIndex.y = std::min(m_endIndex.y, m_startIndex.y + m_rangeTile.y + 1);
         }
     }
+}
+
+void Camera::Update(const float deltaTime)
+{
+    if (m_animState == CameraAnimState::Sliding) {
+        MoveCameraPosition(m_slidingInfo.step /* * deltaTime*/);
+        if (m_slidingInfo.current++ == m_slidingInfo.countStep) {
+            m_animState = CameraAnimState::Done;
+            Notify(UselessEvent::None);
+        }
+    }
+}
+
+void Camera::StartSlidingTo(const ScenePosition sp)
+{
+    const ScenePosition startPosition = m_position;
+    const ScenePosition endPosition = GetConstrainedCameraPosition(sp);
+    Vec2f startToEnd = endPosition - startPosition;
+    Vec2f step = startToEnd.Normalize();
+    m_slidingInfo.step = step * m_speed;
+    m_slidingInfo.countStep = (endPosition - startPosition).Norm() / m_slidingInfo.step.Norm();
+    m_slidingInfo.current = 0;
+    m_animState = CameraAnimState::Sliding;
 }
