@@ -8,10 +8,9 @@ class Camera;
 class TextureController;
 class Tileset;
 
-// Rename ?
-enum class ExtraTileType
+enum class ExtraLayerType
 {
-    TileBorder //, TileCollision
+    LayerBorder, LayerCollision
 };
 
 // No longer inherits from SceneDrawable --> Too many issues caused by the fact 
@@ -19,17 +18,19 @@ enum class ExtraTileType
 class TileLayer
 {
     private:
-        std::vector<Tile> m_tiles;
         Tileset& m_tileset;
-        const GridSize m_layerSize;
     
     protected:
         TextureController& m_textureController;
         Camera& m_camera;
 
+        std::vector<Tile> m_tiles;
+        const GridSize m_layerSize;
+
     public:
         TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset);
-
+        virtual ~TileLayer() = default;
+        
         std::vector<Tile> GetTiles() const;
         Tile GetTile(const size_t index) const;
         virtual void DrawTexture() const;
@@ -41,13 +42,18 @@ class TileLayer
 class ExtraTileLayer : public TileLayer // Used for tile border layer + will be used for tile collision layer
 {
     private:
-        ExtraTileType m_tileType;
+        ExtraLayerType m_layerType;
+        TextureKey m_tileKey;
         int m_tileSize;
 
     public:
         // Tileset parameter is useless, but I can't remove because of TileLayer constructor
-        ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, const ExtraTileType tileType);
-
+        ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, 
+            const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid); // occupancyGrid should not be in constructor ?
+        ~ExtraTileLayer() override;
+        
+        void BuildBorderLayer();
+        void BuildCollisionLayer(const std::vector<bool>& occupancyGrid);
         void DrawTexture() const override;
 };
 

@@ -4,6 +4,12 @@
 #include "core/camera.hpp"
 #include "tile/tileset.hpp"
 
+namespace TileForExtraPath {
+    // Should be constexpr std::string_view ?
+    const std::string TileBorder = "tile_border";
+    const std::string TileCollision = "tile_collision";
+}
+
 TileLayer::TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset):
     m_textureController(textureController), m_camera(camera), m_tileset(tileset), m_layerSize(layerSize)
 {
@@ -53,10 +59,51 @@ void TileLayer::SetTile(const size_t index, const Tile t)
     m_tiles[index] = t;
 }
 
-ExtraTileLayer::ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, const ExtraTileType tileType):
-    TileLayer(layerSize, camera, textureController, tileset), m_tileType(tileType)
+ExtraTileLayer::ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, 
+const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
+    TileLayer(layerSize, camera, textureController, tileset), m_layerType(layerType)
 {
-    m_textureController.LoadTextureFromFile("../assets/tileset/tile_border16.png", "tile_border16", m_tileSize, m_tileSize);
+    unsigned int wantedTileSize = tileset.GetTileSize();
+    std::string pathToLoad = "../assets/tileset/extra_tile/"; // Should not be here ?
+    
+    switch (layerType) {
+        case ExtraLayerType::LayerBorder :
+            m_tileKey = TileForExtraPath::TileBorder;
+            BuildBorderLayer();
+            break;
+        case ExtraLayerType::LayerCollision : 
+            m_tileKey = TileForExtraPath::TileCollision;
+            BuildCollisionLayer(occupancyGrid);
+            break;
+    }
+
+    m_tileKey += std::to_string(wantedTileSize);
+    pathToLoad += m_tileKey + ".png";
+    
+    m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, m_tileSize, m_tileSize);
+    
+    if (wantedTileSize != m_tileSize) 
+        throw std::runtime_error("Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // If this happens, the file is probably incorrectly named
+}
+
+ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is deleted in ~TextureController
+{
+    m_textureController.DeleteTexture(m_tileKey);
+}
+
+void ExtraTileLayer::BuildBorderLayer()
+{
+    m_tiles.clear();
+    for (unsigned int i = 0 ; i < m_layerSize.x * m_layerSize.y ; i++)
+        m_tiles.push_back(1);
+}
+
+void ExtraTileLayer::BuildCollisionLayer(const std::vector<bool>& occupancyGrid)
+{
+    // Should test occupancyGrid.size() != m_layerSize.x*m_layerSize.y ?
+    m_tiles.clear();
+    for (unsigned int i = 0 ; i < m_layerSize.x * m_layerSize.y ; i++)
+        m_tiles.push_back(!occupancyGrid[i]);
 }
 
 void ExtraTileLayer::DrawTexture() const
@@ -70,11 +117,13 @@ void ExtraTileLayer::DrawTexture() const
 
     for (int j = startIndex.y ; j < endIndex.y ; j++){
         for (int i = startIndex.x ; i < endIndex.x ; i++){
-            const SDL_Rect src{0, 0, m_tileSize, m_tileSize};
-            const int tileScreenSize = static_cast<int>(m_tileSize*zoom+1);
-            const ScreenPosition dstPosition = (Vec2{i,j}*m_tileSize)*zoom-cameraPosition;
-            const SDL_Rect dst{dstPosition.x, dstPosition.y, tileScreenSize, tileScreenSize};
-            m_textureController.RenderTexture("tile_border16", src, dst);
+            if (m_tiles[j*m_layerSize.x+i] == 1) {
+                const SDL_Rect src{0, 0, m_tileSize, m_tileSize};
+                const int tileScreenSize = static_cast<int>(m_tileSize*zoom+1);
+                const ScreenPosition dstPosition = (Vec2{i,j}*m_tileSize)*zoom-cameraPosition;
+                const SDL_Rect dst{dstPosition.x, dstPosition.y, tileScreenSize, tileScreenSize};
+                m_textureController.RenderTexture(m_tileKey, src, dst);
+            }
         }
     }
 }

@@ -293,7 +293,8 @@ EditorMapScene::EditorMapScene(GameContext& context):
 void EditorMapScene::UpdateTilemapLayer()
 {
     TilemapScene::UpdateTilemapLayer();
-    TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, ExtraTileType::TileBorder);
+    TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
+        ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
     m_layers.push_back(borderLayer);
 }
 
