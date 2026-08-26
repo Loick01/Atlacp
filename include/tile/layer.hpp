@@ -8,25 +8,47 @@ class Camera;
 class TextureController;
 class Tileset;
 
+// Rename ?
+enum class ExtraTileType
+{
+    TileBorder //, TileCollision
+};
+
 // No longer inherits from SceneDrawable --> Too many issues caused by the fact 
 // that m_textureKey was unused (problematic calls of TextureController::DeleteTexture() with empty key) 
 class TileLayer
 {
     private:
-        TextureController& m_textureController;
-        Camera& m_camera;
         std::vector<Tile> m_tiles;
         Tileset& m_tileset;
-        const GridSize m_size;
+        const GridSize m_layerSize;
     
+    protected:
+        TextureController& m_textureController;
+        Camera& m_camera;
+
     public:
         TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset);
 
         std::vector<Tile> GetTiles() const;
         Tile GetTile(const size_t index) const;
-        void DrawTexture() const;
+        virtual void DrawTexture() const;
         void AddTile(const Tile t);
         void SetTile(const size_t index, const Tile t);
+};
+
+// Rename ?
+class ExtraTileLayer : public TileLayer // Used for tile border layer + will be used for tile collision layer
+{
+    private:
+        ExtraTileType m_tileType;
+        int m_tileSize;
+
+    public:
+        // Tileset parameter is useless, but I can't remove because of TileLayer constructor
+        ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, const ExtraTileType tileType);
+
+        void DrawTexture() const override;
 };
 
 struct MapData // Should be in map/map_types.hpp ?

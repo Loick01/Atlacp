@@ -57,7 +57,8 @@ class EditorMapEventController : public EventController, public EventStateHolder
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
-        ScenePosition m_lastCameraOrigin;
+        // Rename ?
+        ScenePosition m_lastKnownPosition; // Tileset screen position when m_tileset.GetShouldDraw(), otherwise m_camera scene position 
 
         // Will be removed ?
         Tileset& m_tileset; // Should be a UiElement ?

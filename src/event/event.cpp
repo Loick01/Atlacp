@@ -113,7 +113,8 @@ void GameMapEventController::HandlePollEvents()
 EditorMapEventController::EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
     m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
 {
-    m_eventState.SetLayerSize(m_layerCount);
+    // Warning : m_layerCount does not count ExtraTileLayer
+    m_eventState.SetLayerCount(m_layerCount);
     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
 }
 
@@ -190,7 +191,13 @@ void EditorMapEventController::HandlePollEvents()
                         m_eventState.isReplacingTile = true;
                     }
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
-                    m_lastCameraOrigin = m_camera.GetPosition() + GetMouseScreenPosition(); // Do not use the zoom here
+                    const ScreenPosition mousePosition = GetMouseScreenPosition();
+                    if (m_tileset.GetShouldDraw()) {
+                        m_tileset.SetScreenPosition(mousePosition);
+                        m_lastKnownPosition = m_tileset.GetScreenPosition() - mousePosition;
+                    } else {
+                        m_lastKnownPosition = m_camera.GetPosition() + mousePosition; // Do not use the zoom here
+                    }
                     m_eventState.isCameraMoving = true;
                 }
                 break;
@@ -223,8 +230,13 @@ void EditorMapEventController::HandlePollEvents()
     }
 
     if (m_eventState.isCameraMoving){
-        const ScreenPosition mousePosition = GetMouseScreenPosition();
-        m_camera.SetCameraPosition(m_lastCameraOrigin-mousePosition);
+        if (m_tileset.GetShouldDraw()) {
+            const ScreenPosition mousePosition = GetMouseScreenPosition();
+            m_tileset.SetScreenPosition(m_lastKnownPosition+mousePosition);
+        } else {
+            const ScreenPosition mousePosition = GetMouseScreenPosition();
+            m_camera.SetCameraPosition(m_lastKnownPosition-mousePosition);
+        }
     } else if (m_eventState.isReplacingTile){
         const ScenePosition normScenePos = GetMouseScenePosition();
         m_tilemap.ReplaceTileAt(normScenePos, m_eventState.selectedLayer, m_eventState.selectedTile);

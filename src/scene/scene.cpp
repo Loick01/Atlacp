@@ -152,12 +152,15 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
-    UpdateTilemapLayer();
     m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);});
 
     // if I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
+
+    // UpdateTilemapLayer() must be called when initializing TilemapScene
+    // Because it's a virtual function, it would only call TilemapScene::UpdateTilemapLayer() if called here
+    // That's why it has to be called in the constructors of TilemapScene subclasses (GameMapScene and EditorMapScene)
 }
 
 void TilemapScene::UpdateTilemapLayer()
@@ -185,6 +188,7 @@ GameMapScene::GameMapScene(GameContext& context):
     m_orderController(m_camera, m_context.fileReader, m_elementsController, m_tilemap, m_context.uiComponentController), 
     m_interactionController(m_orderController), m_triggerController(m_orderController)
 {
+    UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
@@ -277,11 +281,20 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
 EditorMapScene::EditorMapScene(GameContext& context):
     TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
+    UpdateTilemapLayer();
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
     m_context.uiController.BuildUiFile("editor_scene.uif");
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
+}
+
+
+void EditorMapScene::UpdateTilemapLayer()
+{
+    TilemapScene::UpdateTilemapLayer();
+    TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, ExtraTileType::TileBorder);
+    m_layers.push_back(borderLayer);
 }
 
 void EditorMapScene::Gameloop()
@@ -298,7 +311,7 @@ void EditorMapScene::Gameloop()
     const EditorMapEventState eventState = static_cast<EditorMapEventController*>(m_context.eventController.get())->GetEventState(); 
     
     for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameMapScene, TileLayer are rendered all at once
-        if (eventState.isLayerRendered[i])
+        // if (eventState.isLayerRendered[i])
             m_layers[i]->DrawTexture();
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)

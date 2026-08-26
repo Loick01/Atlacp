@@ -31,7 +31,7 @@ struct EditorMapEventState
 {
     Tile selectedTile;
     int selectedTileset;
-    std::vector<bool> isLayerRendered;
+    std::vector<bool> isLayerRendered; // Unused for now
     int selectedLayer; // Should not be higher than m_layerCount
     bool isCameraMoving;
     bool isReplacingTile;
@@ -44,7 +44,7 @@ struct EditorMapEventState
         isReplacingTile = false;
     }
 
-    void SetLayerSize(const unsigned int layerCount) {
+    void SetLayerCount(const unsigned int layerCount) {
         isLayerRendered.assign(layerCount, true);
     }
 };

@@ -73,7 +73,7 @@ class TilemapScene : public Scene
         Tileset m_tileset;
         Tilemap m_tilemap;
 
-        void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
+        virtual void UpdateTilemapLayer(); // Use in constructor + when a new map is loading --> m_tilemap.AddListener(...);
         virtual void HandleTilemapEvent(const TilemapEvent e);
 
     public:
@@ -104,6 +104,8 @@ class EditorMapScene : public TilemapScene
         
     public:
         EditorMapScene(GameContext& context);
+
+        void UpdateTilemapLayer() override; // Add an extra layer for tile borders
         void Gameloop() override;
 };
 
