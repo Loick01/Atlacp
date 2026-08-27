@@ -33,6 +33,10 @@ void UiTextElement::ComputeFinal()
     // Be sure to call UiTextElement::ComputePosition after generating the texture with GenerateText
     SetMaxWidth(m_params.scale);
     GenerateText();
+
+    for (std::unique_ptr<UiElement>& e : m_childs)
+        e->SetParentSize(GetSize());
+    
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }

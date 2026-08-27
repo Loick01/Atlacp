@@ -296,11 +296,14 @@ EditorMapScene::EditorMapScene(GameContext& context):
 
     const std::vector<UiKey> keys = layerSelectionList->GetItemsKey();
     for (unsigned int i = 0 ; i < m_layers.size() ; i++) { // m_layers.size() = keys.size()
-        std::string layerIndex = std::to_string(i);
+        std::string layerDisplay = std::to_string(i);
+        
         if (const ExtraTileLayer* etl = dynamic_cast<const ExtraTileLayer*>(m_layers[i]))
-            layerIndex = etl->GetUiDisplay();
-    
-        m_context.uiController.UpdateText(keys[i], layerIndex);
+            layerDisplay = etl->GetUiDisplay();
+
+        if (i != m_layers.size()-1) layerDisplay += " | ";
+
+        m_context.uiController.UpdateText(keys[i], layerDisplay);
     }
     
     m_drawables.push_back(&m_tileset);
@@ -341,7 +344,7 @@ void EditorMapScene::Gameloop()
     
     if (eventState.selectedLayer != m_lastLayer){
         m_lastLayer = eventState.selectedLayer;
-        m_context.uiController.UpdateText("editedLayerText", "Edited layer : " + std::to_string(m_lastLayer));
+        m_context.uiController.UpdateText("editedLayerText", "Edited layer:" + std::to_string(m_lastLayer));
     } 
 
     m_context.uiController.Draw();

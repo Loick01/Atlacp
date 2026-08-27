@@ -197,6 +197,11 @@ void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 void UiElement::ComputeFinal()
 {
     ComputeZoom(m_params.scale, m_params.scaleAxis);
+
+    // I haven't checked if this is really necessary, but I'm 90% sure
+    for (std::unique_ptr<UiElement>& e : m_childs)
+        e->SetParentSize(GetSize());
+
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);
 }
