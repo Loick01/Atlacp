@@ -44,6 +44,7 @@ class ExtraTileLayer : public TileLayer // Used for tile border layer + will be 
     private:
         ExtraLayerType m_layerType;
         TextureKey m_tileKey;
+        std::string m_uiDisplay; // How this ExtraTileLayer will be displayed in the UI. For TileLayer, it only uses 0,1,2,etc.
         int m_tileSize;
 
     public:
@@ -52,6 +53,7 @@ class ExtraTileLayer : public TileLayer // Used for tile border layer + will be 
             const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid); // occupancyGrid should not be in constructor ?
         ~ExtraTileLayer() override;
         
+        std::string GetUiDisplay() const;
         void BuildBorderLayer();
         void BuildCollisionLayer(const std::vector<bool>& occupancyGrid);
         void DrawTexture() const override;

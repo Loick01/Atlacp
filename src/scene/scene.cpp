@@ -283,7 +283,26 @@ EditorMapScene::EditorMapScene(GameContext& context):
 {
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
+    
     m_context.uiController.BuildUiFile("editor_scene.uif");
+    UiDynamicList* layerSelectionList = m_context.uiComponentController.CreateDynamicList("layerSelection", "layer_selectable.uit");
+    layerSelectionList->SetFirstItemParams(
+        UiParams(m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.5f)), Axis::Width, // Scale
+        Anchor::LeftIn, Anchor::Center, // Anchor BottomIn ?
+        m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f)), // Padding
+        m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f))));
+    layerSelectionList->SetNrItem(m_layers.size()); // Do not use m_tilemap.GetLayerCount(), it doesn't count ExtraTileLayer
+    layerSelectionList->Open();
+
+    const std::vector<UiKey> keys = layerSelectionList->GetItemsKey();
+    for (unsigned int i = 0 ; i < m_layers.size() ; i++) { // m_layers.size() = keys.size()
+        std::string layerIndex = std::to_string(i);
+        if (const ExtraTileLayer* etl = dynamic_cast<const ExtraTileLayer*>(m_layers[i]))
+            layerIndex = etl->GetUiDisplay();
+    
+        m_context.uiController.UpdateText(keys[i], layerIndex);
+    }
+    
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
@@ -294,8 +313,11 @@ void EditorMapScene::UpdateTilemapLayer()
 {
     TilemapScene::UpdateTilemapLayer();
     TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
-        ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
+        ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
     m_layers.push_back(borderLayer);
+    TileLayer* collisionLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
+        ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
+    m_layers.push_back(collisionLayer);
 }
 
 void EditorMapScene::Gameloop()
@@ -319,7 +341,7 @@ void EditorMapScene::Gameloop()
     
     if (eventState.selectedLayer != m_lastLayer){
         m_lastLayer = eventState.selectedLayer;
-        m_context.uiController.UpdateText("boxText", "Selected layer : " + std::to_string(m_lastLayer));
+        m_context.uiController.UpdateText("editedLayerText", "Edited layer : " + std::to_string(m_lastLayer));
     } 
 
     m_context.uiController.Draw();

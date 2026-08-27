@@ -1,0 +1,8 @@
+frame
+layerIndex
+textelement
+scale frame width 0.5
+xAnchor right_out
+yAnchor top_in
+text N
+textsize small

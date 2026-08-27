@@ -66,15 +66,19 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     unsigned int wantedTileSize = tileset.GetTileSize();
     std::string pathToLoad = "../assets/tileset/extra_tile/"; // Should not be here ?
     
-    switch (layerType) {
+    switch (m_layerType) {
         case ExtraLayerType::LayerBorder :
             m_tileKey = TileForExtraPath::TileBorder;
+            m_uiDisplay = "Border";
             BuildBorderLayer();
             break;
         case ExtraLayerType::LayerCollision : 
             m_tileKey = TileForExtraPath::TileCollision;
+            m_uiDisplay = "Collision";
             BuildCollisionLayer(occupancyGrid);
             break;
+        default:
+            throw std::runtime_error("Unknown ExtraLayerType value");
     }
 
     m_tileKey += std::to_string(wantedTileSize);
@@ -89,6 +93,11 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
 ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is deleted in ~TextureController
 {
     m_textureController.DeleteTexture(m_tileKey);
+}
+
+std::string ExtraTileLayer::GetUiDisplay() const
+{
+    return m_uiDisplay;
 }
 
 void ExtraTileLayer::BuildBorderLayer()

@@ -193,7 +193,7 @@ void EditorMapEventController::HandlePollEvents()
                 }else if (event.button.button == SDL_BUTTON_MIDDLE){
                     const ScreenPosition mousePosition = GetMouseScreenPosition();
                     if (m_tileset.GetShouldDraw()) {
-                        m_tileset.SetScreenPosition(mousePosition);
+                        // Do not m_tileset.SetScreenPosition on mousePosition here
                         m_lastKnownPosition = m_tileset.GetScreenPosition() - mousePosition;
                     } else {
                         m_lastKnownPosition = m_camera.GetPosition() + mousePosition; // Do not use the zoom here

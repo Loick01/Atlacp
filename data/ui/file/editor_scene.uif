@@ -10,11 +10,12 @@ xPadding root height 0.02
 yPadding root height 0.02
 ###
 frame
-boxText
+editedLayerText
 textelement
 scale frame width 0.9
 xAnchor left_in
-yAnchor center
-xPadding frame width 0.1
+yAnchor top_in
+xPadding frame height 0.2
+yPadding frame height 0.2
 textsize small
 ###
