@@ -113,8 +113,6 @@ void GameMapEventController::HandlePollEvents()
 EditorMapEventController::EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
     m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
 {
-    // Warning : m_layerCount does not count ExtraTileLayer
-    m_eventState.SetLayerCount(m_layerCount);
     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
 }
 
@@ -160,6 +158,15 @@ void EditorMapEventController::HandlePollEvents()
                         break;
                     case SDL_SCANCODE_S:
                         m_eventState.selectedLayer = (m_eventState.selectedLayer-1+m_layerCount)%m_layerCount;
+                        break;
+                    case SDL_SCANCODE_A:
+                        m_eventState.uiDirection = Direction::Left;
+                        break;
+                    case SDL_SCANCODE_D:
+                        m_eventState.uiDirection = Direction::Right;
+                        break;
+                    case SDL_SCANCODE_T:
+                        m_eventState.isAction = true;
                         break;
                     case SDL_SCANCODE_R:
                         m_camera.Reset();
@@ -241,6 +248,12 @@ void EditorMapEventController::HandlePollEvents()
         const ScenePosition normScenePos = GetMouseScenePosition();
         m_tilemap.ReplaceTileAt(normScenePos, m_eventState.selectedLayer, m_eventState.selectedTile);
     }
+}
+
+void EditorMapEventController::Reset()
+{
+    m_eventState.uiDirection = Direction::None;
+    m_eventState.isAction = false;
 }
 
 BattleEventController::BattleEventController() 

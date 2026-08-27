@@ -29,23 +29,22 @@ struct GameMapEventState
 
 struct EditorMapEventState
 {
+    Direction uiDirection;
     Tile selectedTile;
     int selectedTileset;
-    std::vector<bool> isLayerRendered; // Unused for now
     int selectedLayer; // Should not be higher than m_layerCount
     bool isCameraMoving;
     bool isReplacingTile;
+    bool isAction;
 
     EditorMapEventState() {
+        uiDirection = Direction::None;
         selectedLayer = 0;
         isCameraMoving = false;
         selectedTile = 0;
         selectedTileset = 0;
         isReplacingTile = false;
-    }
-
-    void SetLayerCount(const unsigned int layerCount) {
-        isLayerRendered.assign(layerCount, true);
+        isAction = false;
     }
 };
 

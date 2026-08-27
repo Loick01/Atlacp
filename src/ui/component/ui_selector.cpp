@@ -27,6 +27,21 @@ bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
     return false;
 }
 
+bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
+{
+    if (isAction) {
+        SoundController::GetInstance().RequestChunk(BaseSfx::Accept);
+        return true;
+    } else if (d == Direction::Right) {
+        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Next() ?
+        Next();
+    } else if (d == Direction::Left) {
+        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Previous() ?
+        Previous();
+    }
+    return false;
+}
+
 void UiSelector::UpdateToOptionIndex()
 {
     const UiKey& parentKey = m_optionKeys[m_optionIndex];

@@ -279,7 +279,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 EditorMapScene::EditorMapScene(GameContext& context):
-    TilemapScene(context, false), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
+    TilemapScene(context, false), m_selector(nullptr), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
@@ -305,10 +305,16 @@ EditorMapScene::EditorMapScene(GameContext& context):
 
         m_context.uiController.UpdateText(keys[i], layerDisplay);
     }
-    
+
+    m_selector = m_context.uiComponentController.CreateSelector("selector", "selector.uit");
+    m_selector->Open();
+    m_selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
+
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
+
+    m_isLayerRendered.assign(m_layers.size(), true); // Do not use m_tilemap.GetLayerCount(), it doesn't include ExtraTileLayer
 }
 
 
@@ -334,10 +340,11 @@ void EditorMapScene::Gameloop()
 
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     
-    const EditorMapEventState eventState = static_cast<EditorMapEventController*>(m_context.eventController.get())->GetEventState(); 
+    EditorMapEventController* eventController = static_cast<EditorMapEventController*>(m_context.eventController.get());
+    const EditorMapEventState eventState = eventController->GetEventState(); 
     
     for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameMapScene, TileLayer are rendered all at once
-        // if (eventState.isLayerRendered[i])
+        if (m_isLayerRendered[i])
             m_layers[i]->DrawTexture();
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
@@ -347,8 +354,18 @@ void EditorMapScene::Gameloop()
         m_context.uiController.UpdateText("editedLayerText", "Edited layer:" + std::to_string(m_lastLayer));
     } 
 
+    if (m_selector->HorizontalNavigation(eventState.uiDirection, eventState.isAction)) {
+        const unsigned int selectorIndex = m_selector->GetOptionIndex();
+        m_isLayerRendered[selectorIndex] = !m_isLayerRendered[selectorIndex];     
+    }
+
+    SoundController::GetInstance().PlayRequestedChunk(); 
+    
     m_context.uiController.Draw();
-    m_context.window.UpdateRender();    
+    m_context.window.UpdateRender();
+
+    // Need to reset eventState.uiDirection to Direction::None and eventState.isAction to false
+    eventController->Reset(); // Will be removed ?
 }
 
 BattleScene::BattleScene(GameContext& context):

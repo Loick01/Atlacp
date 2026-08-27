@@ -100,6 +100,8 @@ class GameMapScene : public TilemapScene
 class EditorMapScene : public TilemapScene
 {
     private:
+        std::vector<bool> m_isLayerRendered; // Should be in Tilemap if not only used by Editor
+        UiSelector* m_selector;
         int m_lastLayer; // UiValue ?
         
     public:

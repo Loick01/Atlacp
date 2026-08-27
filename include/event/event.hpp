@@ -71,6 +71,8 @@ class EditorMapEventController : public EventController, public EventStateHolder
 
         void HandleStateEvents() override;
         void HandlePollEvents() override;
+
+        void Reset(); // Will be removed ?
 };
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
