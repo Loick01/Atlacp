@@ -151,8 +151,12 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
     SortRenderedEntities();
 }
 
-void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap)
+void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap) // Same than TriggerController::SetTriggers()
 {
+    for (MapElement* e : m_mapElements)
+        delete e; // Because I use new to create my MapElement (below)
+    m_mapElements.clear();
+
     for (const DataMapElement& data : elementsData) {
         MapElement* e = new MapElement(tilemap); // TODO
         e->SetMapPosition(data.position);

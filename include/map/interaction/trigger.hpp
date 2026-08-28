@@ -21,7 +21,7 @@ class TriggerController // Should be merged with InteractionController ?
     public:
         TriggerController(OrderController& orderController);
 
-        void SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap);
+        void SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap); // Rename ? (Same than MapElementController::LoadElements())
     
         void LookForTrigger(MapEntity* entity);
         void ContinueTrigger();
