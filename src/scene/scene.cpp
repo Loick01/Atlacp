@@ -99,7 +99,7 @@ MainMenuScene::MainMenuScene(GameContext& context):
     m_context.eventController = std::make_unique<MainMenuEventController>();
    
     m_context.uiController.BuildUiFile("main_menu_scene.uif");
-    // SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
+    SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
 
     m_context.window.HideCursor();
 
@@ -195,7 +195,7 @@ GameMapScene::GameMapScene(GameContext& context):
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
     m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
-    
+
     SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
     m_context.window.HideCursor();
 
@@ -297,8 +297,6 @@ EditorMapScene::EditorMapScene(GameContext& context):
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
-
-    m_isLayerRendered.assign(m_layers.size(), true); // Do not use m_tilemap.GetLayerCount(), it doesn't include ExtraTileLayer
 }
 
 
@@ -315,6 +313,7 @@ void EditorMapScene::UpdateTilemapLayer()
 
     EditorMapEventController* eventController = static_cast<EditorMapEventController*>(m_context.eventController.get());
     eventController->SetLayerCount(m_tilemap.GetLayerCount());
+    m_isLayerRendered.assign(m_layers.size(), true); // Do not use m_tilemap.GetLayerCount(), it doesn't include ExtraTileLayer
 
     BuildUILayerSelection();
 }
