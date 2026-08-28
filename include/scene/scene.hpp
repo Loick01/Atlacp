@@ -101,13 +101,16 @@ class EditorMapScene : public TilemapScene
 {
     private:
         std::vector<bool> m_isLayerRendered; // Should be in Tilemap if not only used by Editor
+        UiDynamicList* m_layerSelection;
         UiSelector* m_selector;
         int m_lastLayer; // UiValue ?
+        bool m_isFirstLoad; // try to remove
         
     public:
         EditorMapScene(GameContext& context);
 
-        void UpdateTilemapLayer() override; // Add an extra layer for tile borders
+        void UpdateTilemapLayer() override; // Add extra layers to m_layers (Border, Collision)
+        void BuildUILayerSelection(); // Maps in the same world could have different number of layers, that's why I need to rebuild m_layerSelection
         void Gameloop() override;
 };
 

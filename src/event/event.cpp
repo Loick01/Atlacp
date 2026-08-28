@@ -111,7 +111,7 @@ void GameMapEventController::HandlePollEvents()
 }
 
 EditorMapEventController::EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
-    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera), m_layerCount(m_tilemap.GetLayerCount())
+    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera)
 {
     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
 }
@@ -248,6 +248,12 @@ void EditorMapEventController::HandlePollEvents()
         const ScenePosition normScenePos = GetMouseScenePosition();
         m_tilemap.ReplaceTileAt(normScenePos, m_eventState.selectedLayer, m_eventState.selectedTile);
     }
+}
+
+void EditorMapEventController::SetLayerCount(const unsigned int layerCount)
+{
+    m_eventState.selectedLayer = 0;
+    m_layerCount = layerCount;
 }
 
 void EditorMapEventController::Reset()

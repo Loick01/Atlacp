@@ -99,7 +99,7 @@ MainMenuScene::MainMenuScene(GameContext& context):
     m_context.eventController = std::make_unique<MainMenuEventController>();
    
     m_context.uiController.BuildUiFile("main_menu_scene.uif");
-    SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
+    // SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
 
     m_context.window.HideCursor();
 
@@ -148,7 +148,7 @@ void MainMenuScene::Gameloop()
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
-    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "z_world", m_camera, shouldCulling) // Replace world file here to try other worlds
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "tx_world", m_camera, shouldCulling) // Replace world file here to try other worlds
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
@@ -279,36 +279,20 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 EditorMapScene::EditorMapScene(GameContext& context):
-    TilemapScene(context, false), m_selector(nullptr), m_lastLayer(-1) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
+    TilemapScene(context, false), m_layerSelection(nullptr), m_selector(nullptr), m_lastLayer(-1), m_isFirstLoad(true) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
-    UpdateTilemapLayer();
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
     
     m_context.uiController.BuildUiFile("editor_scene.uif");
-    UiDynamicList* layerSelectionList = m_context.uiComponentController.CreateDynamicList("layerSelection", "layer_selectable.uit");
-    layerSelectionList->SetFirstItemParams(
+    m_layerSelection = m_context.uiComponentController.CreateDynamicList("layerSelection", "layer_selectable.uit");
+    m_layerSelection->SetFirstItemParams(
         UiParams(m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Width, 0.5f)), Axis::Width, // Scale
         Anchor::LeftIn, Anchor::Center, // Anchor BottomIn ?
         m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f)), // Padding
         m_context.uiController.GetResultFromPartialSize(PartialSize("frame", Axis::Height, 0.2f))));
-    layerSelectionList->SetNrItem(m_layers.size()); // Do not use m_tilemap.GetLayerCount(), it doesn't count ExtraTileLayer
-    layerSelectionList->Open();
-
-    const std::vector<UiKey> keys = layerSelectionList->GetItemsKey();
-    for (unsigned int i = 0 ; i < m_layers.size() ; i++) { // m_layers.size() = keys.size()
-        std::string layerDisplay = std::to_string(i);
-        
-        if (const ExtraTileLayer* etl = dynamic_cast<const ExtraTileLayer*>(m_layers[i]))
-            layerDisplay = etl->GetUiDisplay();
-
-        if (i != m_layers.size()-1) layerDisplay += " | ";
-
-        m_context.uiController.UpdateText(keys[i], layerDisplay);
-    }
-
     m_selector = m_context.uiComponentController.CreateSelector("selector", "selector.uit");
-    m_selector->Open();
-    m_selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
+    
+    UpdateTilemapLayer();
 
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
@@ -319,14 +303,46 @@ EditorMapScene::EditorMapScene(GameContext& context):
 
 
 void EditorMapScene::UpdateTilemapLayer()
-{
+{    
     TilemapScene::UpdateTilemapLayer();
+
     TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
     m_layers.push_back(borderLayer);
     TileLayer* collisionLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
     m_layers.push_back(collisionLayer);
+
+    EditorMapEventController* eventController = static_cast<EditorMapEventController*>(m_context.eventController.get());
+    eventController->SetLayerCount(m_tilemap.GetLayerCount());
+
+    BuildUILayerSelection();
+}
+
+void EditorMapScene::BuildUILayerSelection()
+{
+    if (!m_isFirstLoad) {
+        m_layerSelection->Close();
+        // m_selector->Close(); // TODO : Not working, there is a problem with the key
+    } else {
+        m_isFirstLoad = false;
+    }
+    m_layerSelection->SetNrItem(m_layers.size()); // Do not use m_tilemap.GetLayerCount(), it doesn't count ExtraTileLayer
+    m_layerSelection->Open();
+
+    const std::vector<UiKey> keys = m_layerSelection->GetItemsKey();
+    for (unsigned int i = 0 ; i < m_layers.size() ; i++) { // m_layers.size() = keys.size()
+        std::string layerDisplay = std::to_string(i);
+        
+        if (const ExtraTileLayer* etl = dynamic_cast<const ExtraTileLayer*>(m_layers[i]))
+            layerDisplay = etl->GetUiDisplay();
+
+        if (i != m_layers.size()-1) layerDisplay += " | ";
+
+        m_context.uiController.UpdateText(keys[i], layerDisplay);
+    }
+    m_selector->Open();
+    m_selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
 }
 
 void EditorMapScene::Gameloop()

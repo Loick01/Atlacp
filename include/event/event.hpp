@@ -72,6 +72,7 @@ class EditorMapEventController : public EventController, public EventStateHolder
         void HandleStateEvents() override;
         void HandlePollEvents() override;
 
+        void SetLayerCount(const unsigned int layerCount);
         void Reset(); // Will be removed ?
 };
 
