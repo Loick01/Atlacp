@@ -104,14 +104,19 @@ class EditorMapScene : public TilemapScene
         UiDynamicList* m_layerSelection;
         UiSelector* m_selector;
         int m_lastLayer; // UiValue ?
+        unsigned int m_previousLayerCount; // Because the maps in a same world can have different layerCount 
         bool m_isFirstLoad; // try to remove
         
     public:
         EditorMapScene(GameContext& context);
-
-        void UpdateTilemapLayer() override; // Add extra layers to m_layers (Border, Collision)
-        void BuildUILayerSelection(); // Maps in the same world could have different number of layers, that's why I need to rebuild m_layerSelection
+        ~EditorMapScene();
+        
         void Gameloop() override;
+        void UpdateTilemapLayer() override;
+
+        void CreateExtraLayers();
+        void DeleteExtraLayers(const unsigned int index);
+        void BuildUILayerSelection(); // Maps in the same world could have different number of layers, that's why I need to rebuild m_layerSelection
 };
 
 class BattleScene : public Scene

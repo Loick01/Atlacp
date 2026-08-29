@@ -20,21 +20,21 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=z1e4advGHfU">
-        <img src="https://img.youtube.com/vi/z1e4advGHfU/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/z1e4advGHfU/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Player, Camera and Editor</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=6zPQBOPspiM">
-        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Random NPC</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
-        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Map Navigation</strong>
@@ -43,21 +43,21 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=gSUQSt18fMc">
-        <img src="https://img.youtube.com/vi/gSUQSt18fMc/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/gSUQSt18fMc/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>NPC Behaviours</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=6ae6qKwDAPM">
-        <img src="https://img.youtube.com/vi/6ae6qKwDAPM/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/6ae6qKwDAPM/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Camera Viewport</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=jSI-w6vJv0A">
-        <img src="https://img.youtube.com/vi/jSI-w6vJv0A/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/jSI-w6vJv0A/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>UI Element</strong>
@@ -66,21 +66,21 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=C2cFozAkxuY">
-        <img src="https://img.youtube.com/vi/C2cFozAkxuY/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/C2cFozAkxuY/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Turn-Based Battle System</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=tqeDZGtkRpI">
-        <img src="https://img.youtube.com/vi/tqeDZGtkRpI/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/tqeDZGtkRpI/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Main Menu, Music and Sound Effects</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=2j6m4lXyyoE">
-        <img src="https://img.youtube.com/vi/2j6m4lXyyoE/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/2j6m4lXyyoE/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Move Animations</strong>
@@ -89,21 +89,21 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=BcvYCM1XcZs">
-        <img src="https://img.youtube.com/vi/BcvYCM1XcZs/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/BcvYCM1XcZs/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Orders : Frame Text, DialogText and NpcGoTo</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=_pFn2lPQ8Gs">
-        <img src="https://img.youtube.com/vi/_pFn2lPQ8Gs/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/_pFn2lPQ8Gs/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Triggers and PlayCinematicOrder</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=dcqNufJLIiM">
-        <img src="https://img.youtube.com/vi/dcqNufJLIiM/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/dcqNufJLIiM/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Multilayer Tilemap</strong>

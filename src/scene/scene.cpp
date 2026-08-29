@@ -148,7 +148,7 @@ void MainMenuScene::Gameloop()
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
-    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "z_world", m_camera, shouldCulling) // Replace world file here to try other worlds
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "tx_world", m_camera, shouldCulling) // Replace world file here to try other worlds
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
@@ -165,7 +165,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
 
 void TilemapScene::UpdateTilemapLayer()
 {
-    m_layers.clear(); // Forget the previous TileLayer
+    m_layers.clear();
     const std::vector<TileLayer>& layers = m_tilemap.GetLayers();
     for (const TileLayer& l : layers)
         m_layers.push_back(&l);
@@ -299,20 +299,40 @@ EditorMapScene::EditorMapScene(GameContext& context):
     // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
 }
 
+EditorMapScene::~EditorMapScene()
+{
+    DeleteExtraLayers(m_tilemap.GetLayerCount());
+}
 
-void EditorMapScene::UpdateTilemapLayer()
-{    
-    TilemapScene::UpdateTilemapLayer();
-
+void EditorMapScene::CreateExtraLayers()
+{
+    // Should not use new ?
     TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
     m_layers.push_back(borderLayer);
     TileLayer* collisionLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
     m_layers.push_back(collisionLayer);
+}
 
+void EditorMapScene::DeleteExtraLayers(const unsigned int index)
+{
+    if (m_layers.size() > 0) { // When loading a map for the first time, there are no layers yet
+        delete m_layers[index]; // Border layer
+        delete m_layers[index+1]; // Collision layer 
+    }
+}
+
+void EditorMapScene::UpdateTilemapLayer()
+{   
+    DeleteExtraLayers(m_previousLayerCount);
+    TilemapScene::UpdateTilemapLayer();
+    CreateExtraLayers();
+
+    const unsigned int layerCount = m_tilemap.GetLayerCount();
+    m_previousLayerCount = layerCount;
     EditorMapEventController* eventController = static_cast<EditorMapEventController*>(m_context.eventController.get());
-    eventController->SetLayerCount(m_tilemap.GetLayerCount());
+    eventController->SetLayerCount(layerCount);
     m_isLayerRendered.assign(m_layers.size(), true); // Do not use m_tilemap.GetLayerCount(), it doesn't include ExtraTileLayer
 
     BuildUILayerSelection();
