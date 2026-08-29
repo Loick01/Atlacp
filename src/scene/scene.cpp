@@ -148,7 +148,7 @@ void MainMenuScene::Gameloop()
 
 TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     Scene(context), m_tileset(m_context.textureController),
-    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "tx_world", m_camera, shouldCulling) // Replace world file here to try other worlds
+    m_tilemap(m_context.textureController, m_context.fileReader, m_tileset, "z_world", m_camera, shouldCulling) // Replace world file here to try other worlds
 {
     m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, m_tileset.GetTileSize());
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());

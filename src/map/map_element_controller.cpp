@@ -9,14 +9,12 @@
 MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
 Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath):
     m_player(fileReader, tilemap, textureController, spritePlayerPath, camera, 4.f, 6.f),
-    m_fileReader(fileReader), m_currentMapEntityUpdated(nullptr)
+    m_fileReader(fileReader), m_currentMapEntityUpdated(nullptr), m_shouldUpdateNpc(true)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     
-    m_renderedEntities = {&m_player}; // ?
-
+    m_renderedEntities = {&m_player};
     m_updatedEntities = m_renderedEntities;
-    SortRenderedEntities(); // ?
 }
 
 MapElementController::~MapElementController()
@@ -54,12 +52,13 @@ MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
 void MapElementController::DeleteNPCs()
 {
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
-    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
-        delete m_updatedEntities[i];
-        m_updatedEntities[i] = nullptr; // Fix segfault on MapEntity::Update() when loading a new map
-    }
+    for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
+        delete m_updatedEntities[i]; // Because I use new to instantiate NPC, later I will use unique_ptr
     
-    // Warning : NPC adress are still in m_renderedEntities
+    // Currently, DeleteNPCs is only called in LoadNPCs() and ~MapElementController(), so calling clear() on these vectors is useless because their elements are 
+    // already overwriten in LoadNPCs(). I keep it anyway, in case DeleteNPCs() is used somewhere else later)
+    m_updatedEntities.clear();
+    m_renderedEntities.clear();
 }
 
 void MapElementController::Draw() const
@@ -72,10 +71,20 @@ void MapElementController::Update(const GameMapEventState& playerEventState, con
 {
     m_player.SetEventState(playerEventState);
     
-    for (MapEntity* e : m_updatedEntities) {
-        // if (e == nullptr) break; // ???
-        m_currentMapEntityUpdated = e;
-        e->Update(deltaTime);
+    m_currentMapEntityUpdated = &m_player;
+    m_player.Update(deltaTime);
+    
+    // Do not update the NPCs on this frame if a new map has been loaded, when the Player exited the map or walked on a trigger with LoadMapOrder (not implemented yet)
+    if (m_shouldUpdateNpc) {
+        // Warning : If at some point a NPC could trigger a map loading, this for loop will crash 
+        // Because Tilemap::LoadMap() -> Notify(TilemapEvent::LoadingMap) -> MapElementController::LoadNPCs() (which modifies m_updatedEntities) 
+        for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
+            MapEntity* e = m_updatedEntities[i];
+            m_currentMapEntityUpdated = e;
+            e->Update(deltaTime);
+        }
+    } else {
+        m_shouldUpdateNpc = true;
     }
 }
 
@@ -113,8 +122,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
 {
     DeleteNPCs();
 
-    // Same code in MapElementController constructor, try to merge it
-    m_renderedEntities = {&m_player}; // Clear this vector and keep only the player
+    m_renderedEntities = {&m_player}; // Keep only the Player
 
     const std::vector<DataNPC> npcsData = m_fileReader.ReadNPCsFile(filepath, mapIndex);
 
@@ -149,6 +157,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
     
     m_updatedEntities = m_renderedEntities;
     SortRenderedEntities();
+    m_shouldUpdateNpc = false;
 }
 
 void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap) // Same than TriggerController::SetTriggers()

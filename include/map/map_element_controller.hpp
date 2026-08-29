@@ -14,15 +14,19 @@ class MapElementController : public Notifier<EntityEvent>
 {
     private:
         const FileReader& m_fileReader;
-        Player m_player; // ?
+        Player m_player;
         
         // Will use unique_ptr<MapEntity> ?
+        // m_renderedEntities and m_updatedEntities both include the Player and every NPC
         std::vector<MapEntity*> m_renderedEntities; // Sorted by y position
         // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
+
         std::vector<MapElement*> m_mapElements; // Should not be here ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
 
         MapEntity* m_currentMapEntityUpdated;
+
+        bool m_shouldUpdateNpc;
         
     public:
         MapElementController(const FileReader& fileReader, TextureController& textureController,
