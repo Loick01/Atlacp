@@ -60,6 +60,11 @@ ScenePosition SceneDrawable::GetDisplayOffset() const
     return m_displayOffset;
 }   
 
+ScenePosition SceneDrawable::GetScenePosition() const
+{
+    return m_position;
+}
+
 void SceneDrawable::SetDisplayOffset(const ScenePosition offset)
 {
     m_displayOffset = offset;

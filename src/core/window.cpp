@@ -24,7 +24,7 @@ void Window::CreateWindow()
     if(!m_window)
         throw std::runtime_error("Failed to create SDL window\n" + std::string(SDL_GetError()));
     SDL_GetWindowSize(m_window, &m_size.x, &m_size.y);
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if(!m_renderer) 
         throw std::runtime_error("Failed to create a SDL renderer\n" + std::string(SDL_GetError()));
 }

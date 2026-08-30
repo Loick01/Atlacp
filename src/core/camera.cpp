@@ -3,7 +3,7 @@
 #include "core/window.hpp"
 
 Camera::Camera():
-    m_position(ScenePosition{0,0}), m_speed(0.05f), m_animState(CameraAnimState::Free)
+    m_position(ScenePosition{0,0}), m_speed(8.f), m_animState(CameraAnimState::Free)
 {}
 
 void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)

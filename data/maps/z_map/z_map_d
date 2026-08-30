@@ -30,9 +30,12 @@ npc_goto 8 8 41
 npc_idle down 41
 frame_text 1 Npc 41 will not move;
 
-10 7 3
+10 7 6
 frame_text 1 Trigger - Prepare for camera slide;
 camera_slide_to_position 2000 1500
+camera_slide_to_entity 42
+camera_slide_to_position 2000 -1000
+camera_slide_to_entity 0
 frame_text 1 Trigger - Done with camera slide;
 
 25 9 1

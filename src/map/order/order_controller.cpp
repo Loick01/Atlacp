@@ -120,6 +120,13 @@ void OrderController::ExecuteOrder(const CameraSlideToPositionOrder& o)
     // if (m_camera.IsDone()) NextOrder(); // I think it's useless, even if the camera is already at its targeted position, Notify() will be called anyway // Remove
 }
 
+void OrderController::ExecuteOrder(const CameraSlideToEntityOrder& o)
+{
+    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    m_camera.StartSlidingTo(entity->GetScenePosition());
+    m_camera.AddCallback([this](UselessEvent e){NextOrder();});
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else
@@ -152,6 +159,11 @@ bool OrderController::UpdateOrder(const CameraSlideToPositionOrder& o)
     return m_camera.GetAnimState() == CameraAnimState::Done;
 }
 
+bool OrderController::UpdateOrder(const CameraSlideToEntityOrder& o)
+{
+    return m_camera.GetAnimState() == CameraAnimState::Done;
+}
+
 void OrderController::StopOrder(const Order& o)
 {
     return; // When there is nothing to stop or delete
@@ -179,7 +191,13 @@ void OrderController::StopOrder(const NpcGoToOrder& o)
     // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
 }
 
-void OrderController::StopOrder(const CameraSlideToPositionOrder& o) // Could be removed and use only CameraAnimState::Free/Sliding ?
+void OrderController::StopOrder(const CameraSlideToPositionOrder& o)
+{
+    m_camera.SetAnimState(CameraAnimState::Free);
+    m_camera.RemoveLastCallback();
+}
+
+void OrderController::StopOrder(const CameraSlideToEntityOrder& o)
 {
     m_camera.SetAnimState(CameraAnimState::Free);
     m_camera.RemoveLastCallback();

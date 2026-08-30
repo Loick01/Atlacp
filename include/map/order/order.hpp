@@ -89,19 +89,26 @@ struct CameraSlideToPositionOrder {
     }
 };
 
+struct CameraSlideToEntityOrder {
+    unsigned int idEntity;
+
+    std::string GetString() const
+    {
+        std::string res = "camera_slide_to_entity " + std::to_string(idEntity);
+        return res;
+    }
+};
+
 // TODO :
 // struct AddInventoryOrder {};
-// Orders about Camera (Slide/Anchor)
+// Orders about Camera (Anchor)
 // Orders about NPC (Create/Delete)
 
 using Order = std::variant<
-    FrameTextOrder,
-    DialogTextOrder,
-    NpcGoToOrder,
-    NpcFollowOrder,
-    NpcIdleOrder,
-    PlayCinematicOrder,
-    CameraSlideToPositionOrder
+    FrameTextOrder, DialogTextOrder,
+    NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
+    CameraSlideToPositionOrder, CameraSlideToEntityOrder,
+    PlayCinematicOrder
 >;
 
 std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()

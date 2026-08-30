@@ -64,6 +64,7 @@ class FileReader
         NpcIdleOrder ReadNpcIdleOrder(std::ifstream& input) const;
         PlayCinematicOrder ReadPlayCinematicOrder(std::ifstream& input) const;
         CameraSlideToPositionOrder ReadCameraSlideToPositionOrder(std::ifstream& input) const;
+        CameraSlideToEntityOrder ReadCameraSlideToEntityOrder(std::ifstream& input) const;
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;

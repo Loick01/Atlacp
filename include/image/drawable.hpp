@@ -44,6 +44,8 @@ class SceneDrawable : public Drawable
     
     public:
         SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position);
+        
+        ScenePosition GetScenePosition() const;
         void LookMe();
 };
 
