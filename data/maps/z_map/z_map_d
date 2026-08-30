@@ -6,9 +6,10 @@ zoria_2
 
 element 2
 
-9 7 2
-camera_slide_to 2000 1500
-frame_text 1 There is a trigger just on the left of this sign. Try it !;
+9 7 3
+frame_text 1 Interaction - Prepare for camera slide;
+camera_slide_to_position 2000 1500
+frame_text 1 Interaction - Done with camera slide;
 
 18 11 4
 frame_text 1 Here is an example of a PlayCinematicOrder, with its Orders defined in a separate file;
@@ -16,7 +17,7 @@ npc_goto 17 12 42
 npc_follow 0 42
 frame_text 1 Npc 42 will follow you; 
 
-trigger 2
+trigger 3
 
 8 7 4
 frame_text 4 
@@ -28,6 +29,11 @@ Here is a screenshot of how a trigger is defined in a data file;
 npc_goto 8 8 41
 npc_idle down 41
 frame_text 1 Npc 41 will not move;
+
+10 7 3
+frame_text 1 Trigger - Prepare for camera slide;
+camera_slide_to_position 2000 1500
+frame_text 1 Trigger - Done with camera slide;
 
 25 9 1
 play_cinematic cine02

@@ -10,6 +10,13 @@ struct Pair
 {
     T x;
     T y;
+
+    Pair& operator+=(const Pair& rhs) 
+    {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
 };
 
 struct Vec2 : public Pair<int>
@@ -39,13 +46,6 @@ struct Vec2 : public Pair<int>
         return {x+rhs, y+rhs};
     }
 
-    Vec2& operator+=(const Vec2& rhs) 
-    {
-        x += rhs.x;
-        y += rhs.y;
-        return *this;
-    }
-
     Vec2 operator*(const Pair<int> rhs) const
     {
         return {x*rhs.x, y*rhs.y};
@@ -72,19 +72,11 @@ struct Vec2 : public Pair<int>
     }
 };
 
-// TODO : Clean Vec2f
 struct Vec2f : public Pair<float>
 {
     Vec2f() = default;
     Vec2f(float px, float py) { x = px ; y = py; }
     Vec2f(const Vec2& v) { x = v.x; y = v.y; }
-
-    Vec2f& operator+=(const Vec2f& rhs) 
-    {
-        x += rhs.x;
-        y += rhs.y;
-        return *this;
-    }
 
     Vec2f operator*(const float rhs) const
     {

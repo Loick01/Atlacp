@@ -79,12 +79,12 @@ struct PlayCinematicOrder { // Execute Orders defined in a file given by cinemat
     }
 };
 
-struct CameraSlideToOrder {
+struct CameraSlideToPositionOrder {
     ScenePosition endPosition;
 
     std::string GetString() const
     {
-        std::string res = "camera_slide_to " + std::to_string(endPosition.x) + " " + std::to_string(endPosition.y);
+        std::string res = "camera_slide_to_position " + std::to_string(endPosition.x) + " " + std::to_string(endPosition.y);
         return res;
     }
 };
@@ -101,7 +101,7 @@ using Order = std::variant<
     NpcFollowOrder,
     NpcIdleOrder,
     PlayCinematicOrder,
-    CameraSlideToOrder
+    CameraSlideToPositionOrder
 >;
 
 std::string GetStringDescription(const Order& order); // Used in FileReader::SaveMapFile()

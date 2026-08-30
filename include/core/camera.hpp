@@ -31,7 +31,7 @@ class Camera : public Notifier<UselessEvent> // Will Notify() for Order executio
         AreaSize m_tilemapSize; // Could change when loading a new map
         Pair<bool> m_isOffScreen;
         float m_zoom;
-        float m_speed; // Will use this value when sliding to a ScenePosition, for example with CameraSlideToOrder
+        float m_speed; // Will use this value when sliding to a ScenePosition (CameraSlideToPositionOrder) or a MapEntity (CameraSlideToEntityOrder)
         
         bool m_shouldCulling;
         Pair<int> m_startIndex;
@@ -55,9 +55,9 @@ class Camera : public Notifier<UselessEvent> // Will Notify() for Order executio
         void AddZoom(const float z);
         void SetAnimState(const CameraAnimState animState);
         void SetTilemapInfo(const AreaSize tilemapSize);
-        void SetCameraPosition(const ScenePosition sp); // Set m_position to sp
-        void MoveCameraPosition(const ScenePosition sp); // Add sp to m_position
+        void SetCameraPosition(const ScenePosition sp);
         void MoveCameraPosition(const Vec2f v);
+        void MoveCameraPosition(const ScenePosition sp); 
         void Reset();
         void LookAt(const ScenePosition sp);
 

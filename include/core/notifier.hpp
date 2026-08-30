@@ -26,6 +26,11 @@ class Notifier
             m_callbacks.push_back(c);
         }
 
+        void RemoveLastCallback() // For now, I don't need RemoveCallback(Callback c)
+        {
+            m_callbacks.pop_back();
+        }
+
         void ClearCallback()
         {
             m_callbacks.clear();

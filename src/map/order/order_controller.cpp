@@ -113,7 +113,7 @@ void OrderController::ExecuteOrder(const PlayCinematicOrder& o)
     // So NextOrder() will directly execute the first order in cinematic file 
 }
 
-void OrderController::ExecuteOrder(const CameraSlideToOrder& o)
+void OrderController::ExecuteOrder(const CameraSlideToPositionOrder& o)
 {
     m_camera.StartSlidingTo(o.endPosition);
     m_camera.AddCallback([this](UselessEvent e){NextOrder();});
@@ -147,7 +147,7 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
     return goTo->IsDone();
 }
 
-bool OrderController::UpdateOrder(const CameraSlideToOrder& o)
+bool OrderController::UpdateOrder(const CameraSlideToPositionOrder& o)
 {
     return m_camera.GetAnimState() == CameraAnimState::Done;
 }
@@ -179,9 +179,10 @@ void OrderController::StopOrder(const NpcGoToOrder& o)
     // npc->SetState(EntityState::Free); // Should be in SetRandomBehaviour() ?
 }
 
-void OrderController::StopOrder(const CameraSlideToOrder& o) // Could be removed and use only CameraAnimState::Free/Sliding ?
+void OrderController::StopOrder(const CameraSlideToPositionOrder& o) // Could be removed and use only CameraAnimState::Free/Sliding ?
 {
     m_camera.SetAnimState(CameraAnimState::Free);
+    m_camera.RemoveLastCallback();
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)

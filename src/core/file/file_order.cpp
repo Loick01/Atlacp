@@ -24,8 +24,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadNpcIdleOrder(input));
         } else if (s == "play_cinematic") {
             orders.push_back(ReadPlayCinematicOrder(input));
-        } else if (s == "camera_slide_to") {
-            orders.push_back(ReadCameraSlideToOrder(input));
+        } else if (s == "camera_slide_to_position") {
+            orders.push_back(ReadCameraSlideToPositionOrder(input));
         }else {
             throw std::runtime_error("Unknow order type : " + s);
         }       
@@ -107,9 +107,9 @@ PlayCinematicOrder FileReader::ReadPlayCinematicOrder(std::ifstream& input) cons
     return PlayCinematicOrder{s};
 }
 
-CameraSlideToOrder FileReader::ReadCameraSlideToOrder(std::ifstream& input) const
+CameraSlideToPositionOrder FileReader::ReadCameraSlideToPositionOrder(std::ifstream& input) const
 {
     ScenePosition pos;
     input >> pos.x; input >> pos.y;
-    return CameraSlideToOrder{pos};
+    return CameraSlideToPositionOrder{pos};
 }

@@ -95,14 +95,14 @@ void Camera::SetCameraPosition(const ScenePosition sp)
     m_position = sp;
 } 
 
-void Camera::MoveCameraPosition(const ScenePosition sp)
-{
-    m_position += static_cast<Vec2>(sp); // TODO : static_cast ?
-} 
-
 void Camera::MoveCameraPosition(const Vec2f v)
 {
     m_position += v;
+} 
+
+void Camera::MoveCameraPosition(const ScenePosition sp)
+{
+    MoveCameraPosition(Vec2f(sp));
 } 
 
 void Camera::Reset() // Used in editor
