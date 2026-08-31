@@ -3,7 +3,7 @@
 #include "core/window.hpp"
 
 Camera::Camera():
-    m_position(ScenePosition{0,0}), m_speed(8.f), m_animState(CameraAnimState::Free)
+    m_position(ScenePosition{0,0}), m_speed(400.f), m_animState(CameraAnimState::Free)
 {}
 
 void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)
@@ -143,23 +143,23 @@ void Camera::ComputeMapCulling(const GridSize layerSize, const int tileSize)
 
 void Camera::Update(const float deltaTime)
 {
-    if (m_animState == CameraAnimState::Sliding) {
-        MoveCameraPosition(m_slidingInfo.step /* * deltaTime*/);
-        if (m_slidingInfo.current++ == m_slidingInfo.countStep) {
-            m_animState = CameraAnimState::Done;
-            Notify(UselessEvent::None);
-        }
+    if (m_animState != CameraAnimState::Sliding)
+        return;
+    
+    Vec2f toEndPosition = m_slidingInfo.endPosition - ScenePosition(m_position); 
+    const float remainingDistance = toEndPosition.Norm();
+    const float frameDistance = m_speed * deltaTime;
+    if (frameDistance >= remainingDistance) {
+        SetCameraPosition(m_slidingInfo.endPosition);
+        m_animState = CameraAnimState::Done;
+        Notify(UselessEvent::None);
+    } else {
+        MoveCameraPosition(toEndPosition.Normalize() * frameDistance);
     }
 }
 
 void Camera::StartSlidingTo(const ScenePosition sp)
 {
-    const ScenePosition startPosition = m_position;
-    const ScenePosition endPosition = GetConstrainedCameraPosition(sp);
-    Vec2f startToEnd = endPosition - startPosition;
-    Vec2f step = startToEnd.Normalize();
-    m_slidingInfo.step = step * m_speed;
-    m_slidingInfo.countStep = (endPosition - startPosition).Norm() / m_slidingInfo.step.Norm();
-    m_slidingInfo.current = 0;
+    m_slidingInfo.endPosition = GetConstrainedCameraPosition(sp);;
     m_animState = CameraAnimState::Sliding;
 }

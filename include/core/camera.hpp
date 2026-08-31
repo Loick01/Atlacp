@@ -15,9 +15,7 @@ enum class CameraAnimState // Rename ?
  
 struct SlidingInfo // Could use Animation instead ?
 {
-    Vec2f step;
-    unsigned int countStep;
-    unsigned int current;
+    ScenePosition endPosition;
 };
 
 class Camera : public Notifier<UselessEvent> // Will Notify() for Order execution
