@@ -2,16 +2,16 @@
 
 #include <SDL2/SDL_rect.h>
 
-#include "core/camera.hpp"
 #include "core/path.hpp"
 #include "image/texture.hpp"
 #include "tile/tilemap.hpp"
 
-MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const unsigned int id):
-    SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap),
-    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_id(id),
-    m_movementState(EntityMovementState::Free), m_interactionState(EntityInteractionState::None), m_animation(fileReader, spriteFilepath)
+MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, const FileReader& fileReader,
+    Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const float cameraZoom,
+    const unsigned int id):
+SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, ScenePosition{0,0}), MapElement(tilemap),
+m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_cameraZoom(cameraZoom), m_id(id),
+m_movementState(EntityMovementState::Free), m_interactionState(EntityInteractionState::None), m_animation(fileReader, spriteFilepath)
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;
@@ -19,6 +19,7 @@ MapEntity::MapEntity(TextureController& textureController, const std::string& sp
     // Sprites could have a different size than tiles
     SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, m_textureHeight-tilemap.GetTileSize()});
     Reset(initialDirection);
+    // Player and NPC constructors use the camera zoom in GetFinalDrawingPosition(), that's why I added it as a parameter here
 }
 
 EntityMovementState MapEntity::GetMovementState() const
@@ -107,17 +108,15 @@ ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 
 ScenePosition MapEntity::GetFinalDrawingPosition(const ScenePosition sp) const
 {
-    return (sp-GetDisplayOffset())*m_camera.GetZoom();
+    return (sp-GetDisplayOffset())*m_cameraZoom;
 }
 
 void MapEntity::DrawTexture() const
 {
     const Vec2 sprite = m_animation.GetCurrentSprite(); 
     const SDL_Rect src{sprite.x, sprite.y, m_textureWidth, m_textureHeight};
-    const ScenePosition cameraPosition = m_camera.GetPosition()-m_camera.GetScreenOffset();
-    const float zoom = m_camera.GetZoom();
-    const SDL_Rect dst{m_position.x-cameraPosition.x, m_position.y-cameraPosition.y,
-                       static_cast<int>(m_textureWidth*zoom), static_cast<int>(m_textureHeight*zoom)};
+    const SDL_Rect dst{m_position.x-m_cameraPosition.x, m_position.y-m_cameraPosition.y,
+                       static_cast<int>(m_textureWidth*m_cameraZoom), static_cast<int>(m_textureHeight*m_cameraZoom)};
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 
@@ -192,4 +191,14 @@ void MapEntity::ReleaseInteracting()
 {
     SetMovementState(EntityMovementState::Free);
     SetInteractionState(EntityInteractionState::None);
+}
+
+void MapEntity::SetCameraZoom(const float zoom)
+{
+    m_cameraZoom = zoom;
+}
+
+void MapEntity::SetCameraPosition(const ScenePosition sp)
+{
+    m_cameraPosition = sp;
 }

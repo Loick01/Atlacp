@@ -191,7 +191,7 @@ GameMapScene::GameMapScene(GameContext& context):
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
     
-    m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+    m_elementsController.LoadNPCs(m_context.textureController, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
     m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
@@ -267,7 +267,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_elementsController.LoadNPCs(m_context.textureController, m_camera, m_tilemap, 
+            m_elementsController.LoadNPCs(m_context.textureController, m_tilemap, 
                 m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
             m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
             m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);

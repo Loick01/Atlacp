@@ -3,8 +3,8 @@
 #include "tile/tilemap.hpp"
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
-    const std::string& spriteFilepath, Camera& camera, const float walkSpeed, const float runSpeed):
-    MapEntity(textureController, spriteFilepath, camera, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed)
+    const std::string& spriteFilepath, const float walkSpeed, const float runSpeed, const float cameraZoom):
+    MapEntity(textureController, spriteFilepath, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed, cameraZoom)
 {
     const MapPosition spawn = tilemap.GetSpawnPosition();
     if (spawn.x != -1 && spawn.y != -1)
@@ -16,7 +16,6 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
     m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
-    LookMe();
 }
 
 void Player::Update(const float deltaTime)
@@ -63,7 +62,6 @@ void Player::Update(const float deltaTime)
                 default:
                     SetIsRunning(m_eventState.isRunning);
                     OrderStartMovement(direction, true, true);
-                    LookMe(); // Important : Will clamp camera position, which is necessary to avoid negative index when culling (because of negative camera position)
                     break;
             }
             break;
@@ -72,7 +70,6 @@ void Player::Update(const float deltaTime)
         case EntityMovementState::Moving:
         {
             OrderUpdateMovement(deltaTime);
-            LookMe();
             break;
         }
 
@@ -95,7 +92,6 @@ void Player::Update(const float deltaTime)
                 default:
                     SetIsRunning(m_eventState.isRunning);
                     OrderStartMovement(direction, false, true);
-                    LookMe(); // Same reason than case EntityMovementState::Free
                     break;
             }
             break;

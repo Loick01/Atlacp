@@ -14,6 +14,8 @@ class MapElementController : public Notifier<EntityEvent>
 {
     private:
         const FileReader& m_fileReader;
+        Camera& m_camera;
+        
         Player m_player;
         
         // Will use unique_ptr<MapEntity> ?
@@ -45,7 +47,7 @@ class MapElementController : public Notifier<EntityEvent>
         void HandleEntityEvent(const EntityEvent e);
 
         void DeleteNPCs();
-        void LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap, // These 3 parameters should not be here ?
+        void LoadNPCs(TextureController& textureController, Tilemap& tilemap, // These 2 parameters should not be here ?
             const std::string& filepath, const unsigned int mapIndex);
         void LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap);
 };

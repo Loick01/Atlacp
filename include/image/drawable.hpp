@@ -3,7 +3,6 @@
 #include "core/core_types.hpp" // Vec2
 #include "image/image_types.hpp" // TextureKey, ScenePosition, ScreenPosition
 
-class Camera;
 class TextureController;
 
 class Drawable
@@ -37,16 +36,14 @@ class SceneDrawable : public Drawable
     protected:
         ScenePosition m_position;
         ScenePosition m_displayOffset; // Should be in MapEntity
-        Camera& m_camera;
 
-        ScenePosition GetDisplayOffset() const;
         void SetDisplayOffset(const ScenePosition offset);
     
     public:
-        SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position);
+        SceneDrawable(TextureController& textureController, const std::string& textureFilepath, const ScenePosition position);
         
+        ScenePosition GetDisplayOffset() const;
         ScenePosition GetScenePosition() const;
-        void LookMe();
 };
 
 class ScreenDrawable : public Drawable

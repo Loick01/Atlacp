@@ -123,7 +123,7 @@ void OrderController::ExecuteOrder(const CameraSlideToPositionOrder& o)
 void OrderController::ExecuteOrder(const CameraSlideToEntityOrder& o)
 {
     MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
-    m_camera.StartSlidingTo(entity->GetScenePosition());
+    m_camera.StartSlidingTo(entity->GetScenePosition() + entity->GetDisplayOffset());
     m_camera.AddCallback([this](UselessEvent e){NextOrder();});
 }
 
@@ -156,12 +156,12 @@ bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 
 bool OrderController::UpdateOrder(const CameraSlideToPositionOrder& o)
 {
-    return m_camera.GetAnimState() == CameraAnimState::Done;
+    return m_camera.GetCameraState() == CameraState::DoneSliding;
 }
 
 bool OrderController::UpdateOrder(const CameraSlideToEntityOrder& o)
 {
-    return m_camera.GetAnimState() == CameraAnimState::Done;
+    return m_camera.GetCameraState() == CameraState::DoneSliding;
 }
 
 void OrderController::StopOrder(const Order& o)
@@ -193,13 +193,13 @@ void OrderController::StopOrder(const NpcGoToOrder& o)
 
 void OrderController::StopOrder(const CameraSlideToPositionOrder& o)
 {
-    m_camera.SetAnimState(CameraAnimState::Free);
+    m_camera.SetCameraState(CameraState::Anchored); // Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
     m_camera.RemoveLastCallback();
 }
 
 void OrderController::StopOrder(const CameraSlideToEntityOrder& o)
 {
-    m_camera.SetAnimState(CameraAnimState::Free);
+    m_camera.SetCameraState(CameraState::Anchored); // Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
     m_camera.RemoveLastCallback();
 }
 

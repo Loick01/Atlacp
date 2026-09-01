@@ -14,7 +14,7 @@ class NPC : public MapEntity // Should have a Tilemap& member ?
 
     public:
         NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const std::string& spriteFilepath,
-            Camera& camera, const MapPosition position, const float walkSpeed, const float runSpeed, const unsigned int id);
+            const MapPosition position, const float walkSpeed, const float runSpeed, const float cameraZoom, const unsigned int id);
 
         const MapEntityBehaviour* GetMapBehaviour() const;
         MapEntityBehaviour* GetMapBehaviour();

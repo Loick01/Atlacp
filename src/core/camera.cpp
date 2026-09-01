@@ -1,9 +1,11 @@
 #include "core/camera.hpp"
 
 #include "core/window.hpp"
+#include "map/map_entity.hpp"
 
 Camera::Camera():
-    m_position(ScenePosition{0,0}), m_speed(400.f), m_animState(CameraAnimState::Free)
+    m_position(ScenePosition{0,0}), m_speed(400.f), m_cameraState(CameraState::Anchored),
+    m_anchoredEntity(nullptr)
 {}
 
 void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int tileSize)
@@ -49,9 +51,9 @@ AreaSize Camera::GetViewport() const
     return m_viewport;
 }
 
-CameraAnimState Camera::GetAnimState() const
+CameraState Camera::GetCameraState() const
 {
-    return m_animState;
+    return m_cameraState;
 }
 
 Pair<int> Camera::GetStartIndex() const
@@ -79,9 +81,9 @@ void Camera::AddZoom(const float z)
     m_zoom += z;
 }   
 
-void Camera::SetAnimState(const CameraAnimState animState)
+void Camera::SetCameraState(const CameraState state)
 {
-    m_animState = animState;
+    m_cameraState = state;
 }
 
 void Camera::SetTilemapInfo(const AreaSize tilemapSize)
@@ -105,7 +107,7 @@ void Camera::MoveCameraPosition(const ScenePosition sp)
     MoveCameraPosition(Vec2f(sp));
 } 
 
-void Camera::Reset() // Used in editor
+void Camera::ResetPositionAndZoom() // Used in editor
 {
     m_zoom = 1.0f;
     SetCameraPosition(ScenePosition{0,0});
@@ -116,6 +118,11 @@ void Camera::LookAt(const ScenePosition sp) // Center the camera on a scene posi
 {
     ScenePosition constrainedPosition = GetConstrainedCameraPosition(sp);
     SetCameraPosition(constrainedPosition);
+}
+
+void Camera::SetAnchoredEntity(MapEntity* entity)
+{
+    m_anchoredEntity = entity;
 }
 
 void Camera::SetShouldCulling(const bool shouldCulling)
@@ -143,23 +150,31 @@ void Camera::ComputeMapCulling(const GridSize layerSize, const int tileSize)
 
 void Camera::Update(const float deltaTime)
 {
-    if (m_animState != CameraAnimState::Sliding)
-        return;
-    
-    Vec2f toEndPosition = m_slidingInfo.endPosition - ScenePosition(m_position); 
-    const float remainingDistance = toEndPosition.Norm();
-    const float frameDistance = m_speed * deltaTime;
-    if (frameDistance >= remainingDistance) {
-        SetCameraPosition(m_slidingInfo.endPosition);
-        m_animState = CameraAnimState::Done;
-        Notify(UselessEvent::None);
-    } else {
-        MoveCameraPosition(toEndPosition.Normalize() * frameDistance);
+    switch (m_cameraState) {
+        case CameraState::Anchored : {
+            LookAt(m_anchoredEntity->GetScenePosition() + m_anchoredEntity->GetDisplayOffset());
+            break;
+        }
+        case CameraState::Sliding : {
+            Vec2f toEndPosition = m_slidingInfo.endPosition - ScenePosition(m_position); 
+            const float remainingDistance = toEndPosition.Norm();
+            const float frameDistance = m_speed * deltaTime;
+            if (frameDistance >= remainingDistance) {
+                SetCameraPosition(m_slidingInfo.endPosition);
+                m_cameraState = CameraState::DoneSliding;
+                Notify(UselessEvent::None);
+            } else {
+                MoveCameraPosition(toEndPosition.Normalize() * frameDistance);
+            }
+            break;
+        }
+        default:
+            break;
     }
 }
 
 void Camera::StartSlidingTo(const ScenePosition sp)
 {
     m_slidingInfo.endPosition = GetConstrainedCameraPosition(sp);
-    m_animState = CameraAnimState::Sliding;
+    m_cameraState = CameraState::Sliding;
 }

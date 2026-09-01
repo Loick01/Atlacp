@@ -8,11 +8,11 @@
 
 MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
 Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath):
-    m_player(fileReader, tilemap, textureController, spritePlayerPath, camera, 4.f, 6.f),
-    m_fileReader(fileReader), m_currentMapEntityUpdated(nullptr), m_shouldUpdateNpc(true)
+    m_fileReader(fileReader), m_camera(camera), m_player(fileReader, tilemap, textureController, spritePlayerPath, 4.f, 6.f, m_camera.GetZoom()),
+    m_currentMapEntityUpdated(nullptr), m_shouldUpdateNpc(true)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
-    
+    m_camera.SetAnchoredEntity(&m_player);
     m_renderedEntities = {&m_player};
     m_updatedEntities = m_renderedEntities;
 }
@@ -63,8 +63,11 @@ void MapElementController::DeleteNPCs()
 
 void MapElementController::Draw() const
 {
-    for (MapEntity* e : m_renderedEntities)
+    for (MapEntity* e : m_renderedEntities) {
+        e->SetCameraPosition(m_camera.GetPosition() - m_camera.GetScreenOffset());
+        e->SetCameraZoom(m_camera.GetZoom());
         e->DrawTexture();
+    }
 }
 
 void MapElementController::Update(const GameMapEventState& playerEventState, const float deltaTime)
@@ -117,7 +120,7 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
     }
 }
 
-void MapElementController::LoadNPCs(TextureController& textureController, Camera& camera, Tilemap& tilemap,
+void MapElementController::LoadNPCs(TextureController& textureController, Tilemap& tilemap,
     const std::string& filepath, const unsigned int mapIndex)
 {
     DeleteNPCs();
@@ -137,8 +140,9 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
             tilemap, 
             textureController,
             "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
-            camera, npcPosition,
+            npcPosition,
             data.walkSpeed, data.runSpeed,
+            m_camera.GetZoom(),
             data.id
         );
         npc->SetOrders(data.orders);
@@ -149,7 +153,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Camera
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
     // MapEntity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_fileReader, tilemap, textureController, trackedEntity, "map_entity/" + data.sprite, camera, 4.f, 6.f);
+    //     NPC* npc = new NPC(m_fileReader, tilemap, textureController, trackedEntity, "map_entity/" + data.sprite, 4.f, 6.f);
     //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     //     m_renderedEntities.push_back(npc);
     //     trackedEntity = npc;

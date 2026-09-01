@@ -169,7 +169,7 @@ void EditorMapEventController::HandlePollEvents()
                         m_eventState.isAction = true;
                         break;
                     case SDL_SCANCODE_R:
-                        m_camera.Reset();
+                        m_camera.ResetPositionAndZoom();
                         break;
                     case SDL_SCANCODE_UP:
                         m_tilemap.LoadAdjacentMap(MapBound::OutUp);

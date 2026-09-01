@@ -1,7 +1,6 @@
 #include "image/drawable.hpp"
 
 #include "image/texture.hpp"
-#include "core/camera.hpp"
 #include "core/path.hpp"
 
 Drawable::Drawable(TextureController& textureController, const std::string& textureFilepath):
@@ -51,8 +50,8 @@ void Drawable::DeleteTexture()
     m_textureController.DeleteTexture(m_textureKey);
 }
 
-SceneDrawable::SceneDrawable(TextureController& textureController, const std::string& textureFilepath, Camera& camera, const ScenePosition position):
-    Drawable(textureController, textureFilepath), m_camera(camera), m_position(position)
+SceneDrawable::SceneDrawable(TextureController& textureController, const std::string& textureFilepath, const ScenePosition position):
+    Drawable(textureController, textureFilepath), m_position(position)
 {}
 
 ScenePosition SceneDrawable::GetDisplayOffset() const
@@ -68,11 +67,6 @@ ScenePosition SceneDrawable::GetScenePosition() const
 void SceneDrawable::SetDisplayOffset(const ScenePosition offset)
 {
     m_displayOffset = offset;
-}
-
-void SceneDrawable::LookMe()
-{
-    m_camera.LookAt(m_position+m_displayOffset);
 }
 
 ScreenDrawable::ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position, const bool shouldDraw):

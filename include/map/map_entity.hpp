@@ -6,7 +6,6 @@
 #include "map/map_element.hpp"
 #include "map/map_movement.hpp"
 
-class Camera;
 class TextureController;
 class Tilemap;
 
@@ -27,13 +26,17 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         unsigned int m_id;
         bool m_isRunning;
 
+        ScenePosition m_cameraPosition;
+        float m_cameraZoom;
+
         ScenePosition ContinueMovement(const float deltaTime);
         void TryStartMovement(const MapMovement movement, const bool isFirstMovement, const bool canExitMap);
         void TryStartInteraction(const MapPosition targetPosition);
 
     protected:
-        MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
-            Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const unsigned int id = 0); // For now, only Player has id = 0
+        MapEntity(TextureController& textureController, const std::string& spriteFilepath, const FileReader& fileReader,
+            Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const float cameraZoom,
+            const unsigned int id = 0); // For now, only Player has id = 0
         
         ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
@@ -66,4 +69,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 
         void OnInteracting(const Direction direction) override;
         void ReleaseInteracting() override;
+
+        void SetCameraZoom(const float zoom);
+        void SetCameraPosition(const ScenePosition sp);
 };
