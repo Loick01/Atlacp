@@ -4,28 +4,29 @@ tileset 2 zoria/
 zoria
 zoria_2
 
-element 2
+element 3
+
+9 5 3
+frame_text 1 Interaction - Anchor on NPC 44;
+camera_anchor_entity 44
+frame_text 1 Interaction - Camera is anchored;
 
 9 7 3
-frame_text 1 Interaction - Prepare for camera slide;
-camera_slide_to_position 2000 1500
-frame_text 1 Interaction - Done with camera slide;
+frame_text 1 Interaction - Anchor on Player;
+camera_anchor_entity 0
+frame_text 1 Interaction - Camera is anchored;
 
 18 11 4
 frame_text 1 Here is an example of a PlayCinematicOrder, with its Orders defined in a separate file;
 npc_goto 17 12 42
 npc_follow 0 42
-frame_text 1 Npc 42 will follow you; 
+frame_text 1 Npc 42 will follow you;
 
 trigger 3
 
 8 7 4
-frame_text 4 
-This is an Order executed by a trigger;
-It can be any of the Orders, just like those used for MapElement or MapEntity interactions;
-Just make the player walk onto a tile where a trigger is defined, and it will execute the 
-list of Orders associated with that trigger;
-Here is a screenshot of how a trigger is defined in a data file;
+frame_text 4 This is an Order executed by a trigger;It can be any of the Orders, just like those used for MapElement or MapEntity interactions;Just make the player walk onto a tile where a trigger is defined, and it will execute the 
+list of Orders associated with that trigger;Here is a screenshot of how a trigger is defined in a data file;
 npc_goto 8 8 41
 npc_idle down 41
 frame_text 1 Npc 41 will not move;
@@ -46,7 +47,7 @@ play_cinematic cine02
 384 449 384 422 384 384 384 384 451 384 384 333 334 0 0 0 33 0 0 0 0 332 333 384 384 384 417 384 
 450 384 384 422 384 450 384 384 384 384 334 0 0 0 6 0 0 33 0 6 0 0 0 332 333 384 384 384 
 384 451 386 454 384 451 449 384 384 334 0 25 26 27 28 29 0 0 264 261 261 266 0 0 0 332 333 384 
-417 386 454 384 384 384 384 384 302 0 0 58 58 59 60 60 0 0 292 293 293 294 0 0 0 0 0 332 
+417 386 454 384 384 384 384 384 302 3 0 58 58 59 60 60 0 0 292 293 293 294 0 0 0 0 0 332 
 384 422 384 449 384 384 417 384 334 0 0 89 90 91 92 93 0 264 292 293 293 294 0 37 0 0 0 0 
 384 422 384 384 384 384 450 302 0 3 0 121 122 123 124 125 0 292 292 293 293 326 5 0 33 0 0 0 
 384 422 417 384 449 384 384 334 0 0 0 153 154 155 156 157 0 324 325 325 330 0 0 0 0 0 0 0 

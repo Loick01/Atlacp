@@ -127,6 +127,13 @@ void OrderController::ExecuteOrder(const CameraSlideToEntityOrder& o)
     m_camera.AddCallback([this](UselessEvent e){NextOrder();});
 }
 
+void OrderController::ExecuteOrder(const CameraAnchorEntityOrder& o)
+{
+    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    m_camera.SetAnchoredEntity(entity);
+    NextOrder();
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else

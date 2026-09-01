@@ -79,7 +79,7 @@ struct PlayCinematicOrder { // Execute Orders defined in a file given by cinemat
     }
 };
 
-struct CameraSlideToPositionOrder {
+struct CameraSlideToPositionOrder { // Move the camera to the given position 
     ScenePosition endPosition;
 
     std::string GetString() const
@@ -89,7 +89,7 @@ struct CameraSlideToPositionOrder {
     }
 };
 
-struct CameraSlideToEntityOrder {
+struct CameraSlideToEntityOrder { // Move the camera to the position of the given MapEntity
     unsigned int idEntity;
 
     std::string GetString() const
@@ -99,15 +99,25 @@ struct CameraSlideToEntityOrder {
     }
 };
 
+struct CameraAnchorEntityOrder { // Make the camera follow the given MapEntity
+    unsigned int idEntity; 
+
+    std::string GetString() const
+    {
+        std::string res = "camera_anchor_entity " + std::to_string(idEntity);
+        return res;
+    }
+};
+
 // TODO :
 // struct AddInventoryOrder {};
-// Orders about Camera (Anchor)
 // Orders about NPC (Create/Delete)
 
 using Order = std::variant<
     FrameTextOrder, DialogTextOrder,
     NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
     CameraSlideToPositionOrder, CameraSlideToEntityOrder,
+    CameraAnchorEntityOrder,
     PlayCinematicOrder
 >;
 
