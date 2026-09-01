@@ -29,11 +29,11 @@ ScenePosition MapMovement::GetScenePosition() const
     return m_startPosition + (m_endPosition - m_startPosition) * m_progress; // Should be in Interpolation struct ?
 }
 
-EntityState MapMovement::UpdateProgress(const float speed, const float deltaTime)
+EntityMovementState MapMovement::UpdateProgress(const float speed, const float deltaTime)
 {
     m_progress += speed * deltaTime;
     m_progress = std::min(1.0f, m_progress); 
-    EntityState newState = m_progress == 1.f ? EntityState::OnStop : EntityState::Moving;
+    EntityMovementState newState = m_progress == 1.f ? EntityMovementState::OnStop : EntityMovementState::Moving;
     return newState;
 }
 

@@ -10,8 +10,8 @@
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, Camera& camera, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const unsigned int id):
     SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, camera, ScenePosition{0,0}), MapElement(tilemap),
-    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_state(EntityState::Free), m_animation(fileReader, spriteFilepath),
-    m_id(id)
+    m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_id(id),
+    m_movementState(EntityMovementState::Free), m_interactionState(EntityInteractionState::None), m_animation(fileReader, spriteFilepath)
 {
     const AreaSize spriteSize = m_animation.GetSpriteSize();
     m_textureWidth = spriteSize.x;
@@ -21,9 +21,14 @@ MapEntity::MapEntity(TextureController& textureController, const std::string& sp
     Reset(initialDirection);
 }
 
-EntityState MapEntity::GetState() const
+EntityMovementState MapEntity::GetMovementState() const
 {
-    return m_state;
+    return m_movementState;
+}
+
+EntityInteractionState MapEntity::GetInteractionState() const
+{
+    return m_interactionState;
 }
 
 MapMovement MapEntity::GetCurrentMovement() const
@@ -42,7 +47,7 @@ void MapEntity::Reset(const Direction direction)
     if (direction == Direction::None) 
         throw std::invalid_argument("Direction should not be None\n");
     SetOrientation(direction);
-    m_state = EntityState::Free;
+    m_movementState = EntityMovementState::Free;
 }
 
 void MapEntity::TryStartMovement(const MapMovement movement, const bool isFirstMovement, const bool canExitMap)
@@ -59,7 +64,7 @@ void MapEntity::TryStartMovement(const MapMovement movement, const bool isFirstM
         // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
     }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(targetPosition)){
         m_currentMovement = movement;
-        m_state = EntityState::Moving;
+        m_movementState = EntityMovementState::Moving;
 
         int tileSize = m_tilemap.GetTileSize();
         m_animation.Initialize(movement.GetDirection(), isFirstMovement);
@@ -77,7 +82,7 @@ void MapEntity::TryStartInteraction(const MapPosition targetPosition)
 {
     const MapBound bound = m_tilemap.IsOutOfMap(targetPosition);
     if (bound == MapBound::Inside){
-        m_state = EntityState::Interacting;
+        m_interactionState = EntityInteractionState::Interacting;
         SetTargetPosition(targetPosition);
         Notify(EntityEvent::EnterInteraction);
     }
@@ -95,7 +100,7 @@ void MapEntity::ContinueTrigger()
 
 ScenePosition MapEntity::ContinueMovement(const float deltaTime)
 {
-    m_state = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
+    m_movementState = m_currentMovement.UpdateProgress(GetCurrentSpeed(), deltaTime);
     m_animation.Continue(deltaTime);
     return m_currentMovement.GetScenePosition();
 }
@@ -162,9 +167,14 @@ bool MapEntity::GetIsRunning() const
     return m_isRunning;
 }
 
-void MapEntity::SetState(const EntityState state)
+void MapEntity::SetMovementState(const EntityMovementState state)
 {
-    m_state = state;
+    m_movementState = state;
+}
+
+void MapEntity::SetInteractionState(const EntityInteractionState state)
+{
+    m_interactionState = state;
 }
 
 void MapEntity::SetIsRunning(const bool isRunning)
@@ -175,10 +185,11 @@ void MapEntity::SetIsRunning(const bool isRunning)
 void MapEntity::OnInteracting(const Direction direction)
 {
     SetOrientation(direction);
-    SetState(EntityState::Interacting); // Targeted entity will not move
+    SetInteractionState(EntityInteractionState::Interacting); // Targeted entity will not move
 }
 
 void MapEntity::ReleaseInteracting()
 {
-    SetState(EntityState::Free);
+    SetMovementState(EntityMovementState::Free);
+    SetInteractionState(EntityInteractionState::None);
 }

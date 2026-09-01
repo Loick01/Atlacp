@@ -18,7 +18,7 @@ class MapEntityBehaviour // Should be call EntityMovementBehaviour or MovementBe
         MapEntityBehaviour() = default;
         virtual ~MapEntityBehaviour() = default;
         
-        // One function for each value in MapEntity::EntityState
+        // One function for each value in MapEntity::EntityMovementState
         virtual void FreeCase(MapEntity& entity, const float deltaTime) = 0;
         virtual void MovingCase(MapEntity& entity, const float deltaTime) = 0;
         virtual void OnStopCase(MapEntity& entity) = 0;

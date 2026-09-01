@@ -3,9 +3,14 @@
 #include "map/map_types.hpp" // MapPosition, Direction
 #include "image/image_types.hpp" // ScenePosition
 
-enum class EntityState
+enum class EntityMovementState
 {
-    Free, Moving, OnStop, Interacting, Triggering // Interacting and Triggering should be merged ?
+    Free, Moving, OnStop
+};
+
+enum class EntityInteractionState
+{
+    None, Interacting, Triggering
 };
 
 class MapMovement
@@ -27,7 +32,7 @@ class MapMovement
         Direction GetOppositeDirection() const;
         MapPosition GetStartPosition() const;
         ScenePosition GetScenePosition() const;
-        EntityState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
+        EntityMovementState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
         
         // Not sure to keep these 2 functions
         MapPosition GetMoveFromDirection(const Direction direction) const;

@@ -20,7 +20,8 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
     private:
         MapMovement m_currentMovement;
         MapEntityAnimation m_animation;
-        EntityState m_state;
+        EntityMovementState m_movementState;
+        EntityInteractionState m_interactionState;
         float m_walkSpeed;
         float m_runSpeed;
         unsigned int m_id;
@@ -49,14 +50,16 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         void ContinueTrigger();
         // void LeaveInteraction(); --> Notify(EntityEvent::LeaveInteraction);
 
-        EntityState GetState() const;
+        EntityMovementState GetMovementState() const;
+        EntityInteractionState GetInteractionState() const;
         MapMovement GetCurrentMovement() const;
         float GetWalkSpeed() const;
         float GetRunSpeed() const;
         float GetCurrentSpeed() const;
         unsigned int GetId() const;
         bool GetIsRunning() const;
-        void SetState(const EntityState state);
+        void SetMovementState(const EntityMovementState state);
+        void SetInteractionState(const EntityInteractionState state);
         void SetIsRunning(const bool isRunning);
         void SetOrientation(const Direction direction);
         void Reset(const Direction direction);

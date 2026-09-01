@@ -25,21 +25,26 @@ MapEntityBehaviour* NPC::GetMapBehaviour()
 
 void NPC::Update(const float deltaTime)
 {
+    const EntityInteractionState interactionState = GetInteractionState();
+    if (interactionState != EntityInteractionState::None) {
+        return; // For now it's unnecessary because NPC can't start an interaction or a trigger, but I will change that later
+    }
+
     // Should test if m_behaviour != nullptr ?
-    switch (GetState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
-        case EntityState::Free:
+    switch (GetMovementState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
+        case EntityMovementState::Free:
         {
             m_behaviour->FreeCase(*this, deltaTime);
             break;
         }
 
-        case EntityState::Moving:
+        case EntityMovementState::Moving:
         {
             m_behaviour->MovingCase(*this, deltaTime);
             break;
         }
 
-        case EntityState::OnStop: // Enter this case at the end of the current movement
+        case EntityMovementState::OnStop: // Enter this case at the end of the current movement
         {
             Notify(EntityEvent::HasMoved); // Some triggers should be restricted for NPC (for example when a trigger start a cinematic)
             m_behaviour->OnStopCase(*this);

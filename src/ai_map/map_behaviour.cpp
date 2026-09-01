@@ -16,7 +16,10 @@ void MapRandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
         entity.OrderStartMovement(m_random.GetRandomDirection(), true);
         // When I made the sprite orientation update even if the movement isn't valid, if the NPC is blocked in the 4 directions,
         // it will be updated every frame. I would need something else to handle that case
-        if (entity.GetState() != EntityState::Free) // Generate a new delay only if the movement is valid (no collision)
+
+        // Generate a new delay only if the movement is valid (no collision)
+        // Don't need to test GetInteractionState() here, already to EntityInteractionState::None when calling Behaviour::FreeCase
+        if (entity.GetMovementState() != EntityMovementState::Free)
             m_delay = m_random.GetRandomFloat(0.5f, 5.f);
     }
 }
@@ -47,8 +50,7 @@ MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const Ma
 
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
 {
-    const EntityState trackedEntityState = m_trackedEntity->GetState();
-    if (trackedEntityState != EntityState::Free && trackedEntityState != EntityState::Triggering && trackedEntityState != EntityState::Interacting){ // ?
+    if (m_trackedEntity->GetMovementState() != EntityMovementState::Free && m_trackedEntity->GetInteractionState() == EntityInteractionState::None){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
@@ -64,7 +66,7 @@ void MapFollowBehaviour::MovingCase(MapEntity& entity, const float deltaTime)
 
 void MapFollowBehaviour::OnStopCase(MapEntity& entity)
 {
-    if (m_trackedEntity->GetState() != EntityState::Free){
+    if (m_trackedEntity->GetMovementState() != EntityMovementState::Free && m_trackedEntity->GetInteractionState() == EntityInteractionState::None){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
         const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?

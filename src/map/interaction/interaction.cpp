@@ -12,7 +12,7 @@ void InteractionController::InitializeInteraction(const std::vector<MapEntity*>&
 {
     for (MapEntity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
         // Only one interaction at a time
-        if (e->GetState() == EntityState::Interacting) {
+        if (e->GetInteractionState() == EntityInteractionState::Interacting) {
             m_srcEntity = e;
             break;
         }
@@ -20,7 +20,7 @@ void InteractionController::InitializeInteraction(const std::vector<MapEntity*>&
     const MapPosition target = m_srcEntity->GetTargetPosition();
 
     for (MapEntity* e : entities) {
-        if (e->GetMapPosition() == target && e->GetState() == EntityState::Free) {
+        if (e->GetMapPosition() == target && e->GetMovementState() == EntityMovementState::Free && e->GetInteractionState() == EntityInteractionState::None) {
             m_dstElement = e;
             return;
         }
@@ -37,7 +37,7 @@ void InteractionController::StartInteraction()
 {
     if (m_dstElement == nullptr || m_dstElement->GetOrders().size() == 0) {
         // No target MapElement or MapEntity has been found OR no order to execute (only for NPC, if a MapElement is declared it must have at least one order)
-        m_srcEntity->SetState(EntityState::Free);
+        m_srcEntity->SetInteractionState(EntityInteractionState::None);
         return;
     }
     
@@ -59,7 +59,7 @@ void InteractionController::ContinueInteraction()
 
 void InteractionController::EndInteraction()
 {
-    m_srcEntity->SetState(EntityState::Free);
+    m_srcEntity->ReleaseInteracting();
     m_dstElement->ReleaseInteracting();
     m_srcEntity = nullptr;
     m_dstElement = nullptr;

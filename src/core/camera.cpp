@@ -160,6 +160,6 @@ void Camera::Update(const float deltaTime)
 
 void Camera::StartSlidingTo(const ScenePosition sp)
 {
-    m_slidingInfo.endPosition = GetConstrainedCameraPosition(sp);;
+    m_slidingInfo.endPosition = GetConstrainedCameraPosition(sp);
     m_animState = CameraAnimState::Sliding;
 }

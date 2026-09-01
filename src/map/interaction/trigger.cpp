@@ -29,7 +29,7 @@ void TriggerController::LookForTrigger(MapEntity* entity)
 {
     for (MapElement* t : m_triggers) {
         if (t->GetMapPosition() == entity->GetMapPosition()) {
-            entity->SetState(EntityState::Triggering);
+            entity->SetInteractionState(EntityInteractionState::Triggering);
             m_triggeringEntity = entity;
             m_orderController.AddOrders(t->GetOrders());
             m_orderController.NextOrder();
@@ -46,5 +46,6 @@ void TriggerController::ContinueTrigger()
 
 void TriggerController::EndTrigger()
 {
-    m_triggeringEntity->SetState(EntityState::Free);
+    m_triggeringEntity->SetMovementState(EntityMovementState::Free);
+    m_triggeringEntity->SetInteractionState(EntityInteractionState::None);
 }
