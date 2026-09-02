@@ -30,6 +30,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadCameraSlideToEntityOrder(input));
         } else if (s == "camera_anchor_entity") {
             orders.push_back(ReadCameraAnchorEntityOrder(input));
+        } else if (s == "entity_orientation") {
+            orders.push_back(ReadEntityOrientationOrder(input));
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }       
@@ -130,4 +132,12 @@ CameraAnchorEntityOrder FileReader::ReadCameraAnchorEntityOrder(std::ifstream& i
     unsigned int idEntity;
     input >> idEntity;
     return CameraAnchorEntityOrder{idEntity};
+}
+
+EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& input) const
+{
+    unsigned int idEntity;
+    input >> idEntity;
+    Direction direction = ReadDirection(input);
+    return EntityOrientationOrder{idEntity, direction};
 }

@@ -109,6 +109,17 @@ struct CameraAnchorEntityOrder { // Make the camera follow the given MapEntity
     }
 };
 
+struct EntityOrientationOrder {
+    unsigned int idEntity;
+    Direction direction;
+
+    std::string GetString() const
+    {
+        std::string res = "entity_orientation " + std::to_string(idEntity) + " " + std::to_string((int)direction); // TODO : direction should be write with the same values as FileReader::ReadDirection
+        return res;
+    }
+};
+
 // TODO :
 // struct AddInventoryOrder {};
 // Orders about NPC (Create/Delete)
@@ -118,6 +129,7 @@ using Order = std::variant<
     NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
     CameraSlideToPositionOrder, CameraSlideToEntityOrder,
     CameraAnchorEntityOrder,
+    EntityOrientationOrder,
     PlayCinematicOrder
 >;
 

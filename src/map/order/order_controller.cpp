@@ -134,6 +134,13 @@ void OrderController::ExecuteOrder(const CameraAnchorEntityOrder& o)
     NextOrder();
 }
 
+void OrderController::ExecuteOrder(const EntityOrientationOrder& o)
+{
+    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    entity->SetOrientation(o.direction);
+    NextOrder();
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else
