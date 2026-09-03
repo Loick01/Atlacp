@@ -243,7 +243,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
         }
 
         default:
-            throw std::runtime_error("Selector is not supposed to be on this index : " + selectorIndex);
+            throw std::runtime_error("Selector is not supposed to be on this index : " + std::to_string(selectorIndex));
     }
 }
 

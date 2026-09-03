@@ -1,5 +1,7 @@
 #include "map/map_element_controller.hpp"
 
+// #include <algorithm>
+
 #include "map/map_entity.hpp"
 #include "map/npc.hpp"
 #include "core/camera.hpp"
@@ -41,12 +43,36 @@ MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
         if (m->GetId() == id)
             return m;
     }
-    throw std::runtime_error("This MapEntity was not found in MapElementController::m_updatedEntities : " + id);
+    throw std::runtime_error("This MapEntity was not found in MapElementController::m_updatedEntities : " + std::to_string(id));
 }
 
 MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
 {
     return m_currentMapEntityUpdated;
+}
+
+void MapElementController::DeleteEntity(const unsigned int idEntity)
+{
+    std::vector<MapEntity*>::iterator itRendered = std::find_if(m_renderedEntities.begin(), m_renderedEntities.end(), 
+        [idEntity](MapEntity* entity) {
+            return entity->GetId() == idEntity;
+        }
+    );
+    std::vector<MapEntity*>::iterator itUpdated = std::find_if(m_updatedEntities.begin(), m_updatedEntities.end(), 
+        [idEntity](MapEntity* entity) {
+            return entity->GetId() == idEntity;
+        }
+    );
+
+    if (itRendered == m_renderedEntities.end() || itUpdated == m_updatedEntities.end())
+        throw std::runtime_error("This MapEntity was not found in MapElementController : " + std::to_string(idEntity));
+
+    // Or itUpdated
+    (*itRendered)->FreePosition();
+    delete *itRendered;
+    
+    m_renderedEntities.erase(itRendered);
+    m_updatedEntities.erase(itUpdated);
 }
 
 void MapElementController::DeleteNPCs()

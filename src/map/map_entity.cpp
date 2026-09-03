@@ -202,3 +202,13 @@ void MapEntity::SetCameraPosition(const ScenePosition sp)
 {
     m_cameraPosition = sp;
 }
+
+void MapEntity::FreePosition()
+{
+    m_tilemap.FreePosition(GetMapPosition());
+}
+
+void MapEntity::TakePosition()
+{
+    m_tilemap.TakePosition(GetMapPosition());
+}

@@ -32,6 +32,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadCameraAnchorEntityOrder(input));
         } else if (s == "entity_orientation") {
             orders.push_back(ReadEntityOrientationOrder(input));
+        } else if (s == "entity_delete") {
+            orders.push_back(ReadEntityDeleteOrder(input));
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }       
@@ -140,4 +142,12 @@ EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& inp
     input >> idEntity;
     Direction direction = ReadDirection(input);
     return EntityOrientationOrder{idEntity, direction};
+}
+
+EntityDeleteOrder FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
+{
+    unsigned int idEntity;
+    input >> idEntity;
+    if (idEntity == 0) throw std::runtime_error("FileReader::ReadEntityDeleteOrder -> idEntity should not be 0 (Player)");
+    return EntityDeleteOrder{idEntity};
 }

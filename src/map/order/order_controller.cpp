@@ -141,6 +141,12 @@ void OrderController::ExecuteOrder(const EntityOrientationOrder& o)
     NextOrder();
 }
 
+void OrderController::ExecuteOrder(const EntityDeleteOrder& o)
+{
+    m_mapElementController.DeleteEntity(o.idEntity);
+    NextOrder();
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else

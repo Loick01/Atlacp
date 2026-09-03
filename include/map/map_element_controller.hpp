@@ -46,6 +46,7 @@ class MapElementController : public Notifier<EntityEvent>
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
+        void DeleteEntity(const unsigned int idEntity);
         void DeleteNPCs();
         void LoadNPCs(TextureController& textureController, Tilemap& tilemap, // These 2 parameters should not be here ?
             const std::string& filepath, const unsigned int mapIndex);

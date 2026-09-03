@@ -72,4 +72,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 
         void SetCameraZoom(const float zoom);
         void SetCameraPosition(const ScenePosition sp);
+
+        void FreePosition();
+        void TakePosition();
 };

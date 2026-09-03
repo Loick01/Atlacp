@@ -135,7 +135,7 @@ void MainMenuScene::Gameloop()
                 m_gameloop = false;
                 return;
             default:
-                throw std::runtime_error("Selector is not supposed to be on this index : " + m_selector.GetOptionIndex());
+                throw std::runtime_error("Selector is not supposed to be on this index : " + std::to_string(m_selector.GetOptionIndex()));
         }
         Notify(se);
     }

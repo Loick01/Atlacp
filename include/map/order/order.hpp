@@ -64,7 +64,7 @@ struct NpcIdleOrder { // Gives MapIdleBehaviour to an NPC, which makes it look i
 
     std::string GetString() const
     {
-        std::string res = "npc_idle " + GetStringFromDirection(direction) + " " + std::to_string(idNpc); // TODO : Direction should not be written that way
+        std::string res = "npc_idle " + GetStringFromDirection(direction) + " " + std::to_string(idNpc);
         return res;
     }
 };
@@ -115,21 +115,31 @@ struct EntityOrientationOrder {
 
     std::string GetString() const
     {
-        std::string res = "entity_orientation " + std::to_string(idEntity) + " " + std::to_string((int)direction); // TODO : direction should be write with the same values as FileReader::ReadDirection
+        std::string res = "entity_orientation " + std::to_string(idEntity) + " " + GetStringFromDirection(direction);
+        return res;
+    }
+};
+
+struct EntityDeleteOrder {
+    unsigned int idEntity;
+
+    std::string GetString() const
+    {
+        std::string res = "entity_delete " + std::to_string(idEntity);
         return res;
     }
 };
 
 // TODO :
 // struct AddInventoryOrder {};
-// Orders about NPC (Create/Delete)
+// EntityCreateOrder(idEntity)
 
 using Order = std::variant<
     FrameTextOrder, DialogTextOrder,
     NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
     CameraSlideToPositionOrder, CameraSlideToEntityOrder,
     CameraAnchorEntityOrder,
-    EntityOrientationOrder,
+    EntityOrientationOrder, EntityDeleteOrder,
     PlayCinematicOrder
 >;
 

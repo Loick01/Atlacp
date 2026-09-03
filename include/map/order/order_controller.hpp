@@ -37,6 +37,7 @@ class OrderController
         void ExecuteOrder(const CameraSlideToEntityOrder& o);
         void ExecuteOrder(const CameraAnchorEntityOrder& o);
         void ExecuteOrder(const EntityOrientationOrder& o);
+        void ExecuteOrder(const EntityDeleteOrder& o);
 
         // Rename IsOrderDone() (return true if the Order is done) ?
         bool UpdateOrder(const Order& o); // Default when there is no function with the specific Order type
