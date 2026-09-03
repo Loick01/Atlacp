@@ -1,7 +1,7 @@
 0 2 3
 test_map/
 map_entity/player
-test_npcs
+test/test_npcs
 map1 map
 map2 map1
 map3

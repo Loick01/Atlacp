@@ -12,33 +12,34 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
     orders.reserve(nrOrder);
     for (unsigned int i = 0 ; i < nrOrder ; i++) {
         input >> s;
-        if (s == "frame_text") {
+        if (s == "frame_text")
             orders.push_back(ReadFrameTextOrder(input));
-        } else if (s == "dialog_text") {
+        else if (s == "dialog_text")
             orders.push_back(ReadDialogTextOrder(input));
-        } else if (s == "npc_goto") {
+        else if (s == "npc_goto")
             orders.push_back(ReadNpcGoToOrder(input));
-        } else if (s == "npc_follow") {
+        else if (s == "npc_follow")
             orders.push_back(ReadNpcFollowOrder(input));
-        } else if (s == "npc_idle") {
+        else if (s == "npc_idle")
             orders.push_back(ReadNpcIdleOrder(input));
-        } else if (s == "play_cinematic") {
+        else if (s == "play_cinematic")
             orders.push_back(ReadPlayCinematicOrder(input));
-        } else if (s == "camera_slide_to_position") {
+        else if (s == "camera_slide_to_position")
             orders.push_back(ReadCameraSlideToPositionOrder(input));
-        } else if (s == "camera_slide_to_entity") {
+        else if (s == "camera_slide_to_entity")
             orders.push_back(ReadCameraSlideToEntityOrder(input));
-        } else if (s == "camera_anchor_entity") {
+        else if (s == "camera_anchor_entity")
             orders.push_back(ReadCameraAnchorEntityOrder(input));
-        } else if (s == "entity_orientation") {
+        else if (s == "entity_orientation")
             orders.push_back(ReadEntityOrientationOrder(input));
-        } else if (s == "entity_delete") {
+        else if (s == "entity_create")
+            orders.push_back(ReadEntityCreateOrder(input));
+        else if (s == "entity_delete")
             orders.push_back(ReadEntityDeleteOrder(input));
-        } else if (s == "time_delay") {
+        else if (s == "time_delay")
             orders.push_back(ReadTimeDelayOrder(input));
-        } else {
+        else
             throw std::runtime_error("Unknow order type : " + s);
-        }       
     }
     return orders;
 }
@@ -146,11 +147,21 @@ EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& inp
     return EntityOrientationOrder{idEntity, direction};
 }
 
+EntityCreateOrder FileReader::ReadEntityCreateOrder(std::ifstream& input) const
+{
+    unsigned int idEntity;
+    MapPosition spawnPosition;
+    std::string filepath;
+    input >> idEntity;
+    input >> spawnPosition.x; input >> spawnPosition.y;
+    input >> filepath;
+    return EntityCreateOrder{idEntity, spawnPosition, filepath};
+}
+
 EntityDeleteOrder FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     input >> idEntity;
-    if (idEntity == 0) throw std::runtime_error("FileReader::ReadEntityDeleteOrder -> idEntity should not be 0 (Player)");
     return EntityDeleteOrder{idEntity};
 }
 

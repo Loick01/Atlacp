@@ -8,6 +8,7 @@ struct DataMapElement;
 class Camera;
 class FileReader;
 class MapEntity;
+class TextureController;
 class Tilemap;
 
 class MapElementController : public Notifier<EntityEvent>
@@ -15,6 +16,8 @@ class MapElementController : public Notifier<EntityEvent>
     private:
         const FileReader& m_fileReader;
         Camera& m_camera;
+        TextureController& m_textureController;
+        Tilemap& m_tilemap;
         
         Player m_player;
         
@@ -46,9 +49,9 @@ class MapElementController : public Notifier<EntityEvent>
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
+        void CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition); // TODO : npcFilepath will be removed ?
         void DeleteEntity(const unsigned int idEntity);
         void DeleteNPCs();
-        void LoadNPCs(TextureController& textureController, Tilemap& tilemap, // These 2 parameters should not be here ?
-            const std::string& filepath, const unsigned int mapIndex);
-        void LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap);
+        void LoadNPCsForMap(const std::string& filepath, const unsigned int mapIndex);
+        void LoadElements(const std::vector<DataMapElement>& elementsData);
 };

@@ -142,6 +142,12 @@ void OrderController::ExecuteOrder(const EntityOrientationOrder& o)
     NextOrder();
 }
 
+void OrderController::ExecuteOrder(const EntityCreateOrder& o)
+{
+    m_mapElementController.CreateEntity(o.entityFilepath, o.idEntity, o.spawnPosition);
+    NextOrder();
+}
+
 void OrderController::ExecuteOrder(const EntityDeleteOrder& o)
 {
     m_mapElementController.DeleteEntity(o.idEntity);

@@ -1,5 +1,5 @@
 1 3 1
 tx_map/
 map_entity/character
-tx_npcs
+tx/world_npcs
 tx_map tx_map_1 tx_map_2

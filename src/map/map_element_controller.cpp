@@ -10,7 +10,8 @@
 
 MapElementController::MapElementController(const FileReader& fileReader, TextureController& textureController,
 Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath):
-    m_fileReader(fileReader), m_camera(camera), m_player(fileReader, tilemap, textureController, spritePlayerPath, 4.f, 6.f, m_camera.GetZoom()),
+    m_fileReader(fileReader), m_camera(camera), m_textureController(textureController), m_tilemap(tilemap), 
+    m_player(fileReader, m_tilemap, m_textureController, spritePlayerPath, 4.f, 6.f, m_camera.GetZoom()),
     m_currentMapEntityUpdated(nullptr), m_shouldUpdateNpc(true)
 {
     m_player.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
@@ -51,8 +52,40 @@ MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
     return m_currentMapEntityUpdated;
 }
 
+void MapElementController::CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition)
+{
+    if (idEntity == 0) 
+        throw std::runtime_error("MapElementController::CreateEntity -> idEntity = 0 is already use for Player");
+
+    DataNPC data = m_fileReader.ReadDataNPC(npcFilepath, idEntity);
+    // Do not use data.position, but the MapPosition given as a parameter
+    
+    if (!m_tilemap.IsFreePosition(spawnPosition))
+            throw std::runtime_error("NPC can only spawn on free position"); 
+        
+    NPC* npc = new NPC( // TODO : Merge with the same code in MapElementController::LoadNPCsForMap 
+        m_fileReader, 
+        m_tilemap, 
+        m_textureController,
+        "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
+        spawnPosition,
+        data.walkSpeed, data.runSpeed,
+        m_camera.GetZoom(),
+        data.id
+    );
+    npc->SetOrders(data.orders);
+    npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
+
+    m_updatedEntities.push_back(npc);
+    m_renderedEntities.push_back(npc);
+    SortRenderedEntities();
+}
+
 void MapElementController::DeleteEntity(const unsigned int idEntity)
 {
+    if (idEntity == 0) 
+        throw std::runtime_error("MapElementController::DeleteEntity -> Player (idEntity = 0) should notbe deleted");
+
     std::vector<MapEntity*>::iterator itRendered = std::find_if(m_renderedEntities.begin(), m_renderedEntities.end(), 
         [idEntity](MapEntity* entity) {
             return entity->GetId() == idEntity;
@@ -81,8 +114,8 @@ void MapElementController::DeleteNPCs()
     for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
         delete m_updatedEntities[i]; // Because I use new to instantiate NPC, later I will use unique_ptr
     
-    // Currently, DeleteNPCs is only called in LoadNPCs() and ~MapElementController(), so calling clear() on these vectors is useless because their elements are 
-    // already overwriten in LoadNPCs(). I keep it anyway, in case DeleteNPCs() is used somewhere else later)
+    // Currently, DeleteNPCs is only called in LoadNPCsForMap() and ~MapElementController(), so calling clear() on these vectors is useless because their elements are 
+    // already overwriten in LoadNPCsForMap(). I keep it anyway, in case DeleteNPCs() is used somewhere else later)
     m_updatedEntities.clear();
     m_renderedEntities.clear();
 }
@@ -106,7 +139,7 @@ void MapElementController::Update(const GameMapEventState& playerEventState, con
     // Do not update the NPCs on this frame if a new map has been loaded, when the Player exited the map or walked on a trigger with LoadMapOrder (not implemented yet)
     if (m_shouldUpdateNpc) {
         // Warning : If at some point a NPC could trigger a map loading, this for loop will crash 
-        // Because Tilemap::LoadMap() -> Notify(TilemapEvent::LoadingMap) -> MapElementController::LoadNPCs() (which modifies m_updatedEntities) 
+        // Because Tilemap::LoadMap() -> Notify(TilemapEvent::LoadingMap) -> MapElementController::LoadNPCsForMap() (which modifies m_updatedEntities) 
         for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++) {
             MapEntity* e = m_updatedEntities[i];
             m_currentMapEntityUpdated = e;
@@ -146,25 +179,24 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
     }
 }
 
-void MapElementController::LoadNPCs(TextureController& textureController, Tilemap& tilemap,
-    const std::string& filepath, const unsigned int mapIndex)
+void MapElementController::LoadNPCsForMap(const std::string& filepath, const unsigned int mapIndex)
 {
     DeleteNPCs();
 
     m_renderedEntities = {&m_player}; // Keep only the Player
 
-    const std::vector<DataNPC> npcsData = m_fileReader.ReadNPCsFile(filepath, mapIndex);
+    const std::vector<DataNPC> npcsData = m_fileReader.ReadDataNPCsForMap(filepath, mapIndex);
 
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
         DataNPC data = npcsData[i];
         const MapPosition npcPosition = data.position;
-        if (!tilemap.IsFreePosition(npcPosition))
+        if (!m_tilemap.IsFreePosition(npcPosition))
             throw std::runtime_error("NPC can only spawn on free position"); 
         
         NPC* npc = new NPC( // TODO
             m_fileReader, 
-            tilemap, 
-            textureController,
+            m_tilemap, 
+            m_textureController,
             "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
             npcPosition,
             data.walkSpeed, data.runSpeed,
@@ -179,7 +211,7 @@ void MapElementController::LoadNPCs(TextureController& textureController, Tilema
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
     // MapEntity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
-    //     NPC* npc = new NPC(m_fileReader, tilemap, textureController, trackedEntity, "map_entity/" + data.sprite, 4.f, 6.f);
+    //     NPC* npc = new NPC(m_fileReader, m_tilemap, m_textureController, trackedEntity, "map_entity/" + data.sprite, 4.f, 6.f);
     //     npc->AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
     //     m_renderedEntities.push_back(npc);
     //     trackedEntity = npc;
@@ -190,14 +222,14 @@ void MapElementController::LoadNPCs(TextureController& textureController, Tilema
     m_shouldUpdateNpc = false;
 }
 
-void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData, Tilemap& tilemap) // Same than TriggerController::SetTriggers()
+void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData) // Same than TriggerController::SetTriggers()
 {
     for (MapElement* e : m_mapElements)
         delete e; // Because I use new to create my MapElement (below)
     m_mapElements.clear();
 
     for (const DataMapElement& data : elementsData) {
-        MapElement* e = new MapElement(tilemap); // TODO
+        MapElement* e = new MapElement(m_tilemap); // TODO
         e->SetMapPosition(data.position);
         e->SetOrders(data.orders);
         m_mapElements.push_back(e);

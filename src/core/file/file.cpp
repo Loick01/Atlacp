@@ -60,7 +60,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     return actorsData;
 }
 
-std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const
+std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
     std::ifstream input = OpenFile(DataDirectory::NPC + npcsFilepath);
     std::vector<DataNPC> npcsData;
@@ -86,6 +86,31 @@ std::vector<DataNPC> FileReader::ReadNPCsFile(const std::string& npcsFilepath, c
     }
     
     return npcsData;
+}
+
+DataNPC FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const
+{
+    std::ifstream input = OpenFile(DataDirectory::NPC + npcFilepath);
+    std::string s;
+
+    while (input >> s) {
+        const unsigned int currentId = std::stoi(s);
+        if (currentId == idEntity) {
+            // TODO : Merge with the same code in FileReader::ReadDataNPCsForMap
+            // But this is not the same structure than in world_npcs file (where id is in the last position)
+            DataNPC data; 
+            input >> data.sprite;
+            input >> data.walkSpeed;
+            input >> data.runSpeed;
+            data.id = currentId;
+            data.orders = ReadOrders(input);
+            // MapPosition is not read in the file, because ReadDataNPC is used (for now ?) only in MapElementController::CreateEntity, which provides a spawn position
+            return data;
+        } else {
+            std::getline(input, s); // Skip the line
+        }
+    }
+    throw std::runtime_error("No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity));
 }
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const

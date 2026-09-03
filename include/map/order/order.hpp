@@ -120,6 +120,18 @@ struct EntityOrientationOrder {
     }
 };
 
+struct EntityCreateOrder {
+    unsigned int idEntity;
+    MapPosition spawnPosition;
+    std::string entityFilepath; // The data to build the MapEntity will be read in this file. TODO : Will be removed ?  
+
+    std::string GetString() const
+    {
+        std::string res = "entity_create " + std::to_string(idEntity) + " " + std::to_string(spawnPosition.x) + " " + std::to_string(spawnPosition.y) + " " + entityFilepath;
+        return res;
+    }
+};
+
 struct EntityDeleteOrder {
     unsigned int idEntity;
 
@@ -149,7 +161,7 @@ using Order = std::variant<
     NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
     CameraSlideToPositionOrder, CameraSlideToEntityOrder,
     CameraAnchorEntityOrder,
-    EntityOrientationOrder, EntityDeleteOrder,
+    EntityOrientationOrder, EntityCreateOrder, EntityDeleteOrder,
     TimeDelayOrder,
     PlayCinematicOrder
 >;

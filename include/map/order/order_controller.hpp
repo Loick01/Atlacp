@@ -39,6 +39,7 @@ class OrderController
         void ExecuteOrder(const CameraSlideToEntityOrder& o);
         void ExecuteOrder(const CameraAnchorEntityOrder& o);
         void ExecuteOrder(const EntityOrientationOrder& o);
+        void ExecuteOrder(const EntityCreateOrder& o);
         void ExecuteOrder(const EntityDeleteOrder& o);
         void ExecuteOrder(const TimeDelayOrder& o);
 

@@ -191,9 +191,8 @@ GameMapScene::GameMapScene(GameContext& context):
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
     
-    m_elementsController.LoadNPCs(m_context.textureController, m_tilemap, 
-                m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
-    m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
+    m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+    m_elementsController.LoadElements(m_tilemap.GetElementsData());
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
 
     // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
@@ -267,9 +266,8 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_elementsController.LoadNPCs(m_context.textureController, m_tilemap, 
-                m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
-            m_elementsController.LoadElements(m_tilemap.GetElementsData(), m_tilemap);
+            m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+            m_elementsController.LoadElements(m_tilemap.GetElementsData());
             m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
             break;
         }

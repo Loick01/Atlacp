@@ -67,6 +67,7 @@ class FileReader
         CameraSlideToEntityOrder ReadCameraSlideToEntityOrder(std::ifstream& input) const;
         CameraAnchorEntityOrder ReadCameraAnchorEntityOrder(std::ifstream& input) const;
         EntityOrientationOrder ReadEntityOrientationOrder(std::ifstream& input) const;
+        EntityCreateOrder ReadEntityCreateOrder(std::ifstream& input) const;
         EntityDeleteOrder ReadEntityDeleteOrder(std::ifstream& input) const;
         TimeDelayOrder ReadTimeDelayOrder(std::ifstream& input) const;
         
@@ -80,7 +81,8 @@ class FileReader
         // File
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
-        std::vector<DataNPC> ReadNPCsFile(const std::string& npcsFilepath, const unsigned int mapIndex) const;
+        std::vector<DataNPC> ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
+        DataNPC ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const;
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename ? (because UiFile != UiTemplate)
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;

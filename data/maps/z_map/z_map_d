@@ -11,7 +11,7 @@ frame_text 1 Interaction - Anchor on NPC 44;
 camera_anchor_entity 44
 frame_text 1 Interaction - Camera is anchored;
 
-9 7 16
+9 7 17
 frame_text 1 Interaction - Anchor on Player;
 camera_anchor_entity 0
 entity_orientation 41 right
@@ -27,6 +27,7 @@ entity_orientation 0 down
 time_delay 1
 entity_orientation 0 up
 time_delay 1
+entity_create 49 8 7 z/other_z_npcs
 frame_text 1 Interaction - Camera is anchored;
 
 18 11 4
