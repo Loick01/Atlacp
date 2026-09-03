@@ -6,6 +6,7 @@
 
 #include "map/order/order.hpp"
 
+struct Time;
 class Camera;
 class FileReader;
 class MapElementController;
@@ -25,6 +26,7 @@ class OrderController
         FileReader& m_fileReader;
         MapElementController& m_mapElementController;
         Tilemap& m_tilemap; // Should be in NPC instead of here ?
+        Time& m_time;
         UiComponentController& m_uiComponentController;
 
         void ExecuteOrder(const FrameTextOrder& o);
@@ -38,6 +40,7 @@ class OrderController
         void ExecuteOrder(const CameraAnchorEntityOrder& o);
         void ExecuteOrder(const EntityOrientationOrder& o);
         void ExecuteOrder(const EntityDeleteOrder& o);
+        void ExecuteOrder(const TimeDelayOrder& o);
 
         // Rename IsOrderDone() (return true if the Order is done) ?
         bool UpdateOrder(const Order& o); // Default when there is no function with the specific Order type
@@ -46,6 +49,7 @@ class OrderController
         bool UpdateOrder(const NpcGoToOrder& o);
         bool UpdateOrder(const CameraSlideToPositionOrder& o);
         bool UpdateOrder(const CameraSlideToEntityOrder& o); // Try to merge with UpdateOrder(CameraSlideToPosition) ?
+        bool UpdateOrder(const TimeDelayOrder& o);
 
         void StopOrder(const Order& o); // Default when there is no function with the specific Order type
         void StopOrder(const FrameTextOrder& o);
@@ -53,6 +57,7 @@ class OrderController
         void StopOrder(const NpcGoToOrder& o);
         void StopOrder(const CameraSlideToPositionOrder& o);
         void StopOrder(const CameraSlideToEntityOrder& o); // Try to merge with StopOrder(CameraSlideToPosition) ?
+        void StopOrder(const TimeDelayOrder& o);
 
         void Execute(Order& order);
         bool Update(const Order& order); // Rename IsOrderDone() ?
@@ -60,7 +65,7 @@ class OrderController
 
     public:
         OrderController(Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
-            Tilemap& tilemap, UiComponentController& uiComponentController);
+            Tilemap& tilemap, Time& time, UiComponentController& uiComponentController);
 
         void AddOrders(const std::vector<Order>& orders);
         bool NextOrder();

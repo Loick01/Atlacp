@@ -8,7 +8,7 @@
 
 using ComponentKey = std::string;
 
-class Time;
+struct Time;
 class UiController;
 class UiDialogBox;
 class UiDynamicList;

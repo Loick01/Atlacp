@@ -130,6 +130,16 @@ struct EntityDeleteOrder {
     }
 };
 
+struct TimeDelayOrder {
+    float delay;
+
+    std::string GetString() const
+    {
+        std::string res = "time_delay " + std::to_string(delay);
+        return res;
+    }
+};
+
 // TODO :
 // struct AddInventoryOrder {};
 // EntityCreateOrder(idEntity)
@@ -140,6 +150,7 @@ using Order = std::variant<
     CameraSlideToPositionOrder, CameraSlideToEntityOrder,
     CameraAnchorEntityOrder,
     EntityOrientationOrder, EntityDeleteOrder,
+    TimeDelayOrder,
     PlayCinematicOrder
 >;
 

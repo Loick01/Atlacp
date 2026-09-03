@@ -2,6 +2,7 @@
 
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
+#include "core/time.hpp"
 #include "map/map_element_controller.hpp"
 #include "map/npc.hpp" // NPC, MapBehaviour
 #include "sound/sound.hpp"
@@ -11,9 +12,9 @@
 #include "ui/component/ui_frame_text.hpp"
 
 OrderController::OrderController(Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
-Tilemap& tilemap, UiComponentController& uiComponentController) :
+Tilemap& tilemap, Time& time, UiComponentController& uiComponentController) :
     m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
-    m_tilemap(tilemap), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
+    m_tilemap(tilemap), m_time(time), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
 void OrderController::Execute(Order& order)
@@ -147,6 +148,12 @@ void OrderController::ExecuteOrder(const EntityDeleteOrder& o)
     NextOrder();
 }
 
+void OrderController::ExecuteOrder(const TimeDelayOrder& o)
+{
+    m_time.SetDelay(o.delay);
+    m_time.AddCallback([this](UselessEvent e){NextOrder();});
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else
@@ -182,6 +189,11 @@ bool OrderController::UpdateOrder(const CameraSlideToPositionOrder& o)
 bool OrderController::UpdateOrder(const CameraSlideToEntityOrder& o)
 {
     return m_camera.GetCameraState() == CameraState::DoneSliding;
+}
+
+bool OrderController::UpdateOrder(const TimeDelayOrder& o)
+{
+    return m_time.GetDelay() == 0.f;
 }
 
 void OrderController::StopOrder(const Order& o)
@@ -221,6 +233,12 @@ void OrderController::StopOrder(const CameraSlideToEntityOrder& o)
 {
     m_camera.SetCameraState(CameraState::Anchored); // Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
     m_camera.RemoveLastCallback();
+}
+
+void OrderController::StopOrder(const TimeDelayOrder& o)
+{
+    // Time::m_delay is already reset at 0.f in Time::Update()
+    m_time.RemoveLastCallback();
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)

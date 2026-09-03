@@ -68,6 +68,7 @@ class FileReader
         CameraAnchorEntityOrder ReadCameraAnchorEntityOrder(std::ifstream& input) const;
         EntityOrientationOrder ReadEntityOrientationOrder(std::ifstream& input) const;
         EntityDeleteOrder ReadEntityDeleteOrder(std::ifstream& input) const;
+        TimeDelayOrder ReadTimeDelayOrder(std::ifstream& input) const;
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;

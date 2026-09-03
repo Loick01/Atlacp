@@ -34,6 +34,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadEntityOrientationOrder(input));
         } else if (s == "entity_delete") {
             orders.push_back(ReadEntityDeleteOrder(input));
+        } else if (s == "time_delay") {
+            orders.push_back(ReadTimeDelayOrder(input));
         } else {
             throw std::runtime_error("Unknow order type : " + s);
         }       
@@ -150,4 +152,11 @@ EntityDeleteOrder FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
     input >> idEntity;
     if (idEntity == 0) throw std::runtime_error("FileReader::ReadEntityDeleteOrder -> idEntity should not be 0 (Player)");
     return EntityDeleteOrder{idEntity};
+}
+
+TimeDelayOrder FileReader::ReadTimeDelayOrder(std::ifstream& input) const
+{
+    float delay;
+    input >> delay;
+    return TimeDelayOrder{delay};
 }
