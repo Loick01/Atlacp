@@ -109,7 +109,7 @@ struct CameraAnchorEntityOrder { // Make the camera follow the given MapEntity
     }
 };
 
-struct EntityOrientationOrder {
+struct EntityOrientationOrder { // Set the orientation of a MapEntity
     unsigned int idEntity;
     Direction direction;
 
@@ -120,7 +120,7 @@ struct EntityOrientationOrder {
     }
 };
 
-struct EntityCreateOrder {
+struct EntityCreateOrder { // Create a new MapEntity (NPC only) whose data is read from a file 
     unsigned int idEntity;
     MapPosition spawnPosition;
     std::string entityFilepath; // The data to build the MapEntity will be read in this file. TODO : Will be removed ?  
@@ -132,7 +132,7 @@ struct EntityCreateOrder {
     }
 };
 
-struct EntityDeleteOrder {
+struct EntityDeleteOrder { // Delete a MapEntity (NPC only)
     unsigned int idEntity;
 
     std::string GetString() const
@@ -142,7 +142,7 @@ struct EntityDeleteOrder {
     }
 };
 
-struct TimeDelayOrder {
+struct TimeDelayOrder { // Pause the Order execution
     float delay;
 
     std::string GetString() const
@@ -154,7 +154,6 @@ struct TimeDelayOrder {
 
 // TODO :
 // struct AddInventoryOrder {};
-// EntityCreateOrder(idEntity)
 
 using Order = std::variant<
     FrameTextOrder, DialogTextOrder,

@@ -1,0 +1,19 @@
+18
+dialog_text 1 ui/face/villager_face Wait for me !;
+entity_create 50 6 14 z/other_z_npcs
+npc_idle right 50
+time_delay 0.7
+entity_orientation 0 up
+time_delay 0.7
+entity_orientation 0 down
+time_delay 0.7
+entity_orientation 0 left
+time_delay 0.7
+camera_slide_to_entity 50
+camera_anchor_entity 50
+npc_goto 19 3 50
+entity_orientation 50 right
+npc_follow 0 50
+camera_slide_to_entity 0
+camera_anchor_entity 0
+dialog_text 2 ui/face/villager_face Phew...;Alright ! We can go;

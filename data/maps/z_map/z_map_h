@@ -1,4 +1,4 @@
-1 1 28 16 -1 -1
+1 1 28 16 6 14
 
 tileset 2 zoria/
 zoria
@@ -6,7 +6,13 @@ zoria_2
 
 element 0
 
-trigger 0
+trigger 2
+
+20 3 1
+play_cinematic cine_demo_13a
+
+24 3 1
+play_cinematic cine_demo_13b
 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 300 302 0 0 0 0 0 0 0 0 0 0 0 0 
 107 108 0 0 37 0 73 0 0 0 0 0 37 0 300 302 0 0 0 0 39 73 0 0 37 0 0 0 
