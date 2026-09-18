@@ -20,21 +20,21 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=z1e4advGHfU">
-        <img src="https://img.youtube.com/vi/z1e4advGHfU/maxresdefault.jpg" height="130">
+        <img src="https://img.youtube.com/vi/z1e4advGHfU/maxresdefault.jpg" height="125">
       </a>
       <br>
       <strong>Player, Camera and Editor</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=6zPQBOPspiM">
-        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="130">
+        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="125">
       </a>
       <br>
       <strong>Random NPC</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
-        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="130">
+        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="125">
       </a>
       <br>
       <strong>Map Navigation</strong>
