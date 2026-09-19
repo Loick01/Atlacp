@@ -160,6 +160,13 @@ void OrderController::ExecuteOrder(const TimeDelayOrder& o)
     m_time.AddCallback([this](UselessEvent e){NextOrder();});
 }
 
+void OrderController::ExecuteOrder(const LoadMapOrder& o)
+{
+    m_tilemap.LoadMapByIndex(o.mapIndex);
+    // TODO : Need to call Camera::SetTilemapInfo (not here, but in LoadMap ?)
+    NextOrder();
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else

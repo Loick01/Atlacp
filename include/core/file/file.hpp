@@ -70,6 +70,7 @@ class FileReader
         EntityCreateOrder ReadEntityCreateOrder(std::ifstream& input) const;
         EntityDeleteOrder ReadEntityDeleteOrder(std::ifstream& input) const;
         TimeDelayOrder ReadTimeDelayOrder(std::ifstream& input) const;
+        LoadMapOrder ReadLoadMapOrder(std::ifstream& input) const;
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;

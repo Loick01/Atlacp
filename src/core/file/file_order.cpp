@@ -38,6 +38,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadEntityDeleteOrder(input));
         else if (s == "time_delay")
             orders.push_back(ReadTimeDelayOrder(input));
+        else if (s == "load_map")
+            orders.push_back(ReadLoadMapOrder(input));
         else
             throw std::runtime_error("Unknow order type : " + s);
     }
@@ -170,4 +172,11 @@ TimeDelayOrder FileReader::ReadTimeDelayOrder(std::ifstream& input) const
     float delay;
     input >> delay;
     return TimeDelayOrder{delay};
+}
+
+LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
+{
+    unsigned int mapIndex;
+    input >> mapIndex;
+    return LoadMapOrder{mapIndex};
 }

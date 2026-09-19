@@ -38,9 +38,10 @@ frame_text 1 The Camera is back on the Player;
 
 trigger 2
 
-9 8 3
+9 8 4
 frame_text 1 You enter the trigger;
 npc_goto 9 9 50
+load_map 3
 frame_text 1 You exit the trigger;
 
 10 8 2

@@ -152,8 +152,16 @@ struct TimeDelayOrder { // Pause the Order execution
     }
 };
 
-// TODO :
-// struct AddInventoryOrder {};
+struct LoadMapOrder { // Load a new map
+    unsigned int mapIndex;
+    // TODO : Add MapPosition spawnPosition here ? (For now I use spawn position defined in the map file)
+    
+    std::string GetString() const
+    {
+        std::string res = "load_map " + std::to_string(mapIndex);
+        return res;
+    }
+};
 
 using Order = std::variant<
     FrameTextOrder, DialogTextOrder,
@@ -162,6 +170,7 @@ using Order = std::variant<
     CameraAnchorEntityOrder,
     EntityOrientationOrder, EntityCreateOrder, EntityDeleteOrder,
     TimeDelayOrder,
+    LoadMapOrder,
     PlayCinematicOrder
 >;
 

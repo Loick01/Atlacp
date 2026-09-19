@@ -29,7 +29,7 @@ class Tilemap : public Notifier<TilemapEvent>
         const bool m_shouldCulling;
 
         void LoadMap(const std::string& mapFilepath);
-
+        
     public:
         Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 
             const std::string& worldFilepath, Camera& camera, const bool shouldCulling);
@@ -60,6 +60,7 @@ class Tilemap : public Notifier<TilemapEvent>
         void SetTileAt(const size_t layer, const Tile newTile, const MapPosition p);
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile newTile);
         
+        void LoadMapByIndex(const unsigned int mapIndex);
         void LoadAdjacentMap(const MapBound bound);
         void SaveMap(const std::string &mapFilepath) const;
 };

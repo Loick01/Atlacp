@@ -11,7 +11,7 @@ Tilemap::Tilemap(TextureController& textureController, const FileReader& fileRea
     m_camera.SetShouldCulling(m_shouldCulling);
     m_worldData = m_fileReader.ReadWorldFile(worldFilepath);
     m_currentMap = m_worldData.startMap; // The first loaded map is specified in the world file
-    LoadMap(m_worldData.mapDirectoryPath + m_worldData.maps[m_currentMap]); 
+    LoadMapByIndex(m_currentMap);
 }
 
 const std::vector<DataMapElement>& Tilemap::GetElementsData() const
@@ -144,6 +144,12 @@ void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Ti
     }
 }
 
+void Tilemap::LoadMapByIndex(const unsigned int mapIndex)
+{
+    m_currentMap = mapIndex;
+    LoadMap(m_worldData.mapDirectoryPath + m_worldData.maps[m_currentMap]);
+}
+
 void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
 {
     // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
@@ -162,7 +168,7 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
             m_currentMap -= 1;
             break;
     }
-    LoadMap(m_worldData.mapDirectoryPath + m_worldData.maps[m_currentMap]);
+    LoadMapByIndex(m_currentMap);
     m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 

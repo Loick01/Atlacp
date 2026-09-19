@@ -42,6 +42,7 @@ class OrderController
         void ExecuteOrder(const EntityCreateOrder& o);
         void ExecuteOrder(const EntityDeleteOrder& o);
         void ExecuteOrder(const TimeDelayOrder& o);
+        void ExecuteOrder(const LoadMapOrder& o);
 
         // Rename IsOrderDone() (return true if the Order is done) ?
         bool UpdateOrder(const Order& o); // Default when there is no function with the specific Order type
