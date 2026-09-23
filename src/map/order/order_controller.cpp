@@ -260,28 +260,28 @@ void OrderController::AddOrders(const std::vector<Order>& orders)
         m_orders.push(o);
 }
 
-bool OrderController::NextOrder()
+void OrderController::NextOrder()
 {
     if (m_hasCurrentOrder) {
         const bool isOrderDone = Update(m_currentOrder);
         if (isOrderDone && m_orders.empty()) {
             Stop(m_currentOrder);
             m_hasCurrentOrder = false;
-            return false;
+            Notify(OrderExecutionEvent::End);
+            return;
         }
 
         if (!isOrderDone)
-            return true;
+            return;
         
         Stop(m_currentOrder);
     }
 
-    if (m_orders.empty()) // Remove
+    if (m_orders.empty()) // Remove ?
         throw std::runtime_error("OrderController::m_orders should not be empty when reaching here");
     
     m_currentOrder = m_orders.front();
     m_hasCurrentOrder = true;
     m_orders.pop();
     Execute(m_currentOrder);
-    return true;
 }

@@ -2,7 +2,7 @@
 
 #include <functional>
 
-enum UselessEvent // Rename
+enum UselessEvent // TODO : Should not exist ?
 {
     None
 };

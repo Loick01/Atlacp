@@ -6,7 +6,9 @@
 
 InteractionController::InteractionController(OrderController& orderController) :
     m_orderController(orderController), m_srcEntity(nullptr), m_dstElement(nullptr)
-{}
+{
+    m_orderController.AddCallback([this](OrderExecutionEvent e){EndInteraction();});
+}
 
 void InteractionController::InitializeInteraction(const std::vector<MapEntity*>& entities, const std::vector<MapElement*>& elements)
 {
@@ -49,18 +51,15 @@ void InteractionController::StartInteraction()
 
 void InteractionController::ContinueInteraction()
 {
-    if (!m_orderController.NextOrder())
-        EndInteraction();
-    // TODO : EndInteraction() can only be called after player input (because the only call is in ContinueInteraction)
-    // If the last Order of an interaction is for example a NpcGoTo, EndInteraction is not called and both entities 
-    // involved in the interaction can't be released + NextOrder could be called even if the Order queue (in 
-    // OrderController) is empty, which results in a runtime_error
+    m_orderController.NextOrder();
 }
 
 void InteractionController::EndInteraction()
 {
-    m_srcEntity->ReleaseInteracting();
-    m_dstElement->ReleaseInteracting();
-    m_srcEntity = nullptr;
-    m_dstElement = nullptr;
+    if (m_srcEntity != nullptr && m_dstElement != nullptr) {
+        m_srcEntity->ReleaseInteracting();
+        m_dstElement->ReleaseInteracting();
+        m_srcEntity = nullptr;
+        m_dstElement = nullptr;
+    }
 }

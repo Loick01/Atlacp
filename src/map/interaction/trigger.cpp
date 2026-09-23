@@ -8,7 +8,9 @@
 
 TriggerController::TriggerController(OrderController& orderController): 
     m_orderController(orderController), m_triggeringEntity(nullptr)
-{}
+{
+    m_orderController.AddCallback([this](OrderExecutionEvent e){EndTrigger();});
+}
 
 void TriggerController::SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap)
 {
@@ -40,12 +42,13 @@ void TriggerController::LookForTrigger(MapEntity* entity)
 
 void TriggerController::ContinueTrigger()
 {
-    if (!m_orderController.NextOrder())
-        EndTrigger();
+    m_orderController.NextOrder();
 }
 
 void TriggerController::EndTrigger()
 {
-    m_triggeringEntity->SetMovementState(EntityMovementState::Free);
-    m_triggeringEntity->SetInteractionState(EntityInteractionState::None);
+    if (m_triggeringEntity != nullptr) {
+        m_triggeringEntity->SetMovementState(EntityMovementState::Free);
+        m_triggeringEntity->SetInteractionState(EntityInteractionState::None);
+    }
 }

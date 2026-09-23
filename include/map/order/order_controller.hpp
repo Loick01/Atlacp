@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "core/notifier.hpp"
 #include "map/order/order.hpp"
 
 struct Time;
@@ -15,7 +16,12 @@ class UiComponentController;
 class UiDialogBox;
 class UiFrameText;
 
-class OrderController
+enum class OrderExecutionEvent // TODO : Should not exist ?
+{
+    End
+};
+
+class OrderController : public Notifier<OrderExecutionEvent>
 {
     private:
         std::queue<Order> m_orders;
@@ -70,5 +76,5 @@ class OrderController
             Tilemap& tilemap, Time& time, UiComponentController& uiComponentController);
 
         void AddOrders(const std::vector<Order>& orders);
-        bool NextOrder();
+        void NextOrder();
 };
