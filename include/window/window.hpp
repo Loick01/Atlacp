@@ -5,12 +5,7 @@
 #include <SDL2/SDL.h>
 
 #include "core/core_types.hpp" // AreaSize
-
-struct Boxing
-{
-    SDL_Rect rectF; // First rectangle : Left or Top 
-    SDL_Rect rectS; // Second rectangle : Right or Bottom
-};
+#include "window/boxing.hpp"
 
 class Window
 {
@@ -20,7 +15,7 @@ class Window
         SDL_Window* m_window;
         SDL_Renderer* m_renderer;
         SDL_Color m_bgColor;
-        Boxing m_box;
+        Boxing m_boxing;
         AreaSize m_size;
         const std::string m_title;
 
@@ -30,11 +25,11 @@ class Window
 
         SDL_Renderer* GetRenderer() const;
         AreaSize GetSize() const;
-        void SetBoxing(const int x_b, const int y_b, const int w, const int h);
+        void SetBoxing(const int x, const int y, const int w, const int h); // TODO : Remove ?
         void ClearRenderer() const;
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bgColor);
-        void DrawBoxing();
+        void DrawBoxing() const; // TODO : Remove ?
         void ShowCursor();
         void HideCursor();
 };

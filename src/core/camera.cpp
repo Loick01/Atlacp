@@ -1,6 +1,6 @@
 #include "core/camera.hpp"
 
-#include "core/window.hpp"
+#include "window/window.hpp"
 #include "map/map_entity.hpp"
 
 Camera::Camera():

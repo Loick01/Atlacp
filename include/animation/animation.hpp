@@ -5,7 +5,7 @@
 
 class FileReader;
 
-class Animation
+class Animation // TODO : Rename SpriteAnimation ?
 {
     protected:
         const FileReader& m_fileReader;

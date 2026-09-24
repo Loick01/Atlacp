@@ -14,7 +14,7 @@
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
 #include "core/time.hpp"
-#include "core/window.hpp"
+#include "window/window.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
 #include "ui/component/ui_component_controller.hpp"
