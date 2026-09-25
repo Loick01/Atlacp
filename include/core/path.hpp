@@ -20,7 +20,7 @@ namespace AssetDirectory {
 
 namespace DataDirectory {
     // Should be constexpr std::string_view ?
-    const std::string Animation = "../data/animation/";
+    const std::string SpriteAnimation = "../data/animation/";
     const std::string Battle = "../data/battle/battles/";
     const std::string Cinematic = "../data/cinematics/";
     const std::string Map = "../data/maps/";

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "animation/animation.hpp" // Animation
+#include "animation/sprite_animation.hpp" // SpriteAnimation
 #include "map/map_types.hpp" // Direction
 
-class MapEntityAnimation : public Animation // Must have sprites for 4 directions
+class MapEntityAnimation : public SpriteAnimation // Must have sprites for 4 directions
 {
     private:
         int m_indexOffset;
@@ -11,7 +11,7 @@ class MapEntityAnimation : public Animation // Must have sprites for 4 direction
     public:
         MapEntityAnimation(const FileReader& fileReader, const std::string& path);
 
-        void Initialize(const Direction direction, const bool isFirstMovement); // Should be in Animation ?
+        void Initialize(const Direction direction, const bool isFirstMovement); // Should be in SpriteAnimation ?
         void Reset(const Direction direction); // Rename ?
         void Continue(const float deltaTime) override;
 };

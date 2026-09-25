@@ -14,7 +14,7 @@ enum class CameraState
     Free, Anchored, Sliding, DoneSliding // TODO : Rename DoneSliding (it will not be used only for CameraSlideToEntity/PositionOrder)
 };
  
-struct SlidingInfo // Could use Animation instead ?
+struct SlidingInfo // TODO : Could use Animation instead ?
 {
     ScenePosition endPosition;
 };

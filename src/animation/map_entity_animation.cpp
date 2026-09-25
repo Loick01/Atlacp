@@ -3,7 +3,7 @@
 #include "core/file/file.hpp"
 
 MapEntityAnimation::MapEntityAnimation(const FileReader& fileReader, const std::string& path):
-    Animation(fileReader, path)
+    SpriteAnimation(fileReader, path)
 {}
 
 void MapEntityAnimation::Initialize(const Direction direction, const bool isFirstMovement)

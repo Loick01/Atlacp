@@ -9,20 +9,25 @@ void Boxing::SetRenderer(SDL_Renderer* renderer)
     m_renderer = renderer;
 }
 
-void Boxing::SetRect(const int x, const int y, const int w, const int h)
+void Boxing::SetBars(const ScreenPosition positionBarS, const AreaSize barsSize)
 {
-    m_rectF = SDL_Rect{0, 0, w, h};
-    m_rectS = SDL_Rect{x, y, w, h};
+    m_barF = {{0, 0, barsSize.x, barsSize.y}, barsSize};
+    m_barS = {{positionBarS.x, positionBarS.y, barsSize.x, barsSize.y}, barsSize};
 }
 
 void Boxing::Draw() const
 {
     SDL_SetRenderDrawColor(m_renderer, m_color.r, m_color.g, m_color.b, 255);
-    SDL_RenderFillRect(m_renderer, &m_rectF);
-    SDL_RenderFillRect(m_renderer, &m_rectS);
+    SDL_RenderFillRect(m_renderer, &m_barF.rect);
+    SDL_RenderFillRect(m_renderer, &m_barS.rect);
 }
 
-// void Boxing::Update()
-// {
-    
-// }
+void Boxing::Update(const float deltaTime)
+{
+    switch (m_state) {
+        case BoxingAnimationState::Idle :
+            break;
+        case BoxingAnimationState::Animated :
+            break;
+    }
+}

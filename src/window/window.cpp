@@ -41,14 +41,15 @@ AreaSize Window::GetSize() const
     return m_size;
 }
 
-void Window::SetBoxing(const int x, const int y, const int w, const int h)
+void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize)
 {
-    m_boxing.SetRect(x, y, w, h);
+    m_boxing.SetBars(positionBarS, barsSize);
 }
 
-void Window::DrawBoxing() const
+void Window::FrameBoxing(const float deltaTime)
 {
     m_boxing.Draw();
+    m_boxing.Update(deltaTime);
 }
 
 void Window::ClearRenderer() const

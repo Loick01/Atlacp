@@ -1,17 +1,17 @@
 #pragma once
 
-#include "animation/animation.hpp"
+#include "animation/sprite_animation.hpp"
 #include "ui/element/ui_element.hpp"
 
 class UiAnimatedElement : public UiElement // Rename UiAnimationElement ?
 {
     private:    
-        Animation m_animation;
+        SpriteAnimation m_animation;
 
     public:
         UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath);
 
-        Animation& GetAnimation();
+        SpriteAnimation& GetAnimation();
         void UpdateSpriteSizeFromAnimation();
         void DrawTexture() const override;
 };

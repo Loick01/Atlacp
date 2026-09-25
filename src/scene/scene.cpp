@@ -110,6 +110,9 @@ MainMenuScene::MainMenuScene(GameContext& context):
 
 void MainMenuScene::Gameloop()
 {
+    m_context.time.Update();
+    const float deltaTime = m_context.time.GetDeltaTime();
+
     m_context.window.ClearRenderer();
     
     m_context.eventController->PollAllEvents();
@@ -142,7 +145,7 @@ void MainMenuScene::Gameloop()
     SoundController::GetInstance().PlayRequestedChunk(); 
     
     m_context.uiController.Draw();
-    m_context.window.DrawBoxing();
+    m_context.window.FrameBoxing(deltaTime);
     m_context.window.UpdateRender();
 }
 
@@ -234,6 +237,7 @@ void GameMapScene::Gameloop()
 {
     m_context.time.Update();
     const float deltaTime = m_context.time.GetDeltaTime();
+
     m_context.window.ClearRenderer();
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
@@ -257,7 +261,7 @@ void GameMapScene::Gameloop()
     SoundController::GetInstance().PlayRequestedChunk();
     m_context.uiController.Draw();
     
-    m_context.window.DrawBoxing();
+    m_context.window.FrameBoxing(deltaTime);
     m_context.window.UpdateRender();
 }
 
@@ -424,6 +428,8 @@ BattleScene::BattleScene(GameContext& context):
 void BattleScene::Gameloop()
 {
     m_context.time.Update();
+    const float deltaTime = m_context.time.GetDeltaTime();
+
     m_context.window.ClearRenderer();
     
     m_context.eventController->PollAllEvents();
@@ -437,7 +443,7 @@ void BattleScene::Gameloop()
     m_battleController.PlayNextTurn();
 
     m_context.uiController.Draw();
-    m_context.window.DrawBoxing();
+    m_context.window.FrameBoxing(deltaTime);
     m_context.window.UpdateRender();
 }
 

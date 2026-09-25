@@ -25,11 +25,11 @@ class Window
 
         SDL_Renderer* GetRenderer() const;
         AreaSize GetSize() const;
-        void SetBoxing(const int x, const int y, const int w, const int h); // TODO : Remove ?
+        void SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize);
         void ClearRenderer() const;
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bgColor);
-        void DrawBoxing() const; // TODO : Remove ?
+        void FrameBoxing(const float deltaTime);
         void ShowCursor();
         void HideCursor();
 };

@@ -1,38 +1,34 @@
-#include "animation/animation.hpp"
+#include "animation/sprite_animation.hpp"
 
 #include "core/file/file.hpp"
 
-Animation::Animation(const FileReader& fileReader, const std::string& animationFilepath):
+SpriteAnimation::SpriteAnimation(const FileReader& fileReader, const std::string& animationFilepath):
     m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
 {
     UpdateAnimationData(animationFilepath);
 }
 
-Animation::Animation(const FileReader& fileReader):
-    m_fileReader(fileReader), m_currentSpriteIndex(0), m_count(0.f), m_isDone(false)
-{}
-
-Vec2 Animation::GetCurrentSprite() const
+Vec2 SpriteAnimation::GetCurrentSprite() const
 {
     return m_animationData.sprites[m_currentSpriteIndex];
 }
 
-AreaSize Animation::GetSpriteSize() const
+AreaSize SpriteAnimation::GetSpriteSize() const
 {
     return m_animationData.spriteSize;
 }
 
-bool Animation::IsDone() const
+bool SpriteAnimation::IsDone() const
 {
     return m_isDone;
 }
 
-void Animation::UpdateAnimationData(const std::string& animationFilepath)
+void SpriteAnimation::UpdateAnimationData(const std::string& animationFilepath)
 {
     m_animationData = m_fileReader.ReadAnimationFile(animationFilepath);
 }
 
-void Animation::Continue(const float deltaTime)
+void SpriteAnimation::Continue(const float deltaTime)
 {
     m_count += deltaTime;
     if (m_count >= m_animationData.frameDuration){

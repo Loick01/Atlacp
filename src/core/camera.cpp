@@ -18,10 +18,16 @@ void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int
     m_viewport = m_rangeTile*tileSize*m_zoom;
     const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport; // Should rename ?
     if (bestPossibleZoom.x < bestPossibleZoom.y){ // Letterboxing
-        window.SetBoxing(0, windowSize.y-outsideViewport.y/2, windowSize.x, outsideViewport.y/2);
+        window.SetBoxing(
+            ScreenPosition{0, windowSize.y-outsideViewport.y/2},
+            AreaSize{windowSize.x, outsideViewport.y/2});
+
         m_screenOffset = ScenePosition{0, outsideViewport.y/2};
     }else{ // Pillarboxing
-        window.SetBoxing(windowSize.x-outsideViewport.x/2, 0, outsideViewport.x/2, windowSize.y);
+        window.SetBoxing(
+            ScreenPosition{windowSize.x-outsideViewport.x/2, 0},
+            AreaSize{outsideViewport.x/2, windowSize.y});
+            
         m_screenOffset = ScenePosition{outsideViewport.x/2, 0};
     }
 }

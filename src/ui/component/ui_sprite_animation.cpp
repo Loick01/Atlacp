@@ -43,7 +43,7 @@ void UiSpriteAnimation::SetTargetElement(const UiKey& key)
 
 void UiSpriteAnimation::ContinueAnimation()
 {
-    m_animated->GetAnimation().Continue(m_time.GetDeltaTime());
+    m_animated->GetAnimation().Continue(m_time.GetDeltaTime()); // TODO : deltaTime should not be get here ?
 }
 
 unsigned int UiSpriteAnimation::GetInstanceCount()

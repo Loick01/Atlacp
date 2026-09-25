@@ -5,7 +5,7 @@
 
 class FileReader;
 
-class Animation // TODO : Rename SpriteAnimation ?
+class SpriteAnimation // TODO : Rename SpriteAnimation ?
 {
     protected:
         const FileReader& m_fileReader;
@@ -15,8 +15,7 @@ class Animation // TODO : Rename SpriteAnimation ?
         bool m_isDone;
 
     public:
-        Animation(const FileReader& fileReader, const std::string& animationFilepath);
-        Animation(const FileReader& fileReader);
+        SpriteAnimation(const FileReader& fileReader, const std::string& animationFilepath);
 
         Vec2 GetCurrentSprite() const;
         AreaSize GetSpriteSize() const;

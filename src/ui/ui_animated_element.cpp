@@ -9,7 +9,7 @@ UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureContro
     UiElement(textureController, key, AssetDirectory::Spritesheet+animationPath), m_animation(fileReader, animationPath)
 {}
 
-Animation& UiAnimatedElement::GetAnimation()
+SpriteAnimation& UiAnimatedElement::GetAnimation()
 {
     return m_animation;
 }
