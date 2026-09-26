@@ -83,6 +83,13 @@ struct Vec2f : public Pair<float>
         return {x*rhs, y*rhs};
     }
 
+    Vec2f& operator*=(const float rhs)
+    {
+        x *= rhs;
+        y *= rhs;
+        return *this;
+    }
+
     Vec2f Normalize()
     {
         const float length = Norm();

@@ -10,6 +10,7 @@ Window::Window(const std::string& title, const SDL_Color bgColor) :
     CreateWindow();
 
     m_boxing.SetRenderer(m_renderer);
+    m_boxing.SetWindowCenter(GetSize()/2);
     SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255); // TODO : Remove
 }
 
@@ -43,7 +44,7 @@ AreaSize Window::GetSize() const
 
 void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize)
 {
-    m_boxing.SetBars(positionBarS, barsSize);
+    m_boxing.SetBars(GetSize(), barsSize);
 }
 
 void Window::FrameBoxing(const float deltaTime)

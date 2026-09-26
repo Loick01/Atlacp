@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "animation/animation_types.hpp" // AnimationData
+#include "animation/animation_types.hpp" // SpriteAnimationData
 #include "battle/battle_types.hpp" // DataBattleActor
 #include "map/order/order.hpp" // Order
 #include "tile/tile_types.hpp" // WorldData, TilesetData
@@ -90,7 +90,7 @@ class FileReader
         MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
         TilesetData ReadTilesetFile(const std::string& path) const;
-        AnimationData ReadAnimationFile(const std::string& animationFilepath) const;
+        SpriteAnimationData ReadAnimationFile(const std::string& animationFilepath) const;
 
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 

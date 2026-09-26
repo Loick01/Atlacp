@@ -1,18 +1,20 @@
 #pragma once
 
-#include "animation/animation_types.hpp" // AnimationData
+#include "animation/animation_types.hpp" // SpriteAnimationData
 #include "core/core_types.hpp" // Vec2, AreaSize
 
 class FileReader;
 
-class SpriteAnimation // TODO : Rename SpriteAnimation ?
+class SpriteAnimation
 {
-    protected:
+    private:
         const FileReader& m_fileReader;
-        AnimationData m_animationData;
+        bool m_isDone;
+
+    protected:
+        SpriteAnimationData m_animationData;
         float m_count; // Elapsed time since the last sprite update
         int m_currentSpriteIndex;
-        bool m_isDone;
 
     public:
         SpriteAnimation(const FileReader& fileReader, const std::string& animationFilepath);

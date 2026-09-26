@@ -263,10 +263,10 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
     return data;
 }
 
-AnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
+SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
     std::ifstream input = OpenFile(DataDirectory::SpriteAnimation + animationFilepath);
-    AnimationData data;
+    SpriteAnimationData data;
 
     input >> data.spriteSize.x;
     input >> data.spriteSize.y;
