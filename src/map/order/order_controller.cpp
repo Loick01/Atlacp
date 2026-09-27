@@ -218,7 +218,7 @@ bool OrderController::UpdateOrder(const TimeDelayOrder& o)
 
 bool OrderController::UpdateOrder(const BoxingAnimationOrder& o)
 {
-    return m_boxing.GetAnimationState() == BoxingAnimationState::Idle; // TODO : Maybe each Bar will have its own BoxingAnimationState
+    return m_boxing.GetAnimationState() == BoxingState::Fixed; // TODO : Maybe each Bar will have its own BoxingState
 }
 
 void OrderController::StopOrder(const Order& o)

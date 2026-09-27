@@ -6,15 +6,21 @@
 #include "core/notifier.hpp"
 #include "image/image_types.hpp" // ScreenPosition
 
-enum class BoxingAnimationState
+enum class BoxingState
 {
-    Idle, Animated
+    Fixed, Animated
 };
 
 struct BarAnimation
 {
+    static constexpr float defaultSpeed = 50.f;
+
     Vec2f direction;
     float speed;
+
+    BarAnimation(const Vec2f& dir):
+        direction(dir), speed(defaultSpeed)
+    {}
 };
 
 struct Bar
@@ -28,13 +34,13 @@ struct Bar
 
     Bar() = default;
 
-    Bar(const SDL_Rect& rect, const AreaSize size):
-        sdlRect(rect), initialSize(size)
+    Bar(const SDL_Rect& rect, const AreaSize size, const Vec2f& dir):
+        sdlRect(rect), initialSize(size), anim(dir)
     {
         currentSize = Vec2f(sdlRect.w, sdlRect.h);
     }
 
-    void UpdateSize(const float deltaTime) // TODO : Rename
+    void UpdateSize(const float deltaTime) // TODO : Rename ?
     {
         currentSize += anim.direction*anim.speed*deltaTime;
         sdlRect.w = currentSize.x;
@@ -45,10 +51,8 @@ struct Bar
 class Boxing : public Notifier<UselessEvent> // Will Notify() for Order execution // TODO : public Animation ?
 {
     private:
-        // TODO : std::vector<Bar> ? (Maybe I will use more than two Bar) 
-        Bar m_barF; // First bar : Left or Top 
-        Bar m_barS; // Second bar : Right or Bottom
-        BoxingAnimationState m_state;
+        std::vector<Bar> m_bars;
+        BoxingState m_state;
         ScreenPosition m_windowCenter;
 
         SDL_Renderer* m_renderer;
@@ -57,7 +61,7 @@ class Boxing : public Notifier<UselessEvent> // Will Notify() for Order executio
     public:
         Boxing(const SDL_Color& color);
 
-        BoxingAnimationState GetAnimationState() const;
+        BoxingState GetAnimationState() const;
         
         void SetRenderer(SDL_Renderer* renderer);
         void SetBars(const AreaSize windowSize, const AreaSize barsSize);
