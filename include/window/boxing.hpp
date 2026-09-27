@@ -31,13 +31,31 @@ struct Bar
     Vec2f currentSize;
     
     BarAnimation anim;
+    BoxingState state;
 
     Bar() = default;
 
     Bar(const SDL_Rect& rect, const AreaSize size, const Vec2f& dir):
-        sdlRect(rect), initialSize(size), anim(dir)
+        sdlRect(rect), initialSize(size), anim(dir), state(BoxingState::Fixed)
     {
         currentSize = Vec2f(sdlRect.w, sdlRect.h);
+    }
+
+    void Update(const ScreenPosition windowCenter, const float deltaTime)
+    {
+        switch (state) {
+            case BoxingState::Fixed : {
+                break;
+            }
+            case BoxingState::Animated : {
+                UpdateSize(deltaTime);
+
+                if (std::abs(currentSize.x) > windowCenter.x || std::abs(currentSize.x) < initialSize.x) // TODO : Should also check y axis
+                    state = BoxingState::Fixed;
+                
+                break;
+            }
+        }
     }
 
     void UpdateSize(const float deltaTime) // TODO : Rename ?
@@ -52,7 +70,6 @@ class Boxing : public Notifier<UselessEvent> // Will Notify() for Order executio
 {
     private:
         std::vector<Bar> m_bars;
-        BoxingState m_state;
         ScreenPosition m_windowCenter;
 
         SDL_Renderer* m_renderer;

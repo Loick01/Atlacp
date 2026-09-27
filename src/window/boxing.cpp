@@ -1,12 +1,16 @@
 #include "window/boxing.hpp"
 
 Boxing::Boxing(const SDL_Color& color):
-    m_color(color), m_renderer(nullptr), m_state(BoxingState::Fixed)
+    m_color(color), m_renderer(nullptr)
 {}
 
 BoxingState Boxing::GetAnimationState() const
 {
-    return m_state;
+    for (const Bar& b : m_bars)
+        if (b.state == BoxingState::Animated)
+            return BoxingState::Animated;
+        
+    return BoxingState::Fixed;
 }
 
 void Boxing::SetRenderer(SDL_Renderer* renderer)
@@ -30,8 +34,8 @@ void Boxing::StartAnimation(const float speed)
     for (Bar& b : m_bars) {
         b.anim.direction *= -1.f; // TODO : ?
         b.anim.speed = speed;
+        b.state = BoxingState::Animated;
     }
-    m_state = BoxingState::Animated;
 }
 
 void Boxing::Draw() const
@@ -44,33 +48,12 @@ void Boxing::Draw() const
 
 void Boxing::Update(const float deltaTime)
 {
-    switch (m_state) {
-        case BoxingState::Fixed : {
-            break;
-        }
-        case BoxingState::Animated : {
-            for (Bar& b : m_bars)
-                b.UpdateSize(deltaTime);
-
-            // TODO : Should not be here (Each Bar should check independently in UpdateSize() ?)
-            // TODO : Should also check y axis
-            // TODO : Do not use -currentSize for m_barS
-            // TODO : Fix sdlRect size to initialSize
-            Bar m_barF = m_bars[0];
-            Bar m_barS = m_bars[1];
-            if (m_barF.currentSize.x > m_windowCenter.x || m_barF.currentSize.x < m_barF.initialSize.x) {
-                m_state = BoxingState::Fixed;
-                Notify(UselessEvent::None);
-                return;
-            }
-
-            if (-m_barS.currentSize.x > m_windowCenter.x || -m_barS.currentSize.x < m_barS.initialSize.x) {
-                m_state = BoxingState::Fixed;
-                Notify(UselessEvent::None);
-                return;
-            }
-            
-            break;
-        }
+    for (Bar& b : m_bars)
+        b.Update(m_windowCenter, deltaTime);
+    
+    if (GetAnimationState() == BoxingState::Fixed) { // Each Bars have state = Fixed
+        // for (Bar& b : m_bars)
+            // TODO : Reset the SDL_Rect size to b.initialSize
+        Notify(UselessEvent::None);
     }
 }
