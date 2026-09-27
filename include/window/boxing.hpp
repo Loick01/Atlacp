@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "core/core_types.hpp" // AreaSize
+#include "core/notifier.hpp"
 #include "image/image_types.hpp" // ScreenPosition
 
 enum class BoxingAnimationState
@@ -41,7 +42,7 @@ struct Bar
     }
 };
 
-class Boxing // TODO : public Animation
+class Boxing : public Notifier<UselessEvent> // Will Notify() for Order execution // TODO : public Animation ?
 {
     private:
         // TODO : std::vector<Bar> ? (Maybe I will use more than two Bar) 
@@ -56,10 +57,13 @@ class Boxing // TODO : public Animation
     public:
         Boxing(const SDL_Color& color);
 
+        BoxingAnimationState GetAnimationState() const;
+        
         void SetRenderer(SDL_Renderer* renderer);
         void SetBars(const AreaSize windowSize, const AreaSize barsSize);
         void SetWindowCenter(const ScreenPosition windowCenter);
         
+        void StartAnimation(const float speed);
         void Draw() const;
         void Update(const float deltaTime);
 };

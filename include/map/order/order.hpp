@@ -163,6 +163,16 @@ struct LoadMapOrder { // Load a new map
     }
 };
 
+struct BoxingAnimationOrder { // Start the Boxing animation (for now, only one animation is available)
+    float speed;
+
+    std::string GetString() const
+    {
+        std::string res = "boxing_animation " + std::to_string(speed);
+        return res;
+    }
+};
+
 using Order = std::variant<
     FrameTextOrder, DialogTextOrder,
     NpcGoToOrder, NpcFollowOrder, NpcIdleOrder,
@@ -170,7 +180,7 @@ using Order = std::variant<
     CameraAnchorEntityOrder,
     EntityOrientationOrder, EntityCreateOrder, EntityDeleteOrder,
     TimeDelayOrder,
-    LoadMapOrder,
+    LoadMapOrder, BoxingAnimationOrder,
     PlayCinematicOrder
 >;
 

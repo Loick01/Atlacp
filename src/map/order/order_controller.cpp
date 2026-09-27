@@ -10,10 +10,11 @@
 #include "ui/component/ui_component_controller.hpp"
 #include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_frame_text.hpp"
+#include "window/boxing.hpp"
 
-OrderController::OrderController(Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
+OrderController::OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
 Tilemap& tilemap, Time& time, UiComponentController& uiComponentController) :
-    m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
+    m_boxing(boxing), m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
     m_tilemap(tilemap), m_time(time), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
@@ -167,6 +168,12 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
     NextOrder();
 }
 
+void OrderController::ExecuteOrder(const BoxingAnimationOrder& o)
+{
+    m_boxing.StartAnimation(o.speed);
+    m_boxing.AddCallback([this](UselessEvent e){NextOrder();});
+}
+
 bool OrderController::UpdateOrder(const Order& o)
 {
     return true; // Do nothing else
@@ -207,6 +214,11 @@ bool OrderController::UpdateOrder(const CameraSlideToEntityOrder& o)
 bool OrderController::UpdateOrder(const TimeDelayOrder& o)
 {
     return m_time.GetDelay() == 0.f;
+}
+
+bool OrderController::UpdateOrder(const BoxingAnimationOrder& o)
+{
+    return m_boxing.GetAnimationState() == BoxingAnimationState::Idle; // TODO : Maybe each Bar will have its own BoxingAnimationState
 }
 
 void OrderController::StopOrder(const Order& o)
@@ -252,6 +264,11 @@ void OrderController::StopOrder(const TimeDelayOrder& o)
 {
     // Time::m_delay is already reset at 0.f in Time::Update()
     m_time.RemoveLastCallback();
+}
+
+void OrderController::StopOrder(const BoxingAnimationOrder& o)
+{
+    m_boxing.RemoveLastCallback();
 }
 
 void OrderController::AddOrders(const std::vector<Order>& orders)

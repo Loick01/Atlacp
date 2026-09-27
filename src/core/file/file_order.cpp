@@ -40,6 +40,8 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
             orders.push_back(ReadTimeDelayOrder(input));
         else if (s == "load_map")
             orders.push_back(ReadLoadMapOrder(input));
+        else if (s == "boxing_animation")
+            orders.push_back(ReadBoxingAnimationOrder(input));
         else
             throw std::runtime_error("Unknow order type : " + s);
     }
@@ -179,4 +181,11 @@ LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
     unsigned int mapIndex;
     input >> mapIndex;
     return LoadMapOrder{mapIndex};
+}
+
+BoxingAnimationOrder FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const
+{
+    float speed;
+    input >> speed;
+    return BoxingAnimationOrder{speed};
 }

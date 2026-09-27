@@ -42,6 +42,11 @@ AreaSize Window::GetSize() const
     return m_size;
 }
 
+Boxing& Window::GetBoxing()
+{
+    return m_boxing;
+}
+
 void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize)
 {
     m_boxing.SetBars(GetSize(), barsSize);

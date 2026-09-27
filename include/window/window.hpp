@@ -25,6 +25,8 @@ class Window
 
         SDL_Renderer* GetRenderer() const;
         AreaSize GetSize() const;
+        Boxing& GetBoxing();
+
         void SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize);
         void ClearRenderer() const;
         void UpdateRender() const;
