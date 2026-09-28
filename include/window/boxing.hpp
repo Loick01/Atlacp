@@ -6,6 +6,11 @@
 #include "core/notifier.hpp"
 #include "image/image_types.hpp" // ScreenPosition
 
+enum class BoxingType
+{
+    Letterboxing, Pillarboxing
+};
+
 enum class BoxingState
 {
     Fixed, Animated
@@ -23,47 +28,34 @@ struct BarAnimation
     {}
 };
 
-struct Bar
+class Bar
 {
-    SDL_Rect sdlRect;
+    private:
+        SDL_Rect m_sdlRect;
 
-    AreaSize initialSize;
-    Vec2f currentSize;
+        AreaSize m_initialSize;
+        Vec2f m_currentSize;
+        
+        BarAnimation m_barAnim;
+        BoxingState m_state;
+
+        Direction m_resizeDirection;
+        BoxingType m_boxType;
     
-    BarAnimation anim;
-    BoxingState state;
+        void UpdateSize(const float deltaTime0); // TODO : Rename ?
+        
+    public:
+        Bar(const SDL_Rect& rect, const AreaSize size, const Vec2f& dir, const BoxingType boxType, const Direction resizeDirection);
+        
+        const SDL_Rect* GetRectPtr() const;
+        BarAnimation& GetBarAnimation();
+        BoxingState GetState() const;
 
-    Bar() = default;
+        bool Check(const ScreenPosition windowCenter);
 
-    Bar(const SDL_Rect& rect, const AreaSize size, const Vec2f& dir):
-        sdlRect(rect), initialSize(size), anim(dir), state(BoxingState::Fixed)
-    {
-        currentSize = Vec2f(sdlRect.w, sdlRect.h);
-    }
+        void SetState(const BoxingState state);
 
-    void Update(const ScreenPosition windowCenter, const float deltaTime)
-    {
-        switch (state) {
-            case BoxingState::Fixed : {
-                break;
-            }
-            case BoxingState::Animated : {
-                UpdateSize(deltaTime);
-
-                if (std::abs(currentSize.x) > windowCenter.x || std::abs(currentSize.x) < initialSize.x) // TODO : Should also check y axis
-                    state = BoxingState::Fixed;
-                
-                break;
-            }
-        }
-    }
-
-    void UpdateSize(const float deltaTime) // TODO : Rename ?
-    {
-        currentSize += anim.direction*anim.speed*deltaTime;
-        sdlRect.w = currentSize.x;
-        sdlRect.h = currentSize.y;
-    }
+        void Update(const ScreenPosition windowCenter, const float deltaTime);
 };
 
 class Boxing : public Notifier<UselessEvent> // Will Notify() for Order execution // TODO : public Animation ?
@@ -81,7 +73,7 @@ class Boxing : public Notifier<UselessEvent> // Will Notify() for Order executio
         BoxingState GetAnimationState() const;
         
         void SetRenderer(SDL_Renderer* renderer);
-        void SetBars(const AreaSize windowSize, const AreaSize barsSize);
+        void SetBars(const AreaSize windowSize, const AreaSize barsSize, const BoxingType boxType);
         void SetWindowCenter(const ScreenPosition windowCenter);
         
         void StartAnimation(const float speed);

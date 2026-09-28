@@ -47,9 +47,9 @@ Boxing& Window::GetBoxing()
     return m_boxing;
 }
 
-void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize)
+void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize, const BoxingType boxType)
 {
-    m_boxing.SetBars(GetSize(), barsSize);
+    m_boxing.SetBars(GetSize(), barsSize, boxType);
 }
 
 void Window::FrameBoxing(const float deltaTime)
@@ -60,6 +60,7 @@ void Window::FrameBoxing(const float deltaTime)
 
 void Window::ClearRenderer() const
 {
+    SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
     SDL_RenderClear(m_renderer);
 }
 
@@ -71,7 +72,6 @@ void Window::UpdateRender() const
 void Window::SetBackgroundColor(const SDL_Color bgColor)
 {
     m_bgColor = bgColor;
-    SDL_SetRenderDrawColor(m_renderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
 }
 
 void Window::ShowCursor()

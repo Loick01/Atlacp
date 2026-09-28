@@ -41,9 +41,9 @@ trigger 2
 9 8 6
 frame_text 1 You enter the trigger;
 npc_goto 9 9 50
-boxing_animation 1000
+boxing_animation 500
 load_map 3
-boxing_animation 1000
+boxing_animation 500
 frame_text 1 You exit the trigger;
 
 10 8 2
