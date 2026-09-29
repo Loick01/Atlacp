@@ -31,10 +31,9 @@ struct BarAnimation
 class Bar
 {
     private:
-        SDL_Rect m_sdlRect;
+        SDL_FRect m_sdlFRect;
 
-        AreaSize m_initialSize;
-        Vec2f m_currentSize;
+        Vec2f m_initialSize;
         
         BarAnimation m_barAnim;
         BoxingState m_state;
@@ -45,9 +44,9 @@ class Bar
         void UpdateSize(const float deltaTime0); // TODO : Rename ?
         
     public:
-        Bar(const SDL_Rect& rect, const AreaSize size, const Vec2f& dir, const BoxingType boxType, const Direction resizeDirection);
+        Bar(const SDL_FRect& fRect, const Vec2f size, const Vec2f& dir, const BoxingType boxType, const Direction resizeDirection); // For now, all Bars have the same size
         
-        const SDL_Rect* GetRectPtr() const;
+        const SDL_FRect* GetFRectPtr() const;
         BarAnimation& GetBarAnimation();
         BoxingState GetState() const;
 
@@ -58,7 +57,7 @@ class Bar
         void Update(const ScreenPosition windowCenter, const float deltaTime);
 };
 
-class Boxing : public Notifier<UselessEvent> // Will Notify() for Order execution // TODO : public Animation ?
+class Boxing : public Notifier<UselessEvent> // Will Notify() for Order execution
 {
     private:
         std::vector<Bar> m_bars;
@@ -73,7 +72,7 @@ class Boxing : public Notifier<UselessEvent> // Will Notify() for Order executio
         BoxingState GetAnimationState() const;
         
         void SetRenderer(SDL_Renderer* renderer);
-        void SetBars(const AreaSize windowSize, const AreaSize barsSize, const BoxingType boxType);
+        void SetBars(const AreaSize windowSize, const Vec2f barsSize, const BoxingType boxType);
         void SetWindowCenter(const ScreenPosition windowCenter);
         
         void StartAnimation(const float speed);

@@ -47,7 +47,7 @@ Boxing& Window::GetBoxing()
     return m_boxing;
 }
 
-void Window::SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize, const BoxingType boxType)
+void Window::SetBoxing(const ScreenPosition positionBarS, const Vec2f barsSize, const BoxingType boxType)
 {
     m_boxing.SetBars(GetSize(), barsSize, boxType);
 }

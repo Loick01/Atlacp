@@ -27,7 +27,7 @@ class Window
         AreaSize GetSize() const;
         Boxing& GetBoxing();
 
-        void SetBoxing(const ScreenPosition positionBarS, const AreaSize barsSize, const BoxingType boxType);
+        void SetBoxing(const ScreenPosition positionBarS, const Vec2f barsSize, const BoxingType boxType);
         void ClearRenderer() const;
         void UpdateRender() const;
         void SetBackgroundColor(const SDL_Color bgColor);

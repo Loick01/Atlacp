@@ -76,6 +76,7 @@ struct Vec2f : public Pair<float>
 {
     Vec2f() = default;
     Vec2f(float px, float py) { x = px ; y = py; }
+    Vec2f(int px, int py) { x = px ; y = py; }
     Vec2f(const Vec2& v) { x = v.x; y = v.y; }
 
     Vec2f operator*(const float rhs) const

@@ -20,14 +20,14 @@ void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int
     if (bestPossibleZoom.x < bestPossibleZoom.y){ 
         window.SetBoxing(
             ScreenPosition{0, windowSize.y-outsideViewport.y/2},
-            AreaSize{windowSize.x, outsideViewport.y/2},
+            Vec2f{windowSize.x, outsideViewport.y/2},
             BoxingType::Letterboxing);
 
         m_screenOffset = ScenePosition{0, outsideViewport.y/2};
     }else{ 
         window.SetBoxing(
             ScreenPosition{windowSize.x-outsideViewport.x/2, 0},
-            AreaSize{outsideViewport.x/2, windowSize.y},
+            Vec2f{outsideViewport.x/2, windowSize.y},
             BoxingType::Pillarboxing);
             
         m_screenOffset = ScenePosition{outsideViewport.x/2, 0};
