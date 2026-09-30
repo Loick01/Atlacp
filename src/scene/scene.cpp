@@ -229,11 +229,11 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         case EntityEvent::RequestLoadMap : {
-            // m_sceneState = GameMapSceneState::WaitForOrder;
+            m_sceneState = GameMapSceneState::WaitForOrder;
             m_orderController.AddOrders({
-                // BoxingAnimationOrder{1000.f},
-                LoadMapOrder{m_tilemap.GetCurrentMapIndex()} //,
-                // BoxingAnimationOrder{1000.f}
+                BoxingAnimationOrder{2000.f},
+                LoadMapOrder{m_tilemap.GetCurrentMapIndex()},
+                BoxingAnimationOrder{2000.f}
             });
             m_orderController.NextOrder();
             break;
@@ -252,21 +252,21 @@ void GameMapScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     
+    m_camera.Update(deltaTime);
+    m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
+    const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
+    for (size_t i = 0 ; i < layerSplitIndex ; i++)
+        m_layers[i]->DrawTexture();
+    
+    m_elementsController.Draw();
+    
+    for (size_t i = layerSplitIndex ; i < m_layers.size() ; i++)
+        m_layers[i]->DrawTexture();
+
     switch (m_sceneState) {
         case GameMapSceneState::Update : {
             m_context.eventController->HandlePollEvents(); 
             m_context.eventController->HandleStateEvents(); 
-            
-            m_camera.Update(deltaTime); // Here ?
-            m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
-            const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
-            for (size_t i = 0 ; i < layerSplitIndex ; i++)
-                m_layers[i]->DrawTexture();
-            
-            m_elementsController.Draw();
-            
-            for (size_t i = layerSplitIndex ; i < m_layers.size() ; i++)
-                m_layers[i]->DrawTexture();
 
             m_elementsController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
@@ -274,7 +274,8 @@ void GameMapScene::Gameloop()
             break;
         }
         case GameMapSceneState::WaitForOrder : {
-            if (m_orderController.HasNoOrders()) m_sceneState == GameMapSceneState::Update;
+            // Because I use HasCurrentOrder() instead of HasNoOrder(), MapEntities will not be able to move until the Boxing animation is done 
+            if (!m_orderController.GetHasCurrentOrder()) m_sceneState = GameMapSceneState::Update;
             break;
         }
     }

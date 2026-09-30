@@ -23,6 +23,11 @@ bool OrderController::HasNoOrders() const
     return m_orders.empty();
 }
 
+bool OrderController::GetHasCurrentOrder() const
+{
+    return m_hasCurrentOrder;
+}
+
 void OrderController::Execute(Order& order)
 {
     m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)

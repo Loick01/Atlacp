@@ -81,6 +81,9 @@ class OrderController : public Notifier<OrderExecutionEvent>
             Tilemap& tilemap, Time& time, UiComponentController& uiComponentController);
 
         bool HasNoOrders() const;
+        bool GetHasCurrentOrder() const; 
+        // Even if the queue m_orders is empty, there may still be an Order (the last one removed from the queue) that is currently being executed
+        // That's why HasNoOrders is not enough to know if the OrderController has finished
         
         void AddOrders(const std::vector<Order>& orders);
         void NextOrder();

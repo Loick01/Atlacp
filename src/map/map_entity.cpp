@@ -61,9 +61,9 @@ void MapEntity::TryStartMovement(const MapMovement movement, const bool isFirstM
         m_tilemap.UpdateMapIndex(bound);
         Notify(EntityEvent::RequestLoadMap);
 
-        SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
-        const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
-        m_position = GetFinalDrawingPosition(newPosition);
+        // SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
+        // const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
+        // m_position = GetFinalDrawingPosition(newPosition);
         // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
     }else if (bound == MapBound::Inside && m_tilemap.IsFreePosition(targetPosition)){
         m_currentMovement = movement;
