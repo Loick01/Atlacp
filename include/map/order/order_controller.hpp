@@ -80,6 +80,8 @@ class OrderController : public Notifier<OrderExecutionEvent>
         OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
             Tilemap& tilemap, Time& time, UiComponentController& uiComponentController);
 
+        bool HasNoOrders() const;
+        
         void AddOrders(const std::vector<Order>& orders);
         void NextOrder();
 };

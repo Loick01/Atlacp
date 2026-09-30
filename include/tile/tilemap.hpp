@@ -60,7 +60,8 @@ class Tilemap : public Notifier<TilemapEvent>
         void SetTileAt(const size_t layer, const Tile newTile, const MapPosition p);
         void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile newTile);
         
+        void UpdateMapIndex(const MapBound bound);
         void LoadMapByIndex(const unsigned int mapIndex);
-        void LoadAdjacentMap(const MapBound bound);
+        void LoadCurrentMap();
         void SaveMap(const std::string &mapFilepath) const;
 };

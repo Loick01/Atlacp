@@ -11,7 +11,7 @@ Tilemap::Tilemap(TextureController& textureController, const FileReader& fileRea
     m_camera.SetShouldCulling(m_shouldCulling);
     m_worldData = m_fileReader.ReadWorldFile(worldFilepath);
     m_currentMap = m_worldData.startMap; // The first loaded map is specified in the world file
-    LoadMapByIndex(m_currentMap);
+    LoadCurrentMap();
 }
 
 const std::vector<DataMapElement>& Tilemap::GetElementsData() const
@@ -150,7 +150,12 @@ void Tilemap::LoadMapByIndex(const unsigned int mapIndex)
     LoadMap(m_worldData.mapDirectoryPath + m_worldData.maps[m_currentMap]);
 }
 
-void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used only in editor
+void Tilemap::LoadCurrentMap()
+{
+    LoadMapByIndex(m_currentMap);
+}
+
+void Tilemap::UpdateMapIndex(const MapBound bound)
 {
     // When loading a new map, no verifications are made to check if the code tries to reach an out-of-world map.
     // Maps are supposed to be designed in such a way the player can't get out of the world.
@@ -168,8 +173,6 @@ void Tilemap::LoadAdjacentMap(const MapBound bound) // This function is used onl
             m_currentMap -= 1;
             break;
     }
-    LoadMapByIndex(m_currentMap);
-    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
 }
 
 void Tilemap::LoadMap(const std::string& mapFilepath)
@@ -198,6 +201,9 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
             m_mapData.occupancyGrid.push_back(is_free);
         }
     }
+
+    m_camera.SetTilemapInfo(m_mapData.size*m_tileset.GetTileSize());
+    
     Notify(TilemapEvent::LoadingMap); // Update TileLayer used for rendering in TilemapScene
 }
 

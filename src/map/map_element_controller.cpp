@@ -170,7 +170,8 @@ void MapElementController::HandleEntityEvent(const EntityEvent e)
         }
         case EntityEvent::EnterInteraction :
         case EntityEvent::ContinueInteraction :
-        case EntityEvent::ContinueTrigger : {
+        case EntityEvent::ContinueTrigger : 
+        case EntityEvent::RequestLoadMap : {
             Notify(e);
             break;
         }

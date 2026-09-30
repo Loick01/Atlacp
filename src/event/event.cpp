@@ -172,16 +172,20 @@ void EditorMapEventController::HandlePollEvents()
                         m_camera.ResetPositionAndZoom();
                         break;
                     case SDL_SCANCODE_UP:
-                        m_tilemap.LoadAdjacentMap(MapBound::OutUp);
+                        m_tilemap.UpdateMapIndex(MapBound::OutUp);
+                        m_tilemap.LoadCurrentMap();
                         break;
                     case SDL_SCANCODE_DOWN:
-                        m_tilemap.LoadAdjacentMap(MapBound::OutDown);
+                        m_tilemap.UpdateMapIndex(MapBound::OutDown);
+                        m_tilemap.LoadCurrentMap();
                         break;
                     case SDL_SCANCODE_RIGHT:
-                        m_tilemap.LoadAdjacentMap(MapBound::OutRight);
+                        m_tilemap.UpdateMapIndex(MapBound::OutRight);
+                        m_tilemap.LoadCurrentMap();
                         break;
                     case SDL_SCANCODE_LEFT:
-                        m_tilemap.LoadAdjacentMap(MapBound::OutLeft);
+                        m_tilemap.UpdateMapIndex(MapBound::OutLeft);
+                        m_tilemap.LoadCurrentMap();
                         break;
                     default:
                         break;

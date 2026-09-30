@@ -11,7 +11,10 @@ class Tilemap;
 
 enum class EntityEvent
 {
-    HasMoved, EnterInteraction, ContinueInteraction, ContinueTrigger // Should merge ContinueInteraction with ContinueTrigger ?
+    HasMoved, 
+    EnterInteraction, ContinueInteraction,
+    ContinueTrigger,
+    RequestLoadMap
 };
 
 class MapEntity : public SceneDrawable, public MapElement, public Notifier<EntityEvent>

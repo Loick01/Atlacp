@@ -58,7 +58,9 @@ void MapEntity::TryStartMovement(const MapMovement movement, const bool isFirstM
     const MapBound bound = m_tilemap.IsOutOfMap(targetPosition); // Rename
 
     if (canExitMap && bound != MapBound::Inside){
-        m_tilemap.LoadAdjacentMap(bound);
+        m_tilemap.UpdateMapIndex(bound);
+        Notify(EntityEvent::RequestLoadMap);
+
         SetMapPosition(m_tilemap.GetProjectedPosition(targetPosition, bound));
         const ScenePosition newPosition = GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
         m_position = GetFinalDrawingPosition(newPosition);

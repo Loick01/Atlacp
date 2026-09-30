@@ -189,7 +189,7 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 GameMapScene::GameMapScene(GameContext& context):
     TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
     m_orderController(m_context.window.GetBoxing(), m_camera, m_context.fileReader, m_elementsController, m_tilemap, m_context.time, m_context.uiComponentController), 
-    m_interactionController(m_orderController), m_triggerController(m_orderController)
+    m_interactionController(m_orderController), m_triggerController(m_orderController), m_sceneState(GameMapSceneState::Update)
 {
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
@@ -228,6 +228,16 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             m_triggerController.ContinueTrigger();
             break;
         }
+        case EntityEvent::RequestLoadMap : {
+            // m_sceneState = GameMapSceneState::WaitForOrder;
+            m_orderController.AddOrders({
+                // BoxingAnimationOrder{1000.f},
+                LoadMapOrder{m_tilemap.GetCurrentMapIndex()} //,
+                // BoxingAnimationOrder{1000.f}
+            });
+            m_orderController.NextOrder();
+            break;
+        }
         default:
             throw std::runtime_error("GameMapScene::HandleEntityEvent() : Unknown EntityEvent value");
     }
@@ -242,23 +252,33 @@ void GameMapScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     
-    m_context.eventController->HandlePollEvents(); 
-    m_context.eventController->HandleStateEvents(); 
-    
-    m_camera.Update(deltaTime); // Here ?
-    m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
-    const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
-    for (size_t i = 0 ; i < layerSplitIndex ; i++)
-        m_layers[i]->DrawTexture();
-    
-    m_elementsController.Draw();
-    
-    for (size_t i = layerSplitIndex ; i < m_layers.size() ; i++)
-        m_layers[i]->DrawTexture();
+    switch (m_sceneState) {
+        case GameMapSceneState::Update : {
+            m_context.eventController->HandlePollEvents(); 
+            m_context.eventController->HandleStateEvents(); 
+            
+            m_camera.Update(deltaTime); // Here ?
+            m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
+            const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
+            for (size_t i = 0 ; i < layerSplitIndex ; i++)
+                m_layers[i]->DrawTexture();
+            
+            m_elementsController.Draw();
+            
+            for (size_t i = layerSplitIndex ; i < m_layers.size() ; i++)
+                m_layers[i]->DrawTexture();
 
-    m_elementsController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
+            m_elementsController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
-    SoundController::GetInstance().PlayRequestedChunk();
+            SoundController::GetInstance().PlayRequestedChunk();
+            break;
+        }
+        case GameMapSceneState::WaitForOrder : {
+            if (m_orderController.HasNoOrders()) m_sceneState == GameMapSceneState::Update;
+            break;
+        }
+    }
+
     m_context.uiController.Draw();
     
     m_context.window.FrameBoxing(deltaTime);

@@ -153,8 +153,8 @@ struct TimeDelayOrder { // Pause the Order execution
 };
 
 struct LoadMapOrder { // Load a new map
-    unsigned int mapIndex;
-    // TODO : Add MapPosition spawnPosition here ? (For now I use spawn position defined in the map file)
+    size_t mapIndex;
+    // TODO : Add MapPosition spawnPosition here ? (For now, I use the spawn position defined in the map file)
     
     std::string GetString() const
     {

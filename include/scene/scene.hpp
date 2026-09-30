@@ -25,6 +25,11 @@ enum class SwitchEvent
     ToMainMenu, ToGameMap, ToEditorMap, ToBattle
 };
 
+enum class GameMapSceneState // TODO : Rename SceneState (to use it for all Scene) ?
+{
+    Update, WaitForOrder
+};
+
 struct GameContext
 {
     Window& window;
@@ -87,6 +92,8 @@ class GameMapScene : public TilemapScene
         OrderController m_orderController;
         InteractionController m_interactionController; // Was in MapElementController, but I moved it here because I need to remove #include "interaction.hpp" from map_element_controller.hpp
         TriggerController m_triggerController;
+
+        GameMapSceneState m_sceneState;
         
         void HandleEntityEvent(const EntityEvent e);
         

@@ -18,6 +18,11 @@ Tilemap& tilemap, Time& time, UiComponentController& uiComponentController) :
     m_tilemap(tilemap), m_time(time), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
+bool OrderController::HasNoOrders() const
+{
+    return m_orders.empty();
+}
+
 void OrderController::Execute(Order& order)
 {
     m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
@@ -164,7 +169,6 @@ void OrderController::ExecuteOrder(const TimeDelayOrder& o)
 void OrderController::ExecuteOrder(const LoadMapOrder& o)
 {
     m_tilemap.LoadMapByIndex(o.mapIndex);
-    // TODO : Need to call Camera::SetTilemapInfo (not here, but in LoadMap ?)
     NextOrder();
 }
 
@@ -281,7 +285,7 @@ void OrderController::NextOrder()
 {
     if (m_hasCurrentOrder) {
         const bool isOrderDone = Update(m_currentOrder);
-        if (isOrderDone && m_orders.empty()) {
+        if (isOrderDone && HasNoOrders()) {
             Stop(m_currentOrder);
             m_hasCurrentOrder = false;
             Notify(OrderExecutionEvent::End);
@@ -294,7 +298,7 @@ void OrderController::NextOrder()
         Stop(m_currentOrder);
     }
 
-    if (m_orders.empty()) // Remove ?
+    if (HasNoOrders()) // Remove ?
         throw std::runtime_error("OrderController::m_orders should not be empty when reaching here");
     
     m_currentOrder = m_orders.front();
