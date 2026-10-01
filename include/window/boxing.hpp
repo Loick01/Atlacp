@@ -11,7 +11,12 @@ enum class BoxingType
     Letterboxing, Pillarboxing
 };
 
-enum class BoxingState
+enum class BarState // TODO : Rename
+{
+    Open, Close
+};
+
+enum class BoxingState // TODO : Rename
 {
     Fixed, Animated
 };
@@ -32,11 +37,11 @@ class Bar
 {
     private:
         SDL_FRect m_sdlFRect;
-
-        Vec2f m_initialSize;
+        const SDL_FRect m_initialFRect;
         
         BarAnimation m_barAnim;
-        BoxingState m_state;
+        BarState m_barState;
+        BoxingState m_boxingState;
 
         Direction m_resizeDirection;
         BoxingType m_boxType;
@@ -44,15 +49,17 @@ class Bar
         void UpdateSize(const float deltaTime0); // TODO : Rename ?
         
     public:
-        Bar(const SDL_FRect& fRect, const Vec2f size, const Vec2f& dir, const BoxingType boxType, const Direction resizeDirection); // For now, all Bars have the same size
+        Bar(const SDL_FRect& fRect, const Vec2f& dir, const BoxingType boxType, const Direction resizeDirection);
         
         const SDL_FRect* GetFRectPtr() const;
         BarAnimation& GetBarAnimation();
-        BoxingState GetState() const;
+        BarState GetBarState() const;
+        BoxingState GetBoxingState() const;
 
         bool Check(const ScreenPosition windowCenter);
 
-        void SetState(const BoxingState state);
+        void SetBarState(const BarState state);
+        void SetBoxingState(const BoxingState state);
 
         void Update(const ScreenPosition windowCenter, const float deltaTime);
 };
