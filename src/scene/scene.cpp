@@ -232,7 +232,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             m_sceneState = GameMapSceneState::WaitForOrder;
             m_orderController.AddOrders({
                 BoxingAnimationOrder{2000.f},
-                LoadMapOrder{m_tilemap.GetCurrentMapIndex()},
+                LoadMapOrder{m_tilemap.GetCurrentMapIndex(), PlayerReposition::Projection},
                 BoxingAnimationOrder{2000.f}
             });
             m_orderController.NextOrder();

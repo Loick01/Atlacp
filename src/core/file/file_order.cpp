@@ -180,7 +180,7 @@ LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
 {
     unsigned int mapIndex;
     input >> mapIndex;
-    return LoadMapOrder{mapIndex};
+    return LoadMapOrder{mapIndex, PlayerReposition::MapSpawn};
 }
 
 BoxingAnimationOrder FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const

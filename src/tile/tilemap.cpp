@@ -5,8 +5,9 @@
 #include "tile/tileset.hpp"
 
 Tilemap::Tilemap(TextureController& textureController, const FileReader& fileReader, Tileset& tileset, 
-    const std::string& worldFilepath, Camera& camera, const bool shouldCulling) :
-    m_camera(camera), m_textureController(textureController), m_fileReader(fileReader), m_tileset(tileset), m_shouldCulling(shouldCulling)
+const std::string& worldFilepath, Camera& camera, const bool shouldCulling) :
+    m_camera(camera), m_textureController(textureController), m_fileReader(fileReader), m_tileset(tileset), 
+    m_shouldCulling(shouldCulling), m_currentBound(MapBound::Inside)
 {
     m_camera.SetShouldCulling(m_shouldCulling);
     m_worldData = m_fileReader.ReadWorldFile(worldFilepath);
@@ -53,10 +54,10 @@ MapPosition Tilemap::GetSpawnPosition() const
     return m_mapData.spawnPosition; // Return the spawn position of the loaded map (could be -1 if undefined)
 }
 
-MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bound) const
+MapPosition Tilemap::GetProjectedPosition(const MapPosition p) const
 {
     MapPosition projectedPosition = p;
-    switch (bound){
+    switch (m_currentBound){
         case MapBound::OutUp:
             projectedPosition.y = m_mapData.size.y-1;
             break;
@@ -69,6 +70,8 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p, const MapBound bo
         case MapBound::OutLeft:
             projectedPosition.x = m_mapData.size.x-1;
             break;
+        default:
+            throw std::runtime_error("Tilemap::m_currentBound should not be MapBound::Inside when calling Tilemap::GetProjectedPosition()");
     }
     return projectedPosition;
 }
@@ -173,6 +176,8 @@ void Tilemap::UpdateMapIndex(const MapBound bound)
             m_currentMap -= 1;
             break;
     }
+
+    m_currentBound = bound;
 }
 
 void Tilemap::LoadMap(const std::string& mapFilepath)
@@ -210,4 +215,9 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
 void Tilemap::SaveMap(const std::string &mapFilepath) const
 {
     m_fileReader.SaveMapFile(m_worldData.mapDirectoryPath + mapFilepath, m_mapData);
+}
+
+void Tilemap::SetCurrentBound(const MapBound bound)
+{
+    m_currentBound = bound;
 }

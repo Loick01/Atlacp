@@ -36,12 +36,12 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         void TryStartMovement(const MapMovement movement, const bool isFirstMovement, const bool canExitMap);
         void TryStartInteraction(const MapPosition targetPosition);
 
+        ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
+
     protected:
         MapEntity(TextureController& textureController, const std::string& spriteFilepath, const FileReader& fileReader,
             Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const float cameraZoom,
             const unsigned int id = 0); // For now, only Player has id = 0
-        
-        ScenePosition GetFinalDrawingPosition(const ScenePosition sp) const;
     
     public:
         virtual void Update(const float deltaTime) = 0;
@@ -78,4 +78,6 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
 
         void FreePosition();
         void TakePosition();
+
+        void UpdateDrawingPosition(const ScenePosition sp);
 };

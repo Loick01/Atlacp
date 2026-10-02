@@ -15,7 +15,7 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     }
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
-    m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
+    UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
 }
 
 void Player::Update(const float deltaTime)

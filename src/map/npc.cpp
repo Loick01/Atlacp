@@ -9,7 +9,7 @@ NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& text
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
-    m_position = GetFinalDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
+    UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
     m_behaviour = std::make_unique<MapRandomBehaviour>(); // NPC always spawn with random behaviour ? I think NPCs could spawn with Idle behaviour
 }
 

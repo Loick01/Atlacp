@@ -28,6 +28,8 @@ class Tilemap : public Notifier<TilemapEvent>
         size_t m_currentMap;
         const bool m_shouldCulling;
 
+        MapBound m_currentBound;
+
         void LoadMap(const std::string& mapFilepath);
         
     public:
@@ -40,9 +42,9 @@ class Tilemap : public Notifier<TilemapEvent>
         const std::vector<bool>& GetOccupancyGrid() const;
         const WorldData& GetWorldData() const;
 
-        MapBound IsOutOfMap(const MapPosition p) const;
+        MapBound IsOutOfMap(const MapPosition p) const; // TODO : Rename
         MapPosition GetSpawnPosition() const;
-        MapPosition GetProjectedPosition(const MapPosition p, const MapBound bound) const;
+        MapPosition GetProjectedPosition(const MapPosition p) const;
         GridSize GetLayerSize() const;
         
         size_t GetLayerCount() const;
@@ -64,4 +66,6 @@ class Tilemap : public Notifier<TilemapEvent>
         void LoadMapByIndex(const unsigned int mapIndex);
         void LoadCurrentMap();
         void SaveMap(const std::string &mapFilepath) const;
+
+        void SetCurrentBound(const MapBound bound);
 };

@@ -174,6 +174,25 @@ void OrderController::ExecuteOrder(const TimeDelayOrder& o)
 void OrderController::ExecuteOrder(const LoadMapOrder& o)
 {
     m_tilemap.LoadMapByIndex(o.mapIndex);
+
+    Player* player = static_cast<Player*>(m_mapElementController.GetMapEntityFromId(0));
+
+    switch (o.reposition) {
+        case PlayerReposition::MapSpawn :
+            player->SetMapPosition(m_tilemap.GetSpawnPosition());
+            break;
+        case PlayerReposition::Projection :
+            player->SetMapPosition(m_tilemap.GetProjectedPosition(player->GetMapPosition()));
+            m_tilemap.SetCurrentBound(MapBound::Inside);
+            break;
+        default :
+            throw std::runtime_error("Unknown PlayerReposition value");
+    }
+    
+    const ScenePosition newPosition = player->GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
+    player->UpdateDrawingPosition(newPosition);
+    // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
+    
     NextOrder();
 }
 
