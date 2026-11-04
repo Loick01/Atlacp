@@ -2,6 +2,7 @@
 
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
+#include "core/logger.hpp"
 #include "core/time.hpp"
 #include "map/map_element_controller.hpp"
 #include "map/npc.hpp" // NPC, MapBehaviour
@@ -32,14 +33,14 @@ void OrderController::Execute(Order& order)
 {
     m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
 
-    return std::visit( // Use return (even if void) to exit the function before reaching throw runtime_error
+    return std::visit( // Use return (even if void) to exit the function before reaching the Log
         [this](const auto& o)
         {
             ExecuteOrder(o);
         },
         order
     );
-    throw std::runtime_error("No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder 
+    Logger::GetInstance().AddLog(Level::L4, "No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder
 }
 
 bool OrderController::Update(const Order& order)
@@ -186,7 +187,8 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
             m_tilemap.SetCurrentBound(MapBound::Inside);
             break;
         default :
-            throw std::runtime_error("Unknown PlayerReposition value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled PlayerReposition used in ExecuteOrder(LoadMapOrder)");
+            break;
     }
     
     const ScenePosition newPosition = player->GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
@@ -322,8 +324,10 @@ void OrderController::NextOrder()
         Stop(m_currentOrder);
     }
 
-    if (HasNoOrders()) // Remove ?
-        throw std::runtime_error("OrderController::m_orders should not be empty when reaching here");
+    if (HasNoOrders()) {
+        Logger::GetInstance().AddLog(Level::L4, "OrderController::m_orders should not be empty when reaching here");
+        return;
+    }
     
     m_currentOrder = m_orders.front();
     m_hasCurrentOrder = true;

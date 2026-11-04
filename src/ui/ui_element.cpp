@@ -1,7 +1,5 @@
 #include "ui/element/ui_element.hpp"
 
-#include <stdexcept>
-
 #include "image/texture.hpp"
 
 UiElement::UiElement(TextureController& textureController, const UiKey& key,
@@ -113,7 +111,8 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
             SetZoom(scale/GetTextureHeight());
             break;
         default:
-            throw std::invalid_argument("Unknown axis value\n");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiElement::ComputeZoom");
+            break;
     }
 }
 
@@ -139,7 +138,8 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             localPosition.x = m_parentSize.x;
             break;
         default:
-            throw std::invalid_argument("Incorrect anchor value for x axis\n");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (x axis) used in UiElement::ComputePosition");
+            break;
     }
     switch(yAnchor){
         case Anchor::TopIn:
@@ -158,7 +158,8 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             localPosition.y = m_parentSize.y;
             break;
         default:
-            throw std::invalid_argument("Incorrect anchor value for y axis\n");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (y axis) used in UiElement::ComputePosition");
+            break;
     }
     SetLocalPosition(localPosition);
 }
@@ -183,7 +184,9 @@ std::unique_ptr<UiElement> UiElement::RemoveChild(const UiKey& key)
             return removed;
         }
     }
-    throw std::runtime_error("(UiElement::RemoveChild) No elements have this key : " + key);
+    
+    Logger::GetInstance().AddLog(Level::L4, "(UiElement::RemoveChild) No elements have this key: " + key);
+    return nullptr;
 }
 
 void UiElement::BuildChild(std::unique_ptr<UiElement> child)

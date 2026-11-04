@@ -4,19 +4,19 @@
 #include <string_view>
 #include <vector>
 
-enum class LogLevel
+enum class Level
 {   
-    Level0, Level1, Level2, Level3
+    L0, L1, L2, L3, L4
 };
 
 struct Log
 {
     const std::string message;
-    const LogLevel level;
+    const Level level;
 
     const std::string_view label;
 
-    Log(const std::string& m, const LogLevel l):
+    Log(const std::string& m, const Level l):
         message(m), level(l), label(GetLevelLabel())
     {}
 
@@ -34,8 +34,8 @@ class Logger // Singleton
         static Logger& GetInstance();
 
         const std::vector<Log>& GetLogs() const;
-        void WriteLogsInFile() const; // TODO : For now, logs are not filtered according to their LogLevel
+        void WriteLogsInFile() const; // TODO : For now, logs are not filtered according to their Level
 
-        void AddLog(const LogLevel level, const std::string& message);
+        void AddLog(const Level level, const std::string& message);
         void Clear();
 };

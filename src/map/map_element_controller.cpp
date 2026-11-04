@@ -37,14 +37,12 @@ std::vector<MapElement*>& MapElementController::GetElements()
 
 MapEntity* MapElementController::GetMapEntityFromId(const unsigned int id)
 {
-    // if (id == 0) throw std::runtime_error("MapElementController::GetMapEntity() --> Do not use id = 0, this is reserved for the player"); // Will be removed
-    
-    // Should return exclusively NPC ? For now GetMapEntity is used only for NpcGoToOrder, but maybe I will change it to EntityGoToOrder
     for (MapEntity* m : m_updatedEntities) {
         if (m->GetId() == id)
             return m;
     }
-    throw std::runtime_error("This MapEntity was not found in MapElementController::m_updatedEntities : " + std::to_string(id));
+    Logger::GetInstance().AddLog(Level::L4, "The MapEntity " + std::to_string(id) + " was not found in MapElementController::m_updatedEntities");
+    return nullptr;
 }
 
 MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
@@ -54,16 +52,28 @@ MapEntity* MapElementController::GetCurrentMapEntityUpdated() const
 
 void MapElementController::CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition)
 {
-    if (idEntity == 0) 
-        throw std::runtime_error("MapElementController::CreateEntity -> idEntity = 0 is already use for Player");
+    if (idEntity == 0) { 
+        Logger::GetInstance().AddLog(Level::L4, "MapElementController::CreateEntity -> idEntity = 0 is already use for Player");
+        return; // TODO : Maybe I could still create the NPC but with a new id (but how I will retrieve the NPC from data file ?)
+    }
 
-    DataNPC data = m_fileReader.ReadDataNPC(npcFilepath, idEntity);
-    // Do not use data.position, but the MapPosition given as a parameter
+    const std::optional<DataNPC> optData = m_fileReader.ReadDataNPC(npcFilepath, idEntity);
     
-    if (!m_tilemap.IsFreePosition(spawnPosition))
-            throw std::runtime_error("NPC can only spawn on free position"); 
+    if (!optData.has_value()) {
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity);
+        return;
+    }
+
+    if (!m_tilemap.IsFreePosition(spawnPosition)) { // Do not use data.position, but the MapPosition given as a parameter 
+        Logger::GetInstance().AddLog(Level::L4, "MapEntity can only spawn on free position");
+        return;
+    }
+    
+    const DataNPC data = optData.value();
         
-    NPC* npc = new NPC( // TODO : Merge with the same code in MapElementController::LoadNPCsForMap 
+    // TODO : Merge with the same code in MapElementController::LoadNPCsForMap 
+    // TODO : Do not use new
+    NPC* npc = new NPC(
         m_fileReader, 
         m_tilemap, 
         m_textureController,
@@ -83,9 +93,13 @@ void MapElementController::CreateEntity(const std::string& npcFilepath, const un
 
 void MapElementController::DeleteEntity(const unsigned int idEntity)
 {
-    if (idEntity == 0) 
-        throw std::runtime_error("MapElementController::DeleteEntity -> Player (idEntity = 0) should notbe deleted");
+    if (idEntity == 0) { 
+        Logger::GetInstance().AddLog(Level::L4, "MapElementController::DeleteEntity -> Player (idEntity = 0) should not be deleted");
+        return;
+    }
 
+    // TODO : I will not use both vectors to retrieve the MapEntity
+    
     std::vector<MapEntity*>::iterator itRendered = std::find_if(m_renderedEntities.begin(), m_renderedEntities.end(), 
         [idEntity](MapEntity* entity) {
             return entity->GetId() == idEntity;
@@ -97,8 +111,10 @@ void MapElementController::DeleteEntity(const unsigned int idEntity)
         }
     );
 
-    if (itRendered == m_renderedEntities.end() || itUpdated == m_updatedEntities.end())
-        throw std::runtime_error("This MapEntity was not found in MapElementController : " + std::to_string(idEntity));
+    if (itRendered == m_renderedEntities.end() || itUpdated == m_updatedEntities.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "This MapEntity was not found in MapElementController : " + idEntity);
+        return;
+    }
 
     // Or itUpdated
     (*itRendered)->FreePosition();
@@ -191,10 +207,12 @@ void MapElementController::LoadNPCsForMap(const std::string& filepath, const uns
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
         DataNPC data = npcsData[i];
         const MapPosition npcPosition = data.position;
-        if (!m_tilemap.IsFreePosition(npcPosition))
-            throw std::runtime_error("NPC can only spawn on free position"); 
+        if (!m_tilemap.IsFreePosition(npcPosition)) {
+            Logger::GetInstance().AddLog(Level::L4, "NPC can only spawn on free position");
+            continue; // TODO : Do something else than skipping the NPC ?
+        }
         
-        NPC* npc = new NPC( // TODO
+        NPC* npc = new NPC(
             m_fileReader, 
             m_tilemap, 
             m_textureController,

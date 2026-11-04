@@ -78,16 +78,17 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
             BuildCollisionLayer(occupancyGrid);
             break;
         default:
-            throw std::runtime_error("Unknown ExtraLayerType value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer"); // TODO : Level::L4 ?
+            return; // TODO : ?
     }
 
     m_tileKey += std::to_string(wantedTileSize);
     pathToLoad += m_tileKey + ".png";
     
     m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, m_tileSize, m_tileSize);
-    
-    if (wantedTileSize != m_tileSize) 
-        throw std::runtime_error("Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // If this happens, the file is probably incorrectly named
+
+    if (wantedTileSize != m_tileSize) // If this happens, pathToLoad is probably incorrect (because I use m_tileKey += std::to_string(wantedTileSize);)
+        Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset");
 }
 
 ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is deleted in ~TextureController

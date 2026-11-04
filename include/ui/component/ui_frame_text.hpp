@@ -1,6 +1,5 @@
 #pragma once
 
-#include <initializer_list>
 #include <queue>
 
 #include "ui/component/ui_component.hpp"

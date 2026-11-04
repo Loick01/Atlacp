@@ -37,12 +37,13 @@ BattleController::~BattleController()
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
     switch(team) {
-        case Team::Ally : 
+        case Team::Ally: 
             return m_allies;
-        case Team::Opponent :
+        case Team::Opponent:
             return m_opponents;
-        default :
-            throw std::runtime_error("Unknown Team value");
+        default:
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Team used in BattleController::GetActorsInTeam");
+            return {};
     }
 }
 
@@ -94,12 +95,13 @@ ExitEvent BattleController::CheckBattleEnd() const
 unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const
 {
     switch(mt) {
-        case MoveType::Physical :
+        case MoveType::Physical:
             return baseValue * srcActor->GetStrength();
-        case MoveType::Magic :
+        case MoveType::Magic:
             return baseValue * srcActor->GetStrength(); // TODO : Need a new field in BattleActor
         default:
-            throw std::runtime_error("Unknown MoveType value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled MoveType used in BattleController::ComputeMoveValue");
+            return 0;
     }
 }
 
@@ -243,7 +245,8 @@ void BattleController::HandleActionSelection(const int selectorIndex)
         }
 
         default:
-            throw std::runtime_error("Selector is not supposed to be on this index : " + std::to_string(selectorIndex));
+            Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index : " + std::to_string(selectorIndex));
+            break;
     }
 }
 
@@ -282,17 +285,19 @@ void BattleController::HandleCurrentCommand()
     moveAnimation->Open();
 
     switch (m_currentCommand.commandType) {
-        case CommandType::Attack : {
+        case CommandType::Attack: {
             ApplyDamage(*m_currentActor, *m_targetActor);
             break;
         }
-        case CommandType::Heal : {
+        case CommandType::Heal: {
             ApplyHeal(*m_currentActor, *m_targetActor);
             break;
         }
-        default : 
-            throw std::runtime_error("Unknown CommandType value"); 
+        default:
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleController::HandleCurrentCommand");
+            break;
     }
+
     m_turnState = TurnState::WaitingForAnimation;
 }
 
@@ -466,7 +471,8 @@ void BattleController::PlayNextTurn()
             break;
         }
 
-        default:
-            throw std::runtime_error("Unknown Turn value");
+        default:    
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Turn used in BattleController::PlayNextTurn");
+            break;
     }
 }

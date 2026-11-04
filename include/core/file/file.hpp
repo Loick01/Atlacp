@@ -1,12 +1,14 @@
 #pragma once
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "animation/animation_types.hpp" // SpriteAnimationData
 #include "battle/battle_types.hpp" // DataBattleActor
+#include "core/logger.hpp"
 #include "map/order/order.hpp" // Order
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
@@ -84,7 +86,7 @@ class FileReader
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
         std::vector<DataNPC> ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
-        DataNPC ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const;
+        std::optional<DataNPC> ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const;
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename ? (because UiFile != UiTemplate)
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;

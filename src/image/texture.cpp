@@ -1,7 +1,5 @@
 #include "image/texture.hpp"
 
-#include <stdexcept>
-
 #include "image/font.hpp"
 
 TextureController::TextureController(FontController& fontController, SDL_Renderer* windowRenderer) :
@@ -10,7 +8,7 @@ TextureController::TextureController(FontController& fontController, SDL_Rendere
     // SDL_image initialization
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
     if ((IMG_Init(imgFlags) & imgFlags) != imgFlags)
-        throw std::runtime_error("Failed to initialize SDL image library\n" + std::string(IMG_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_image: " + std::string(IMG_GetError()));
 }
 
 TextureController::~TextureController()
@@ -25,8 +23,11 @@ TextureController::~TextureController()
 void TextureController::CreateTextureFromSurface(SDL_Surface* surface, const TextureKey& key, const std::string& s, int& textureWidth, int& textureHeight)
 {
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
-    if (!texture)
-        throw std::runtime_error("Failed to convert this surface into a texture : " + s + "\n" + std::string(SDL_GetError()));
+    if (!texture) {
+        Logger::GetInstance().AddLog(Level::L4, "Failed to convert the surface " + s + " into a texture: " + std::string(SDL_GetError()));
+        return;
+    }
+
     textureWidth = surface->w, textureHeight = surface->h;
     SDL_FreeSurface(surface);
     m_textures[key].count = 1;
@@ -44,9 +45,10 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
     if (m_textures.find(key) == m_textures.end()){
         SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
         if (!surface) 
-            throw std::runtime_error("Failed to load this texture : " + textureFilepath + "\n" + std::string(IMG_GetError()));
-        CreateTextureFromSurface(surface, key, textureFilepath, textureWidth, textureHeight);
-    }else{ // Filepath has already been loaded as a texture
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError()));
+        else
+            CreateTextureFromSurface(surface, key, textureFilepath, textureWidth, textureHeight);
+    } else { // Filepath has already been loaded as a texture
         AddTexture(key, textureWidth, textureHeight);
     }
 }
@@ -54,7 +56,10 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
 void TextureController::LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
     int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
-    if (key == "") throw std::runtime_error("Texture key (string) is empty, text in UiTextElement should never be \"\"");
+    if (key.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "Texture key (string) is empty, text in UiTextElement should never be \"\"");
+        return;
+    }
     
     if (m_textures.find(key) == m_textures.end()) {
         SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
@@ -81,7 +86,6 @@ void TextureController::DeleteTexture(const TextureKey& key)
             it->second.count--;
         }
     } else {
-        std::cout << "Try to delete a texture not in m_textures : " << key << "\n";
-        // throw std::runtime_error("Try to delete a texture that don't exist in TextureController : " + key);
+        Logger::GetInstance().AddLog(Level::L4, "Try to delete a texture not in m_textures: " + key);
     }
 }

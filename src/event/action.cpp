@@ -1,6 +1,6 @@
 #include "event/action.hpp"
 
-#include <stdexcept>
+#include "core/logger.hpp"
 
 // KEYBOARD STATE EVENT
 
@@ -89,16 +89,18 @@ JoystickActionController::JoystickActionController() :
 {
     m_joystick = SDL_JoystickOpen(0);
     if (m_joystick == nullptr)
-        throw std::runtime_error("Failed to open joystick\n" + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open Joystick: " + std::string(SDL_GetError()));
 }
 
 bool JoystickActionController::IsJoystickAvailable()
 {
     const int joystick = SDL_Init(SDL_INIT_JOYSTICK);
-    if (joystick==0)
+    if (joystick==0) {
         return SDL_NumJoysticks() != 0;
-    else
-        throw std::runtime_error("Unable to initialize joystick system\n" + std::string(SDL_GetError()));
+    } else {
+        Logger::GetInstance().AddLog(Level::L4, "Unable to initialize Joystick: " + std::string(SDL_GetError()));
+        return false;
+    }
 }
 
 /* If I need to know when the joystick is removed

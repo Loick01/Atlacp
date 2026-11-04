@@ -1,7 +1,5 @@
 #include "scene/scene.hpp"
 
-#include <stdexcept>
-
 #include "sound/sound.hpp"
 
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
@@ -27,7 +25,8 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
         case 3:
             return SwitchEvent::ToEditorMap;
         default:
-            throw std::invalid_argument("Unknown mode");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled mode used in SceneController::GetSwitchEventFromMode");
+            return SwitchEvent::Invalid;
     };
 }
 
@@ -51,8 +50,9 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             m_currentScene = std::make_unique<MainMenuScene>(m_context);
             break;
         }
-        default:{
-            throw std::invalid_argument("Unknown value");
+        default: {
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled SwitchEvent used in SceneController::SetCurrentScene");
+            return;
         }
     }
     m_currentScene->AddCallback([this](SwitchEvent e){RequestSwitchScene(e);});
@@ -138,7 +138,8 @@ void MainMenuScene::Gameloop()
                 m_gameloop = false;
                 return;
             default:
-                throw std::runtime_error("Selector is not supposed to be on this index : " + std::to_string(m_selector.GetOptionIndex()));
+                Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index: " + std::to_string(m_selector.GetOptionIndex()));
+                return; // TODO : ?
         }
         Notify(se);
     }
@@ -208,27 +209,27 @@ GameMapScene::GameMapScene(GameContext& context):
 void GameMapScene::HandleEntityEvent(const EntityEvent e)
 {
     switch (e) {
-        case EntityEvent::HasMoved : {
+        case EntityEvent::HasMoved: {
             MapEntity* currentEntity = m_elementsController.GetCurrentMapEntityUpdated();
             if (currentEntity->GetId() != 0) break; // Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
             m_triggerController.LookForTrigger(currentEntity);
             break;
         }
-        case EntityEvent::EnterInteraction : {
+        case EntityEvent::EnterInteraction: {
             // Should use GetCurrentMapEntityUpdated() to get interacting entity ?
             m_interactionController.InitializeInteraction(m_elementsController.GetEntities(), m_elementsController.GetElements());
             m_interactionController.StartInteraction();
             break;
         }
-        case EntityEvent::ContinueInteraction : {
+        case EntityEvent::ContinueInteraction: {
             m_interactionController.ContinueInteraction();
             break;
         }
-        case EntityEvent::ContinueTrigger : {
+        case EntityEvent::ContinueTrigger: {
             m_triggerController.ContinueTrigger();
             break;
         }
-        case EntityEvent::RequestLoadMap : {
+        case EntityEvent::RequestLoadMap: {
             m_sceneState = GameMapSceneState::WaitForOrder;
             m_orderController.AddOrders({
                 BoxingAnimationOrder{2000.f},
@@ -239,7 +240,8 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         default:
-            throw std::runtime_error("GameMapScene::HandleEntityEvent() : Unknown EntityEvent value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityEvent used in GameMapScene::HandleEntityEvent");
+            break;
     }
 }
 

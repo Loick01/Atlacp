@@ -1,5 +1,6 @@
 #include "map/player.hpp"
 
+#include "core/logger.hpp"
 #include "tile/tilemap.hpp"
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
@@ -10,8 +11,8 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     if (spawn.x != -1 && spawn.y != -1)
         SetMapPosition(spawn);
     else {
-        // SetMapPosition(MapPosition{0, 0});
-        throw std::runtime_error("A spawn position must be defined for the first loaded map (defined in world file)");
+        SetMapPosition(MapPosition{0, 0}); // TODO : Could be not free
+        Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map");
     }
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
@@ -24,7 +25,7 @@ void Player::Update(const float deltaTime)
     if (interactionState != EntityInteractionState::None) {
         switch (interactionState) { // Maybe I will merge InteractionController and TriggerController, so this switch won't be needed anymore
             case EntityInteractionState::Interacting: {
-                if (m_eventState.isInteracting){
+                if (m_eventState.isInteracting) {
                     ContinueInteraction();
                     break;
                 }
@@ -40,7 +41,7 @@ void Player::Update(const float deltaTime)
             }
 
             default:
-                throw std::runtime_error("Unknown EntityInteractionState value");
+                Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityInteractionState used in Player::Update");
                 break; 
         }
         return;
@@ -98,7 +99,7 @@ void Player::Update(const float deltaTime)
         }
 
         default:
-            throw std::runtime_error("Unknown EntityMovementState value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in Player::Update");
             break; 
     }
 }

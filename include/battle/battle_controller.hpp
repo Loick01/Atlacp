@@ -6,6 +6,7 @@
 
 #include "battle/battle_actor.hpp"
 #include "battle/battle_types.hpp" // Team
+#include "core/logger.hpp"
 #include "core/notifier.hpp"
 #include "event/event_types.hpp" // BattleEventState
 #include "ui/component/ui_dynamic_list.hpp"
@@ -47,7 +48,8 @@ struct BattleCommand
             case CommandType::Heal :
                 return sourceTeam;
             default :
-                throw std::runtime_error("Unknown CommandType value"); 
+                Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleCommand::ComputeTargetTeam");
+                return sourceTeam;
         }
     }
 

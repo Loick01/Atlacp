@@ -1,5 +1,6 @@
 #include "ui/component/ui_selector.hpp"
 
+#include "core/logger.hpp"
 #include "sound/sound.hpp"
 #include "ui/element/ui_controller.hpp"
 
@@ -57,7 +58,11 @@ void UiSelector::Reset()
 
 void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue)
 {
-    if (optionKeys.size() == 0) throw std::runtime_error("UiSelector must have at least one key in m_optionKeys");
+    if (optionKeys.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "UiSelector must have at least one key in m_optionKeys");
+        return;
+    }
+    
     m_optionKeys = optionKeys;
     Reset(); 
     // When selector file is build, scale is based on root element, and there is no padding

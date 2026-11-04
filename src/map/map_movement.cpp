@@ -1,5 +1,7 @@
 #include "map/map_movement.hpp"
 
+#include "core/logger.hpp"
+
 MapMovement::MapMovement():
     m_direction(Direction::None), m_move(MapPosition{0, 0})
 {}
@@ -48,7 +50,8 @@ MapPosition MapMovement::GetMoveFromDirection(const Direction direction) const
             return MapPosition{-1, 0};
         case Direction::Right:
             return MapPosition{1, 0};
-        default: // Will throw error ? (for Direction::None)
+        default:
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in MapMovement::GetMoveFromDirection");
             return MapPosition{0, 0}; 
     }
 }
@@ -58,11 +61,13 @@ Direction MapMovement::GetDirectionFromMove(const MapPosition move) const
     if (move.x==0){
         if (move.y==-1) return Direction::Up;
         else if (move.y==1) return Direction::Down;
-    }else{
+    } else {
         if (move.x==-1) return Direction::Left;
         else if (move.x==1) return Direction::Right;
     }
-    return Direction::None; // Will throw error ?
+    
+    Logger::GetInstance().AddLog(Level::L4, "Direction::None");
+    return Direction::None;
 }
 
 void MapMovement::DefineMovement(const Direction direction)

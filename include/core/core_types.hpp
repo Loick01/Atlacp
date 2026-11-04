@@ -3,6 +3,8 @@
 #include <cmath> // sqrt
 #include <iostream> // operator<<
 
+#include "core/logger.hpp"
+
 // Operator signature list : https://gist.github.com/beached/38a4ae52fcadfab68cb6de05403fa393
 
 template <typename T>
@@ -109,7 +111,7 @@ using GridSize = Vec2;
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Pair<T>& v) {
-    os << "(x=" << v.x << ", y=" << v.y << ")\n";
+    os << "(x=" << v.x << ", y=" << v.y << ")";
     return os;
 }
 
@@ -136,6 +138,7 @@ inline std::string GetStringFromDirection(const Direction d) // Should be in fil
         case Direction::Left :
             return "left";
         default:   
-            throw std::runtime_error("Unknown values as Direction");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in GetStringFromDirection");
+            return "none";
     }
 }

@@ -71,7 +71,8 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p) const
             projectedPosition.x = m_mapData.size.x-1;
             break;
         default:
-            throw std::runtime_error("Tilemap::m_currentBound should not be MapBound::Inside when calling Tilemap::GetProjectedPosition()");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled MapBound (MapBound::Inside ?) used in Tilemap::GetProjectedPosition");
+            return {0,0}; // TODO : ?
     }
     return projectedPosition;
 }

@@ -23,9 +23,11 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
     TilesetData data = fileReader.ReadTilesetFile(path);
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
-    else if (data.tileSize != m_tileSize) 
-        throw std::runtime_error("Try to load a tileset with a different tileSize\n"); // Will not be a runtime_error
-
+    else if (data.tileSize != m_tileSize) {
+        Logger::GetInstance().AddLog(Level::L4, "Try to load a tileset with a different tileSize: " + data.tileSize);
+        return;
+    }
+    
     m_textureKey = path; // File extension is not in TextureKey ?
     const std::string tilesetFilepath = AssetDirectory::Tileset + path + FileExtension::Image; 
     m_textureController.LoadTextureFromFile(tilesetFilepath, m_textureKey, m_textureWidth, m_textureHeight);
@@ -132,7 +134,8 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
             }
         }
     }
-    throw std::runtime_error("No tileset can be found to draw this tile (" + std::to_string(tile) + ")\n"); // Will not be a runtime_error
+    Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile);
+    return 0; // TODO : ?
 }
 
 void Tileset::CleanTilesets(const bool shouldDeleteCurrent)

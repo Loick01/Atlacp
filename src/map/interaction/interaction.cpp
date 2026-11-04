@@ -37,14 +37,14 @@ void InteractionController::InitializeInteraction(const std::vector<MapEntity*>&
 
 void InteractionController::StartInteraction()
 {
-    if (m_dstElement == nullptr || m_dstElement->GetOrders().size() == 0) {
+    if (m_dstElement == nullptr || m_dstElement->GetOrders().empty()) {
         // No target MapElement or MapEntity has been found OR no order to execute (only for NPC, if a MapElement is declared it must have at least one order)
         m_srcEntity->SetInteractionState(EntityInteractionState::None);
         return;
     }
     
     m_dstElement->OnInteracting(m_srcEntity->GetCurrentMovement().GetOppositeDirection());
-    // There is at least one order (m_dstElement->GetOrders().size() == 0)
+    // There is at least one order (m_dstElement->GetOrders().empty())
     m_orderController.AddOrders(m_dstElement->GetOrders());
     m_orderController.NextOrder();
 }

@@ -16,10 +16,10 @@ int main(int argc, char* argv[])
         // It means that there should no longer be any textures to SDL_Destroy. 
         // If that's not the case, ~TextureController can avoid memory leaks, but it would be better not to use it (I put a warning message there)
 
-        Logger::GetInstance().WriteLogsInFile(); // Logger::WriteLogsInFile is called no matter how the execution exits, and only once
+        Logger::GetInstance().WriteLogsInFile();
     } catch (const std::exception& e) {
         const std::string exception = std::string("[Unhandled exception] ") + e.what();
-        Logger::GetInstance().AddLog(LogLevel::Level3, exception);
+        Logger::GetInstance().AddLog(Level::L4, exception);
         Logger::GetInstance().WriteLogsInFile();
         
         std::cerr << exception << "\n";

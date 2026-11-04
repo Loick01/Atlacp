@@ -4,16 +4,18 @@
 
 std::string_view Log::GetLevelLabel() const {
     switch (level) {
-        case LogLevel::Level0:
+        case Level::L0:
             return "[DEBUG]";
-        case LogLevel::Level1:
+        case Level::L1:
             return "[INFO]";
-        case LogLevel::Level2: 
+        case Level::L2: 
             return "[WARNING]";
-        case LogLevel::Level3:
+        case Level::L3:
             return "[ERROR]";
+        case Level::L4:
+            return "[TBD]";
         default:
-            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled LogLevel used in Log::GetLevelLabel");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Level used in Log::GetLevelLabel");
             return "[ _ ]";
     }
 }
@@ -42,7 +44,7 @@ void Logger::WriteLogsInFile() const
     output.close();
 }
 
-void Logger::AddLog(const LogLevel level, const std::string& message)
+void Logger::AddLog(const Level level, const std::string& message)
 {
     m_logs.emplace_back(message, level);
 }

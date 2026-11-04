@@ -4,9 +4,20 @@
 #include "map/map_entity.hpp"
 #include "tile/tilemap.hpp"
 
-MapRandomBehaviour::MapRandomBehaviour()
+MapEntityBehaviour::MapEntityBehaviour():
+    m_ready(false)
+{}
+
+bool MapEntityBehaviour::IsReady() const
+{
+    return m_ready;
+}
+
+MapRandomBehaviour::MapRandomBehaviour():
+    MapEntityBehaviour()
 {
     m_delay = m_random.GetRandomFloat(0.5f, 5.f);
+    m_ready = true;
 }
 
 void MapRandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
@@ -35,17 +46,26 @@ void MapRandomBehaviour::OnStopCase(MapEntity& entity)
 }
 
 MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity):
-    m_trackedEntity(trackedEntity)
+    MapEntityBehaviour(), m_trackedEntity(trackedEntity)
 {
-    if (trackedEntity == nullptr)
-        throw std::invalid_argument("Tracked entity is nullptr\n");
+    if (trackedEntity == nullptr) {
+        Logger::GetInstance().AddLog(Level::L4, "Tracked entity is nullptr");
+        return;
+    }
     
-    // Should also test m_runSpeed ?
-    if (trackedEntity->GetWalkSpeed() > followerEntity->GetWalkSpeed()) // Tracked entity should not be faster than the entity who own this behaviour
-        throw std::invalid_argument("MapFollowBehaviour should not be used if tracked entity is faster than follower\n");
+    // Tracked entity should not be faster than the entity who own this behaviour
+    if (trackedEntity->GetWalkSpeed() > followerEntity->GetWalkSpeed() || trackedEntity->GetRunSpeed() > followerEntity->GetRunSpeed()) {
+        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour should not be used if tracked entity is faster than follower");
+        return;
+    }
 
-    if (followerEntity->GetMapPosition().GetManhattanDistance(trackedEntity->GetMapPosition()) != 1)
-        throw std::invalid_argument("MapFollowBehaviour can start only when the tracked entity is next to the follower\n"); // Will use follow with pathfinding in this case
+    // This behaviour do not use pathfinding, it will be a different behaviour
+    if (followerEntity->GetMapPosition().GetManhattanDistance(trackedEntity->GetMapPosition()) != 1) {
+        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour can start only when the tracked entity is next to the follower");
+        return;
+    }
+
+    m_ready = true;
 }
 
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
@@ -78,9 +98,10 @@ void MapFollowBehaviour::OnStopCase(MapEntity& entity)
 }
 
 MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap):
-    m_pathIndex(0)
+    MapEntityBehaviour(), m_pathIndex(0)
 {
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
+    m_ready = true; // TODO : m_ready
 }
 
 bool MapGoToBehaviour::IsDone() const
@@ -120,9 +141,10 @@ void MapGoToBehaviour::OnStopCase(MapEntity& entity)
 }
 
 MapIdleBehaviour::MapIdleBehaviour(MapEntity& entity, const Direction direction):
-    m_direction(direction)
+    MapEntityBehaviour(), m_direction(direction)
 {
     entity.SetOrientation(m_direction);
+    m_ready = true;
 }
 
 void MapIdleBehaviour::FreeCase(MapEntity& entity, const float deltaTime)

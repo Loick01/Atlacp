@@ -40,13 +40,20 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         data.isAiActor = true;
         if (s == "ally") data.team = Team::Ally;
         else if (s == "opponent") data.team = Team::Opponent;
+        else {
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ally\" or \"opponent\"");
+            break;
+        }
         
         // ?
         input >> s;
         if (s == "ai") data.isAiActor = true;
         else if (s == "player") data.isAiActor = false;
-        else throw std::runtime_error("Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\"");
-        
+        else {
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\"");
+            break;
+        }
+
         data.name = ReadString(input);
         input >> data.health;
         input >> data.turnSpeed;
@@ -66,10 +73,14 @@ std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilep
     std::vector<DataNPC> npcsData;
     unsigned int count = 0;
     std::string s;
+    
     while(count < mapIndex && input >> s) { // Skip to the data associated with the chosen map
         if (s == SECTION_DELIMITER) count++;
     }
-    if (count != mapIndex) throw std::runtime_error("NPC file is invalid : " + npcsFilepath);
+    if (count != mapIndex) {
+        Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath);
+        return npcsData;
+    }
 
     input >> count;
     for (unsigned int i = 0 ; i < count ; i++) {
@@ -88,7 +99,7 @@ std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilep
     return npcsData;
 }
 
-DataNPC FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const
+std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const
 {
     std::ifstream input = OpenFile(DataDirectory::NPC + npcFilepath);
     std::string s;
@@ -110,7 +121,8 @@ DataNPC FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned i
             std::getline(input, s); // Skip the line
         }
     }
-    throw std::runtime_error("No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity));
+    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity));
+    return std::nullopt;
 }
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
@@ -163,8 +175,10 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream (should use ReadString ?)
             } else if (s == "textsize") {
                 data.fontSize = ReadFontSize(input);
-            } else  
-                throw std::runtime_error("UiParams has no member with this name " + s);
+            } else {
+                Logger::GetInstance().AddLog(Level::L4, "UiParams has no member with this name: " + s);
+                return uisData; // TODO : ?
+            }
         }
         uisData.push_back(data);
     }

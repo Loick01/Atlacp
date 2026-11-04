@@ -6,7 +6,7 @@ UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFi
     UiList(uiController, uiFilepath)
 {
     if (!m_uiController.IsTemplateUiFile(m_uiFilepath))
-        throw std::runtime_error("The file used for UiDynamicList must be a template file : " + m_uiFilepath);
+        Logger::GetInstance().AddLog(Level::L4, "The file used for UiDynamicList must be a template file: " + m_uiFilepath);
 }
 
 unsigned int UiDynamicList::GetInstanceCount()
@@ -21,7 +21,10 @@ void UiDynamicList::ResetInstanceCount()
         
 void UiDynamicList::Open()
 {   
-    if (m_nrItem == 0) throw std::runtime_error("UiDynamicList::m_nrItem should not be 0");
+    if (m_nrItem == 0) {
+        Logger::GetInstance().AddLog(Level::L4, "UiDynamicList::m_nrItem should not be 0");
+        return; // TODO : ?
+    }
      
     const unsigned int countInstance = GetInstanceCount();
     UiKey lastItemParent;

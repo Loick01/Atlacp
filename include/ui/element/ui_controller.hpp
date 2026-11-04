@@ -23,7 +23,7 @@ class UiController // Should be renamed UiElementController ?
         // WARNING : https://isocpp.org/wiki/faq/dtors#order-dtors-for-locals
         // Class members are deleted in reverse order of declaration
         // When UiElement in m_subRoots are deleted, the Notify(Delete) in ~UiElement calls Remove() which erase the key of the current UiElement from m_elements
-        // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will throw errors because the keys will not
+        // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will generate errors because the keys will not
         // be able to be found in m_elements
 
         const FileReader& m_fileReader;

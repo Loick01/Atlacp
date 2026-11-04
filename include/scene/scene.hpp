@@ -22,7 +22,7 @@
 
 enum class SwitchEvent
 {
-    ToMainMenu, ToGameMap, ToEditorMap, ToBattle
+    ToMainMenu, ToGameMap, ToEditorMap, ToBattle, Invalid
 };
 
 enum class GameMapSceneState // TODO : Rename SceneState (to use it for all Scene) ?

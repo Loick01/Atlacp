@@ -1,6 +1,5 @@
 #pragma once
 
-#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -24,7 +23,7 @@ class UiSelector : public UiComponent
         void ResetInstanceCount() override;
         
         int GetOptionIndex() const;
-        bool VerticalNavigation(const Direction d, const bool isAction);
+        bool VerticalNavigation(const Direction d, const bool isAction); // TODO : Rename
         bool HorizontalNavigation(const Direction d, const bool isAction); // Should be merged with VerticalNavigation() ?
         void Reset();
         void SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue); // Rename (DefineOptionKeys) ?

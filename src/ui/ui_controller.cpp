@@ -1,8 +1,7 @@
 #include "ui/element/ui_controller.hpp"
 
-#include <stdexcept>
-
 #include "core/file/file.hpp"
+#include "core/logger.hpp"
 #include "image/texture.hpp"
 
 UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
@@ -17,8 +16,10 @@ void UiController::AddElement(const UiKey& key, UiElement* element)
 void UiController::RemoveElement(const UiKey& key)
 {
     std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
-    if (it == m_elements.end())
-        throw std::runtime_error("(UiController::RemoveElement) This Ui element can't be found : " + key); // This should not happen. Remove ?
+    if (it == m_elements.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveElement) This Ui element can't be found: " + key);
+        return;
+    }
     m_elements.erase(it);
 }
 
@@ -76,7 +77,8 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Sam
             return removed;
         }
     }
-    throw std::runtime_error("(UiController::RemoveSubRoots) No subroots have this key : " + key);
+    Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveSubRoots) No subroots have this key: " + key);
+    return nullptr;
 }
 
 std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
@@ -92,7 +94,8 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     } else if (data.type == "animatedelement") {
         element = CreateAnimatedElement(data.key, data.imagePath);
     } else {
-        throw std::runtime_error("Unknown UI element type : " + data.type);
+        Logger::GetInstance().AddLog(Level::L4, "Unknown UI element type: " + data.type);
+        return nullptr; // TODO : ?
     }
 
     UiParams& params = element->GetParams();
@@ -139,8 +142,10 @@ std::unordered_map<UiKey, UiElement*>::const_iterator UiController::GetIteratorO
 UiElement* UiController::GetElement(const UiKey& key) const
 {
     std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
-    if (it == m_elements.end())
-        throw std::runtime_error("(UiController::GetElement) This Ui element can't be found : " + key);
+    if (it == m_elements.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "(UiController::GetElement) This Ui element can't be found: " + key);
+        return nullptr;
+    }
     return it->second;
 }
 
@@ -157,7 +162,8 @@ float UiController::GetPartialElementSizeOnAxis(const UiKey& key, const Axis axi
             break;
         }
         default : {
-            throw std::invalid_argument("Unknown axis value\n");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialElementSizeOnAxis");
+            return 0.f;
         }
     }
 }
@@ -174,7 +180,8 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
             break;
         }
         default : {
-            throw std::invalid_argument("Unknown axis value\n");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialRootSizeOnAxis");
+            return 0.f;
         }
     }
 }
@@ -314,15 +321,15 @@ void UiController::UpdatePadding(const UiKey& key, const PartialSize ps, const A
 
 void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
 {
+    if (m_elements.find(newKey) != m_elements.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "Try to update a node in UiController::m_elements with an already existing key: " + newKey);
+        return;
+    }
+
     UiElement* element = GetElement(key);
     element->SetKey(newKey);
     element->ClearCallback();
     element->AddCallback([this, newKey](UiElementEvent e){HandleUiEvent(e, newKey);});
-
-    // It's useless to test if key is in m_elements, because GetElement(key) has already done it
-    // However, newKey could already be used
-    if (m_elements.find(newKey) != m_elements.end()) 
-        throw std::runtime_error("Try to update a node in UiController::m_elements with an already existing key : " + newKey);
 
     // https://stackoverflow.com/questions/5743545/what-is-the-fastest-way-to-change-a-key-of-an-element-inside-stdmap
     std::unordered_map<UiKey, UiElement*>::node_type node = m_elements.extract(key);

@@ -69,7 +69,8 @@ bool Bar::Check(const ScreenPosition windowCenter)
         case BoxingType::Pillarboxing :
             return m_sdlFRect.w > windowCenter.x || m_sdlFRect.w < m_initialFRect.w;
         default:
-            throw std::runtime_error("Unknown BoxingType value");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled BoxingType used in Bar::Check");
+            return false;
     }
 }
 

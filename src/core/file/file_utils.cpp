@@ -9,7 +9,8 @@ T FileReader::ReadEnum(std::ifstream& input, const std::unordered_map<std::strin
     if (it != values.end())
         return it->second;
 
-    throw std::runtime_error("Unknown value read as " + typeName);
+    Logger::GetInstance().AddLog(Level::L4, "Unknown value read as " + typeName);
+    return T{}; // Return a default value
 }
 
 Axis FileReader::ReadAxis(std::ifstream& input) const

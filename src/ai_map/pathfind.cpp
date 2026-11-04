@@ -1,6 +1,7 @@
 #include "ai_map/pathfind.hpp"
 
 #include <queue>
+#include <sstream>
 
 #include "tile/tilemap.hpp"
 
@@ -34,8 +35,15 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
             queue.push(neighbour);
         }
     }
+
+    if (!found) {
+        std::ostringstream message;
+        message << "No path can be found from " << startPosition << " to " << endPosition;
+        Logger::GetInstance().AddLog(Level::L4, message.str());
+        return {};
+    }
+
     std::vector<MapPosition> path;
-    if (!found) return path; // Will throw an error when no path can be found from startPosition to endPosition ?
     MapPosition currentPosition = endPosition;
     while (currentPosition != startPosition){
         path.push_back(currentPosition);

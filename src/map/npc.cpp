@@ -32,31 +32,29 @@ void NPC::Update(const float deltaTime)
 
     // Should test if m_behaviour != nullptr ?
     switch (GetMovementState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
-        case EntityMovementState::Free:
-        {
+        case EntityMovementState::Free: {
             m_behaviour->FreeCase(*this, deltaTime);
             break;
         }
 
-        case EntityMovementState::Moving:
-        {
+        case EntityMovementState::Moving: {
             m_behaviour->MovingCase(*this, deltaTime);
             break;
         }
 
-        case EntityMovementState::OnStop: // Enter this case at the end of the current movement
-        {
+        case EntityMovementState::OnStop: { // Enter this case at the end of the current movement
             Notify(EntityEvent::HasMoved); // Some triggers should be restricted for NPC (for example when a trigger start a cinematic)
             m_behaviour->OnStopCase(*this);
             break;
         }
 
-        default: // Should not happen
+        default:
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in NPC::Update");
+            // TODO : SetMovementState(Free) ?
             break; 
     }
 }
 
-// Instead of SetBehaviour(), I think I will create one function for each behaviour, like below
 void NPC::SetRandomBehaviour()
 {
     m_behaviour = std::make_unique<MapRandomBehaviour>();
@@ -70,6 +68,8 @@ void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
 void NPC::SetFollowBehaviour(const MapEntity* trackedEntity)
 {
     m_behaviour = std::make_unique<MapFollowBehaviour>(this, trackedEntity);
+    if (!m_behaviour->IsReady())
+        SetIdleBehaviour(Direction::Down); // TODO : Do something else (use pathfind ?)
 }
 
 void NPC::SetIdleBehaviour(const Direction direction)

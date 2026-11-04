@@ -9,14 +9,17 @@
 class MapEntity;
 class Tilemap;
 
-class MapEntityBehaviour // Should be call EntityMovementBehaviour or MovementBehaviour ?
+class MapEntityBehaviour // TODO : Should be call EntityMovementBehaviour or MovementBehaviour ?
 {
     protected:
-        Random m_random; // Should not be here ? (a behaviour will not necessary need random generation)
+        Random m_random; // TODO : Should not be here ? (a behaviour will not necessary need random generation)
+        bool m_ready;
 
     public:
-        MapEntityBehaviour() = default;
+        MapEntityBehaviour();
         virtual ~MapEntityBehaviour() = default;
+        
+        bool IsReady() const;
         
         // One function for each value in MapEntity::EntityMovementState
         virtual void FreeCase(MapEntity& entity, const float deltaTime) = 0;
@@ -36,7 +39,7 @@ class MapRandomBehaviour : public MapEntityBehaviour // Always try to move in ra
         void OnStopCase(MapEntity& entity) override;
 };
 
-class MapFollowBehaviour : public MapEntityBehaviour // Rename MapFollowEntitybehaviour ?
+class MapFollowBehaviour : public MapEntityBehaviour // TODO : Rename MapFollowEntitybehaviour ?
 {
     // Assume the tracked entity is one tile away from the follower. Later I will make a follow behaviour with pathfiding
     private:
@@ -44,7 +47,7 @@ class MapFollowBehaviour : public MapEntityBehaviour // Rename MapFollowEntitybe
 
     public:
         MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity);
-
+         
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;
