@@ -3,8 +3,7 @@
 #include "ui/element/ui_controller.hpp"
 
 namespace { // These values must be the same as in the ui file used for UiFrameText (example : frame_text.uif)
-    // Should be constexpr std::string_view ?
-    const std::string keyFrameText = "frameText";
+    inline constexpr std::string_view keyFrameText = "frameText";
 }
 
 UiFrameText::UiFrameText(UiController& uiController, const std::string& uiFilepath) :
@@ -14,7 +13,7 @@ UiFrameText::UiFrameText(UiController& uiController, const std::string& uiFilepa
 bool UiFrameText::NextText()
 {
     if (m_texts.empty()) return false;
-    m_uiController.UpdateText(keyFrameText, m_texts.front());
+    m_uiController.UpdateText(std::string(keyFrameText), m_texts.front());
     m_texts.pop();
     return true;
 }

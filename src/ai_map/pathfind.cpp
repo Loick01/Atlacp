@@ -13,7 +13,7 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
     std::vector<bool> visited(tilemap.GetGridSize(), false);
     visited[tilemap.GetTileIndex(startPosition)] = true; 
     std::vector<MapPosition> parents(tilemap.GetGridSize());
-    std::vector<MapPosition> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}}; // Should get it from EventController ?
+    std::vector<MapPosition> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}}; // TODO++ : Should get it from EventController ?
     bool found = false;
 
     while (!queue.empty()){

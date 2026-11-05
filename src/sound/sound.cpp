@@ -16,7 +16,7 @@ SoundController::SoundController()
 
     m_backgroundMusic = nullptr;
 
-    // Volume setting will not be here
+    // TODO : Volume setting will not be here ?
     Mix_VolumeMusic(50 * MIX_MAX_VOLUME / 100); // For the background music (played with Mix_PlayMusic())
     Mix_Volume(-1, MIX_MAX_VOLUME); // For the sound effects (played with Mix_PlayChannel())
 
@@ -45,12 +45,12 @@ SoundController& SoundController::GetInstance() {
 void SoundController::LoadBaseSfx()
 {
     // TODO : ?
-    LoadChunk(BaseSfx::Accept);
-    LoadChunk(BaseSfx::Open);
-    LoadChunk(BaseSfx::Close);
-    LoadChunk(BaseSfx::Move);
-    LoadChunk(BaseSfx::Next);
-    LoadChunk(BaseSfx::Death);
+    LoadChunk(std::string(BaseSfx::Accept));
+    LoadChunk(std::string(BaseSfx::Open));
+    LoadChunk(std::string(BaseSfx::Close));
+    LoadChunk(std::string(BaseSfx::Move));
+    LoadChunk(std::string(BaseSfx::Next));
+    LoadChunk(std::string(BaseSfx::Death));
 }
 
 void SoundController::DeleteBackgroundMusic()
@@ -65,7 +65,7 @@ void SoundController::SetBackgroundMusic(const std::string& filepath)
     if (m_backgroundMusic != nullptr)
         DeleteBackgroundMusic();
     
-    m_backgroundMusic = Mix_LoadMUS((AssetDirectory::Music+filepath).c_str());
+    m_backgroundMusic = Mix_LoadMUS((std::string(AssetDirectory::Music)+filepath).c_str());
     if (Mix_PlayMusic(m_backgroundMusic, -1) == -1) 
         Logger::GetInstance().AddLog(Level::L4, "Failed to play the music " + filepath + ": " + std::string(Mix_GetError()));
 }
@@ -94,7 +94,7 @@ void SoundController::PlayChunk(const std::string& path)
 void SoundController::LoadChunk(const std::string& path)
 {
     if (m_chunks.find(path) == m_chunks.end()) {
-        Mix_Chunk* chunk = Mix_LoadWAV((AssetDirectory::Sfx+path+FileExtension::Sfx).c_str());
+        Mix_Chunk* chunk = Mix_LoadWAV((std::string(AssetDirectory::Sfx)+path+std::string(FileExtension::Sfx)).c_str());
         if (chunk != nullptr) 
             m_chunks[path] = chunk;
         else

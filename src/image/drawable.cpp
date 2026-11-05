@@ -20,7 +20,7 @@ Drawable::~Drawable()
 
 void Drawable::LoadTexture(const std::string& textureFilepath)
 {
-    const std::string finalPath = AssetDirectory::Root+textureFilepath+FileExtension::Image;
+    const std::string finalPath = std::string(AssetDirectory::Root)+textureFilepath+std::string(FileExtension::Image);
     m_textureKey = textureFilepath;
     m_textureController.LoadTextureFromFile(finalPath, m_textureKey, m_textureWidth, m_textureHeight); 
 }

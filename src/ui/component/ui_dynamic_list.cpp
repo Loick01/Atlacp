@@ -42,7 +42,7 @@ void UiDynamicList::Open()
         if (i == 0) {
             m_uiKey = itemParent;
             m_uiController.UpdateParams(itemParent, m_firstItemParams);
-            // Parent of itemParent (which is here parent of the first built item) will be the one given in the template file (should not be like that ?) 
+            // TODO : Parent of itemParent (which is here parent of the first built item) will be the one given in the template file (should not be like that ?) 
         } else {
             m_uiController.UpdateParent(itemParent, lastItemParent);
         }

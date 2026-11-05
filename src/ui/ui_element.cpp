@@ -37,7 +37,7 @@ void UiElement::SetKey(const UiKey& key)
     m_key = key;
 }
 
-// void UiElement::SetParent(UiElement const* parent)
+// TODO : void UiElement::SetParent(UiElement const* parent)
 void UiElement::SetParent(UiElement* parent)
 {
     m_parent = parent;
@@ -119,7 +119,7 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
 void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
     ScreenPosition localPosition = {0,0};
-    // If ComputePosition is called on a UiTextElement, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
+    // TODO : If ComputePosition is called on a UiTextElement, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
     const AreaSize size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
         case Anchor::LeftIn:
@@ -166,7 +166,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 
 void UiElement::UsePaddingOnPosition(const float xPadding, const float yPadding)
 {
-    AddLocalPosition({xPadding,yPadding}); // AddLocal ???
+    AddLocalPosition({xPadding,yPadding}); // TODO : AddLocal ???
 }
 
 void UiElement::AddChild(std::unique_ptr<UiElement>& child)
@@ -201,7 +201,7 @@ void UiElement::ComputeFinal()
 {
     ComputeZoom(m_params.scale, m_params.scaleAxis);
 
-    // I haven't checked if this is really necessary, but I'm 90% sure
+    // TODO : I haven't checked if this is really necessary, but I'm 90% sure
     for (std::unique_ptr<UiElement>& e : m_childs)
         e->SetParentSize(GetSize());
 

@@ -14,7 +14,7 @@ TriggerController::TriggerController(OrderController& orderController):
 
 void TriggerController::SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap)
 {
-    // Remove (I will use smart ptr, I'm just not sure where to store them)
+    // TODO : Remove (I will use smart ptr, I'm just not sure where to store them)
     for (MapElement* e : m_triggers)
         delete e; // Because I use new to create my MapElement (below)
     m_triggers.clear();

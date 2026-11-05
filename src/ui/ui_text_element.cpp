@@ -16,9 +16,9 @@ void UiTextElement::SetTextSize(const FontSize size)
     m_fontSize = size;
 }
 
-void UiTextElement::GenerateText() // Same than Drawable::LoadTexture(), will be improved
+void UiTextElement::GenerateText() // TODO : Same than Drawable::LoadTexture(), will be improved
 {
-    m_textureKey = m_text; // Will use something else than just text as texture key
+    m_textureKey = m_text; // TODO++ : Will use something else than just text as texture key
     m_textureController.LoadTextureFromText(m_fontSize, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
 }
 

@@ -8,10 +8,9 @@
 #include "ui/element/ui_controller.hpp"
 
 namespace { // These values must be the same as in the template file used for the UiElement associated to a BattleActor (in BattleController::InitializeActors())
-    // Should be constexpr std::string_view ?
-    const std::string PrefixName = "actorName";
-    const std::string PrefixHealth = "actorHealth";
-    const std::string PrefixSprite = "actorSprite";
+    inline constexpr std::string_view PrefixName = "actorName";
+    inline constexpr std::string_view PrefixHealth = "actorHealth";
+    inline constexpr std::string_view PrefixSprite = "actorSprite";
 }
 
 BattleController::BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController):
@@ -21,12 +20,12 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
 {
     // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 
     // it anymore (until next time), I call these functions once here, and then I only use UiComponent::Open()/Close()
-    // I could do either one, but I prefer this solution  (for now)
+    // I could do either one, but I prefer this solution (for now)
     m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit");
     m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif");
-    m_uiComponentController.CreateSelector("selector", "selector.uit"); // Should have optionKey in its constructor ?
+    m_uiComponentController.CreateSelector("selector", "selector.uit"); // TODO++ : Should have optionKey in its constructor ?
     m_uiComponentController.CreateFrameText("frameText", "frame_text.uif");
-    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit"); // Could have animationPath and targetElement in its constructor ? 
+    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit"); // TODO++ : Could have animationPath and targetElement in its constructor ? 
 }
 
 BattleController::~BattleController()
@@ -60,7 +59,7 @@ std::vector<BattleActor*> BattleController::FilterActorsByLifeState(const std::v
 BattleActor* BattleController::PopNextTurn()
 {
     BattleActor* actor = nullptr;
-    while (actor == nullptr) { // Should try m_turns.empty() (even if it's not possible) ?
+    while (actor == nullptr) { // TODO : Should try m_turns.empty() (even if it's not possible) ?
         actor = m_turns.top();
         m_turns.pop();
         if (actor->GetLifeState() == LifeState::Dead) // When a BattleActor dies, he's not instantly removed from m_turns 
@@ -72,7 +71,7 @@ BattleActor* BattleController::PopNextTurn()
     return actor;
 }
 
-BattleActor* BattleController::GetActorSelection() // Could return BattleActor index in m_actors ?
+BattleActor* BattleController::GetActorSelection() // TODO : Could return BattleActor index in m_actors ?
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction)) {
@@ -108,7 +107,7 @@ unsigned int BattleController::ComputeAmount(const MoveType mt, const unsigned b
 BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const
 {
     const unsigned int amount = ComputeAmount(md.moveType, md.baseValue, srcActor);
-    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath, md.animationPath); // Will not be LifeState::Alive
+    return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath, md.animationPath); // TODO : Will not be LifeState::Alive
 }
 
 bool BattleController::HasAliveActor(const Team team) const
@@ -132,10 +131,10 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
         frameText->AddText({targetActor.GetName().value + " fainted !"});
         targetActor.SetSpritePath("battle/gravestone");   
         m_uiController.UpdatePath(targetActor.GetSpritePath());
-        SoundController::GetInstance().RequestChunk(BaseSfx::Death);
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Death));
     }
     
-    frameText->NextText(); // Should not be here ?
+    frameText->NextText(); // TODO : Should not be here ?
 }
 
 void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor)
@@ -225,7 +224,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
     switch (selectorIndex) {
         case 0: {
             OpenMoveSelection();
-            m_turnState = TurnState::MoveSelection; // Should be in OpenMoveSelection() ?
+            m_turnState = TurnState::MoveSelection; // TODO : Should be in OpenMoveSelection() ?
             break;
         }
 
@@ -271,14 +270,14 @@ void BattleController::HandleMoveSelection(const int moveIndex)
     m_currentCommand = CreateCommand(m_currentActor, md);
 
     OpenActorSelection(); // Selectable actors are filtered with targetTeam and targetLifeState in m_currentCommand
-    m_turnState = TurnState::ActorSelection; // Should be in OpenActorSelection() ?
+    m_turnState = TurnState::ActorSelection; // TODO : Should be in OpenActorSelection() ?
 }
 
 void BattleController::HandleCurrentCommand()
 {
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
 
-    // Should call CreateSpriteAnimation() here, with animationPath and targetElement (instead of using setters) ?
+    // TODO : Should call CreateSpriteAnimation() here, with animationPath and targetElement (instead of using setters) ?
     UiSpriteAnimation* moveAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
     moveAnimation->SetAnimationPath(m_currentCommand.animation);
     moveAnimation->SetTargetElement(m_targetActor->GetSpritePath().id);
@@ -329,17 +328,17 @@ void BattleController::InitializeActors(const std::string& dataFile)
         if (data.team == Team::Ally) {
             suffixKey = std::to_string(countAlly++);
             suffixKey += "_" + std::to_string(0);
-        } else if (data.team == Team::Opponent) { // else ? (if I keep only Ally/Opponent)
+        } else if (data.team == Team::Opponent) { // TODO : else ? (if I keep only Ally/Opponent)
             suffixKey = std::to_string(countOpponent++);
             suffixKey += "_" + std::to_string(1);
         }
         
         if (data.isAiActor)
-            actor = std::make_unique<AiActor>(data.team, PrefixName+suffixKey, PrefixHealth+suffixKey, PrefixSprite+suffixKey, data.name, data.health, data.turnSpeed); // Later, AiActor will have more parameters
+            actor = std::make_unique<AiActor>(data.team, std::string(PrefixName)+suffixKey, std::string(PrefixHealth)+suffixKey, std::string(PrefixSprite)+suffixKey, data.name, data.health, data.turnSpeed); // TODO : Later, AiActor will have more parameters
         else
-            actor = std::make_unique<BattleActor>(data.team, PrefixName+suffixKey, PrefixHealth+suffixKey, PrefixSprite+suffixKey, data.name, data.health, data.turnSpeed);
+            actor = std::make_unique<BattleActor>(data.team, std::string(PrefixName)+suffixKey, std::string(PrefixHealth)+suffixKey, std::string(PrefixSprite)+suffixKey, data.name, data.health, data.turnSpeed);
 
-        actor->SetSpritePath(data.spritePath); // Sprite path should be in BattleActor constructor ?
+        actor->SetSpritePath(data.spritePath); // TODO : Sprite path should be in BattleActor constructor ?
         
         std::vector<MoveDefinition> currentMoves;
         for (const unsigned int id : data.moveIds) {
@@ -353,7 +352,7 @@ void BattleController::InitializeActors(const std::string& dataFile)
         m_turns.push(actor.get());
         
         if (data.team == Team::Ally) m_allies.push_back(actor.get());
-        else if (data.team == Team::Opponent) m_opponents.push_back(actor.get()); // else ? (if I keep only Ally/Opponent)
+        else if (data.team == Team::Opponent) m_opponents.push_back(actor.get()); // TODO : else ? (if I keep only Ally/Opponent)
         
         m_actors.push_back(std::move(actor));
     }
@@ -379,7 +378,7 @@ void BattleController::PlayNextTurn()
             m_turnState = TurnState::ActionSelection; 
         }
         
-        case TurnState::ActionSelection : { // Should have TurnState::AiActionSelection to avoid dynamic_cast ?
+        case TurnState::ActionSelection : { // TODO : Should have TurnState::AiActionSelection to avoid dynamic_cast ?
             AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
             UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
             if (aiActor != nullptr) {
@@ -430,7 +429,7 @@ void BattleController::PlayNextTurn()
 
         case TurnState::WaitingForText : {
             if (m_eventState.isAction) {
-                SoundController::GetInstance().RequestChunk(BaseSfx::Next);
+                SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Next));
                 UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
                 if (!frameText->NextText()) {
                     frameText->Close();
@@ -444,7 +443,7 @@ void BattleController::PlayNextTurn()
 
         case TurnState::End : {
             if (m_exitEvent != ExitEvent::None) {
-                m_uiComponentController.GetComponent("allyList")->ResetInstanceCount(); // Should not be here ?
+                m_uiComponentController.GetComponent("allyList")->ResetInstanceCount(); // TODO : Should not be here ?
 
                 for (const std::unique_ptr<BattleActor>& b : m_actors) {
                     const std::vector<MoveDefinition>& moves = b->GetMoves();

@@ -6,8 +6,8 @@
 
 namespace TileForExtraPath {
     // Should be constexpr std::string_view ?
-    const std::string TileBorder = "tile_border";
-    const std::string TileCollision = "tile_collision";
+    inline constexpr std::string_view TileBorder = "tile_border";
+    inline constexpr std::string_view TileCollision = "tile_collision";
 }
 
 TileLayer::TileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset):
@@ -38,7 +38,7 @@ void TileLayer::DrawTexture() const
 
     for (int j = startIndex.y ; j < endIndex.y ; j++){
         for (int i = startIndex.x ; i < endIndex.x ; i++){
-            int tile = m_tileset.GetNormalizedTile(m_tiles[j*m_layerSize.x+i]); // Should use Tile type ?
+            int tile = m_tileset.GetNormalizedTile(m_tiles[j*m_layerSize.x+i]); // TODO : Should use Tile type ?
             int tilesetWidth = m_tileset.GetTilesetWidth(); // Keep this line inside for-loop (selected tileset can be modified by Tileset::GetNormalizedTileset)
             const SDL_Rect src{(tile%tilesetWidth)*tileSize, (tile/tilesetWidth)*tileSize, tileSize, tileSize};
             const int tileScreenSize = static_cast<int>(tileSize*zoom+1);
@@ -64,21 +64,21 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     TileLayer(layerSize, camera, textureController, tileset), m_layerType(layerType)
 {
     unsigned int wantedTileSize = tileset.GetTileSize();
-    std::string pathToLoad = "../assets/tileset/extra_tile/"; // Should not be here ?
+    std::string pathToLoad = "../assets/tileset/extra_tile/"; // TODO : Should not be here ?
     
     switch (m_layerType) {
         case ExtraLayerType::LayerBorder :
-            m_tileKey = TileForExtraPath::TileBorder;
+            m_tileKey = std::string(TileForExtraPath::TileBorder);
             m_uiDisplay = "Border";
             BuildBorderLayer();
             break;
         case ExtraLayerType::LayerCollision : 
-            m_tileKey = TileForExtraPath::TileCollision;
+            m_tileKey = std::string(TileForExtraPath::TileCollision);
             m_uiDisplay = "Collision";
             BuildCollisionLayer(occupancyGrid);
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer"); // TODO : Level::L4 ?
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer");
             return; // TODO : ?
     }
 
@@ -110,7 +110,7 @@ void ExtraTileLayer::BuildBorderLayer()
 
 void ExtraTileLayer::BuildCollisionLayer(const std::vector<bool>& occupancyGrid)
 {
-    // Should test occupancyGrid.size() != m_layerSize.x*m_layerSize.y ?
+    // TODO : Should test occupancyGrid.size() != m_layerSize.x*m_layerSize.y ?
     m_tiles.clear();
     for (unsigned int i = 0 ; i < m_layerSize.x * m_layerSize.y ; i++)
         m_tiles.push_back(!occupancyGrid[i]);

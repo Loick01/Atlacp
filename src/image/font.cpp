@@ -11,7 +11,7 @@ FontController::FontController(const std::string& fontFilepath, const unsigned i
     // TTF_Font are now created and deleted from the FontController
     
     unsigned int minBound = 1;
-    unsigned int maxBound = 100; // How to get a max value ?
+    unsigned int maxBound = 100; // TODO :How to get a max value ?
     const std::string smallSizeExampleText = "Hello world Hello world Hello world Hell";
     while (maxBound - minBound > 1) {
         const unsigned int averageSize = (minBound+maxBound)/2;
@@ -53,7 +53,7 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
     if (m_fonts.find(fontSize) != m_fonts.end())
         TTF_CloseFont(m_fonts[fontSize]);
 
-    TTF_Font* font = TTF_OpenFont((AssetDirectory::Font+fontFilepath).c_str(), textSize);
+    TTF_Font* font = TTF_OpenFont((std::string(AssetDirectory::Font)+fontFilepath).c_str(), textSize);
     if (!font) {
         Logger::GetInstance().AddLog(Level::L4, "Failed to load this font: " + fontFilepath + ": " + std::string(TTF_GetError()));
         return;

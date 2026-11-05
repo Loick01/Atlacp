@@ -102,7 +102,7 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
     
     params.scale = GetResultFromPartialSize(data.scale);
     
-    params.scaleAxis = data.dstScaleAxis; // Also when UiTextElement ?
+    params.scaleAxis = data.dstScaleAxis; // TODO : Also when UiTextElement ?
     params.xAnchor = data.xAnchor;
     params.yAnchor = data.yAnchor;
     
@@ -125,12 +125,12 @@ std::vector<UiKey> UiController::BuildUiFile(const std::string& filepath)
     for (const DataUi& data : fileResult) { 
         const UiKey& k = data.key;
         if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
-        createdElements.push_back(k); // Maybe I could use a flag in ui file to mark specific elements
+        createdElements.push_back(k); // TODO : Maybe I could use a flag in ui file to mark specific elements
         std::unique_ptr<UiElement> element = GenerateElementFromData(data);
         element->AddCallback([this, k](UiElementEvent e){HandleUiEvent(e, k);});
         BuildElement(element, data.parentKey);
     }
-    UpdatePosition(); // Maybe I could only called UpdatePosition only on the subroots created in this call ? 
+    UpdatePosition(); // TODO : Maybe I could only called UpdatePosition only on the subroots created in this call ? 
     return createdElements;
 }
 
@@ -254,7 +254,7 @@ void UiController::UpdatePath(const UiKey& key, const std::string& path)
     element->UpdatePosition();
 }
 
-void UiController::UpdatePath(const UiValue<std::string>& path) // Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
+void UiController::UpdatePath(const UiValue<std::string>& path) // TODO : Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
 {
     UpdatePath(path.id, path.value);
 }
@@ -306,7 +306,7 @@ void UiController::UpdateScalingSize(const UiKey& key, const PartialSize ps)
     UiElement* e = GetElement(key);
     e->SetParamsScale(result);
     e->ComputeFinal();
-    // Should also update scale size for every children of e ?
+    // TODO : Should also update scale size for every children of e ?
     e->UpdatePosition();
 }
 

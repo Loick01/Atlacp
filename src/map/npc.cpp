@@ -8,9 +8,9 @@ NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& text
 {
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
+    tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
     UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
-    m_behaviour = std::make_unique<MapRandomBehaviour>(); // NPC always spawn with random behaviour ? I think NPCs could spawn with Idle behaviour
+    m_behaviour = std::make_unique<MapRandomBehaviour>(); // TODO : NPC always spawn with random behaviour ?
 }
 
 const MapEntityBehaviour* NPC::GetMapBehaviour() const
@@ -27,10 +27,10 @@ void NPC::Update(const float deltaTime)
 {
     const EntityInteractionState interactionState = GetInteractionState();
     if (interactionState != EntityInteractionState::None) {
-        return; // For now it's unnecessary because NPC can't start an interaction or a trigger, but I will change that later
+        return; // TODO : For now it's unnecessary because NPC can't start an interaction or a trigger, but I will change that later
     }
 
-    // Should test if m_behaviour != nullptr ?
+    // TODO : Should test if m_behaviour != nullptr ?
     switch (GetMovementState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
         case EntityMovementState::Free: {
             m_behaviour->FreeCase(*this, deltaTime);

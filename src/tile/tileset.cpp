@@ -17,7 +17,7 @@ Tileset::~Tileset()
     CleanTilesets(false); // Delete every textures whose keys are in m_tilesets
 }
 
-// Should be an override of Drawable::LoadTexture ?
+// TODO : Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 {
     TilesetData data = fileReader.ReadTilesetFile(path);
@@ -28,8 +28,8 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
         return;
     }
     
-    m_textureKey = path; // File extension is not in TextureKey ?
-    const std::string tilesetFilepath = AssetDirectory::Tileset + path + FileExtension::Image; 
+    m_textureKey = path; // TODO : File extension is not in TextureKey ?
+    const std::string tilesetFilepath = std::string(AssetDirectory::Tileset) + path + std::string(FileExtension::Image); 
     m_textureController.LoadTextureFromFile(tilesetFilepath, m_textureKey, m_textureWidth, m_textureHeight);
     data.tilesetKey = m_textureKey;
     if (m_tilesets.empty()){
@@ -90,7 +90,7 @@ void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selectedTile
         int c = sp.x/m_tileSize;
         int l = sp.y/m_tileSize;
         int offset = 0;
-        for (size_t i = 0 ; i < selectedTileset ; i++){ // Should store the offset for each tileset in TilesetData ?
+        for (size_t i = 0 ; i < selectedTileset ; i++){ // TODO : Should store the offset for each tileset in TilesetData ?
             TilesetData t = m_tilesets[i];
             offset += t.size.x*t.size.y;
         }
@@ -98,14 +98,14 @@ void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selectedTile
     }
 }
 
-TilesetData Tileset::GetTilesetData() const // Use this function everytime I try to get a tileset from m_indexTileset ?
+TilesetData Tileset::GetTilesetData() const // TODO : Use this function everytime I try to get a tileset from m_indexTileset ?
 {
     return m_tilesets[m_indexTileset];
 }
 
 Tile Tileset::GetNormalizedTile(const Tile tile)
 {
-    int t = tile; // Should be Tile instead of int
+    int t = tile; // TODO : Should be Tile instead of int
     if (t >= m_normalizationInfo.lastLowerBound && t <= m_normalizationInfo.lastUpperBound)
         return t-m_normalizationInfo.lastLowerBound;
 

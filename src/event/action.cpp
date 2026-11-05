@@ -103,6 +103,7 @@ bool JoystickActionController::IsJoystickAvailable()
     }
 }
 
+// TODO 
 /* If I need to know when the joystick is removed
 for (SDL_Event event : m_events){
     switch (event.type){

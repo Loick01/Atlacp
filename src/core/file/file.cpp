@@ -10,12 +10,12 @@
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
 {
-    std::ifstream input = OpenFile(DataDirectory::Move + moveFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::Move) + moveFilepath);
     std::unordered_map<unsigned int, MoveDefinition> moves;
     std::string s;
     while (input >> s) {
         MoveDefinition m;
-        const unsigned int moveId = std::stoi(s); // Should catch invalid_argument ?
+        const unsigned int moveId = std::stoi(s); // TODO : Should catch invalid_argument ?
         
         m.name = ReadString(input);
         m.commandType = ReadCommandType(input);
@@ -23,7 +23,7 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
         input >> m.baseValue;
         input >> m.sfxPath;
         input >> s;
-        m.animationPath = DataDirectory::BattleMoveDirectory+s;
+        m.animationPath = std::string(DataDirectory::BattleMoveDirectory)+s;
         moves[moveId] = m;
     }
     return moves;
@@ -33,7 +33,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
 {
     // TODO : Add file extension to battle file
     
-    std::ifstream input = OpenFile(DataDirectory::Battle + battleFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::Battle) + battleFilepath);
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
@@ -47,7 +47,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
             break;
         }
         
-        // ?
+        // TODO : ?
         input >> s;
         if (s == "ai") data.isAiActor = true;
         else if (s == "player") data.isAiActor = false;
@@ -61,7 +61,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> data.turnSpeed;
         input >> data.spritePath;
         while (input >> s && s != SECTION_DELIMITER)
-            data.moveIds.push_back(std::stoi(s)); // Should catch invalid_argument ? 
+            data.moveIds.push_back(std::stoi(s)); // TODO : Should catch invalid_argument ? 
         
         actorsData.push_back(data);
     }
@@ -71,7 +71,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
 
 std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const
 {
-    std::ifstream input = OpenFile(DataDirectory::NPC + npcsFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcsFilepath);
     std::vector<DataNPC> npcsData;
     unsigned int count = 0;
     std::string s;
@@ -103,7 +103,7 @@ std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilep
 
 std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const
 {
-    std::ifstream input = OpenFile(DataDirectory::NPC + npcFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcFilepath);
     std::string s;
 
     while (input >> s) {
@@ -131,9 +131,9 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
     std::ifstream input;
     if (IsBaseUiFile(uiFilepath))
-        input = OpenFile(DataDirectory::UiFile + uiFilepath);
+        input = OpenFile(std::string(DataDirectory::UiFile) + uiFilepath);
     else if (IsTemplateUiFile(uiFilepath))
-        input = OpenFile(DataDirectory::UiTemplate + uiFilepath);
+        input = OpenFile(std::string(DataDirectory::UiTemplate) + uiFilepath);
 
     std::vector<DataUi> uisData;
     std::string s;
@@ -174,7 +174,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
                 data.yPadding.axis = ReadAxis(input);
                 input >> data.yPadding.amount;
             } else if (s == "text") {
-                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream (should use ReadString ?)
+                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream // TODO : Should use ReadString ?
             } else if (s == "textsize") {
                 data.fontSize = ReadFontSize(input);
             } else {
@@ -189,7 +189,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 
 WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
-    std::ifstream input = OpenFile(DataDirectory::World + worldFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::World) + worldFilepath);
     WorldData data;
     
     input >> data.startMap;
@@ -257,7 +257,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
-    std::ifstream input = OpenFile(DataDirectory::Map + mapFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::Map) + mapFilepath);
     MapData data;
 
     ReadHeaderMapFile(input, data);
@@ -281,7 +281,7 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
 
 SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
-    std::ifstream input = OpenFile(DataDirectory::SpriteAnimation + animationFilepath);
+    std::ifstream input = OpenFile(std::string(DataDirectory::SpriteAnimation) + animationFilepath);
     SpriteAnimationData data;
 
     input >> data.spriteSize.x;
@@ -291,7 +291,7 @@ SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFi
 
     int v1, v2;
     data.sprites.reserve(data.step*4);
-    while (input >> v1 && input >> v2) // Use a for loop with data.step instead ?
+    while (input >> v1 && input >> v2) // TODO : Use a for loop with data.step instead ?
         data.sprites.push_back(Vec2{v1, v2}*data.spriteSize);
 
     input.close();
@@ -300,7 +300,7 @@ SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFi
 
 TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 {
-    std::ifstream input = OpenFile(DataDirectory::Tileset + path);
+    std::ifstream input = OpenFile(std::string(DataDirectory::Tileset) + path);
     TilesetData data;
 
     input >> data.size.x;
@@ -317,7 +317,7 @@ TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 
 void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
 {
-    std::ofstream output(DataDirectory::Map + mapFilepath);
+    std::ofstream output(std::string(DataDirectory::Map) + mapFilepath);
     const int width = mapData.size.x;
     const int height = mapData.size.y;
     const int layerCount = mapData.layerCount; 

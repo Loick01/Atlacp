@@ -25,7 +25,7 @@ void MapRandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     if (m_delay > 0.f) m_delay -= deltaTime;
     else{
         entity.OrderStartMovement(m_random.GetRandomDirection(), true);
-        // When I made the sprite orientation update even if the movement isn't valid, if the NPC is blocked in the 4 directions,
+        // TODO : When I made the sprite orientation update even if the movement isn't valid, if the NPC is blocked in the 4 directions,
         // it will be updated every frame. I would need something else to handle that case
 
         // Generate a new delay only if the movement is valid (no collision)
@@ -73,7 +73,7 @@ void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     if (m_trackedEntity->GetMovementState() != EntityMovementState::Free && m_trackedEntity->GetInteractionState() == EntityInteractionState::None){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
-        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // TODO : Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, true);
     }
@@ -89,7 +89,7 @@ void MapFollowBehaviour::OnStopCase(MapEntity& entity)
     if (m_trackedEntity->GetMovementState() != EntityMovementState::Free && m_trackedEntity->GetInteractionState() == EntityInteractionState::None){
         const MapMovement movement = m_trackedEntity->GetCurrentMovement();
         const MapPosition deltaPosition = movement.GetStartPosition() - entity.GetMapPosition();
-        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = movement.GetDirectionFromMove(deltaPosition); // TODO : Could use a static function instead ?
         entity.SetIsRunning(m_trackedEntity->GetIsRunning());
         entity.OrderStartMovement(direction, false);
     }else{
@@ -101,7 +101,7 @@ MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPos
     MapEntityBehaviour(), m_pathIndex(0)
 {
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
-    m_ready = true; // TODO : m_ready should be true only if a path exists
+    m_ready = true; // TODO++ : m_ready should be true only if a path exists
 }
 
 bool MapGoToBehaviour::IsDone() const
@@ -114,7 +114,7 @@ void MapGoToBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
     if (!IsDone()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
-        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // TODO : Could use a static function instead ?
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, true);
     }
@@ -131,7 +131,7 @@ void MapGoToBehaviour::OnStopCase(MapEntity& entity)
     if (!IsDone()){
         const MapPosition nextPosition = m_path[m_pathIndex];
         const MapPosition deltaPosition = nextPosition - entity.GetMapPosition();
-        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // Could use a static function instead ?
+        const Direction direction = entity.GetCurrentMovement().GetDirectionFromMove(deltaPosition); // TODO : Could use a static function instead ?
         // Use entity.SetIsRunning if the NPC need to run
         entity.OrderStartMovement(direction, false);
     }else{

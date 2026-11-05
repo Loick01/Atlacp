@@ -150,7 +150,7 @@ void EditorMapEventController::HandlePollEvents()
                         std::cout << "Enter the file name : \n";
                         std::cin >> savefile;
                         m_tilemap.SaveMap(savefile);
-                        std::cout << "Map saved as " << savefile << "\n"; // Will be removed (avoid cout, should be displayed in the Ui frame)
+                        std::cout << "Map saved as " << savefile << "\n"; // TODO : Will be removed; I will use Log instead
                         break;
                     }
                     case SDL_SCANCODE_W:
@@ -221,12 +221,12 @@ void EditorMapEventController::HandlePollEvents()
             case SDL_MOUSEWHEEL:
                 if (m_tileset.GetShouldDraw()){
                     const int tilesetSize = m_tileset.GetTilesetsSize();
-                    if (event.wheel.y > 0) // Should use (event.wheel.y > 0) - (event.wheel.y < 0) to know direction ?
+                    if (event.wheel.y > 0)
                         m_eventState.selectedTileset = (m_eventState.selectedTileset+1)%tilesetSize;
                     else
                         m_eventState.selectedTileset = (m_eventState.selectedTileset-1+tilesetSize)%tilesetSize;
                     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
-                }else{ // If the tileset is not opened, the mouse wheel control the camera zoom (also )
+                }else{ // If the tileset is not opened, the mouse wheel control the camera zoom
                     const ScenePosition mouseBeforeZoom = GetMouseScenePosition();
                     if (event.wheel.y > 0)
                         m_camera.AddZoom(0.1f);

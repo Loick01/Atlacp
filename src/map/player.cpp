@@ -11,11 +11,11 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     if (spawn.x != -1 && spawn.y != -1)
         SetMapPosition(spawn);
     else {
-        SetMapPosition(MapPosition{0, 0}); // TODO : Could be not free
+        SetMapPosition(MapPosition{0, 0}); // TODO : The position could be not free
         Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map");
     }
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
+    tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
     UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
 }
 
@@ -23,7 +23,7 @@ void Player::Update(const float deltaTime)
 {
     const EntityInteractionState interactionState = GetInteractionState();
     if (interactionState != EntityInteractionState::None) {
-        switch (interactionState) { // Maybe I will merge InteractionController and TriggerController, so this switch won't be needed anymore
+        switch (interactionState) { // TODO : Maybe I will merge InteractionController and TriggerController, so this switch won't be needed anymore
             case EntityInteractionState::Interacting: {
                 if (m_eventState.isInteracting) {
                     ContinueInteraction();
@@ -47,7 +47,7 @@ void Player::Update(const float deltaTime)
         return;
     }
 
-    switch (GetMovementState()){ // This code has the same structure than NPC::Update, I think I can merge it in MapEntity::Update
+    switch (GetMovementState()){ // TODO : This code has the same structure than NPC::Update, I think I can merge it in MapEntity::Update
         case EntityMovementState::Free:
         {
             if (m_eventState.isInteracting){

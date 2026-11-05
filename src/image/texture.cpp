@@ -14,7 +14,7 @@ TextureController::TextureController(FontController& fontController, SDL_Rendere
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, Texture>& p : m_textures){
-        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // Will be removed
+        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // TODO : Will be removed and use Logger instead
         SDL_DestroyTexture(p.second.texture);
     }
     IMG_Quit();
@@ -71,7 +71,8 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
 
 void TextureController::RenderTexture(const TextureKey& key, const SDL_Rect& src, const SDL_Rect& dst) const
 {
-    // A texture with m_key=key must already be in the map, otherwise std::out_of_range
+    // TODO : A texture with m_key=key must already be in the map, otherwise std::out_of_range
+    // I will use Logger to check this
     SDL_RenderCopy(m_windowRenderer, m_textures.at(key).texture, &src, &dst);
 }
 

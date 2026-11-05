@@ -91,15 +91,15 @@ MainMenuScene::MainMenuScene(GameContext& context):
     Scene(context), 
     m_selector(m_context.uiController, "selector.uit"), m_staticList(m_context.uiController, "main_menu_mode_selection.uif")
 {
-    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
-    // if I put camera in GameContext, I could avoid calling these setters ?
+    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // TODO : Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
+    // TODO : If I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
     
     m_context.eventController = std::make_unique<MainMenuEventController>();
    
     m_context.uiController.BuildUiFile("main_menu_scene.uif");
-    // SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // Background music will not be started from here
+    // SoundController::GetInstance().SetBackgroundMusic("spirits.ogg"); // TODO : Background music will not be started from here
 
     m_context.window.HideCursor();
 
@@ -118,7 +118,7 @@ void MainMenuScene::Gameloop()
     m_context.eventController->PollAllEvents();
     m_gameloop = m_context.eventController->HandleWindowEvents();
     m_context.eventController->HandlePollEvents();
-    // m_context.eventController->HandleStateEvents();
+    // m_context.eventController->HandleStateEvents(); // TODO : ?
 
     const MainMenuEventState eventState = static_cast<MainMenuEventController*>(m_context.eventController.get())->GetEventState();
 
@@ -158,7 +158,7 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     m_camera.SetTilemapInfo(m_tilemap.GetLayerSize()*m_tileset.GetTileSize());
     m_tilemap.AddCallback([this](TilemapEvent e){HandleTilemapEvent(e);});
 
-    // if I put camera in GameContext, I could avoid calling these setters ?
+    // TODO : If I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
 
@@ -199,7 +199,7 @@ GameMapScene::GameMapScene(GameContext& context):
     m_elementsController.LoadElements(m_tilemap.GetElementsData());
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
 
-    // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // Will be removed (read from a file)
+    // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // TODO : Will be removed (read from a file)
     m_context.window.HideCursor();
 
     m_elementsController.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
@@ -211,12 +211,12 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
     switch (e) {
         case EntityEvent::HasMoved: {
             MapEntity* currentEntity = m_elementsController.GetCurrentMapEntityUpdated();
-            if (currentEntity->GetId() != 0) break; // Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
+            if (currentEntity->GetId() != 0) break; // TODO++ : Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
             m_triggerController.LookForTrigger(currentEntity);
             break;
         }
         case EntityEvent::EnterInteraction: {
-            // Should use GetCurrentMapEntityUpdated() to get interacting entity ?
+            // TODO : Should use GetCurrentMapEntityUpdated() to get interacting entity ?
             m_interactionController.InitializeInteraction(m_elementsController.GetEntities(), m_elementsController.GetElements());
             m_interactionController.StartInteraction();
             break;
@@ -304,7 +304,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 EditorMapScene::EditorMapScene(GameContext& context):
-    TilemapScene(context, false), m_layerSelection(nullptr), m_selector(nullptr), m_lastLayer(-1), m_isFirstLoad(true) // m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
+    TilemapScene(context, false), m_layerSelection(nullptr), m_selector(nullptr), m_lastLayer(-1), m_isFirstLoad(true) // TODO : m_lastLayer should be initialized with EditorMapEventState::selectedLayer ?
 {
     m_context.eventController = std::make_unique<EditorMapEventController>(m_tileset, m_camera, m_tilemap);
     
@@ -321,7 +321,7 @@ EditorMapScene::EditorMapScene(GameContext& context):
 
     m_drawables.push_back(&m_tileset);
     m_context.window.ShowCursor();
-    // SoundController::GetInstance().DeleteBackgroundMusic(); // ?
+    // SoundController::GetInstance().DeleteBackgroundMusic(); // TODO : ?
 }
 
 EditorMapScene::~EditorMapScene()
@@ -331,9 +331,9 @@ EditorMapScene::~EditorMapScene()
 
 void EditorMapScene::CreateExtraLayers()
 {
-    // Should not use new ?
+    // TODo : Do not use new
     TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
-        ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
+        ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // TODO : Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
     m_layers.push_back(borderLayer);
     TileLayer* collisionLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
@@ -407,7 +407,7 @@ void EditorMapScene::Gameloop()
         if (m_isLayerRendered[i])
             m_layers[i]->DrawTexture();
     }
-    for (const Drawable* d : m_drawables) d->DrawTexture(); // Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
+    for (const Drawable* d : m_drawables) d->DrawTexture(); // TODO : Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
     if (eventState.selectedLayer != m_lastLayer){
         m_lastLayer = eventState.selectedLayer;
@@ -425,22 +425,22 @@ void EditorMapScene::Gameloop()
     m_context.window.UpdateRender();
 
     // Need to reset eventState.uiDirection to Direction::None and eventState.isAction to false
-    eventController->Reset(); // Will be removed ?
+    eventController->Reset(); // TODO : Will be removed ?
 }
 
 BattleScene::BattleScene(GameContext& context):
     Scene(context), 
     m_battleController(m_context.fileReader, m_context.uiComponentController, m_context.uiController)
 {
-    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
-    // if I put camera in GameContext, I could avoid calling these setters ?
+    m_camera.ComputeViewport(m_context.window, GridSize{16, 9}, 1); // TODO : Camera::m_screenOffset and Camera::m_viewport must be defined when drawing ui elements, but this line should not be here 
+    // TODO : If I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
     
     m_context.eventController = std::make_unique<BattleEventController>();
    
     m_context.uiController.BuildUiFile("battle_scene.uif");
-    SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // Background music will not be started from here
+    SoundController::GetInstance().SetBackgroundMusic("battle.ogg"); // TODO : Background music will not be started from here
 
     m_battleController.InitializeActors("2p2ai_test");
     

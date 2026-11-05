@@ -28,7 +28,7 @@ MapPosition MapMovement::GetStartPosition() const
 
 ScenePosition MapMovement::GetScenePosition() const
 {
-    return m_startPosition + (m_endPosition - m_startPosition) * m_progress; // Should be in Interpolation struct ?
+    return m_startPosition + (m_endPosition - m_startPosition) * m_progress; // TODo : Should be in Interpolation struct ?
 }
 
 EntityMovementState MapMovement::UpdateProgress(const float speed, const float deltaTime)

@@ -12,7 +12,7 @@ InteractionController::InteractionController(OrderController& orderController) :
 
 void InteractionController::InitializeInteraction(const std::vector<MapEntity*>& entities, const std::vector<MapElement*>& elements)
 {
-    for (MapEntity* e : entities) { // Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
+    for (MapEntity* e : entities) { // TODO : Only the player will be able to start an interaction ? Or NPC will use Interaction system for cinematics ?
         // Only one interaction at a time
         if (e->GetInteractionState() == EntityInteractionState::Interacting) {
             m_srcEntity = e;

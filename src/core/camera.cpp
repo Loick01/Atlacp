@@ -16,7 +16,7 @@ void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int
                                             (windowSize.y/m_rangeTile.y)/static_cast<float>(tileSize)};
     m_zoom = std::min(bestPossibleZoom.x, bestPossibleZoom.y);
     m_viewport = m_rangeTile*tileSize*m_zoom;
-    const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport; // Should rename ?
+    const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport; // TODO : Rename ?
     if (bestPossibleZoom.x < bestPossibleZoom.y){ 
         window.SetBoxing(
             ScreenPosition{0, windowSize.y-outsideViewport.y/2},
@@ -142,7 +142,7 @@ void Camera::ComputeMapCulling(const GridSize layerSize, const int tileSize)
 {
     m_startIndex = GridSize{0, 0};
     m_endIndex = layerSize;
-    if (m_shouldCulling){ // No map culling in editor (find better way than just use a bool ?)
+    if (m_shouldCulling){ // No map culling in editor // TODO : Find a better way than just use a bool ?
         if (m_isOffScreen.x){
             m_startIndex.x = m_position.x/(tileSize*m_zoom);
             // While animating a movement, m_endIndex could not be enough to fill the window with the map

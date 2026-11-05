@@ -16,13 +16,13 @@ int UiSelector::GetOptionIndex() const
 bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
 {
     if (isAction) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Accept);
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Accept));
         return true;
     } else if (d == Direction::Down) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Next() ?
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Next() ?
         Next();
     } else if (d == Direction::Up) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Previous() ?
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Previous() ?
         Previous();
     }
     return false;
@@ -31,13 +31,13 @@ bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
 bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
 {
     if (isAction) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Accept);
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Accept));
         return true;
     } else if (d == Direction::Right) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Next() ?
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Next() ?
         Next();
     } else if (d == Direction::Left) {
-        SoundController::GetInstance().RequestChunk(BaseSfx::Move); // Should be in Previous() ?
+        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Previous() ?
         Previous();
     }
     return false;

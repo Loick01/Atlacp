@@ -183,7 +183,7 @@ void Tilemap::UpdateMapIndex(const MapBound bound)
 
 void Tilemap::LoadMap(const std::string& mapFilepath)
 {
-    // I don't think I should delete all tilesets when loading a new map
+    // TODO : I don't think I should delete all tilesets when loading a new map
     // Instead, I could only delete the unused one
     m_tileset.CleanTilesets(true); // Delete tilesets used for the previous map
 

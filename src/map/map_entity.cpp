@@ -9,7 +9,7 @@
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const float cameraZoom,
     const unsigned int id):
-SceneDrawable(textureController, AssetDirectory::Spritesheet+spriteFilepath, ScenePosition{0,0}), MapElement(tilemap),
+SceneDrawable(textureController, std::string(AssetDirectory::Spritesheet)+spriteFilepath, ScenePosition{0,0}), MapElement(tilemap),
 m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_cameraZoom(cameraZoom), m_id(id),
 m_movementState(EntityMovementState::Free), m_interactionState(EntityInteractionState::None), m_animation(fileReader, spriteFilepath)
 {
@@ -120,7 +120,7 @@ void MapEntity::DrawTexture() const
 
 void MapEntity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
 {
-    // Should berify if direction != Direction::None ?
+    // TODO : Should verify if direction != Direction::None ?
     MapMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);

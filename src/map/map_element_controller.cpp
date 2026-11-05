@@ -1,7 +1,5 @@
 #include "map/map_element_controller.hpp"
 
-// #include <algorithm>
-
 #include "map/map_entity.hpp"
 #include "map/npc.hpp"
 #include "core/camera.hpp"
@@ -27,7 +25,7 @@ MapElementController::~MapElementController()
 
 std::vector<MapEntity*>& MapElementController::GetEntities()
 {
-    return m_updatedEntities; // m_updatedEntities ?
+    return m_updatedEntities; // TODO : m_renderedEntities ?
 }
 
 std::vector<MapElement*>& MapElementController::GetElements()
@@ -77,7 +75,7 @@ void MapElementController::CreateEntity(const std::string& npcFilepath, const un
         m_fileReader, 
         m_tilemap, 
         m_textureController,
-        "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
+        "map_entity/" + data.sprite, // TODo : "map_entity" should be in data.sprite ?
         spawnPosition,
         data.walkSpeed, data.runSpeed,
         m_camera.GetZoom(),
@@ -116,7 +114,7 @@ void MapElementController::DeleteEntity(const unsigned int idEntity)
         return;
     }
 
-    // Or itUpdated
+    // TODo : Or itUpdated
     (*itRendered)->FreePosition();
     delete *itRendered;
     
@@ -128,7 +126,7 @@ void MapElementController::DeleteNPCs()
 {
     // Do not try to delete the player (first element in m_updatedEntities, be sure to don't modify the order --> player must always be updated before every NPC)
     for (unsigned int i = 1 ; i < m_updatedEntities.size() ; i++)
-        delete m_updatedEntities[i]; // Because I use new to instantiate NPC, later I will use unique_ptr
+        delete m_updatedEntities[i]; // TODO : Because I use new to instantiate NPC, later I will use unique_ptr
     
     // Currently, DeleteNPCs is only called in LoadNPCsForMap() and ~MapElementController(), so calling clear() on these vectors is useless because their elements are 
     // already overwriten in LoadNPCsForMap(). I keep it anyway, in case DeleteNPCs() is used somewhere else later)
@@ -152,7 +150,7 @@ void MapElementController::Update(const GameMapEventState& playerEventState, con
     m_currentMapEntityUpdated = &m_player;
     m_player.Update(deltaTime);
     
-    // Do not update the NPCs on this frame if a new map has been loaded, when the Player exited the map or walked on a trigger with LoadMapOrder (not implemented yet)
+    // Do not update the NPCs on this frame if a new map has been loaded, when the Player exited the map or walked on a trigger with LoadMapOrder
     if (m_shouldUpdateNpc) {
         // Warning : If at some point a NPC could trigger a map loading, this for loop will crash 
         // Because Tilemap::LoadMap() -> Notify(TilemapEvent::LoadingMap) -> MapElementController::LoadNPCsForMap() (which modifies m_updatedEntities) 
@@ -216,7 +214,7 @@ void MapElementController::LoadNPCsForMap(const std::string& filepath, const uns
             m_fileReader, 
             m_tilemap, 
             m_textureController,
-            "map_entity/" + data.sprite, // "map_entity" should be in data.sprite ?
+            "map_entity/" + data.sprite, // TODO : "map_entity" should be in data.sprite ?
             npcPosition,
             data.walkSpeed, data.runSpeed,
             m_camera.GetZoom(),
@@ -227,6 +225,7 @@ void MapElementController::LoadNPCsForMap(const std::string& filepath, const uns
         m_renderedEntities.push_back(npc);
     }
     
+    // TODO : Remove
     // Testing follow behaviour (trackedEntity parameter will be remove from NPC constructor)
     // MapEntity* trackedEntity = &m_player;
     // for (unsigned int i = 0 ; i < 10 ; i++){
@@ -241,14 +240,14 @@ void MapElementController::LoadNPCsForMap(const std::string& filepath, const uns
     m_shouldUpdateNpc = false;
 }
 
-void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData) // Same than TriggerController::SetTriggers()
+void MapElementController::LoadElements(const std::vector<DataMapElement>& elementsData) // TODO : Same than TriggerController::SetTriggers()
 {
     for (MapElement* e : m_mapElements)
         delete e; // Because I use new to create my MapElement (below)
     m_mapElements.clear();
 
     for (const DataMapElement& data : elementsData) {
-        MapElement* e = new MapElement(m_tilemap); // TODO
+        MapElement* e = new MapElement(m_tilemap); // TODO : Do not use new
         e->SetMapPosition(data.position);
         e->SetOrders(data.orders);
         m_mapElements.push_back(e);

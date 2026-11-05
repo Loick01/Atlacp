@@ -60,6 +60,8 @@ class MapGoToBehaviour : public MapEntityBehaviour, public Notifier<UselessEvent
         std::vector<MapPosition> m_path;
         unsigned int m_pathIndex;
 
+        // TODO : Add bool isRunning
+
     public:
         MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap);
 

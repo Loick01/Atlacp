@@ -52,7 +52,7 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
 
 std::vector<Order> FileReader::ReadCinematicFile(const std::string& cinematicFilepath) const
 {
-    std::ifstream cinematicInput = OpenFile(DataDirectory::Cinematic + cinematicFilepath);
+    std::ifstream cinematicInput = OpenFile(std::string(DataDirectory::Cinematic) + cinematicFilepath);
     return ReadOrders(cinematicInput);
 }
 

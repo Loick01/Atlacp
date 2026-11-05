@@ -35,10 +35,10 @@ std::string FileReader::GetFileExtension(const std::string& filepath) const
 
 bool FileReader::IsBaseUiFile(const std::string& filepath) const
 {
-    return GetFileExtension(filepath) == FileExtension::UiFile;
+    return GetFileExtension(filepath) == std::string(FileExtension::UiFile);
 }
 
 bool FileReader::IsTemplateUiFile(const std::string& filepath) const
 {
-    return GetFileExtension(filepath) == FileExtension::UiTemplate;
+    return GetFileExtension(filepath) == std::string(FileExtension::UiTemplate);
 }

@@ -74,7 +74,7 @@ void OrderController::ExecuteOrder(const FrameTextOrder& o)
     boxText->AddText(o.texts);
     boxText->NextText();
 
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Open));
 }
 
 void OrderController::ExecuteOrder(const DialogTextOrder& o)
@@ -85,14 +85,14 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
     dialogBox->NextText();
     dialogBox->SetFacePath(o.facePath);
 
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Open));
 }
 
 void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
-    npc->SetMovementState(EntityMovementState::Free); // Should be in SetGoToBehaviour() ? 
-    // It needs to be EntityMovementState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetGoToBehaviour() ? 
+    // TODO : It needs to be EntityMovementState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
     MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());
     goTo->AddCallback([this](UselessEvent e){NextOrder();});
@@ -102,17 +102,17 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 
 void OrderController::ExecuteOrder(const NpcFollowOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
     MapEntity* trackedEntity = m_mapElementController.GetMapEntityFromId(o.idTrackedEntity);
-    npc->SetMovementState(EntityMovementState::Free); // Useless ?
+    npc->SetMovementState(EntityMovementState::Free); // TODO : Useless ?
     npc->SetFollowBehaviour(trackedEntity);
     NextOrder();
 }
 
 void OrderController::ExecuteOrder(const NpcIdleOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
-    npc->SetMovementState(EntityMovementState::Free); // Useless ?
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    npc->SetMovementState(EntityMovementState::Free); // TODO : Useless ?
     npc->SetIdleBehaviour(o.direction);
     NextOrder();
 }
@@ -130,7 +130,7 @@ void OrderController::ExecuteOrder(const CameraSlideToPositionOrder& o)
 {
     m_camera.StartSlidingTo(o.endPosition);
     m_camera.AddCallback([this](UselessEvent e){NextOrder();});
-    // if (m_camera.IsDone()) NextOrder(); // I think it's useless, even if the camera is already at its targeted position, Notify() will be called anyway // Remove
+    // if (m_camera.IsDone()) NextOrder(); // TODO : Remove, because I think it's useless, even if the camera is already at its targeted position, Notify() will be called anyway
 }
 
 void OrderController::ExecuteOrder(const CameraSlideToEntityOrder& o)
@@ -193,7 +193,7 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
     
     const ScenePosition newPosition = player->GetMapPosition().ToScenePosition(m_tilemap.GetTileSize());
     player->UpdateDrawingPosition(newPosition);
-    // Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
+    // TODO : Reset(); ? Will also reset the sprite animation when loading a new map, maybe I don't want that
     
     NextOrder();
 }
@@ -212,21 +212,21 @@ bool OrderController::UpdateOrder(const Order& o)
 bool OrderController::UpdateOrder(const FrameTextOrder& o)
 {
     UiFrameText* boxText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("boxText"));
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Open));
     return !boxText->NextText();
 }
 
 bool OrderController::UpdateOrder(const DialogTextOrder& o)
 {
     UiDialogBox* dialogBox = dynamic_cast<UiDialogBox*>(m_uiComponentController.GetComponent("dialogBox"));
-    SoundController::GetInstance().RequestChunk(BaseSfx::Open);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Open));
     // I suppose the faceset will never be modified
     return !dialogBox->NextText();
 }
 
 bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
     const MapGoToBehaviour* goTo = dynamic_cast<const MapGoToBehaviour*>(npc->GetMapBehaviour());
     return goTo->IsDone();
 }
@@ -260,33 +260,33 @@ void OrderController::StopOrder(const FrameTextOrder& o)
 {
     m_uiComponentController.CloseComponent("boxText");
     m_uiComponentController.DeleteComponent("boxText");
-    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Close));
 }
 
 void OrderController::StopOrder(const DialogTextOrder& o)
 {
     m_uiComponentController.CloseComponent("dialogBox");
     m_uiComponentController.DeleteComponent("dialogBox");
-    SoundController::GetInstance().RequestChunk(BaseSfx::Close);
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Close));
 }
 
 void OrderController::StopOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // Will be dynamic_cast, in case the order of the list changes
+    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
     npc->SetRandomBehaviour();
     // The NPC has necessarily EntityMovementState::Free when he reached his target position, so I don't think SetMovementState(Free) is necessary. 
-    // npc->SetMovementState(EntityMovementState::Free); // Should be in SetRandomBehaviour() ?
+    // npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetRandomBehaviour() ?
 }
 
 void OrderController::StopOrder(const CameraSlideToPositionOrder& o)
 {
-    m_camera.SetCameraState(CameraState::Anchored); // Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
+    m_camera.SetCameraState(CameraState::Anchored); // TODO : Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
     m_camera.RemoveLastCallback();
 }
 
 void OrderController::StopOrder(const CameraSlideToEntityOrder& o)
 {
-    m_camera.SetCameraState(CameraState::Anchored); // Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
+    m_camera.SetCameraState(CameraState::Anchored); // TODO : Anchored ? Maybe I should set it to CameraState::Free and then use a CameraStateToAnchoredOrder(idEntity) ?
     m_camera.RemoveLastCallback();
 }
 

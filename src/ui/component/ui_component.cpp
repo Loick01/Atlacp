@@ -17,7 +17,7 @@ void UiComponent::Open()
 
     if (m_uiController.IsTemplateUiFile(m_uiFilepath)) {
         const unsigned int countInstance = GetInstanceCount();
-        // That's why template file should not have load command (BuildUiFile could return keys only for elements constructed in the file ?)
+        // TODO : That's why template file should not have load command (BuildUiFile could return keys only for elements constructed in the file ?)
         // Or I could use a function similar to BuildUiFile ?
         for (UiKey& k : created) {
             const UiKey newKey = k + std::to_string(countInstance);

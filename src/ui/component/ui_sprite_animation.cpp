@@ -17,13 +17,13 @@ bool UiSpriteAnimation::IsDone() const
 void UiSpriteAnimation::Open()
 {
     UiComponent::Open();
-    // Need to check if a UiAnimatedElement is read in the ui file ?
+    // TODO : Need to check if a UiAnimatedElement is read in the ui file ?
     
     // UpdatePath calls Drawable::LoadTexture and will write on m_textureWidth and m_textureHeight
     // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
-    m_uiController.UpdatePath(m_uiKey, AssetDirectory::Spritesheet+m_animationPath);
+    m_uiController.UpdatePath(m_uiKey, std::string(AssetDirectory::Spritesheet)+m_animationPath);
 
-    m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // static_cast ?
+    m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // TODO : static_cast ?
     if (m_animated == nullptr) { 
         Logger::GetInstance().AddLog(Level::L4, "This UiElement must be a UiAnimatedElement: " + m_uiKey);
         return;
