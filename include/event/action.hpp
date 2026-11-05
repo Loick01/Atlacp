@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 (should be a member in JoystickActionController to verify ?)
+#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 // TODO : Should be a member in JoystickActionController to verify ?
 
 class ActionController
 {
@@ -15,13 +15,13 @@ class ActionController
         virtual bool IsRightActionState() = 0;
         virtual bool IsUpActionState() = 0;
         virtual bool IsDownActionState() = 0;
-        virtual bool IsPrimaryActionState() = 0; // Unused ?
+        virtual bool IsPrimaryActionState() = 0;
         virtual bool IsSecondaryActionState() = 0;
 
         virtual bool IsPressedPoll(const SDL_Event& event) = 0;
         virtual bool IsMotionPoll(const SDL_Event& event) = 0;
         
-        virtual bool IsLeftActionPoll(const SDL_Event& event) = 0; // Should I avoid having a SDL_Event parameter ?
+        virtual bool IsLeftActionPoll(const SDL_Event& event) = 0; // TODO : Should I avoid having a SDL_Event parameter ?
         virtual bool IsRightActionPoll(const SDL_Event& event) = 0;
         virtual bool IsUpActionPoll(const SDL_Event& event) = 0;
         virtual bool IsDownActionPoll(const SDL_Event& event) = 0;

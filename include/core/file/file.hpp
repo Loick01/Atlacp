@@ -13,8 +13,8 @@
 #include "tile/tile_types.hpp" // WorldData, TilesetData
 #include "ui/ui_types.hpp" // DataUi
 
-#define SECTION_DELIMITER "###" // define ? Rename
-#define TEXT_DELIMITER ';' // define ? Rename
+#define SECTION_DELIMITER "###" // TODO : Rename ?
+#define TEXT_DELIMITER ';' // TODO : Rename ?
 
 class Camera;
 class TextureController;
@@ -22,7 +22,7 @@ class Tileset;
 
 struct MapData;
 
-struct DataNPC // Rename ? Should not be here ?
+struct DataNPC // TODO++ : Should not be here
 {
     std::vector<Order> orders;
     MapPosition position;
@@ -32,7 +32,7 @@ struct DataNPC // Rename ? Should not be here ?
     unsigned int id;
 };
 
-struct DataMapElement // Rename ? // Should not be here ?
+struct DataMapElement // TODO++ : Should not be here // TODO : Rename ?
 {
     std::vector<Order> orders;
     MapPosition position;
@@ -52,7 +52,7 @@ class FileReader
         Axis ReadAxis(std::ifstream& input) const;
         Anchor ReadAnchor(std::ifstream& input) const;
         CommandType ReadCommandType(std::ifstream& input) const;
-        MoveType ReadMoveType(std::ifstream& input) const; // Rename ?
+        MoveType ReadMoveType(std::ifstream& input) const;
         MapBehaviour ReadMapBehaviour(std::ifstream& input) const; // Will be used for cinematic files
         FontSize ReadFontSize(std::ifstream& input) const;
         Direction ReadDirection(std::ifstream& input) const;
@@ -87,7 +87,7 @@ class FileReader
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
         std::vector<DataNPC> ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
         std::optional<DataNPC> ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const;
-        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Rename ? (because UiFile != UiTemplate)
+        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;
         MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,

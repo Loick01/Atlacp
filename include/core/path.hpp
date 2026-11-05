@@ -1,35 +1,32 @@
 #pragma once
 
 namespace FileExtension {
-    // Should be constexpr std::string_view ?
-    const std::string Image = ".png";
-    const std::string Sfx = ".wav";
-    const std::string UiFile = ".uif";
-    const std::string UiTemplate = ".uit";
+    inline constexpr std::string_view Image = ".png";
+    inline constexpr std::string_view Sfx = ".wav";
+    inline constexpr std::string_view UiFile = ".uif";
+    inline constexpr std::string_view UiTemplate = ".uit";
 }
 
 namespace AssetDirectory {
-    // Should be constexpr std::string_view ?
-    const std::string Font = "../assets/ui/fonts/"; // Font should not be in UI directory ?
-    const std::string Music = "../assets/sound/music/";
-    const std::string Root = "../assets/";
-    const std::string Sfx = "../assets/sound/sfx/";
-    const std::string Spritesheet = "spritesheet/"; // ?
-    const std::string Tileset = "../assets/tileset/";
+    inline constexpr std::string_view Font = "../assets/ui/fonts/"; // TODO : Font should not be in UI directory ?
+    inline constexpr std::string_view Music = "../assets/sound/music/";
+    inline constexpr std::string_view Root = "../assets/";
+    inline constexpr std::string_view Sfx = "../assets/sound/sfx/";
+    inline constexpr std::string_view Spritesheet = "spritesheet/"; // ?
+    inline constexpr std::string_view Tileset = "../assets/tileset/";
 }
 
 namespace DataDirectory {
-    // Should be constexpr std::string_view ?
-    const std::string SpriteAnimation = "../data/animation/";
-    const std::string Battle = "../data/battle/battles/";
-    const std::string Cinematic = "../data/cinematics/";
-    const std::string Map = "../data/maps/";
-    const std::string Move = "../data/battle/moves/";
-    const std::string NPC = "../data/npcs/";
-    const std::string Tileset = "../data/tileset/";
-    const std::string UiFile = "../data/ui/file/";
-    const std::string UiTemplate = "../data/ui/template/";
-    const std::string World = "../data/worlds/";
+    inline constexpr std::string_view SpriteAnimation = "../data/animation/";
+    inline constexpr std::string_view Battle = "../data/battle/battles/";
+    inline constexpr std::string_view Cinematic = "../data/cinematics/";
+    inline constexpr std::string_view Map = "../data/maps/";
+    inline constexpr std::string_view Move = "../data/battle/moves/";
+    inline constexpr std::string_view NPC = "../data/npcs/";
+    inline constexpr std::string_view Tileset = "../data/tileset/";
+    inline constexpr std::string_view UiFile = "../data/ui/file/";
+    inline constexpr std::string_view UiTemplate = "../data/ui/template/";
+    inline constexpr std::string_view World = "../data/worlds/";
 
-    const std::string BattleMoveDirectory = "battle_move/";
+    inline constexpr std::string_view BattleMoveDirectory = "battle_move/";
 }

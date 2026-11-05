@@ -126,7 +126,7 @@ enum class Direction
     None
 };
 
-inline std::string GetStringFromDirection(const Direction d) // Should be in file_utils.cpp ?
+inline std::string GetStringFromDirection(const Direction d)
 {
     switch (d) {
         case Direction::Up :

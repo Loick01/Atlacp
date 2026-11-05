@@ -8,7 +8,7 @@
 #include "event/action.hpp"
 #include "event/event_types.hpp" // GameMapEventState, EditorMapEventState, BattleEventState
 
-// Because of EditorMapEventController (Remove ?)
+// Because of EditorMapEventController // TODO : Remove ?
 class Camera;
 class Tilemap;
 class Tileset;
@@ -17,6 +17,8 @@ class EventController
 {
     protected:
         std::vector<SDL_Event> m_events;
+
+        // TODO : m_actionController should be here instead of GameMapEventController, BattleEventController, etc. ? (but EditorMapEventController should not have an ActionController)
         
     public:
         EventController() = default;
@@ -30,7 +32,7 @@ class EventController
 class MainMenuEventController : public EventController, public EventStateHolder<MainMenuEventState>
 {
     private:
-        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
+        std::unique_ptr<ActionController> m_actionController;
 
     public:
         MainMenuEventController();
@@ -42,7 +44,7 @@ class MainMenuEventController : public EventController, public EventStateHolder<
 class GameMapEventController : public EventController, public EventStateHolder<GameMapEventState>
 {
     private:
-        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ? (but EditorMapEventController should not have it)
+        std::unique_ptr<ActionController> m_actionController;
 
     public:
         GameMapEventController();
@@ -57,14 +59,14 @@ class EditorMapEventController : public EventController, public EventStateHolder
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
-        // Rename ?
-        ScenePosition m_lastKnownPosition; // Tileset screen position when m_tileset.GetShouldDraw(), otherwise m_camera scene position 
+        ScenePosition m_lastKnownPosition; // Tileset screen position when m_tileset.GetShouldDraw(), otherwise m_camera scene position // TODO++ : Rename ?
 
-        // Will be removed ?
-        Tileset& m_tileset; // Should be a UiElement ?
+        // TODO : Will be removed ?
+        Tileset& m_tileset; // TODO : Could be a UiElement ?
         Tilemap& m_tilemap;
         Camera& m_camera;
-        size_t m_layerCount; // Remove ?
+        
+        size_t m_layerCount;
 
     public:
         EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap);
@@ -73,13 +75,13 @@ class EditorMapEventController : public EventController, public EventStateHolder
         void HandlePollEvents() override;
 
         void SetLayerCount(const unsigned int layerCount);
-        void Reset(); // Will be removed ?
+        void Reset(); // TODO : Remove ?
 };
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
 {
     private:
-        std::unique_ptr<ActionController> m_actionController; // Should be in EventController ?
+        std::unique_ptr<ActionController> m_actionController;
 
     public:
         BattleEventController();

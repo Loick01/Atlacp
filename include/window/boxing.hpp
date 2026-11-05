@@ -11,12 +11,12 @@ enum class BoxingType
     Letterboxing, Pillarboxing
 };
 
-enum class BarState // TODO : Rename
+enum class BarState // TODO : Rename ?
 {
     Open, Close
 };
 
-enum class BoxingState // TODO : Rename
+enum class BoxingState // TODO : Rename ?
 {
     Fixed, Animated
 };

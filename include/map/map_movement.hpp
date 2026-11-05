@@ -34,7 +34,7 @@ class MapMovement
         ScenePosition GetScenePosition() const;
         EntityMovementState UpdateProgress(const float speed, const float deltaTime); // Return the new state the entity should have
         
-        // Not sure to keep these 2 functions
+        // TODO : Not sure to keep these 2 functions
         MapPosition GetMoveFromDirection(const Direction direction) const;
         Direction GetDirectionFromMove(const MapPosition move) const;
 

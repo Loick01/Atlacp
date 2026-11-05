@@ -47,10 +47,10 @@ class Scene : public Notifier<SwitchEvent>
 {
     protected:
         GameContext& m_context;
-        Camera m_camera; // Could be in GameContext ?
+        Camera m_camera; // TODO : Could be in GameContext ?
         bool m_gameloop;
 
-        std::vector<const Drawable*> m_drawables; // Will be removed ?
+        std::vector<const Drawable*> m_drawables; // TODO : Will be removed ?
 
     public:
         Scene(GameContext& context);
@@ -88,7 +88,7 @@ class TilemapScene : public Scene
 class GameMapScene : public TilemapScene
 {
     private:
-        MapElementController m_elementsController; // Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
+        MapElementController m_elementsController; // TODO : Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
         OrderController m_orderController;
         InteractionController m_interactionController; // Was in MapElementController, but I moved it here because I need to remove #include "interaction.hpp" from map_element_controller.hpp
         TriggerController m_triggerController;
@@ -107,12 +107,12 @@ class GameMapScene : public TilemapScene
 class EditorMapScene : public TilemapScene
 {
     private:
-        std::vector<bool> m_isLayerRendered; // Should be in Tilemap if not only used by Editor
+        std::vector<bool> m_isLayerRendered; // TODO : Should be in Tilemap if I need to use it for other TilemapScene and not only for Editor
         UiDynamicList* m_layerSelection;
         UiSelector* m_selector;
-        int m_lastLayer; // UiValue ?
+        int m_lastLayer; // TODO : UiValue ?
         unsigned int m_previousLayerCount; // Because the maps in a same world can have different layerCount 
-        bool m_isFirstLoad; // try to remove
+        bool m_isFirstLoad; // TODO : Try to remove
         
     public:
         EditorMapScene(GameContext& context);

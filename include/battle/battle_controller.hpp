@@ -20,7 +20,7 @@ class FileReader;
 class UiComponentController;
 class UiController;
 
-enum class ExitEvent // Can't use SwitchEvent (from scene.hpp) in this file
+enum class ExitEvent
 {
     ExitWin, ExitLost, None
 };
@@ -36,9 +36,9 @@ struct BattleCommand
     Team sourceTeam;
     Team targetTeam;
     LifeState targetLifeState;
-    unsigned int moveValue; // Rename
+    unsigned int amount;
     std::string sfx;
-    std::string animation; // Remove ?
+    std::string animation;
 
     Team ComputeTargetTeam() const
     {
@@ -55,12 +55,12 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int mv, const std::string& sfxPath, const std::string& animationPath) {
+    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int a, const std::string& sfxPath, const std::string& animationPath) {
         commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
         targetLifeState = s;
-        moveValue = mv;
+        amount = a;
         sfx = sfxPath;
         animation = animationPath;
     }
@@ -85,20 +85,20 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         TurnState m_turnState;
         ExitEvent m_exitEvent;
         BattleCommand m_currentCommand;
-        float m_currentTime; // Rename
+        float m_globalTurnTime;
         
         UiComponentController& m_uiComponentController;
         UiController& m_uiController;
         FileReader& m_fileReader;
 
-        std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents
+        std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents // TODO : Should return a reference ?
         std::vector<BattleActor*> FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         BattleActor* GetActorSelection();
         ExitEvent CheckBattleEnd() const;
-        BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const; // Should remove srcActor ?
-        unsigned int ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
+        BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
+        unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
         bool HasAliveActor(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
@@ -111,7 +111,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void OpenActorSelection();
         void CloseActorSelection();
         void HandleActionSelection(const int index);
-        void HandleAiActionSelection(AiActor& srcActor); // Rename ?
+        void HandleAiActionSelection(AiActor& srcActor); // TODO : Rename ?
         void HandleMoveSelection(const int moveIndex);
         
         void HandleCurrentCommand();
@@ -120,6 +120,6 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
         ~BattleController();
         
-        void InitializeActors(const std::string& battleFile); // Rename battleFile
+        void InitializeActors(const std::string& dataFile);
         void PlayNextTurn();
 };

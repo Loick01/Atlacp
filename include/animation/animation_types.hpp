@@ -6,7 +6,7 @@
 
 struct SpriteAnimationData
 {
-    std::vector<Vec2> sprites; // Position of each sprites in spritesheet. Should use ScreenPosition (or something else) instead of Vec2 ?
+    std::vector<Vec2> sprites; // Position of each sprites in spritesheet
     AreaSize spriteSize;
     int step; // How many step for the animation
     float frameDuration;

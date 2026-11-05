@@ -5,7 +5,7 @@
 
 class UiDialogBox : public UiFrameText
 {   
-    // Currently, UiDialog shares m_instanceCount with UiFrameText, but shouldn't it have its own ?
+    // TODO : Currently, UiDialog shares m_instanceCount with UiFrameText, but shouldn't it have its own ?
     
     public:
         UiDialogBox(UiController& uiController, const std::string& uiFilepath);

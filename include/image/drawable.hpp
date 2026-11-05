@@ -8,9 +8,10 @@ class TextureController;
 class Drawable
 {
     protected:
-        // textureFilepath could be replace by a RessourceFile struct, which contains the path without its extension
+        // TODO : Replace textureFilepath with a RessourceFile struct, which contains the path without its extension
         Drawable(TextureController& textureController, const std::string& textureFilepath);
         Drawable(TextureController& textureController);
+        
         // If this class doesn't stay abstract, will need to delete m_textureKey in its destructor (textureController->DeleteTexture(textureKey))
         // If that happens, beware of every destructor of derivated class from Drawable
         
@@ -22,11 +23,11 @@ class Drawable
     public:
         virtual ~Drawable();
         virtual TextureKey GetTextureKey() const;
-        virtual int GetTextureWidth() const; // Remove virtual ?
-        virtual int GetTextureHeight() const; // Remove virtual ?
+        virtual int GetTextureWidth() const; // TODO : Remove virtual ?
+        virtual int GetTextureHeight() const; // TODO : Remove virtual ?
         virtual void DrawTexture() const = 0;
 
-        bool IsPositionInTexture(const Vec2 sp) const; // Should not use Vec2 for the parameter ?
+        bool IsPositionInTexture(const Vec2 sp) const; // TODO : Should not use Vec2 for the parameter ?
         void LoadTexture(const std::string& textureFilepath); // Load a new texture and update the m_textureKey
         void DeleteTexture();
 };
@@ -35,7 +36,7 @@ class SceneDrawable : public Drawable
 {
     protected:
         ScenePosition m_position;
-        ScenePosition m_displayOffset; // Should be in MapEntity
+        ScenePosition m_displayOffset; // TODO++ : Should be in MapEntity
 
         void SetDisplayOffset(const ScenePosition offset);
     
@@ -50,10 +51,10 @@ class ScreenDrawable : public Drawable
 {
     protected:
         ScreenPosition m_position; // For class that inherit from ScreenDrawable and have a scene graph concept (ex: UiElement), this is the global position 
-        float m_zoom; // Don't use camera zoom, but this value instead. Could be private
+        float m_zoom; // Don't use camera zoom, but this value instead // TODO : Could be private
 
-        // Will be removed ?
-        bool m_shouldDraw; // Could be private
+        // TODO : Will be removed ?
+        bool m_shouldDraw; // TODO : Could be private
 
     public:
         ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position={0, 0}, const bool shouldDraw=true);

@@ -21,13 +21,13 @@ class MapElementController : public Notifier<EntityEvent>
         
         Player m_player;
         
-        // Will use unique_ptr<MapEntity> ?
+        // TODO++ : Will have a std::vector<MapEntity>
         // m_renderedEntities and m_updatedEntities both include the Player and every NPC
         std::vector<MapEntity*> m_renderedEntities; // Sorted by y position
         // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
 
-        std::vector<MapElement*> m_mapElements; // Should not be here ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
+        std::vector<MapElement*> m_mapElements; // TODO++ : Should not be here ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
 
         MapEntity* m_currentMapEntityUpdated;
 
@@ -42,7 +42,7 @@ class MapElementController : public Notifier<EntityEvent>
         std::vector<MapElement*>& GetElements();
         
         MapEntity* GetMapEntityFromId(const unsigned int id);
-        MapEntity* GetCurrentMapEntityUpdated() const; // const ?
+        MapEntity* GetCurrentMapEntityUpdated() const; // TODO : const ?
         
         void Draw() const;
         void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before MapElementController::Update()) 

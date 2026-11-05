@@ -11,7 +11,7 @@ class UiComponent
     protected:
         UiController& m_uiController;
         UiKey m_uiKey;
-        const std::string m_uiFilepath; // const ?
+        const std::string m_uiFilepath; // TODO : const ?
 
     public:
         UiComponent(UiController& uiController, const std::string& uiFilepath);

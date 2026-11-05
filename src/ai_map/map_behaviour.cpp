@@ -101,7 +101,7 @@ MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPos
     MapEntityBehaviour(), m_pathIndex(0)
 {
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
-    m_ready = true; // TODO : m_ready
+    m_ready = true; // TODO : m_ready should be true only if a path exists
 }
 
 bool MapGoToBehaviour::IsDone() const

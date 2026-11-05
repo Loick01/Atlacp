@@ -11,7 +11,7 @@ class MapEntityAnimation : public SpriteAnimation // Must have sprites for 4 dir
     public:
         MapEntityAnimation(const FileReader& fileReader, const std::string& path);
 
-        void Initialize(const Direction direction, const bool isFirstMovement); // Should be in SpriteAnimation ?
-        void Reset(const Direction direction); // Rename ?
+        void Initialize(const Direction direction, const bool isFirstMovement);
+        void Reset(const Direction direction); // TODO : Rename ?
         void Continue(const float deltaTime) override;
 };

@@ -23,7 +23,7 @@ class Camera : public Notifier<UselessEvent> // Will Notify() for Order executio
 {
     private:
         Vec2f m_position;
-        GridSize m_rangeTile; // How many tiles (width and height) will be rendered in the window. Should not be a ScenePosition
+        GridSize m_rangeTile; // How many tiles (width and height) will be rendered in the window
         AreaSize m_viewport; // Size of rendering area
         
         ScreenPosition m_screenOffset;
@@ -38,7 +38,7 @@ class Camera : public Notifier<UselessEvent> // Will Notify() for Order executio
         CameraState m_cameraState;
         SlidingInfo m_slidingInfo;
 
-        MapEntity* m_anchoredEntity; // Should be SceneDrawable m_anchoredDrawable ?
+        MapEntity* m_anchoredEntity; // TODO : Should be SceneDrawable m_anchoredDrawable ? (currently used only for MapEntity)
 
     public:
         Camera();

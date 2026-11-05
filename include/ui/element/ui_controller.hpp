@@ -12,7 +12,7 @@
 class FileReader;
 class TextureController;
 
-class UiController // Should be renamed UiElementController ?
+class UiController // TODO : Should be renamed UiElementController ?
 {       
     private:
         // UiElement are not marked as root, but I don't want it to be possible to delete the root
@@ -29,12 +29,12 @@ class UiController // Should be renamed UiElementController ?
         const FileReader& m_fileReader;
         TextureController& m_textureController;
         
-        const std::string m_fontFilepath; // Will be removed ? (should store a Font object instead of the path ?)
+        const std::string m_fontFilepath; // TODO : Will be removed ? (should store a Font object instead of the path ?)
         ScreenPosition m_position; // Initialized with the viewport position
         AreaSize m_size; // Initialized with the viewport size
 
-        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // Rename
-        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // Rename
+        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // TODO : Rename ?
+        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // TODO : Rename ?
         
         // Add/Remove in UiController::m_elements
         void AddElement(const UiKey& key, UiElement* element);
@@ -52,7 +52,7 @@ class UiController // Should be renamed UiElementController ?
         std::unique_ptr<UiAnimatedElement> CreateAnimatedElement(const UiKey& key, const std::string& animationPath);
         std::unique_ptr<UiElement> RemoveSubRoots(const UiKey& key);
 
-        std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // Rename
+        std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // TODO : Rename
         std::vector<UiKey> BuildUiFile(const std::string& filepath);
 
         std::unordered_map<UiKey, UiElement*>::const_iterator GetIteratorOnElement(const UiKey& key) const;
@@ -63,21 +63,21 @@ class UiController // Should be renamed UiElementController ?
         bool IsTemplateUiFile(const std::string& filepath) const;
         
         void ClearAll();
-        void BuildElement(std::unique_ptr<UiElement>& element, const UiKey& parentKey); // Rename
+        void BuildElement(std::unique_ptr<UiElement>& element, const UiKey& parentKey); // TODO : Rename
         void DeleteElement(const UiKey& key);
 
         void SetSize(const AreaSize size);
         void SetPosition(const ScreenPosition position);
 
-        // Rename these functions, I should not use Update in the name
+        // TODO++ : Rename these functions, I should not use Update in the name
         void UpdatePath(const UiKey& key, const std::string& path);
         void UpdatePath(const UiValue<std::string>& path);
         void UpdateText(const UiKey& key, const std::string& text);
         void UpdateText(const UiValue<std::string>& uiv);
         void UpdateText(const UiValue<unsigned int>& uiv);
         void UpdateParent(const UiKey& key, const UiKey& parent);
-        void UpdateScalingSize(const UiKey& key, const PartialSize ps); // Should use UiKey+Axis+float, instead of PartialSize (which is from file.hpp)
-        // Should add UpdateScalingAxis ?
+        void UpdateScalingSize(const UiKey& key, const PartialSize ps); // TODO : Should use UiKey+Axis+float, instead of PartialSize (which is from file.hpp)
+        // TODO : Should add UpdateScalingAxis ? (I don't need it for now)
         void UpdatePadding(const UiKey& key, const PartialSize ps, const Axis axis);
         void UpdateKey(const UiKey& key, const UiKey& newKey); // Used for ui template instanciation (uit file)
         void UpdateParams(const UiKey& key, const UiParams& params);

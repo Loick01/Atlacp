@@ -7,7 +7,7 @@
 #include "image/image_types.hpp" // TextureKey
 #include "tile/tile_types.hpp" // Tile
 
-using Tile = unsigned int; // Use a struct ?
+using Tile = unsigned int; // TODO : Use a struct ?
 
 struct WorldData
 {
@@ -22,7 +22,7 @@ struct WorldData
 struct TilesetData
 {
     TextureKey tilesetKey;
-    std::set<Tile> solidTiles; // Should use unordered set ?
+    std::set<Tile> solidTiles; // TODO++ : Should use unordered set ?
     GridSize size;
     int tileSize;
 };

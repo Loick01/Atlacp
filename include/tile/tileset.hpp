@@ -8,7 +8,7 @@
 class FileReader;
 class TextureController;
 
-class Tileset : public ScreenDrawable // Could be a UiElement
+class Tileset : public ScreenDrawable // TODO : Could be a UiElement instead of ScreenDrawable ?
 {
     private:
         std::vector<TilesetData> m_tilesets;
@@ -28,12 +28,12 @@ class Tileset : public ScreenDrawable // Could be a UiElement
         int GetTilesetWidth() const;
         int GetTilesetWidth(const int selectedTileset) const;
         int GetTilesetHeight() const;
-        Tile GetNormalizedTile(const Tile tile); // TODO : Rename (it also update m_indexTileset)
+        Tile GetNormalizedTile(const Tile tile); // TODO++ : Rename (it also update m_indexTileset)
         bool IsEmptyTile(const Tile tile);
         void UpdateSelectedTile(const ScreenPosition sp, const int selectedTileset, Tile& tile) const;
         void LoadTileset(const FileReader& fileReader, const std::string& path);
         void SetDisplayedTileset(const int selectedTileset);
-        // if shouldDeleteCurrent is true, the texture with key = m_textureKey is Deleted,
+        // If shouldDeleteCurrent is true, the texture with key = m_textureKey is Deleted,
         // otherwise this texture must be deleted by ~Drawable()
         void CleanTilesets(const bool shouldDeleteCurrent);
 };

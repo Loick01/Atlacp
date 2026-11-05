@@ -12,3 +12,5 @@ class BattleBehaviour
 
         BattleActor* SelectTarget(const std::vector<BattleActor*>& actors) const;
 };
+
+// TODO

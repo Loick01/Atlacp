@@ -22,7 +22,7 @@ class Tilemap : public Notifier<TilemapEvent>
         const FileReader& m_fileReader;
         Tileset& m_tileset;
         TextureController& m_textureController;
-        Camera& m_camera; // Could be removed and use a parameter in LoadMap ?
+        Camera& m_camera; // TODO++ : Could be removed and use a parameter in LoadMap ?
         WorldData m_worldData;
         MapData m_mapData;
         size_t m_currentMap;
@@ -51,7 +51,7 @@ class Tilemap : public Notifier<TilemapEvent>
         size_t GetCurrentMapIndex() const;
         size_t GetLayerSplitIndex() const;
         int GetTileSize() const;
-        int GetGridSize() const; // Should be removed and use instead GetLayerSize()
+        int GetGridSize() const; // TODO : Should be removed and use instead GetLayerSize()
         unsigned int GetTileIndex(const MapPosition p) const;
 
         bool IsPositionInTexture(const Vec2 sp) const; // This function was in Drawable, but Tilemap is not anymore a SceneDrawable

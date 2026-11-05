@@ -7,19 +7,18 @@
 // Mix_FadeOutMusic(int ms), Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 
 namespace BaseSfx{
-    // Should be inline constexpr std::string_view ?
-    inline const std::string Accept = "Accept";
-    inline const std::string Open = "Open";
-    inline const std::string Close = "Close";
-    inline const std::string Move = "Move";
-    inline const std::string Next = "Next";
-    inline const std::string Death = "Death"; // Should not be here (only used for BattleScene) ?
+    inline constexpr std::string_view Accept = "Accept";
+    inline constexpr std::string_view Open = "Open";
+    inline constexpr std::string_view Close = "Close";
+    inline constexpr std::string_view Move = "Move";
+    inline constexpr std::string_view Next = "Next";
+    inline constexpr std::string_view Death = "Death"; // TODO : Should not be here (only used for BattleScene) ?
 }
 
-class SoundController // Singleton
+class SoundController
 {
     private:
-        std::unordered_map<std::string, Mix_Chunk*> m_chunks; // string as key ?
+        std::unordered_map<std::string, Mix_Chunk*> m_chunks; // TODO : string as key ?
         Mix_Music* m_backgroundMusic;
         std::string m_requestedChunk;
 
@@ -37,7 +36,7 @@ class SoundController // Singleton
         void RequestChunk(const std::string& path);
         void PlayRequestedChunk();
         
-        void PlayChunk(const std::string& path); // private ?
+        void PlayChunk(const std::string& path); // TODO : private ?
         void LoadChunk(const std::string& path);
         void DeleteChunk(const std::string& path); // Used only in BattleController::PlayNextTurn (TurnState::End) for now 
 };

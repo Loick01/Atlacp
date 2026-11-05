@@ -20,7 +20,7 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
         m.name = ReadString(input);
         m.commandType = ReadCommandType(input);
         m.moveType = ReadMoveType(input);
-        input >> m.value;
+        input >> m.baseValue;
         input >> m.sfxPath;
         input >> s;
         m.animationPath = DataDirectory::BattleMoveDirectory+s;
@@ -31,6 +31,8 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
 
 std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battleFilepath) const
 {
+    // TODO : Add file extension to battle file
+    
     std::ifstream input = OpenFile(DataDirectory::Battle + battleFilepath);
     std::vector<DataBattleActor> actorsData;
     std::string s;
@@ -247,7 +249,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     input >> s; // Skip "trigger"
     input >> count;
     for (unsigned int i = 0 ; i < count ; i++) {
-        const DataMapElement e = ReadMapElement(input); // Trigger are read in the same way as MapElement
+        const DataMapElement e = ReadMapElement(input);
         data.triggers.push_back(e);
     }
 }

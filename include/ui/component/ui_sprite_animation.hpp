@@ -12,8 +12,8 @@ class UiSpriteAnimation : public UiComponent
     private:
         static inline unsigned int m_instanceCount;
 
-        const Time& m_time; // Should not be here, and have only deltaTime from BattleController ?
-        UiAnimatedElement* m_animated; // Should have instead a reference to UiAnimatedElement::m_animation ?
+        const Time& m_time; // TODo : Should not be here, and have only deltaTime from BattleController ?
+        UiAnimatedElement* m_animated; // TODO : Should have instead a reference to UiAnimatedElement::m_animation ?
         UiKey m_targetElement; // Key of the UiElement that will be the parent of the UiAnimatedElement
         std::string m_animationPath;
     

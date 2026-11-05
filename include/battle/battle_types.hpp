@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-enum class CommandType // Rename
+enum class CommandType // TODO : Rename ?
 {
     Attack, Heal
 };
 
-enum class MoveType // Rename
+enum class MoveType // TODO : Rename ?
 {
     Physical, Magic
 };
@@ -29,12 +29,12 @@ struct DataBattleActor
     bool isAiActor;
 };
 
-struct MoveDefinition // Rename
+struct MoveDefinition // TODO : Rename ?
 {
     std::string name;
     CommandType commandType;
     MoveType moveType;
-    unsigned int value; // Rename
+    unsigned int baseValue;
     std::string sfxPath;
     std::string animationPath;
 };

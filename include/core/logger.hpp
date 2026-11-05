@@ -23,7 +23,7 @@ struct Log
     std::string_view GetLevelLabel() const;
 };
 
-class Logger // Singleton
+class Logger
 {
     private:
         std::vector<Log> m_logs;

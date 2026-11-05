@@ -3,7 +3,7 @@
 #include "animation/sprite_animation.hpp"
 #include "ui/element/ui_element.hpp"
 
-class UiAnimatedElement : public UiElement // Rename UiAnimationElement ?
+class UiAnimatedElement : public UiElement // TODO : Rename UiAnimationElement ?
 {
     private:    
         SpriteAnimation m_animation;

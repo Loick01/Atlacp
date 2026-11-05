@@ -17,7 +17,7 @@ namespace { // These values must be the same as in the template file used for th
 BattleController::BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController):
     m_uiComponentController(uiComponentController), m_uiController(uiController), m_fileReader(fileReader), 
     m_currentActor(nullptr), m_targetActor(nullptr), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None),
-    m_currentTime(0.f)
+    m_globalTurnTime(0.f)
 {
     // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 
     // it anymore (until next time), I call these functions once here, and then I only use UiComponent::Open()/Close()
@@ -66,8 +66,8 @@ BattleActor* BattleController::PopNextTurn()
         if (actor->GetLifeState() == LifeState::Dead) // When a BattleActor dies, he's not instantly removed from m_turns 
             actor = nullptr; // Dead actor is not pushed in m_turns
     }
-    m_currentTime = actor->GetNextTurnTime();
-    actor->ComputeNextTurnTime(m_currentTime);
+    m_globalTurnTime = actor->GetNextTurnTime();
+    actor->ComputeNextTurnTime(m_globalTurnTime);
     m_turns.push(actor);
     return actor;
 }
@@ -92,7 +92,7 @@ ExitEvent BattleController::CheckBattleEnd() const
     return ExitEvent::None;
 }
 
-unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const
+unsigned int BattleController::ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const
 {
     switch(mt) {
         case MoveType::Physical:
@@ -100,14 +100,14 @@ unsigned int BattleController::ComputeMoveValue(const MoveType mt, const unsigne
         case MoveType::Magic:
             return baseValue * srcActor->GetStrength(); // TODO : Need a new field in BattleActor
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled MoveType used in BattleController::ComputeMoveValue");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled MoveType used in BattleController::ComputeAmount");
             return 0;
     }
 }
 
 BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const
 {
-    const unsigned int amount = ComputeMoveValue(md.moveType, md.value, srcActor);
+    const unsigned int amount = ComputeAmount(md.moveType, md.baseValue, srcActor);
     return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath, md.animationPath); // Will not be LifeState::Alive
 }
 
@@ -119,7 +119,7 @@ bool BattleController::HasAliveActor(const Team team) const
 
 void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetActor)
 {
-    const unsigned int damage = m_currentCommand.moveValue;
+    const unsigned int damage = m_currentCommand.amount;
     targetActor.RemoveHealth(damage);
     m_uiController.UpdateText(targetActor.GetHealth());
     
@@ -140,7 +140,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
 
 void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor)
 {
-    const unsigned int hp = m_currentCommand.moveValue;
+    const unsigned int hp = m_currentCommand.amount;
     targetActor.AddHealth(hp);
     m_uiController.UpdateText(targetActor.GetHealth());
     
@@ -301,7 +301,7 @@ void BattleController::HandleCurrentCommand()
     m_turnState = TurnState::WaitingForAnimation;
 }
 
-void BattleController::InitializeActors(const std::string& battleFile)
+void BattleController::InitializeActors(const std::string& dataFile)
 {
     UiDynamicList* allyList = m_uiComponentController.CreateDynamicList("allyList", "battle_actor.uit");
     UiDynamicList* opponentList = m_uiComponentController.CreateDynamicList("opponentList", "battle_actor.uit");
@@ -319,7 +319,7 @@ void BattleController::InitializeActors(const std::string& battleFile)
 
     const std::unordered_map<unsigned int, MoveDefinition> moves = m_fileReader.ReadMoveFile("move_list");
 
-    std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(battleFile);
+    std::vector<DataBattleActor> dataActors = m_fileReader.ReadBattleFile(dataFile);
     unsigned int countAlly = 0;
     unsigned int countOpponent = 0;
     for (const DataBattleActor& data : dataActors) {
@@ -349,7 +349,7 @@ void BattleController::InitializeActors(const std::string& battleFile)
         }
         actor->SetMoves(currentMoves);
         
-        actor->ComputeNextTurnTime(m_currentTime);
+        actor->ComputeNextTurnTime(m_globalTurnTime);
         m_turns.push(actor.get());
         
         if (data.team == Team::Ally) m_allies.push_back(actor.get());

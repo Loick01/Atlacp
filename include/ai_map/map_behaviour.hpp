@@ -41,9 +41,9 @@ class MapRandomBehaviour : public MapEntityBehaviour // Always try to move in ra
 
 class MapFollowBehaviour : public MapEntityBehaviour // TODO : Rename MapFollowEntitybehaviour ?
 {
-    // Assume the tracked entity is one tile away from the follower. Later I will make a follow behaviour with pathfiding
+    // Assume the tracked entity is one tile away from the follower. TODO : Follow behaviour with pathfiding
     private:
-        const MapEntity* m_trackedEntity; // Could be MapEntity& when I remove trackedEntity from NPC constructor ?
+        const MapEntity* m_trackedEntity; // TODO++ : Could be MapEntity& when I remove trackedEntity from NPC constructor ?
 
     public:
         MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity);
@@ -77,7 +77,7 @@ class MapIdleBehaviour : public MapEntityBehaviour
 
     public:
         MapIdleBehaviour(MapEntity& entity, const Direction direction);
-        // These three functions in MapBehaviour should not be pure virtual ?
+
         void FreeCase(MapEntity& entity, const float deltaTime) override;
         void MovingCase(MapEntity& entity, const float deltaTime) override;
         void OnStopCase(MapEntity& entity) override;

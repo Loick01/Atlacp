@@ -54,7 +54,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         void OrderInteraction(const Direction direction);
         void ContinueInteraction();
         void ContinueTrigger();
-        // void LeaveInteraction(); --> Notify(EntityEvent::LeaveInteraction);
+        // TODO : void LeaveInteraction(); --> Notify(EntityEvent::LeaveInteraction); (???)
 
         EntityMovementState GetMovementState() const;
         EntityInteractionState GetInteractionState() const;

@@ -33,10 +33,9 @@ struct DialogTextOrder { // Display text in a frame with a faceset
 };
 
 struct NpcGoToOrder { // Gives MapGoToBehaviour to an NPC, which makes it move toward its target position
-    // Should be the same Order for Player (for now only NPC) ?
+    // TODO : Should be the same Order for Player (currently only NPC) ?
     MapPosition targetPosition;
     unsigned int idNpc;
-    // bool isDone; // Useless ?
 
     std::string GetString() const
     {
@@ -46,7 +45,7 @@ struct NpcGoToOrder { // Gives MapGoToBehaviour to an NPC, which makes it move t
 };
 
 struct NpcFollowOrder { // Gives MapFollowBehaviour to an NPC, which makes it follow a MapEntity (Player or NPC)
-    // Should be the same Order for Player (for now only NPC) ?
+    // TODO : Should be the same Order for Player (currently only NPC) ?
     unsigned int idTrackedEntity;
     unsigned int idNpc;
 
@@ -58,7 +57,7 @@ struct NpcFollowOrder { // Gives MapFollowBehaviour to an NPC, which makes it fo
 };
 
 struct NpcIdleOrder { // Gives MapIdleBehaviour to an NPC, which makes it look in a direction and stay still
-    // Should be the same Order for Player (for now only NPC) ?
+    // TODO : Should be the same Order for Player (currently only NPC) ?
     Direction direction;
     unsigned int idNpc;
 
@@ -160,7 +159,7 @@ enum class PlayerReposition
 struct LoadMapOrder { // Load a new map
     size_t mapIndex;
     PlayerReposition reposition; // For now, I don't read this value in File::ReadLoadMapOrder, I always use MapSpawn, and Projection is only use for map transitions (when the player exits the map) 
-    // TODO : Add MapPosition spawnPosition here ? (For now, I use the spawn position defined in the map file)
+    // TODO++ : Add MapPosition spawnPosition here ? (For now, I use the spawn position defined in the map file)
     
     std::string GetString() const
     {

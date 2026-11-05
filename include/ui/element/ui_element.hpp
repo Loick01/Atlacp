@@ -41,7 +41,7 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         virtual void ComputeFinal();
         
         std::unique_ptr<UiElement> RemoveChild(const UiKey& key);
-        UiElement* GetParent(); // Should return const and be const ?
+        UiElement* GetParent(); // TODO : Should return const and be const ?
         const UiKey& GetKey() const;
         UiParams& GetParams();
 

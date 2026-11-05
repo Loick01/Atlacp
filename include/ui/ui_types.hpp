@@ -4,11 +4,11 @@
 
 #include "image/image_types.hpp" // FontSize
 
-using UiKey = std::string; // string ? Rename UiElementKey ?
+using UiKey = std::string; // TODO : string ? // TODO : Rename UiElementKey ?
 
 enum class UiElementEvent
 {
-    Delete // Create ?
+    Delete // TODO : Create ? (I don't need it for now)
 };
 
 enum class Axis
@@ -28,7 +28,7 @@ enum class Anchor
 template<typename T>
 struct UiValue
 {
-    UiKey id; // const ?
+    UiKey id; // TODO : const ?
     T value;
 
     UiValue(UiKey key, T v):
@@ -58,7 +58,7 @@ struct UiParams
     }
 };
 
-struct PartialSize // Should be in ui_element.hpp ?
+struct PartialSize // TODO++ : Should be in ui_element.hpp ?
 {
     UiKey srcElement;
     Axis axis;
@@ -71,7 +71,7 @@ struct PartialSize // Should be in ui_element.hpp ?
     PartialSize(const UiKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
 };
 
-struct DataUi // Rename + Should not be here ?
+struct DataUi // TODO : Rename ? // TODO : Should not be here
 {
     UiKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
     UiKey key;
@@ -83,14 +83,14 @@ struct DataUi // Rename + Should not be here ?
     
     // Can't use UiParams
     PartialSize scale;
-    Axis dstScaleAxis; // Only use for UiElement (when type = "uielement"), should not be here ?
+    Axis dstScaleAxis; // Only use for UiElement (when type = "uielement") // TODO : Should not be here ?
     Anchor xAnchor;
     Anchor yAnchor;
     PartialSize xPadding;
     PartialSize yPadding;
 
-    DataUi() { // Should not happen
+    DataUi() { // TODO : Should I remove it ? (should not happen)
         text = "invalid_text";
-        fontSize = FontSize::Small; // Small ?
+        fontSize = FontSize::Small; // TODO : Small as default font size ?
     }
 };

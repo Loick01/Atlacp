@@ -20,7 +20,7 @@ void TriggerController::SetTriggers(const std::vector<DataMapElement>& triggersD
     m_triggers.clear();
     
     for (const DataMapElement& data : triggersData) {
-        MapElement* e = new MapElement(tilemap); // TODO
+        MapElement* e = new MapElement(tilemap); // TODO : Do not use new
         e->SetMapPosition(data.position);
         e->SetOrders(data.orders);
         m_triggers.push_back(e);
