@@ -4,7 +4,7 @@
 #include "core/file/file.hpp"
 #include "core/logger.hpp"
 #include "core/time.hpp"
-#include "map/map_element_controller.hpp"
+#include "map/map_entity_controller.hpp"
 #include "map/npc.hpp" // NPC, MapBehaviour
 #include "sound/sound.hpp"
 #include "tile/tilemap.hpp"
@@ -13,7 +13,7 @@
 #include "ui/component/ui_frame_text.hpp"
 #include "window/boxing.hpp"
 
-OrderController::OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
+OrderController::OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapEntityController& mapElementController,
 Tilemap& tilemap, Time& time, UiComponentController& uiComponentController) :
     m_boxing(boxing), m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
     m_tilemap(tilemap), m_time(time), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)

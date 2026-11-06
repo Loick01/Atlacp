@@ -11,7 +11,7 @@ class MapEntity;
 class TextureController;
 class Tilemap;
 
-class MapElementController : public Notifier<EntityEvent>
+class MapEntityController : public Notifier<EntityEvent>
 {
     private:
         const FileReader& m_fileReader;
@@ -27,25 +27,22 @@ class MapElementController : public Notifier<EntityEvent>
         // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
         std::vector<MapEntity*> m_updatedEntities;
 
-        std::vector<MapElement*> m_mapElements; // TODO++ : Should not be here ? + Do not contains MapEntity (Player and NPCs), so the name is not really correct
-
         MapEntity* m_currentMapEntityUpdated;
 
         bool m_shouldUpdateNpc;
         
     public:
-        MapElementController(const FileReader& fileReader, TextureController& textureController,
+        MapEntityController(const FileReader& fileReader, TextureController& textureController,
             Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath);
-        ~MapElementController();
+        ~MapEntityController();
         
         std::vector<MapEntity*>& GetEntities();
-        std::vector<MapElement*>& GetElements();
         
         MapEntity* GetMapEntityFromId(const unsigned int id);
         MapEntity* GetCurrentMapEntityUpdated() const; // TODO : const ?
         
         void Draw() const;
-        void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before MapElementController::Update()) 
+        void Update(const GameMapEventState& playerEventState, const float deltaTime); // GameMapEventState or call SetEventState in GameMapScene (before MapEntityController::Update()) 
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
@@ -53,5 +50,4 @@ class MapElementController : public Notifier<EntityEvent>
         void DeleteEntity(const unsigned int idEntity);
         void DeleteNPCs();
         void LoadNPCsForMap(const std::string& filepath, const unsigned int mapIndex);
-        void LoadElements(const std::vector<DataMapElement>& elementsData);
 };

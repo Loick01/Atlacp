@@ -14,26 +14,24 @@ TriggerController::TriggerController(OrderController& orderController):
 
 void TriggerController::SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap)
 {
-    // TODO : Remove (I will use smart ptr, I'm just not sure where to store them)
-    for (MapElement* e : m_triggers)
-        delete e; // Because I use new to create my MapElement (below)
     m_triggers.clear();
-    
+    m_triggers.reserve(triggersData.size());
+
     for (const DataMapElement& data : triggersData) {
-        MapElement* e = new MapElement(tilemap); // TODO : Do not use new
-        e->SetMapPosition(data.position);
-        e->SetOrders(data.orders);
+        MapElement e(tilemap);
+        e.SetMapPosition(data.position);
+        e.SetOrders(data.orders);
         m_triggers.push_back(e);
     }
 }
 
 void TriggerController::LookForTrigger(MapEntity* entity)
 {
-    for (MapElement* t : m_triggers) {
-        if (t->GetMapPosition() == entity->GetMapPosition()) {
+    for (MapElement& trigger : m_triggers) {
+        if (trigger.GetMapPosition() == entity->GetMapPosition()) {
             entity->SetInteractionState(EntityInteractionState::Triggering);
             m_triggeringEntity = entity;
-            m_orderController.AddOrders(t->GetOrders());
+            m_orderController.AddOrders(trigger.GetOrders());
             m_orderController.NextOrder();
             break;
         }

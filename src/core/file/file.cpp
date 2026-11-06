@@ -117,7 +117,7 @@ std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, c
             input >> data.runSpeed;
             data.id = currentId;
             data.orders = ReadOrders(input);
-            // MapPosition is not read in the file, because ReadDataNPC is used (for now ?) only in MapElementController::CreateEntity, which provides a spawn position
+            // MapPosition is not read in the file, because ReadDataNPC is used (for now ?) only in MapEntityController::CreateEntity, which provides a spawn position
             return data;
         } else {
             std::getline(input, s); // Skip the line

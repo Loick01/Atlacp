@@ -11,7 +11,7 @@ struct Time;
 class Boxing;
 class Camera;
 class FileReader;
-class MapElementController;
+class MapEntityController;
 class Tilemap;
 class UiComponentController;
 class UiDialogBox;
@@ -32,7 +32,7 @@ class OrderController : public Notifier<OrderExecutionEvent>
         Boxing& m_boxing;
         Camera& m_camera;
         FileReader& m_fileReader;
-        MapElementController& m_mapElementController;
+        MapEntityController& m_mapElementController;
         Tilemap& m_tilemap; // TODO : Should be in NPC instead of here ?
         Time& m_time;
         UiComponentController& m_uiComponentController;
@@ -77,7 +77,7 @@ class OrderController : public Notifier<OrderExecutionEvent>
         void Stop(const Order& order); // TODO++ : Rename ?
 
     public:
-        OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapElementController& mapElementController,
+        OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapEntityController& mapElementController,
             Tilemap& tilemap, Time& time, UiComponentController& uiComponentController);
 
         bool HasNoOrders() const;

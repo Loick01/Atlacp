@@ -10,7 +10,7 @@
 #include "image/texture.hpp"
 #include "map/interaction/interaction.hpp"
 #include "map/interaction/trigger.hpp"
-#include "map/map_element_controller.hpp"
+#include "map/map_entity_controller.hpp"
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
 #include "core/time.hpp"
@@ -88,9 +88,9 @@ class TilemapScene : public Scene
 class GameMapScene : public TilemapScene
 {
     private:
-        MapElementController m_elementsController; // TODO : Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
+        MapEntityController m_elementsController; // TODO : Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
         OrderController m_orderController;
-        InteractionController m_interactionController; // Was in MapElementController, but I moved it here because I need to remove #include "interaction.hpp" from map_element_controller.hpp
+        InteractionController m_interactionController;
         TriggerController m_triggerController;
 
         GameMapSceneState m_sceneState;

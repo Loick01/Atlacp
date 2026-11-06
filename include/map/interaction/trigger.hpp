@@ -12,7 +12,7 @@ class Tilemap;
 class TriggerController // TODO : Should be merged with InteractionController ?
 {
     private:
-        std::vector<MapElement*> m_triggers;
+        std::vector<MapElement> m_triggers;
         OrderController& m_orderController;
         MapEntity* m_triggeringEntity;
 
@@ -21,7 +21,7 @@ class TriggerController // TODO : Should be merged with InteractionController ?
     public:
         TriggerController(OrderController& orderController);
 
-        void SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap); // TODO++ : Rename ? (Same than MapElementController::LoadElements())
+        void SetTriggers(const std::vector<DataMapElement>& triggersData, Tilemap& tilemap);
     
         void LookForTrigger(MapEntity* entity);
         void ContinueTrigger();

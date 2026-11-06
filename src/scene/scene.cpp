@@ -196,7 +196,7 @@ GameMapScene::GameMapScene(GameContext& context):
     m_context.eventController = std::make_unique<GameMapEventController>();
     
     m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
-    m_elementsController.LoadElements(m_tilemap.GetElementsData());
+    m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
 
     // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // TODO : Will be removed (read from a file)
@@ -217,7 +217,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
         }
         case EntityEvent::EnterInteraction: {
             // TODO : Should use GetCurrentMapEntityUpdated() to get interacting entity ?
-            m_interactionController.InitializeInteraction(m_elementsController.GetEntities(), m_elementsController.GetElements());
+            m_interactionController.InitializeInteraction(m_elementsController.GetEntities());
             m_interactionController.StartInteraction();
             break;
         }
@@ -294,7 +294,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
             m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
-            m_elementsController.LoadElements(m_tilemap.GetElementsData());
+            m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
             m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
             break;
         }
