@@ -89,7 +89,7 @@ JoystickActionController::JoystickActionController() :
 {
     m_joystick = SDL_JoystickOpen(0);
     if (m_joystick == nullptr)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open Joystick: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open Joystick: " + std::string(SDL_GetError())); // TODO : Log
 }
 
 bool JoystickActionController::IsJoystickAvailable()
@@ -98,7 +98,7 @@ bool JoystickActionController::IsJoystickAvailable()
     if (joystick==0) {
         return SDL_NumJoysticks() != 0;
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Unable to initialize Joystick: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Unable to initialize Joystick: " + std::string(SDL_GetError())); // TODO : Log
         return false;
     }
 }

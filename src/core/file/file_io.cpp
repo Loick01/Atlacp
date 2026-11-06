@@ -9,7 +9,7 @@ std::ifstream FileReader::OpenFile(const std::string& filepath)
     std::ifstream input;
     input.open(filepath);
     if (!input)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open the file : " + filepath);
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open the file : " + filepath); // TODO : Log (use std::optional)
 
     return input;
 }
@@ -26,7 +26,7 @@ std::string FileReader::GetFileExtension(const std::string& filepath) const
 {
     size_t pos = filepath.rfind('.');
     if (pos == std::string::npos) {
-        Logger::GetInstance().AddLog(Level::L4, "This file has no extension : " + filepath);
+        Logger::GetInstance().AddLog(Level::L4, "This file has no extension : " + filepath); // TODO : Level
         return "";
     }
 

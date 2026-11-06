@@ -49,7 +49,7 @@ void NPC::Update(const float deltaTime)
         }
 
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in NPC::Update");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in NPC::Update"); // TODO : Log
             // TODO : SetMovementState(Free) ?
             break; 
     }
@@ -63,12 +63,13 @@ void NPC::SetRandomBehaviour()
 void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
 {
     m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, tilemap);
+    // TODO : IsInit()
 }
 
 void NPC::SetFollowBehaviour(const MapEntity* trackedEntity)
 {
     m_behaviour = std::make_unique<MapFollowBehaviour>(this, trackedEntity);
-    if (!m_behaviour->IsReady())
+    if (!m_behaviour->IsInit())
         SetIdleBehaviour(Direction::Down); // TODO : Do something else (use pathfind ?)
 }
 

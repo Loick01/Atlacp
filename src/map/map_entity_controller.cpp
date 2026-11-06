@@ -34,7 +34,7 @@ MapEntity* MapEntityController::GetMapEntityFromId(const unsigned int id)
         if (m->GetId() == id)
             return m;
     }
-    Logger::GetInstance().AddLog(Level::L4, "The MapEntity " + std::to_string(id) + " was not found in MapEntityController::m_updatedEntities");
+    Logger::GetInstance().AddLog(Level::L4, "The MapEntity " + std::to_string(id) + " was not found in MapEntityController::m_updatedEntities"); // TODO : Log
     return nullptr;
 }
 
@@ -46,19 +46,19 @@ MapEntity* MapEntityController::GetCurrentMapEntityUpdated() const
 void MapEntityController::CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition)
 {
     if (idEntity == 0) { 
-        Logger::GetInstance().AddLog(Level::L4, "MapEntityController::CreateEntity -> idEntity = 0 is already use for Player");
+        Logger::GetInstance().AddLog(Level::L4, "MapEntityController::CreateEntity -> idEntity = 0 is already use for Player"); // TODO : Log
         return; // TODO : Maybe I could still create the NPC but with a new id (but how I will retrieve the NPC from data file ?)
     }
 
     const std::optional<DataNPC> optData = m_fileReader.ReadDataNPC(npcFilepath, idEntity);
     
     if (!optData.has_value()) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity);
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity); // TODO : Log
         return;
     }
 
     if (!m_tilemap.IsFreePosition(spawnPosition)) { // Do not use data.position, but the MapPosition given as a parameter 
-        Logger::GetInstance().AddLog(Level::L4, "MapEntity can only spawn on free position");
+        Logger::GetInstance().AddLog(Level::L4, "MapEntity can only spawn on free position"); // TODO : Log
         return;
     }
     
@@ -87,7 +87,7 @@ void MapEntityController::CreateEntity(const std::string& npcFilepath, const uns
 void MapEntityController::DeleteEntity(const unsigned int idEntity)
 {
     if (idEntity == 0) { 
-        Logger::GetInstance().AddLog(Level::L4, "MapEntityController::DeleteEntity -> Player (idEntity = 0) should not be deleted");
+        Logger::GetInstance().AddLog(Level::L4, "MapEntityController::DeleteEntity -> Player (idEntity = 0) should not be deleted"); // TODO : Log
         return;
     }
 
@@ -105,7 +105,7 @@ void MapEntityController::DeleteEntity(const unsigned int idEntity)
     );
 
     if (itRendered == m_renderedEntities.end() || itUpdated == m_updatedEntities.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "This MapEntity was not found in MapEntityController : " + idEntity);
+        Logger::GetInstance().AddLog(Level::L4, "This MapEntity was not found in MapEntityController : " + idEntity); // TODO : Log
         return;
     }
 
@@ -201,7 +201,7 @@ void MapEntityController::LoadNPCsForMap(const std::string& filepath, const unsi
         DataNPC data = npcsData[i];
         const MapPosition npcPosition = data.position;
         if (!m_tilemap.IsFreePosition(npcPosition)) {
-            Logger::GetInstance().AddLog(Level::L4, "NPC can only spawn on free position");
+            Logger::GetInstance().AddLog(Level::L4, "NPC can only spawn on free position"); // TODO : Log
             continue; // TODO : Do something else than skipping the NPC ?
         }
         

@@ -8,13 +8,13 @@ TextureController::TextureController(FontController& fontController, SDL_Rendere
     // SDL_image initialization
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
     if ((IMG_Init(imgFlags) & imgFlags) != imgFlags)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_image: " + std::string(IMG_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_image: " + std::string(IMG_GetError())); // TODO : Log
 }
 
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, Texture>& p : m_textures){
-        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // TODO : Will be removed and use Logger instead
+        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // TODO : Log
         SDL_DestroyTexture(p.second.texture);
     }
     IMG_Quit();
@@ -24,7 +24,7 @@ void TextureController::CreateTextureFromSurface(SDL_Surface* surface, const Tex
 {
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
     if (!texture) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to convert the surface " + s + " into a texture: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to convert the surface " + s + " into a texture: " + std::string(SDL_GetError())); // TODO : Log
         return;
     }
 
@@ -45,7 +45,7 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
     if (m_textures.find(key) == m_textures.end()){
         SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
         if (!surface) 
-            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError()));
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Log
         else
             CreateTextureFromSurface(surface, key, textureFilepath, textureWidth, textureHeight);
     } else { // Filepath has already been loaded as a texture
@@ -57,7 +57,7 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
     int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
 {
     if (key.empty()) {
-        Logger::GetInstance().AddLog(Level::L4, "Texture key (string) is empty, text in UiTextElement should never be \"\"");
+        Logger::GetInstance().AddLog(Level::L4, "Texture key (string) is empty, text in UiTextElement should never be \"\""); // TODO : Log
         return;
     }
     
@@ -87,6 +87,6 @@ void TextureController::DeleteTexture(const TextureKey& key)
             it->second.count--;
         }
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Try to delete a texture not in m_textures: " + key);
+        Logger::GetInstance().AddLog(Level::L4, "Try to delete a texture not in m_textures: " + key); // TODO : Log
     }
 }

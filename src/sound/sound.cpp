@@ -9,10 +9,10 @@ SoundController::SoundController()
     // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
     int mixFlags = MIX_INIT_OGG;
     if ((Mix_Init(mixFlags) & mixFlags) != mixFlags)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_mixer: " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_mixer: " + std::string(Mix_GetError())); // TODO : Log
 
     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open Audio: " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open Audio: " + std::string(Mix_GetError())); // TODO : Log
 
     m_backgroundMusic = nullptr;
 
@@ -67,7 +67,12 @@ void SoundController::SetBackgroundMusic(const std::string& filepath)
     
     m_backgroundMusic = Mix_LoadMUS((std::string(AssetDirectory::Music)+filepath).c_str());
     if (Mix_PlayMusic(m_backgroundMusic, -1) == -1) 
-        Logger::GetInstance().AddLog(Level::L4, "Failed to play the music " + filepath + ": " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to play the music " + filepath + ": " + std::string(Mix_GetError())); // TODO : Log
+}
+
+void SoundController::ClearChunk()
+{
+    m_requestedChunk.clear();
 }
 
 void SoundController::RequestChunk(const std::string& path)
@@ -86,9 +91,9 @@ void SoundController::PlayRequestedChunk()
 void SoundController::PlayChunk(const std::string& path)
 {
     if (m_chunks.find(path) == m_chunks.end())
-        Logger::GetInstance().AddLog(Level::L4, "Try to play a Chunk not in SoundController (" + path + "): " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Try to play a Chunk not in SoundController (" + path + "): " + std::string(Mix_GetError())); // TODO : Log
     else if (Mix_PlayChannel(-1, m_chunks[path], 0) == -1)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to play Chunk (" + path + "): " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to play Chunk (" + path + "): " + std::string(Mix_GetError())); // TODO : Log
 }
 
 void SoundController::LoadChunk(const std::string& path)
@@ -98,7 +103,7 @@ void SoundController::LoadChunk(const std::string& path)
         if (chunk != nullptr) 
             m_chunks[path] = chunk;
         else
-            Logger::GetInstance().AddLog(Level::L4, "Failed to load the Chunk (" + path + " ): " + std::string(Mix_GetError()));
+            Logger::GetInstance().AddLog(Level::L4, "Failed to load the Chunk (" + path + " ): " + std::string(Mix_GetError())); // TODO : Log
     }
 }
 
@@ -109,6 +114,6 @@ void SoundController::DeleteChunk(const std::string& path)
         Mix_FreeChunk(it->second);
         m_chunks.erase(it);
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Try to delete a Chunk not in SoundController (" + path + " ): " + std::string(Mix_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Try to delete a Chunk not in SoundController (" + path + " ): " + std::string(Mix_GetError())); // TODO : Log
     }
 }

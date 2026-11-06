@@ -25,7 +25,7 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
         case 3:
             return SwitchEvent::ToEditorMap;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled mode used in SceneController::GetSwitchEventFromMode");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled mode used in SceneController::GetSwitchEventFromMode"); // TODO : Log
             return SwitchEvent::Invalid;
     };
 }
@@ -51,7 +51,7 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             break;
         }
         default: {
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled SwitchEvent used in SceneController::SetCurrentScene");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled SwitchEvent used in SceneController::SetCurrentScene"); // TODO : Log (SetCurrentScene() should return a bool)
             return;
         }
     }
@@ -138,8 +138,8 @@ void MainMenuScene::Gameloop()
                 m_gameloop = false;
                 return;
             default:
-                Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index: " + std::to_string(m_selector.GetOptionIndex()));
-                return; // TODO : ?
+                Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index: " + std::to_string(m_selector.GetOptionIndex())); // TODO : Log
+                return;
         }
         Notify(se);
     }
@@ -240,7 +240,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityEvent used in GameMapScene::HandleEntityEvent");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityEvent used in GameMapScene::HandleEntityEvent"); // TODO : Log
             break;
     }
 }
@@ -480,5 +480,6 @@ void BattleScene::Exit(const ExitEvent e) {
             Notify(SwitchEvent::ToMainMenu);
             break;
         }
+        // TODO : Default case
     }
 }

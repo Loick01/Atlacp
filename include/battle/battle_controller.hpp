@@ -48,8 +48,8 @@ struct BattleCommand
             case CommandType::Heal :
                 return sourceTeam;
             default :
-                Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleCommand::ComputeTargetTeam");
-                return sourceTeam;
+                Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleCommand::ComputeTargetTeam"); // TODO : Level
+                return sourceTeam; // TODO : Maybe I could find something else to return ?
         }
     }
 
@@ -115,6 +115,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleMoveSelection(const int moveIndex);
         
         void HandleCurrentCommand();
+        void EndTurn();
 
     public:
         BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);

@@ -12,7 +12,7 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
         SetMapPosition(spawn);
     else {
         SetMapPosition(MapPosition{0, 0}); // TODO : The position could be not free
-        Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map");
+        Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map"); // TODO : Log
     }
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
@@ -41,7 +41,7 @@ void Player::Update(const float deltaTime)
             }
 
             default:
-                Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityInteractionState used in Player::Update");
+                Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityInteractionState used in Player::Update"); // TODO : Log
                 break; 
         }
         return;
@@ -99,7 +99,7 @@ void Player::Update(const float deltaTime)
         }
 
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in Player::Update");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in Player::Update"); // TODO : Log
             break; 
     }
 }

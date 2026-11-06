@@ -41,7 +41,7 @@ std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) con
         case Team::Opponent:
             return m_opponents;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Team used in BattleController::GetActorsInTeam");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Team used in BattleController::GetActorsInTeam"); // TODO : Level
             return {};
     }
 }
@@ -59,15 +59,23 @@ std::vector<BattleActor*> BattleController::FilterActorsByLifeState(const std::v
 BattleActor* BattleController::PopNextTurn()
 {
     BattleActor* actor = nullptr;
-    while (actor == nullptr) { // TODO : Should try m_turns.empty() (even if it's not possible) ?
+    while (actor == nullptr) {
+        if (m_turns.empty()) {
+            Logger::GetInstance().AddLog(Level::L4, "No actors left in BattleController::m_turns"); // TODO : Level
+            return nullptr;
+        }
+        
         actor = m_turns.top();
         m_turns.pop();
+        
         if (actor->GetLifeState() == LifeState::Dead) // When a BattleActor dies, he's not instantly removed from m_turns 
             actor = nullptr; // Dead actor is not pushed in m_turns
     }
+
     m_globalTurnTime = actor->GetNextTurnTime();
     actor->ComputeNextTurnTime(m_globalTurnTime);
     m_turns.push(actor);
+
     return actor;
 }
 
@@ -99,7 +107,7 @@ unsigned int BattleController::ComputeAmount(const MoveType mt, const unsigned b
         case MoveType::Magic:
             return baseValue * srcActor->GetStrength(); // TODO : Need a new field in BattleActor
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled MoveType used in BattleController::ComputeAmount");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled MoveType used in BattleController::ComputeAmount"); // TODO : Level
             return 0;
     }
 }
@@ -244,7 +252,8 @@ void BattleController::HandleActionSelection(const int selectorIndex)
         }
 
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index : " + std::to_string(selectorIndex));
+            Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index : " + std::to_string(selectorIndex)); // TODO : Level
+            EndTurn();
             break;
     }
 }
@@ -293,11 +302,19 @@ void BattleController::HandleCurrentCommand()
             break;
         }
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleController::HandleCurrentCommand");
-            break;
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleController::HandleCurrentCommand"); // TODO : Level
+            moveAnimation->Close(); // Cancel the move animation
+            SoundController::GetInstance().ClearChunk(); // Cancel the move sfx
+            EndTurn();
+            return;
     }
 
     m_turnState = TurnState::WaitingForAnimation;
+}
+
+void BattleController::EndTurn()
+{
+    m_turnState = TurnState::Init;
 }
 
 void BattleController::InitializeActors(const std::string& dataFile)
@@ -374,7 +391,17 @@ void BattleController::PlayNextTurn()
     switch (m_turnState) {
         case TurnState::Init : {
             m_currentActor = PopNextTurn();
-            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) OpenActionSelection();
+            if (m_currentActor == nullptr) {
+                // This can happen only if m_turns is empty (because of the while loop in PopNextTurn()). I have no choice but to exit the battle
+                // There is already a Log in PopNextTurn() in this situation
+                m_exitEvent = ExitEvent::ExitLost;
+                m_turnState = TurnState::End;
+                break;
+            }
+        
+            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) 
+                OpenActionSelection();
+            
             m_turnState = TurnState::ActionSelection; 
         }
         
@@ -464,14 +491,15 @@ void BattleController::PlayNextTurn()
                     frameText->NextText();
                     m_turnState = TurnState::WaitingForText;
                 } else {   
-                    m_turnState = TurnState::Init;
+                    EndTurn();
                 } 
             }
             break;
         }
 
         default:    
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Turn used in BattleController::PlayNextTurn");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Turn used in BattleController::PlayNextTurn"); // TODO : Level
+            EndTurn();
             break;
     }
 }

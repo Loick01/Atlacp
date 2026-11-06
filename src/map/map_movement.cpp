@@ -51,7 +51,7 @@ MapPosition MapMovement::GetMoveFromDirection(const Direction direction) const
         case Direction::Right:
             return MapPosition{1, 0};
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in MapMovement::GetMoveFromDirection");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in MapMovement::GetMoveFromDirection"); // TODO : Log
             return MapPosition{0, 0}; 
     }
 }
@@ -66,7 +66,7 @@ Direction MapMovement::GetDirectionFromMove(const MapPosition move) const
         else if (move.x==1) return Direction::Right;
     }
     
-    Logger::GetInstance().AddLog(Level::L4, "Direction::None");
+    Logger::GetInstance().AddLog(Level::L4, "Direction::None"); // TODO : Log
     return Direction::None;
 }
 

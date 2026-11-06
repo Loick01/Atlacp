@@ -25,7 +25,7 @@ void UiSpriteAnimation::Open()
 
     m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // TODO : static_cast ?
     if (m_animated == nullptr) { 
-        Logger::GetInstance().AddLog(Level::L4, "This UiElement must be a UiAnimatedElement: " + m_uiKey);
+        Logger::GetInstance().AddLog(Level::L4, "This UiElement must be a UiAnimatedElement: " + m_uiKey); // TODO : Log
         return;
     }
 

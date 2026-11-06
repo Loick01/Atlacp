@@ -4,6 +4,7 @@
 
 BattleActor* BattleBehaviour::SelectTarget(const std::vector<BattleActor*>& actors) const
 {
+    // TODO : Return nullptr if actors.empty() ?
     return actors[rand()%actors.size()];
 }
 

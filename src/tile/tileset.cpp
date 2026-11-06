@@ -24,7 +24,7 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
     else if (data.tileSize != m_tileSize) {
-        Logger::GetInstance().AddLog(Level::L4, "Try to load a tileset with a different tileSize: " + data.tileSize);
+        Logger::GetInstance().AddLog(Level::L4, "Try to load a tileset with a different tileSize: " + data.tileSize); // TODO : Log
         return;
     }
     
@@ -134,8 +134,8 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
             }
         }
     }
-    Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile);
-    return 0; // TODO : ?
+    Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile); // TODO : Log
+    return 0;
 }
 
 void Tileset::CleanTilesets(const bool shouldDeleteCurrent)

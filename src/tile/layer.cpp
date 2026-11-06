@@ -78,7 +78,7 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
             BuildCollisionLayer(occupancyGrid);
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer"); // TODO : Log
             return; // TODO : ?
     }
 
@@ -88,7 +88,7 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, m_tileSize, m_tileSize);
 
     if (wantedTileSize != m_tileSize) // If this happens, pathToLoad is probably incorrect (because I use m_tileKey += std::to_string(wantedTileSize);)
-        Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset");
+        Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // TODO : Log
 }
 
 ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is deleted in ~TextureController

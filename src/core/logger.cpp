@@ -15,7 +15,7 @@ std::string_view Log::GetLevelLabel() const {
         case Level::L4:
             return "[TBD]";
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Level used in Log::GetLevelLabel");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Level used in Log::GetLevelLabel"); // TODO : Level
             return "[ _ ]";
     }
 }

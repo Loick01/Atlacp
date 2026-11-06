@@ -43,7 +43,7 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
         else if (s == "boxing_animation")
             orders.push_back(ReadBoxingAnimationOrder(input));
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Unknown order type read in FileReader::ReadOrders: " + s);
+            Logger::GetInstance().AddLog(Level::L4, "Unknown order type read in FileReader::ReadOrders: " + s); // TODO : Log
             break;
         }
     }

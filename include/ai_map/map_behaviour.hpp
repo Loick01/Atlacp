@@ -13,13 +13,13 @@ class MapEntityBehaviour // TODO : Should be call EntityMovementBehaviour or Mov
 {
     protected:
         Random m_random; // TODO : Should not be here ? (a behaviour will not necessary need random generation)
-        bool m_ready;
+        bool m_init;
 
     public:
         MapEntityBehaviour();
         virtual ~MapEntityBehaviour() = default;
         
-        bool IsReady() const;
+        bool IsInit() const;
         
         // One function for each value in MapEntity::EntityMovementState
         virtual void FreeCase(MapEntity& entity, const float deltaTime) = 0;

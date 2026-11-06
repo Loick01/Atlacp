@@ -138,7 +138,7 @@ inline std::string GetStringFromDirection(const Direction d)
         case Direction::Left :
             return "left";
         default:   
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in GetStringFromDirection");
-            return "none";
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Direction used in GetStringFromDirection"); // TODO : Level
+            return "invalid";
     }
 }

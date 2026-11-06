@@ -33,6 +33,7 @@ class SoundController
 
         void SetBackgroundMusic(const std::string& filepath);
 
+        void ClearChunk();
         void RequestChunk(const std::string& path);
         void PlayRequestedChunk();
         

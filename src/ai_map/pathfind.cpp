@@ -39,7 +39,7 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
     if (!found) {
         std::ostringstream message;
         message << "No path can be found from " << startPosition << " to " << endPosition;
-        Logger::GetInstance().AddLog(Level::L4, message.str());
+        Logger::GetInstance().AddLog(Level::L4, message.str()); // TODO : Level
         return {};
     }
 

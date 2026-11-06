@@ -7,7 +7,7 @@ UiList::UiList(UiController& uiController, const std::string& uiFilepath) :
 {
     // TODO : There is something wrong here
     if (!m_uiController.IsBaseUiFile(m_uiFilepath))
-        Logger::GetInstance().AddLog(Level::L4, "The file used for UiList must be a base file: " + m_uiFilepath);
+        Logger::GetInstance().AddLog(Level::L4, "The file used for UiList must be a base file: " + m_uiFilepath); // TODO : Log
 }
 
 std::vector<UiKey> UiList::GetItemsKey() const

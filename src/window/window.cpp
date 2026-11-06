@@ -6,7 +6,7 @@ Window::Window(const std::string& title, const SDL_Color bgColor) :
     m_title(title), m_window(nullptr), m_renderer(nullptr), m_bgColor(bgColor), m_boxing({0, 0, 0})
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) 
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL: " + std::string(SDL_GetError())); // TODO : Log
     
     CreateWindow();
 
@@ -25,11 +25,11 @@ void Window::CreateWindow()
 {
     m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if(!m_window)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create SDL window: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create SDL window: " + std::string(SDL_GetError())); // TODO : Log
 
     m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if(!m_renderer) 
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create SDL renderer: " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create SDL renderer: " + std::string(SDL_GetError())); // TODO : Log
 
     SDL_GetWindowSize(m_window, &m_size.x, &m_size.y);
 }

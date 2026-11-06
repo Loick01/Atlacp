@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
         Logger::GetInstance().WriteLogsInFile();
     } catch (const std::exception& e) {
         const std::string exception = std::string("[Unhandled exception] ") + e.what();
-        Logger::GetInstance().AddLog(Level::L4, exception);
+        Logger::GetInstance().AddLog(Level::L4, exception); // TODO : Level
         Logger::GetInstance().WriteLogsInFile();
         
         std::cerr << exception << "\n";

@@ -111,7 +111,7 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
             SetZoom(scale/GetTextureHeight());
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiElement::ComputeZoom");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiElement::ComputeZoom"); // TODO : Log
             break;
     }
 }
@@ -138,7 +138,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             localPosition.x = m_parentSize.x;
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (x axis) used in UiElement::ComputePosition");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (x axis) used in UiElement::ComputePosition"); // TODO : Log
             break;
     }
     switch(yAnchor){
@@ -158,7 +158,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
             localPosition.y = m_parentSize.y;
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (y axis) used in UiElement::ComputePosition");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Anchor (y axis) used in UiElement::ComputePosition"); // TODO : Log
             break;
     }
     SetLocalPosition(localPosition);
@@ -185,7 +185,7 @@ std::unique_ptr<UiElement> UiElement::RemoveChild(const UiKey& key)
         }
     }
     
-    Logger::GetInstance().AddLog(Level::L4, "(UiElement::RemoveChild) No elements have this key: " + key);
+    Logger::GetInstance().AddLog(Level::L4, "(UiElement::RemoveChild) No elements have this key: " + key); // TODO : Log
     return nullptr;
 }
 

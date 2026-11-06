@@ -40,7 +40,7 @@ void OrderController::Execute(Order& order)
         },
         order
     );
-    Logger::GetInstance().AddLog(Level::L4, "No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder
+    Logger::GetInstance().AddLog(Level::L4, "No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder // TODO : Log
 }
 
 bool OrderController::Update(const Order& order)
@@ -187,7 +187,7 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
             m_tilemap.SetCurrentBound(MapBound::Inside);
             break;
         default :
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled PlayerReposition used in ExecuteOrder(LoadMapOrder)");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled PlayerReposition used in ExecuteOrder(LoadMapOrder)"); // TODO : Log
             break;
     }
     
@@ -325,7 +325,7 @@ void OrderController::NextOrder()
     }
 
     if (HasNoOrders()) {
-        Logger::GetInstance().AddLog(Level::L4, "OrderController::m_orders should not be empty when reaching here");
+        Logger::GetInstance().AddLog(Level::L4, "OrderController::m_orders should not be empty when reaching here"); // TODO : Log
         return;
     }
     

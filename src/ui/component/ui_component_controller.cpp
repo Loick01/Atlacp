@@ -16,7 +16,7 @@ UiComponentController::UiComponentController(Time& time, UiController& uiControl
 bool UiComponentController::IsKeyAvailable(const ComponentKey& key) const
 {
     if (m_components.find(key) != m_components.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "This key is already used for a component in UiComponentController: " + key);
+        Logger::GetInstance().AddLog(Level::L4, "This key is already used for a component in UiComponentController: " + key); // TODO : Log
         return false;
     }
     return true;
@@ -25,7 +25,7 @@ bool UiComponentController::IsKeyAvailable(const ComponentKey& key) const
 bool UiComponentController::IsKeyUsed(const ComponentKey& key) const
 {
     if (m_components.find(key) == m_components.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "This key is not used for a component in UiComponentController: " + key);
+        Logger::GetInstance().AddLog(Level::L4, "This key is not used for a component in UiComponentController: " + key); // TODO : Log
         return false;
     }
     return true;

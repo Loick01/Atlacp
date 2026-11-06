@@ -69,7 +69,7 @@ bool Bar::Check(const ScreenPosition windowCenter)
         case BoxingType::Pillarboxing :
             return m_sdlFRect.w > windowCenter.x || m_sdlFRect.w < m_initialFRect.w;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled BoxingType used in Bar::Check");
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled BoxingType used in Bar::Check"); // TODO : Log
             return false;
     }
 }

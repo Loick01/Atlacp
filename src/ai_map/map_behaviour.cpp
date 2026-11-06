@@ -5,19 +5,19 @@
 #include "tile/tilemap.hpp"
 
 MapEntityBehaviour::MapEntityBehaviour():
-    m_ready(false)
+    m_init(false)
 {}
 
-bool MapEntityBehaviour::IsReady() const
+bool MapEntityBehaviour::IsInit() const
 {
-    return m_ready;
+    return m_init;
 }
 
 MapRandomBehaviour::MapRandomBehaviour():
     MapEntityBehaviour()
 {
     m_delay = m_random.GetRandomFloat(0.5f, 5.f);
-    m_ready = true;
+    m_init = true;
 }
 
 void MapRandomBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
@@ -49,23 +49,23 @@ MapFollowBehaviour::MapFollowBehaviour(const MapEntity* followerEntity, const Ma
     MapEntityBehaviour(), m_trackedEntity(trackedEntity)
 {
     if (trackedEntity == nullptr) {
-        Logger::GetInstance().AddLog(Level::L4, "Tracked entity is nullptr");
+        Logger::GetInstance().AddLog(Level::L4, "Tracked entity is nullptr"); // TODO : Level
         return;
     }
     
     // Tracked entity should not be faster than the entity who own this behaviour
     if (trackedEntity->GetWalkSpeed() > followerEntity->GetWalkSpeed() || trackedEntity->GetRunSpeed() > followerEntity->GetRunSpeed()) {
-        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour should not be used if tracked entity is faster than follower");
+        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour should not be used if tracked entity is faster than follower"); // TODO : Level
         return;
     }
 
     // This behaviour do not use pathfinding, it will be a different behaviour
     if (followerEntity->GetMapPosition().GetManhattanDistance(trackedEntity->GetMapPosition()) != 1) {
-        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour can start only when the tracked entity is next to the follower");
+        Logger::GetInstance().AddLog(Level::L4, "MapFollowBehaviour can start only when the tracked entity is next to the follower"); // TODO : Level
         return;
     }
 
-    m_ready = true;
+    m_init = true;
 }
 
 void MapFollowBehaviour::FreeCase(MapEntity& entity, const float deltaTime)
@@ -101,7 +101,9 @@ MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPos
     MapEntityBehaviour(), m_pathIndex(0)
 {
     m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
-    m_ready = true; // TODO++ : m_ready should be true only if a path exists
+    // if (m_path.empty())
+    //     return;
+    m_init = true; // TODO++ : m_init should be true only if a path exists
 }
 
 bool MapGoToBehaviour::IsDone() const
@@ -144,7 +146,7 @@ MapIdleBehaviour::MapIdleBehaviour(MapEntity& entity, const Direction direction)
     MapEntityBehaviour(), m_direction(direction)
 {
     entity.SetOrientation(m_direction);
-    m_ready = true;
+    m_init = true;
 }
 
 void MapIdleBehaviour::FreeCase(MapEntity& entity, const float deltaTime)

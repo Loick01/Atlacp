@@ -6,7 +6,7 @@
 FontController::FontController(const std::string& fontFilepath, const unsigned int targetWidthForSmallText)
 {
     if (TTF_Init() < 0)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL font library: " + std::string(TTF_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL font library: " + std::string(TTF_GetError())); // TODO : Log
 
     // TTF_Font are now created and deleted from the FontController
     
@@ -18,8 +18,8 @@ FontController::FontController(const std::string& fontFilepath, const unsigned i
         LoadFontForSize(fontFilepath, FontSize::Small, averageSize);
         SDL_Surface* surface = GenerateSurfaceFromTextUnwrapped(FontSize::Small, smallSizeExampleText, SDL_Color{0,0,0,255});
         if (!surface) {
-            Logger::GetInstance().AddLog(Level::L4, "Failed to create the text surface");
-            continue; // TODO : ?
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the text surface"); // TODO : Log
+            continue;
         }
 
         if (surface->w > targetWidthForSmallText*1.01f)
@@ -55,7 +55,7 @@ void FontController::LoadFontForSize(const std::string& fontFilepath, const Font
 
     TTF_Font* font = TTF_OpenFont((std::string(AssetDirectory::Font)+fontFilepath).c_str(), textSize);
     if (!font) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to load this font: " + fontFilepath + ": " + std::string(TTF_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to load this font: " + fontFilepath + ": " + std::string(TTF_GetError())); // TODO : Log
         return;
     }
 
@@ -66,7 +66,7 @@ SDL_Surface* FontController::GenerateSurfaceFromText(const FontSize fontSize, co
 {
     SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(GetFontForSize(fontSize), text.c_str(), textColor, maxWidth); // TTF_RenderUTF8_Solid_Wrapped
     if (!surface) 
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create a surface for this text: " + text + ": " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create a surface for this text: " + text + ": " + std::string(SDL_GetError())); // TODO : Log
 
     return surface; // This surface is free when calling TextureController::CreateTextureFromSurface()
 }
@@ -75,7 +75,7 @@ SDL_Surface* FontController::GenerateSurfaceFromTextUnwrapped(const FontSize fon
 {
     SDL_Surface* surface = TTF_RenderUTF8_Blended(GetFontForSize(fontSize), text.c_str(), textColor); // TTF_RenderUTF8_Solid
     if (!surface) 
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create a surface for this text: " + text + ": " + std::string(SDL_GetError()));
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create a surface for this text: " + text + ": " + std::string(SDL_GetError())); // TODO : Log
         
     return surface; // This surface is free when calling TextureController::CreateTextureFromSurface()
 }

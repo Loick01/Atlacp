@@ -43,7 +43,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         if (s == "ally") data.team = Team::Ally;
         else if (s == "opponent") data.team = Team::Opponent;
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ally\" or \"opponent\"");
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ally\" or \"opponent\""); // TODO : Log
             break;
         }
         
@@ -52,7 +52,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         if (s == "ai") data.isAiActor = true;
         else if (s == "player") data.isAiActor = false;
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\"");
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\""); // TODO : Log
             break;
         }
 
@@ -80,7 +80,7 @@ std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilep
         if (s == SECTION_DELIMITER) count++;
     }
     if (count != mapIndex) {
-        Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath);
+        Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath); // TODO : Log
         return npcsData;
     }
 
@@ -123,7 +123,7 @@ std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, c
             std::getline(input, s); // Skip the line
         }
     }
-    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity));
+    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Log
     return std::nullopt;
 }
 
@@ -178,7 +178,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
             } else if (s == "textsize") {
                 data.fontSize = ReadFontSize(input);
             } else {
-                Logger::GetInstance().AddLog(Level::L4, "UiParams has no member with this name: " + s);
+                Logger::GetInstance().AddLog(Level::L4, "UiParams has no member with this name: " + s); // TODO : Log
                 return uisData; // TODO : ?
             }
         }
