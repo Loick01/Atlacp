@@ -59,8 +59,8 @@ class Tilemap : public Notifier<TilemapEvent>
         void TakePosition(const MapPosition p);
         void FreePosition(const MapPosition p);
 
-        void SetTileAt(const size_t layer, const Tile newTile, const MapPosition p);
-        void ReplaceTileAt(const ScenePosition position, const size_t layer, const Tile newTile);
+        void SetTileAt(const size_t layerIndex, const Tile newTile, const MapPosition p);
+        void ReplaceTileAt(const ScenePosition position, const size_t layerIndex, const Tile newTile);
         
         void UpdateMapIndex(const MapBound bound);
         void LoadMapByIndex(const unsigned int mapIndex);

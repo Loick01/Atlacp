@@ -67,12 +67,12 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     std::string pathToLoad = "../assets/tileset/extra_tile/"; // TODO : Should not be here ?
     
     switch (m_layerType) {
-        case ExtraLayerType::LayerBorder :
+        case ExtraLayerType::Border:
             m_tileKey = std::string(TileForExtraPath::TileBorder);
             m_uiDisplay = "Border";
             BuildBorderLayer();
             break;
-        case ExtraLayerType::LayerCollision : 
+        case ExtraLayerType::Collision: 
             m_tileKey = std::string(TileForExtraPath::TileCollision);
             m_uiDisplay = "Collision";
             BuildCollisionLayer(occupancyGrid);

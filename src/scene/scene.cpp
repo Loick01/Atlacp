@@ -324,34 +324,24 @@ EditorMapScene::EditorMapScene(GameContext& context):
     // SoundController::GetInstance().DeleteBackgroundMusic(); // TODO : ?
 }
 
-EditorMapScene::~EditorMapScene()
-{
-    DeleteExtraLayers(m_tilemap.GetLayerCount());
-}
-
 void EditorMapScene::CreateExtraLayers()
 {
-    // TODo : Do not use new
-    TileLayer* borderLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
-        ExtraLayerType::LayerBorder, m_tilemap.GetOccupancyGrid()); // TODO : Try to remove occupancyGrid parameter (used only for ExtraLayerType::LayerCollision)
-    m_layers.push_back(borderLayer);
-    TileLayer* collisionLayer = new ExtraTileLayer(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
-        ExtraLayerType::LayerCollision, m_tilemap.GetOccupancyGrid());
-    m_layers.push_back(collisionLayer);
-}
+    m_extraLayers.reserve(2);
 
-void EditorMapScene::DeleteExtraLayers(const unsigned int index)
-{
-    if (m_layers.size() > 0) { // When loading a map for the first time, there are no layers yet
-        delete m_layers[index]; // Border layer
-        delete m_layers[index+1]; // Collision layer 
-    }
+    // TODO : Try to remove occupancyGrid parameter (used only for ExtraLayerType::Collision)
+    m_extraLayers.emplace_back(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
+        ExtraLayerType::Border, m_tilemap.GetOccupancyGrid()); 
+    m_extraLayers.emplace_back(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
+        ExtraLayerType::Collision, m_tilemap.GetOccupancyGrid());
+
+    for (const ExtraTileLayer& extraLayer : m_extraLayers)
+        m_layers.push_back(&extraLayer);
 }
 
 void EditorMapScene::UpdateTilemapLayer()
 {   
-    DeleteExtraLayers(m_previousLayerCount);
-    TilemapScene::UpdateTilemapLayer();
+    m_extraLayers.clear();
+    TilemapScene::UpdateTilemapLayer(); // m_layers is clear() here 
     CreateExtraLayers();
 
     const unsigned int layerCount = m_tilemap.GetLayerCount();

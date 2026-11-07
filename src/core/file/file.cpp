@@ -263,17 +263,17 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
     ReadHeaderMapFile(input, data);
     Tile t;
     const size_t layerSize = data.size.x*data.size.y;
-    // WARNING : Use push_back on data.map reallocate its internal storage, 
+    // WARNING : Use push_back on data.layers reallocate its internal storage, 
     // causing existing elements to be copied/moved and their destructors to be called.
     // That's why reserve() MUST be called if I want to avoid unexpected calls of ~TileLayer() 
-    data.map.reserve(data.layerCount);
+    data.layers.reserve(data.layerCount);
     for (unsigned int i = 0 ; i < data.layerCount ; i++){
         TileLayer currentLayer(data.size, camera, textureController, tileset); // Currently, all layers have the same size
         for (size_t c = 0 ; c < layerSize ; c++){
             input >> t; 
             currentLayer.AddTile(t);
         }
-        data.map.push_back(currentLayer);
+        data.layers.push_back(currentLayer);
     }
     input.close();
     return data;
@@ -352,11 +352,11 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     }
 
     // Map layers
-    for (unsigned int layer=0 ; layer < layerCount ; layer++){
-        const std::vector<Tile> layer_tiles = mapData.map[layer].GetTiles();
+    for (unsigned int l=0 ; l < layerCount ; l++){
+        const std::vector<Tile> tiles = mapData.layers[l].GetTiles();
         for (size_t j = 0 ; j < height ; j++){
             for (size_t i = 0 ; i < width ; i++){
-                output << layer_tiles[j*width+i] << " ";
+                output << tiles[j*width+i] << " ";
             }
             output << "\n";
         }

@@ -107,6 +107,7 @@ class GameMapScene : public TilemapScene
 class EditorMapScene : public TilemapScene
 {
     private:
+        std::vector<ExtraTileLayer> m_extraLayers;
         std::vector<bool> m_isLayerRendered; // TODO : Should be in Tilemap if I need to use it for other TilemapScene and not only for Editor
         UiDynamicList* m_layerSelection;
         UiSelector* m_selector;
@@ -116,13 +117,12 @@ class EditorMapScene : public TilemapScene
         
     public:
         EditorMapScene(GameContext& context);
-        ~EditorMapScene();
+        ~EditorMapScene() = default;
         
         void Gameloop() override;
         void UpdateTilemapLayer() override;
 
         void CreateExtraLayers();
-        void DeleteExtraLayers(const unsigned int index);
         void BuildUILayerSelection(); // Maps in the same world could have different number of layers, that's why I need to rebuild m_layerSelection
 };
 

@@ -27,7 +27,7 @@ const std::vector<DataMapElement>& Tilemap::GetTriggersData() const
 
 const std::vector<TileLayer>& Tilemap::GetLayers() const
 {
-    return m_mapData.map;
+    return m_mapData.layers;
 }
 
 const std::vector<bool>& Tilemap::GetOccupancyGrid() const
@@ -133,18 +133,18 @@ void Tilemap::FreePosition(const MapPosition p)
     m_mapData.occupancyGrid[GetTileIndex(p)] = true;
 }
 
-void Tilemap::SetTileAt(const size_t layer, const Tile newTile, const MapPosition p)
+void Tilemap::SetTileAt(const size_t layerIndex, const Tile newTile, const MapPosition p)
 {
-    m_mapData.map[layer].SetTile(GetTileIndex(p), newTile);
+    m_mapData.layers[layerIndex].SetTile(GetTileIndex(p), newTile);
 }
 
-void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layer, const Tile newTile)
+void Tilemap::ReplaceTileAt(const ScenePosition sp, const size_t layerIndex, const Tile newTile)
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with scene position)
         const int tileSize = m_tileset.GetTileSize();
         int c = sp.x/tileSize;
         int l = sp.y/tileSize;
-        SetTileAt(layer,newTile,{c,l});
+        SetTileAt(layerIndex, newTile, {c,l});
     }
 }
 
@@ -199,8 +199,8 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
     for (size_t j=0 ; j<map_size.y ; j++){
         for (size_t i=0 ; i<map_size.x ; i++){
             bool is_free = true;
-            for (size_t layer=0 ; layer<m_mapData.layerCount ; layer++){
-                const Tile t = m_mapData.map[layer].GetTile(j*map_size.x+i);
+            for (size_t l = 0 ; l < m_mapData.layerCount ; l++){
+                const Tile t = m_mapData.layers[l].GetTile(j*map_size.x+i);
                 is_free = m_tileset.IsEmptyTile(t);
                 if (!is_free) break;
             }

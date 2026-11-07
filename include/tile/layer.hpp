@@ -10,7 +10,7 @@ class Tileset;
 
 enum class ExtraLayerType
 {
-    LayerBorder, LayerCollision
+    Border, Collision
 };
 
 // No longer inherits from SceneDrawable --> Too many issues caused by the fact 
@@ -63,7 +63,7 @@ struct MapData // TODO++ : Should be in map/map_types.hpp ?
 {
     size_t layerCount;
     size_t layerSplitIndex; // TODO : Later, each MapEntity will have its own value so that it can be drawn independently 
-    std::vector<TileLayer> map; // TODO : Rename layers ?
+    std::vector<TileLayer> layers;
     std::vector<bool> occupancyGrid; // TODO : Could be a TileLayer ?
     std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
     std::vector<DataMapElement> elements;
