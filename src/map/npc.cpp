@@ -29,7 +29,7 @@ void NPC::Update(const float deltaTime)
     if (interactionState != EntityInteractionState::None) {
         return; // TODO : For now it's unnecessary because NPC can't start an interaction or a trigger, but I will change that later
     }
-
+    
     // TODO : Should test if m_behaviour != nullptr ?
     switch (GetMovementState()){ // This code has the same structure than Player::Update, I think I can merge it in MapEntity::Update
         case EntityMovementState::Free: {
@@ -63,7 +63,8 @@ void NPC::SetRandomBehaviour()
 void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
 {
     m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, tilemap);
-    // TODO : IsInit()
+    if (!m_behaviour->IsInit())
+        SetIdleBehaviour(Direction::Down);
 }
 
 void NPC::SetFollowBehaviour(const MapEntity* trackedEntity)

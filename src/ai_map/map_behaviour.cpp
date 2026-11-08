@@ -100,10 +100,10 @@ void MapFollowBehaviour::OnStopCase(MapEntity& entity)
 MapGoToBehaviour::MapGoToBehaviour(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap):
     MapEntityBehaviour(), m_pathIndex(0)
 {
-    m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap);
-    // if (m_path.empty())
-    //     return;
-    m_init = true; // TODO++ : m_init should be true only if a path exists
+    bool hasFound = false;
+    m_path = Pathfind::ComputePath(startPosition, endPosition, tilemap, hasFound);
+    if (hasFound)
+        m_init = true;
 }
 
 bool MapGoToBehaviour::IsDone() const

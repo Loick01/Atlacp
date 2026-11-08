@@ -5,7 +5,7 @@
 
 #include "tile/tilemap.hpp"
 
-std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap)
+std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, const MapPosition endPosition, const Tilemap& tilemap, bool& hasFound)
 {
     // Breadth First Search -> Explore all the accessible tiles
     std::queue<MapPosition> queue;
@@ -14,13 +14,12 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
     visited[tilemap.GetTileIndex(startPosition)] = true; 
     std::vector<MapPosition> parents(tilemap.GetGridSize());
     std::vector<MapPosition> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}}; // TODO++ : Should get it from EventController ?
-    bool found = false;
 
     while (!queue.empty()){
         const MapPosition current = queue.front();
         queue.pop();
         if (current == endPosition){
-            found = true;
+            hasFound = true;
             break;
         }
         for (const MapPosition direction : directions){
@@ -36,7 +35,7 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
         }
     }
 
-    if (!found) {
+    if (!hasFound) {
         std::ostringstream message;
         message << "No path can be found from " << startPosition << " to " << endPosition;
         Logger::GetInstance().AddLog(Level::L4, message.str()); // TODO : Level

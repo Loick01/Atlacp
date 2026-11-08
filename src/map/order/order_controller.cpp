@@ -94,10 +94,18 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetGoToBehaviour() ? 
     // TODO : It needs to be EntityMovementState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
+    
+    // SetGoToBehaviour() can fail (when there is no path from start to end position)
+    // In this situation, SetIdleBehaviour() is called (in SetGoToBehaviour())
     MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());
-    goTo->AddCallback([this](UselessEvent e){NextOrder();});
-    // If the NPC is already at its target, the path is empty. In this scenario, the behaviour will never Notify() and Order execution will be blocked
-    if (goTo->IsDone()) NextOrder();
+    if (goTo != nullptr) { 
+        goTo->AddCallback([this](UselessEvent e){NextOrder();});
+        // If the NPC is already at its target, the path is empty. In this scenario, the behaviour will never Notify() and Order execution will be blocked
+        if (goTo->IsDone()) NextOrder();
+    } else {
+        m_currentOrder = NpcIdleOrder{Direction::Down, o.idNpc};
+        NextOrder();
+    }
 }
 
 void OrderController::ExecuteOrder(const NpcFollowOrder& o)
