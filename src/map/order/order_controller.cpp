@@ -96,15 +96,14 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
     
     // SetGoToBehaviour() can fail (when there is no path from start to end position)
-    // In this situation, SetIdleBehaviour() is called (in SetGoToBehaviour())
     MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());
-    if (goTo != nullptr) { 
+    if (goTo != nullptr && goTo->IsInit()) {
         goTo->AddCallback([this](UselessEvent e){NextOrder();});
         // If the NPC is already at its target, the path is empty. In this scenario, the behaviour will never Notify() and Order execution will be blocked
-        if (goTo->IsDone()) NextOrder();
+        if (goTo->IsDone()) NextOrder(); // That's why I need this line
     } else {
-        m_currentOrder = NpcIdleOrder{Direction::Down, o.idNpc};
-        NextOrder();
+        Order order = NpcIdleOrder{Direction::Down, o.idNpc};
+        Execute(order);
     }
 }
 
@@ -114,7 +113,12 @@ void OrderController::ExecuteOrder(const NpcFollowOrder& o)
     MapEntity* trackedEntity = m_mapElementController.GetMapEntityFromId(o.idTrackedEntity);
     npc->SetMovementState(EntityMovementState::Free); // TODO : Useless ?
     npc->SetFollowBehaviour(trackedEntity);
-    NextOrder();
+    if (npc->GetMapBehaviour()->IsInit()) {
+        NextOrder();
+    } else {
+        Order order = NpcIdleOrder{Direction::Down, o.idNpc};
+        Execute(order);
+    }
 }
 
 void OrderController::ExecuteOrder(const NpcIdleOrder& o)

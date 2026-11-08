@@ -63,15 +63,11 @@ void NPC::SetRandomBehaviour()
 void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
 {
     m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, tilemap);
-    if (!m_behaviour->IsInit())
-        SetIdleBehaviour(Direction::Down);
 }
 
 void NPC::SetFollowBehaviour(const MapEntity* trackedEntity)
 {
     m_behaviour = std::make_unique<MapFollowBehaviour>(this, trackedEntity);
-    if (!m_behaviour->IsInit())
-        SetIdleBehaviour(Direction::Down); // TODO : Do something else (use pathfind ?)
 }
 
 void NPC::SetIdleBehaviour(const Direction direction)
