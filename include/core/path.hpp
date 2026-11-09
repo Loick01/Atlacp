@@ -5,6 +5,8 @@ namespace FileExtension {
     inline constexpr std::string_view Sfx = ".wav";
     inline constexpr std::string_view UiFile = ".uif";
     inline constexpr std::string_view UiTemplate = ".uit";
+    inline constexpr std::string_view WorldNpcs = ".worldnpcs";
+    inline constexpr std::string_view Npcs = ".npcs";
 }
 
 namespace AssetDirectory {

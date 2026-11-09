@@ -33,12 +33,7 @@ std::string FileReader::GetFileExtension(const std::string& filepath) const
     return filepath.substr(pos);
 }
 
-bool FileReader::IsBaseUiFile(const std::string& filepath) const
+bool FileReader::CheckFileExtension(const std::string& filepath, const std::string_view extension) const
 {
-    return GetFileExtension(filepath) == std::string(FileExtension::UiFile);
-}
-
-bool FileReader::IsTemplateUiFile(const std::string& filepath) const
-{
-    return GetFileExtension(filepath) == std::string(FileExtension::UiTemplate);
+    return GetFileExtension(filepath) == std::string(extension);
 }

@@ -1,6 +1,6 @@
 18
 dialog_text 1 ui/face/villager_face Wait for me !;
-entity_create 50 6 14 z/other_z_npcs
+entity_create 50 6 14 z/list.npcs
 npc_idle right 50
 time_delay 0.7
 entity_orientation 0 up

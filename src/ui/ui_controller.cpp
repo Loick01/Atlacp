@@ -1,6 +1,7 @@
 #include "ui/element/ui_controller.hpp"
 
 #include "core/file/file.hpp"
+#include "core/path.hpp"
 #include "core/logger.hpp"
 #include "image/texture.hpp"
 
@@ -196,12 +197,12 @@ float UiController::GetResultFromPartialSize(const PartialSize& ps) const
 
 bool UiController::IsBaseUiFile(const std::string& filepath) const
 {
-    return m_fileReader.IsBaseUiFile(filepath);
+    return m_fileReader.CheckFileExtension(filepath, FileExtension::UiFile);
 }
 
 bool UiController::IsTemplateUiFile(const std::string& filepath) const
 {
-    return m_fileReader.IsTemplateUiFile(filepath);
+    return m_fileReader.CheckFileExtension(filepath, FileExtension::UiTemplate);
 }
 
 void UiController::ClearAll()

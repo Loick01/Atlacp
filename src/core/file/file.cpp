@@ -69,8 +69,31 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     return actorsData;
 }
 
-std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const
+DataNPC FileReader::ReadDataNPC(std::ifstream& input, const unsigned int id) const
 {
+    DataNPC data; // NPC always spawn with random behaviour
+
+    if (id == -1)
+        input >> data.id;
+    else
+        data.id = id;
+
+    input >> data.sprite; 
+    input >> data.position.x; input >> data.position.y;
+    input >> data.walkSpeed;
+    input >> data.runSpeed;
+    data.orders = ReadOrders(input);
+    
+    return data;
+}
+
+std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const
+{
+    if (!CheckFileExtension(npcsFilepath, FileExtension::WorldNpcs)) {
+        Logger::GetInstance().AddLog(Level::L4, "World Npc file extension is incorrect"); // TODO : Level
+        return {};
+    }
+
     std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcsFilepath);
     std::vector<DataNPC> npcsData;
     unsigned int count = 0;
@@ -81,43 +104,32 @@ std::vector<DataNPC> FileReader::ReadDataNPCsForMap(const std::string& npcsFilep
     }
     if (count != mapIndex) {
         Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath); // TODO : Log
-        return npcsData;
+        return {};
     }
 
     input >> count;
     for (unsigned int i = 0 ; i < count ; i++) {
-        DataNPC data; // NPC always spawn with random behaviour
-
-        input >> data.sprite; 
-        input >> data.position.x; input >> data.position.y;
-        input >> data.walkSpeed;
-        input >> data.runSpeed;
-        input >> data.id;
-        data.orders = ReadOrders(input);
-
+        const DataNPC data = ReadDataNPC(input);
         npcsData.push_back(data);
     }
     
     return npcsData;
 }
 
-std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const
+std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const
 {
+    if (!CheckFileExtension(npcFilepath, FileExtension::Npcs)) {
+        Logger::GetInstance().AddLog(Level::L4, "Npcs file extension is incorrect"); // TODO : Level
+        return std::nullopt;
+    }
+
     std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcFilepath);
     std::string s;
 
     while (input >> s) {
         const unsigned int currentId = std::stoi(s);
         if (currentId == idEntity) {
-            // TODO : Merge with the same code in FileReader::ReadDataNPCsForMap
-            // But this is not the same structure than in world_npcs file (where id is in the last position)
-            DataNPC data; 
-            input >> data.sprite;
-            input >> data.walkSpeed;
-            input >> data.runSpeed;
-            data.id = currentId;
-            data.orders = ReadOrders(input);
-            // MapPosition is not read in the file, because ReadDataNPC is used (for now ?) only in MapEntityController::CreateEntity, which provides a spawn position
+            const DataNPC data = ReadDataNPC(input, idEntity);
             return data;
         } else {
             std::getline(input, s); // Skip the line
@@ -130,9 +142,9 @@ std::optional<DataNPC> FileReader::ReadDataNPC(const std::string& npcFilepath, c
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
     std::ifstream input;
-    if (IsBaseUiFile(uiFilepath))
+    if (CheckFileExtension(uiFilepath, FileExtension::UiFile))
         input = OpenFile(std::string(DataDirectory::UiFile) + uiFilepath);
-    else if (IsTemplateUiFile(uiFilepath))
+    else if (CheckFileExtension(uiFilepath, FileExtension::UiTemplate))
         input = OpenFile(std::string(DataDirectory::UiTemplate) + uiFilepath);
 
     std::vector<DataUi> uisData;

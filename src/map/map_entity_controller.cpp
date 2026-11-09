@@ -50,7 +50,7 @@ void MapEntityController::CreateEntity(const std::string& npcFilepath, const uns
         return; // TODO : Maybe I could still create the NPC but with a new id (but how I will retrieve the NPC from data file ?)
     }
 
-    const std::optional<DataNPC> optData = m_fileReader.ReadDataNPC(npcFilepath, idEntity);
+    const std::optional<DataNPC> optData = m_fileReader.GetDataNPCFromId(npcFilepath, idEntity);
     
     if (!optData.has_value()) {
         Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity); // TODO : Log
@@ -195,7 +195,7 @@ void MapEntityController::LoadNPCsForMap(const std::string& filepath, const unsi
 
     m_renderedEntities = {&m_player}; // Keep only the Player
 
-    const std::vector<DataNPC> npcsData = m_fileReader.ReadDataNPCsForMap(filepath, mapIndex);
+    const std::vector<DataNPC> npcsData = m_fileReader.GetDataNPCsForMap(filepath, mapIndex);
 
     for (unsigned int i = 0 ; i < npcsData.size() ; i++) {
         DataNPC data = npcsData[i];

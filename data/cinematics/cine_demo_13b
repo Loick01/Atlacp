@@ -1,5 +1,5 @@
 13
-entity_create 48 1 3 z/other_z_npcs
+entity_create 48 1 3 z/list.npcs
 npc_idle right 48
 camera_slide_to_entity 48
 camera_anchor_entity 48

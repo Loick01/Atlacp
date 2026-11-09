@@ -85,8 +85,11 @@ class FileReader
         // File
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
-        std::vector<DataNPC> ReadDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
-        std::optional<DataNPC> ReadDataNPC(const std::string& npcFilepath, const unsigned int idEntity) const;
+
+        DataNPC ReadDataNPC(std::ifstream& input, const unsigned int id=-1) const;
+        std::vector<DataNPC> GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
+        std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const;
+
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
         WorldData ReadWorldFile(const std::string& worldFilepath) const;
@@ -102,6 +105,5 @@ class FileReader
         
         // FileIO
         std::string GetFileExtension(const std::string& filepath) const;
-        bool IsBaseUiFile(const std::string& filepath) const;
-        bool IsTemplateUiFile(const std::string& filepath) const;
+        bool CheckFileExtension(const std::string& filepath, const std::string_view extension) const;
 };
