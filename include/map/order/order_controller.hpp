@@ -32,7 +32,7 @@ class OrderController : public Notifier<OrderExecutionEvent>
         Boxing& m_boxing;
         Camera& m_camera;
         FileReader& m_fileReader;
-        MapEntityController& m_mapElementController;
+        MapEntityController& m_mapEntityController;
         Tilemap& m_tilemap; // TODO : Should be in NPC instead of here ?
         Time& m_time;
         UiComponentController& m_uiComponentController;

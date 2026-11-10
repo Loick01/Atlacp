@@ -45,7 +45,7 @@ MapEntity* MapEntityController::GetCurrentMapEntityUpdated() const
 
 void MapEntityController::CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition)
 {
-    if (idEntity == 0) { 
+    if (idEntity == 0) { // TODO : idEntity == -1 ?
         Logger::GetInstance().AddLog(Level::L4, "MapEntityController::CreateEntity -> idEntity = 0 is already use for Player"); // TODO : Log
         return; // TODO : Maybe I could still create the NPC but with a new id (but how I will retrieve the NPC from data file ?)
     }

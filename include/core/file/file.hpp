@@ -77,6 +77,7 @@ class FileReader
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;
+        DataNPC ReadDataNPC(std::ifstream& input, const unsigned int targetId=-1) const;
         void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
 
     public:
@@ -86,7 +87,6 @@ class FileReader
         std::unordered_map<unsigned int, MoveDefinition> ReadMoveFile(const std::string& moveFilepath) const;
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
 
-        DataNPC ReadDataNPC(std::ifstream& input, const unsigned int id=-1) const;
         std::vector<DataNPC> GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
         std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const;
 

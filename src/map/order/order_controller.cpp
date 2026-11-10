@@ -15,7 +15,7 @@
 
 OrderController::OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapEntityController& mapElementController,
 Tilemap& tilemap, Time& time, UiComponentController& uiComponentController) :
-    m_boxing(boxing), m_camera(camera), m_fileReader(fileReader), m_mapElementController(mapElementController), 
+    m_boxing(boxing), m_camera(camera), m_fileReader(fileReader), m_mapEntityController(mapElementController), 
     m_tilemap(tilemap), m_time(time), m_uiComponentController(uiComponentController), m_hasCurrentOrder(false)
 {}
 
@@ -90,7 +90,7 @@ void OrderController::ExecuteOrder(const DialogTextOrder& o)
 
 void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
     npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetGoToBehaviour() ? 
     // TODO : It needs to be EntityMovementState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
     npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
@@ -109,8 +109,8 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
 
 void OrderController::ExecuteOrder(const NpcFollowOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
-    MapEntity* trackedEntity = m_mapElementController.GetMapEntityFromId(o.idTrackedEntity);
+    NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    MapEntity* trackedEntity = m_mapEntityController.GetMapEntityFromId(o.idTrackedEntity);
     npc->SetMovementState(EntityMovementState::Free); // TODO : Useless ?
     npc->SetFollowBehaviour(trackedEntity);
     if (npc->GetMapBehaviour()->IsInit()) {
@@ -123,7 +123,7 @@ void OrderController::ExecuteOrder(const NpcFollowOrder& o)
 
 void OrderController::ExecuteOrder(const NpcIdleOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
+    NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
     npc->SetMovementState(EntityMovementState::Free); // TODO : Useless ?
     npc->SetIdleBehaviour(o.direction);
     NextOrder();
@@ -147,34 +147,34 @@ void OrderController::ExecuteOrder(const CameraSlideToPositionOrder& o)
 
 void OrderController::ExecuteOrder(const CameraSlideToEntityOrder& o)
 {
-    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    MapEntity* entity = m_mapEntityController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
     m_camera.StartSlidingTo(entity->GetScenePosition() + entity->GetDisplayOffset());
     m_camera.AddCallback([this](UselessEvent e){NextOrder();});
 }
 
 void OrderController::ExecuteOrder(const CameraAnchorEntityOrder& o)
 {
-    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    MapEntity* entity = m_mapEntityController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
     m_camera.SetAnchoredEntity(entity);
     NextOrder();
 }
 
 void OrderController::ExecuteOrder(const EntityOrientationOrder& o)
 {
-    MapEntity* entity = m_mapElementController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
+    MapEntity* entity = m_mapEntityController.GetMapEntityFromId(o.idEntity); // Could be Player (id = 0) or NPC
     entity->SetOrientation(o.direction);
     NextOrder();
 }
 
 void OrderController::ExecuteOrder(const EntityCreateOrder& o)
 {
-    m_mapElementController.CreateEntity(o.entityFilepath, o.idEntity, o.spawnPosition);
+    m_mapEntityController.CreateEntity(o.entityFilepath, o.idEntity, o.spawnPosition);
     NextOrder();
 }
 
 void OrderController::ExecuteOrder(const EntityDeleteOrder& o)
 {
-    m_mapElementController.DeleteEntity(o.idEntity);
+    m_mapEntityController.DeleteEntity(o.idEntity);
     NextOrder();
 }
 
@@ -188,7 +188,7 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
 {
     m_tilemap.LoadMapByIndex(o.mapIndex);
 
-    Player* player = static_cast<Player*>(m_mapElementController.GetMapEntityFromId(0));
+    Player* player = static_cast<Player*>(m_mapEntityController.GetMapEntityFromId(0));
 
     switch (o.reposition) {
         case PlayerReposition::MapSpawn :
@@ -238,7 +238,7 @@ bool OrderController::UpdateOrder(const DialogTextOrder& o)
 
 bool OrderController::UpdateOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
+    NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
     const MapGoToBehaviour* goTo = dynamic_cast<const MapGoToBehaviour*>(npc->GetMapBehaviour());
     return goTo->IsDone();
 }
@@ -284,7 +284,7 @@ void OrderController::StopOrder(const DialogTextOrder& o)
 
 void OrderController::StopOrder(const NpcGoToOrder& o)
 {
-    NPC* npc = static_cast<NPC*>(m_mapElementController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
+    NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes
     npc->SetRandomBehaviour();
     // The NPC has necessarily EntityMovementState::Free when he reached his target position, so I don't think SetMovementState(Free) is necessary. 
     // npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetRandomBehaviour() ?

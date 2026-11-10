@@ -69,15 +69,11 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     return actorsData;
 }
 
-DataNPC FileReader::ReadDataNPC(std::ifstream& input, const unsigned int id) const
+DataNPC FileReader::ReadDataNPC(std::ifstream& input, const unsigned int targetId) const
 {
     DataNPC data; // NPC always spawn with random behaviour
 
-    if (id == -1)
-        input >> data.id;
-    else
-        data.id = id;
-
+    input >> data.id;
     input >> data.sprite; 
     input >> data.position.x; input >> data.position.y;
     input >> data.walkSpeed;
@@ -127,13 +123,9 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
     std::string s;
 
     while (input >> s) {
-        const unsigned int currentId = std::stoi(s);
-        if (currentId == idEntity) {
-            const DataNPC data = ReadDataNPC(input, idEntity);
+        const DataNPC data = ReadDataNPC(input, idEntity);
+        if (data.id == idEntity)
             return data;
-        } else {
-            std::getline(input, s); // Skip the line
-        }
     }
     Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Log
     return std::nullopt;
