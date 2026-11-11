@@ -155,11 +155,11 @@ float UiController::GetPartialElementSizeOnAxis(const UiKey& key, const Axis axi
     const UiElement* element = GetElement(key); // ComputeFinal must have been called on this UiElement
     switch(axis) {
         case Axis::Width : {
-            return element->GetSize().x * amount;
+            return element->GetTextureSize().x * amount;
             break;
         }
         case Axis::Height : {
-            return element->GetSize().y * amount;
+            return element->GetTextureSize().y * amount;
             break;
         }
         default : {

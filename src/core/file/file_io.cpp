@@ -4,13 +4,14 @@
 
 #include "core/path.hpp"
 
-std::ifstream FileReader::OpenFile(const std::string& filepath)
+std::optional<std::ifstream> FileReader::OpenFile(const std::string& filepath)
 {
     std::ifstream input;
     input.open(filepath);
-    if (!input)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open the file : " + filepath); // TODO : Log (use std::optional)
-
+    if (!input) {
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open the file : " + filepath); // TODO : Level
+        return std::nullopt;
+    }
     return input;
 }
 

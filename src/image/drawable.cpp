@@ -4,7 +4,7 @@
 #include "core/path.hpp"
 
 Drawable::Drawable(TextureController& textureController, const std::string& textureFilepath):
-    m_textureController(textureController)
+    m_textureController(textureController), m_textureSize({0, 0})
 {
     LoadTexture(textureFilepath);
 }
@@ -22,7 +22,7 @@ void Drawable::LoadTexture(const std::string& textureFilepath)
 {
     const std::string finalPath = std::string(AssetDirectory::Root)+textureFilepath+std::string(FileExtension::Image);
     m_textureKey = textureFilepath;
-    m_textureController.LoadTextureFromFile(finalPath, m_textureKey, m_textureWidth, m_textureHeight); 
+    m_textureController.LoadTextureFromFile(finalPath, m_textureKey, m_textureSize); 
 }
 
 TextureKey Drawable::GetTextureKey() const
@@ -30,19 +30,14 @@ TextureKey Drawable::GetTextureKey() const
     return m_textureKey;
 }
 
-int Drawable::GetTextureWidth() const
+AreaSize Drawable::GetTextureSize() const
 {
-    return m_textureWidth;
-}
-
-int Drawable::GetTextureHeight() const
-{
-    return m_textureHeight;
+    return m_textureSize;
 }
 
 bool Drawable::IsPositionInTexture(const Vec2 sp) const // sp must be normalized
 {
-    return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureWidth() && sp.y <= GetTextureHeight();
+    return sp.x >= 0 && sp.y >= 0 && sp.x <= GetTextureSize().x && sp.y <= GetTextureSize().y;
 }
 
 void Drawable::DeleteTexture()
@@ -82,9 +77,9 @@ ScreenPosition ScreenDrawable::GetScreenPosition() const
     return m_position;
 }
 
-ScreenPosition ScreenDrawable::GetSize() const
+AreaSize ScreenDrawable::GetTextureSize() const
 {
-    return ScreenPosition{GetTextureWidth(), GetTextureHeight()}*m_zoom;
+    return m_textureSize*m_zoom;
 }
 
 float ScreenDrawable::GetZoom() const
@@ -105,8 +100,9 @@ void ScreenDrawable::SetZoom(const float zoom)
 void ScreenDrawable::DrawTexture() const
 {
     if (m_shouldDraw){
-        const SDL_Rect src{0, 0, m_textureWidth, m_textureHeight};
-        const SDL_Rect dst{m_position.x, m_position.y, static_cast<int>(m_textureWidth*m_zoom), static_cast<int>(m_textureHeight*m_zoom)};
+        const AreaSize textureSize = GetTextureSize();
+        const SDL_Rect src{0, 0, m_textureSize.x, m_textureSize.y};
+        const SDL_Rect dst{m_position.x, m_position.y, textureSize.x, textureSize.y};
         m_textureController.RenderTexture(m_textureKey, src, dst);
     }
 }

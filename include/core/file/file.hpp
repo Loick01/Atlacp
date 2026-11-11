@@ -42,7 +42,7 @@ class FileReader
 {
     private:
         // FileIO
-        static std::ifstream OpenFile(const std::string& filepath);
+        static std::optional<std::ifstream> OpenFile(const std::string& filepath);
         std::string ReadString(std::ifstream& input) const;
 
         // FileUtils
@@ -92,7 +92,7 @@ class FileReader
 
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
-        WorldData ReadWorldFile(const std::string& worldFilepath) const;
+        std::optional<WorldData> ReadWorldFile(const std::string& worldFilepath) const;
         MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
         TilesetData ReadTilesetFile(const std::string& path) const;

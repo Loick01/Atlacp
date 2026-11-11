@@ -30,7 +30,7 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
     
     m_textureKey = path; // TODO : File extension is not in TextureKey ?
     const std::string tilesetFilepath = std::string(AssetDirectory::Tileset) + path + std::string(FileExtension::Image); 
-    m_textureController.LoadTextureFromFile(tilesetFilepath, m_textureKey, m_textureWidth, m_textureHeight);
+    m_textureController.LoadTextureFromFile(tilesetFilepath, m_textureKey, m_textureSize);
     data.tilesetKey = m_textureKey;
     if (m_tilesets.empty()){
         m_indexTileset = 0; // This index was initialized with -1, it needs to be 0 once the first tileset is loaded
@@ -45,12 +45,14 @@ TextureKey Tileset::GetTextureKey() const
     return m_tilesets[m_indexTileset].tilesetKey;
 }
 
-void Tileset::SetDisplayedTileset(const int selectedTileset)
+void Tileset::SetDisplayedTileset(const int tilesetIndex)
 {
-    // Drawable::m_textureKey/m_textureWidth/m_textureHeight is not used in Tileset class, except in editor mode (when displaying the tileset) 
-    m_textureKey = m_tilesets[selectedTileset].tilesetKey;
-    m_textureWidth = m_tilesets[selectedTileset].size.x*m_tileSize;
-    m_textureHeight = m_tilesets[selectedTileset].size.y*m_tileSize;
+    // Drawable::m_textureKey/m_textureSize is not used in Tileset class, except in editor mode (when displaying the tileset) 
+    if (m_tilesets.size() <= tilesetIndex) // TODO : Log ?
+        return;
+    const TilesetData tileset = m_tilesets.at(tilesetIndex);
+    m_textureKey = tileset.tilesetKey;
+    m_textureSize = tileset.size*m_tileSize;
 }
 
 int Tileset::GetTilesetsSize() const
@@ -68,9 +70,9 @@ int Tileset::GetTilesetWidth() const
     return m_tilesets[m_indexTileset].size.x;
 }
 
-int Tileset::GetTilesetWidth(const int selectedTileset) const
+int Tileset::GetTilesetWidth(const int tilesetIndex) const
 {
-    return m_tilesets[selectedTileset].size.x;
+    return m_tilesets[tilesetIndex].size.x;
 }
 
 int Tileset::GetTilesetHeight() const
@@ -84,17 +86,17 @@ bool Tileset::IsEmptyTile(const Tile tile)
     return m_tilesets[m_indexTileset].solidTiles.find(t) == m_tilesets[m_indexTileset].solidTiles.end();
 }
 
-void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int selectedTileset, Tile& tile) const
+void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int tilesetIndex, Tile& tile) const
 {
     if (IsPositionInTexture(sp)){ // sp must be normalized (with screen position)
         int c = sp.x/m_tileSize;
         int l = sp.y/m_tileSize;
         int offset = 0;
-        for (size_t i = 0 ; i < selectedTileset ; i++){ // TODO : Should store the offset for each tileset in TilesetData ?
+        for (size_t i = 0 ; i < tilesetIndex ; i++){ // TODO : Should store the offset for each tileset in TilesetData ?
             TilesetData t = m_tilesets[i];
             offset += t.size.x*t.size.y;
         }
-        tile = offset + l*GetTilesetWidth(selectedTileset)+c;
+        tile = offset + l*GetTilesetWidth(tilesetIndex)+c;
     }
 }
 

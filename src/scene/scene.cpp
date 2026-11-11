@@ -161,7 +161,6 @@ TilemapScene::TilemapScene(GameContext& context, const bool shouldCulling):
     // TODO : If I put camera in GameContext, I could avoid calling these setters ?
     m_context.uiController.SetSize(m_camera.GetViewport());
     m_context.uiController.SetPosition(m_camera.GetScreenOffset());
-
     // UpdateTilemapLayer() must be called when initializing TilemapScene
     // Because it's a virtual function, it would only call TilemapScene::UpdateTilemapLayer() if called here
     // That's why it has to be called in the constructors of TilemapScene subclasses (GameMapScene and EditorMapScene)
@@ -188,36 +187,35 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_elementsController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
-    m_orderController(m_context.window.GetBoxing(), m_camera, m_context.fileReader, m_elementsController, m_tilemap, m_context.time, m_context.uiComponentController), 
+    TilemapScene(context, true), m_mapEntityController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
+    m_orderController(m_context.window.GetBoxing(), m_camera, m_context.fileReader, m_mapEntityController, m_tilemap, m_context.time, m_context.uiComponentController), 
     m_interactionController(m_orderController), m_triggerController(m_orderController), m_sceneState(GameMapSceneState::Update)
 {
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
     
-    m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+    m_mapEntityController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
     m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
 
     // SoundController::GetInstance().SetBackgroundMusic("forest.ogg"); // TODO : Will be removed (read from a file)
     m_context.window.HideCursor();
 
-    m_elementsController.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
+    m_mapEntityController.AddCallback([this](EntityEvent e){HandleEntityEvent(e);});
 }
-
 
 void GameMapScene::HandleEntityEvent(const EntityEvent e)
 {
     switch (e) {
         case EntityEvent::HasMoved: {
-            MapEntity* currentEntity = m_elementsController.GetCurrentMapEntityUpdated();
+            MapEntity* currentEntity = m_mapEntityController.GetCurrentMapEntityUpdated();
             if (currentEntity->GetId() != 0) break; // TODO++ : Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
             m_triggerController.LookForTrigger(currentEntity);
             break;
         }
         case EntityEvent::EnterInteraction: {
             // TODO : Should use GetCurrentMapEntityUpdated() to get interacting entity ?
-            m_interactionController.InitializeInteraction(m_elementsController.GetEntities());
+            m_interactionController.InitializeInteraction(m_mapEntityController.GetEntities());
             m_interactionController.StartInteraction();
             break;
         }
@@ -258,19 +256,16 @@ void GameMapScene::Gameloop()
     m_camera.ComputeMapCulling(m_tilemap.GetLayerSize(), m_tileset.GetTileSize());
     const size_t layerSplitIndex = m_tilemap.GetLayerSplitIndex();
     for (size_t i = 0 ; i < layerSplitIndex ; i++)
-        m_layers[i]->DrawTexture();
-    
-    m_elementsController.Draw();
-    
+        m_layers.at(i)->DrawTexture();
+    m_mapEntityController.Draw();
     for (size_t i = layerSplitIndex ; i < m_layers.size() ; i++)
-        m_layers[i]->DrawTexture();
-
+        m_layers.at(i)->DrawTexture();
     switch (m_sceneState) {
         case GameMapSceneState::Update : {
             m_context.eventController->HandlePollEvents(); 
             m_context.eventController->HandleStateEvents(); 
 
-            m_elementsController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
+            m_mapEntityController.Update(static_cast<GameMapEventController*>(m_context.eventController.get())->GetEventState(), deltaTime);
 
             SoundController::GetInstance().PlayRequestedChunk();
             break;
@@ -293,7 +288,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_elementsController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+            m_mapEntityController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
             m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
             m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
             break;
@@ -342,7 +337,7 @@ void EditorMapScene::UpdateTilemapLayer()
 {   
     m_extraLayers.clear();
     TilemapScene::UpdateTilemapLayer(); // m_layers is clear() here 
-    CreateExtraLayers();
+    // CreateExtraLayers();
 
     const unsigned int layerCount = m_tilemap.GetLayerCount();
     m_previousLayerCount = layerCount;
@@ -395,7 +390,7 @@ void EditorMapScene::Gameloop()
     
     for (unsigned int i = 0 ; i < m_layers.size() ; i++){ // Unlike GameMapScene, TileLayer are rendered all at once
         if (m_isLayerRendered[i])
-            m_layers[i]->DrawTexture();
+            m_layers[i]->DrawTexture(); // TODO : m_layers.at(i) ?
     }
     for (const Drawable* d : m_drawables) d->DrawTexture(); // TODO : Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     

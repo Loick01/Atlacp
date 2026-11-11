@@ -53,7 +53,7 @@ void MapEntityController::CreateEntity(const std::string& npcFilepath, const uns
     const std::optional<DataNPC> optData = m_fileReader.GetDataNPCFromId(npcFilepath, idEntity);
     
     if (!optData.has_value()) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Failed to create the MapEntity with id = " + idEntity); // TODO : Level
         return;
     }
 

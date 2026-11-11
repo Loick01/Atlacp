@@ -52,8 +52,11 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
 
 std::vector<Order> FileReader::ReadCinematicFile(const std::string& cinematicFilepath) const
 {
-    std::ifstream cinematicInput = OpenFile(std::string(DataDirectory::Cinematic) + cinematicFilepath);
-    return ReadOrders(cinematicInput);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Cinematic) + cinematicFilepath);
+    if (optInput.has_value())
+        return ReadOrders(optInput.value());
+    else 
+        return {};
 }
 
 FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const

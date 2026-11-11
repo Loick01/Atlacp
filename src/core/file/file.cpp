@@ -10,7 +10,11 @@
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
 {
-    std::ifstream input = OpenFile(std::string(DataDirectory::Move) + moveFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Move) + moveFilepath);
+    if (!optInput.has_value())
+        return {};
+    std::ifstream& input = optInput.value();
+    
     std::unordered_map<unsigned int, MoveDefinition> moves;
     std::string s;
     while (input >> s) {
@@ -33,7 +37,11 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
 {
     // TODO : Add file extension to battle file
     
-    std::ifstream input = OpenFile(std::string(DataDirectory::Battle) + battleFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Battle) + battleFilepath);
+    if (!optInput.has_value())
+        return {};
+    std::ifstream& input = optInput.value();
+
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
@@ -90,7 +98,11 @@ std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepa
         return {};
     }
 
-    std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcsFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::NPC) + npcsFilepath);
+    if (!optInput.has_value())
+        return {};
+    std::ifstream& input = optInput.value();
+
     std::vector<DataNPC> npcsData;
     unsigned int count = 0;
     std::string s;
@@ -119,7 +131,11 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
         return std::nullopt;
     }
 
-    std::ifstream input = OpenFile(std::string(DataDirectory::NPC) + npcFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::NPC) + npcFilepath);
+    if (!optInput.has_value())
+        std::nullopt;
+    std::ifstream& input = optInput.value();
+
     std::string s;
 
     while (input >> s) {
@@ -133,11 +149,15 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
 
 std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
-    std::ifstream input;
+    std::optional<std::ifstream> optInput;
     if (CheckFileExtension(uiFilepath, FileExtension::UiFile))
-        input = OpenFile(std::string(DataDirectory::UiFile) + uiFilepath);
+        optInput = OpenFile(std::string(DataDirectory::UiFile) + uiFilepath);
     else if (CheckFileExtension(uiFilepath, FileExtension::UiTemplate))
-        input = OpenFile(std::string(DataDirectory::UiTemplate) + uiFilepath);
+        optInput = OpenFile(std::string(DataDirectory::UiTemplate) + uiFilepath);
+
+    if (!optInput.has_value())
+        return {};
+    std::ifstream& input = optInput.value();
 
     std::vector<DataUi> uisData;
     std::string s;
@@ -191,10 +211,13 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
     return uisData;
 }
 
-WorldData FileReader::ReadWorldFile(const std::string& worldFilepath) const
+std::optional<WorldData> FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
-    std::ifstream input = OpenFile(std::string(DataDirectory::World) + worldFilepath);
     WorldData data;
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::World) + worldFilepath);
+    if (!optInput.has_value())
+        return std::nullopt;
+    std::ifstream& input = optInput.value();
     
     input >> data.startMap;
     input >> data.size.x;
@@ -261,7 +284,10 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
 MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
-    std::ifstream input = OpenFile(std::string(DataDirectory::Map) + mapFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Map) + mapFilepath);
+    // TODO : has_value()
+    std::ifstream& input = optInput.value();
+
     MapData data;
 
     ReadHeaderMapFile(input, data);
@@ -285,7 +311,10 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
 
 SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
-    std::ifstream input = OpenFile(std::string(DataDirectory::SpriteAnimation) + animationFilepath);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::SpriteAnimation) + animationFilepath);
+    // TODO : has_value()
+    std::ifstream& input = optInput.value();
+
     SpriteAnimationData data;
 
     input >> data.spriteSize.x;
@@ -304,7 +333,10 @@ SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFi
 
 TilesetData FileReader::ReadTilesetFile(const std::string& path) const
 {
-    std::ifstream input = OpenFile(std::string(DataDirectory::Tileset) + path);
+    std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Tileset) + path);
+    // TODO : has_value()
+    std::ifstream& input = optInput.value();
+
     TilesetData data;
 
     input >> data.size.x;

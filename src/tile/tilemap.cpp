@@ -10,7 +10,10 @@ const std::string& worldFilepath, Camera& camera, const bool shouldCulling) :
     m_shouldCulling(shouldCulling), m_currentBound(MapBound::Inside)
 {
     m_camera.SetShouldCulling(m_shouldCulling);
-    m_worldData = m_fileReader.ReadWorldFile(worldFilepath);
+    std::optional<WorldData> optWorldData = m_fileReader.ReadWorldFile(worldFilepath);
+    if (!optWorldData.has_value())
+        return;
+    m_worldData = optWorldData.value();
     m_currentMap = m_worldData.startMap; // The first loaded map is specified in the world file
     LoadCurrentMap();
 }
@@ -120,17 +123,21 @@ bool Tilemap::IsPositionInTexture(const Vec2 sp) const
 
 bool Tilemap::IsFreePosition(const MapPosition p)
 {
-    return m_mapData.occupancyGrid[GetTileIndex(p)];
+    return m_mapData.occupancyGrid.at(GetTileIndex(p));
 }
 
 void Tilemap::TakePosition(const MapPosition p)
 {
-    m_mapData.occupancyGrid[GetTileIndex(p)] = false;
+    if (m_mapData.occupancyGrid.size() <= GetTileIndex(p)) { // TODO : Should also be in IsFreePosition and FreePosition ?
+        Logger::GetInstance().AddLog(Level::L4, "Invalid MapPosition used in Tilemap::TakePosition"); // TODO : Level
+        return;
+    }
+    m_mapData.occupancyGrid.at(GetTileIndex(p)) = false;
 }
 
 void Tilemap::FreePosition(const MapPosition p)
 {
-    m_mapData.occupancyGrid[GetTileIndex(p)] = true;
+    m_mapData.occupancyGrid.at(GetTileIndex(p)) = true;
 }
 
 void Tilemap::SetTileAt(const size_t layerIndex, const Tile newTile, const MapPosition p)

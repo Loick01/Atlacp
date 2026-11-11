@@ -10,7 +10,9 @@ SpriteAnimation::SpriteAnimation(const FileReader& fileReader, const std::string
 
 Vec2 SpriteAnimation::GetCurrentSprite() const
 {
-    return m_animationData.sprites[m_currentSpriteIndex];
+    if (m_animationData.sprites.size() <= m_currentSpriteIndex)
+        return Vec2{0, 0};
+    return m_animationData.sprites.at(m_currentSpriteIndex);
 }
 
 AreaSize SpriteAnimation::GetSpriteSize() const

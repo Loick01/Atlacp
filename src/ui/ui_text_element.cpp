@@ -19,7 +19,7 @@ void UiTextElement::SetTextSize(const FontSize size)
 void UiTextElement::GenerateText() // TODO : Same than Drawable::LoadTexture(), will be improved
 {
     m_textureKey = m_text; // TODO++ : Will use something else than just text as texture key
-    m_textureController.LoadTextureFromText(m_fontSize, m_textureKey, m_text, m_textureWidth, m_textureHeight, m_textColor, m_maxWidth);
+    m_textureController.LoadTextureFromText(m_fontSize, m_textureKey, m_text, m_textureSize, m_textColor, m_maxWidth);
 }
 
 void UiTextElement::SetMaxWidth(const float amount)
@@ -35,7 +35,7 @@ void UiTextElement::ComputeFinal()
     GenerateText();
 
     for (std::unique_ptr<UiElement>& e : m_childs)
-        e->SetParentSize(GetSize());
+        e->SetParentSize(GetTextureSize());
     
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);

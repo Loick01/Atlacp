@@ -71,4 +71,12 @@ struct MapData // TODO++ : Should be in map/map_types.hpp ?
     MapPosition spawnPosition; // Position where the player will start when loading the associated map (-1 if no specific position)
     GridSize size; // TODO : Should not be here, and only in TileLayer ?
     std::string tilesetDirectoryPath;
+
+    MapData() {
+        layerCount = 0;
+        spawnPosition = {0, 0};
+        layerSplitIndex = 0;
+        occupancyGrid.clear();
+        layers.clear();
+    }
 };

@@ -40,21 +40,35 @@ void TextureController::AddTexture(const TextureKey& key, int& textureWidth, int
     SDL_QueryTexture(m_textures[key].texture, nullptr, nullptr, &textureWidth, &textureHeight);
 }
 
-void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int& textureWidth, int& textureHeight)
+// TODO : Remove
+void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int& textureSize)
 {
     if (m_textures.find(key) == m_textures.end()){
         SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
         if (!surface) 
             Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Log
         else
-            CreateTextureFromSurface(surface, key, textureFilepath, textureWidth, textureHeight);
+            CreateTextureFromSurface(surface, key, textureFilepath, textureSize, textureSize);
     } else { // Filepath has already been loaded as a texture
-        AddTexture(key, textureWidth, textureHeight);
+        AddTexture(key, textureSize, textureSize);
+    }
+}
+
+void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, AreaSize& textureSize)
+{
+    if (m_textures.find(key) == m_textures.end()){
+        SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
+        if (!surface) 
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Log
+        else
+            CreateTextureFromSurface(surface, key, textureFilepath, textureSize.x, textureSize.y);
+    } else { // Filepath has already been loaded as a texture
+        AddTexture(key, textureSize.x, textureSize.y);
     }
 }
 
 void TextureController::LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
-    int &textureWidth, int& textureHeight, const SDL_Color textColor, const int maxWidth)
+    AreaSize& textureSize, const SDL_Color textColor, const int maxWidth)
 {
     if (key.empty()) {
         Logger::GetInstance().AddLog(Level::L4, "Texture key (string) is empty, text in UiTextElement should never be \"\""); // TODO : Log
@@ -63,16 +77,17 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
     
     if (m_textures.find(key) == m_textures.end()) {
         SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
-        CreateTextureFromSurface(surface, key, text, textureWidth, textureHeight);
+        CreateTextureFromSurface(surface, key, text, textureSize.x, textureSize.y);
     }else{ // Text has already been generated as a texture
-        AddTexture(key, textureWidth, textureHeight);
+        AddTexture(key, textureSize.x, textureSize.y);
     }
 }
 
 void TextureController::RenderTexture(const TextureKey& key, const SDL_Rect& src, const SDL_Rect& dst) const
 {
     // TODO : A texture with m_key=key must already be in the map, otherwise std::out_of_range
-    // I will use Logger to check this
+    if (m_textures.find(key) == m_textures.end())
+        return; // TODO : Log
     SDL_RenderCopy(m_windowRenderer, m_textures.at(key).texture, &src, &dst);
 }
 

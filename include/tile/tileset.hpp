@@ -26,13 +26,13 @@ class Tileset : public ScreenDrawable // TODO : Could be a UiElement instead of 
         int GetTilesetsSize() const;
         int GetTileSize() const;
         int GetTilesetWidth() const;
-        int GetTilesetWidth(const int selectedTileset) const;
+        int GetTilesetWidth(const int tilesetIndex) const;
         int GetTilesetHeight() const;
         Tile GetNormalizedTile(const Tile tile); // TODO++ : Rename (it also update m_indexTileset)
         bool IsEmptyTile(const Tile tile);
-        void UpdateSelectedTile(const ScreenPosition sp, const int selectedTileset, Tile& tile) const;
+        void UpdateSelectedTile(const ScreenPosition sp, const int tilesetIndex, Tile& tile) const;
         void LoadTileset(const FileReader& fileReader, const std::string& path);
-        void SetDisplayedTileset(const int selectedTileset);
+        void SetDisplayedTileset(const int tilesetIndex);
         // If shouldDeleteCurrent is true, the texture with key = m_textureKey is Deleted,
         // otherwise this texture must be deleted by ~Drawable()
         void CleanTilesets(const bool shouldDeleteCurrent);

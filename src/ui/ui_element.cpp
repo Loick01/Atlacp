@@ -105,10 +105,10 @@ void UiElement::ComputeZoom(const float scale, const Axis axis)
 {
     switch(axis){
         case Axis::Width:
-            SetZoom(scale/GetTextureWidth());
+            SetZoom(scale/m_textureSize.x);
             break;
         case Axis::Height:
-            SetZoom(scale/GetTextureHeight());
+            SetZoom(scale/m_textureSize.y);
             break;
         default:
             Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiElement::ComputeZoom"); // TODO : Log
@@ -120,7 +120,7 @@ void UiElement::ComputePosition(const Anchor xAnchor, const Anchor yAnchor)
 {
     ScreenPosition localPosition = {0,0};
     // TODO : If ComputePosition is called on a UiTextElement, the zoom here must be 1.0f (text size is handled by the font), I should use a virtual function to get the zoom here
-    const AreaSize size = GetSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
+    const AreaSize size = GetTextureSize(); // Need drawing size (including the zoom) to get the position (so ComputePosition must be called after ComputeZoom) 
     switch(xAnchor){
         case Anchor::LeftIn:
             localPosition.x = 0;
@@ -192,7 +192,7 @@ std::unique_ptr<UiElement> UiElement::RemoveChild(const UiKey& key)
 void UiElement::BuildChild(std::unique_ptr<UiElement> child)
 {
     child->SetParent(this);
-    child->SetParentSize(GetSize());
+    child->SetParentSize(GetTextureSize());
     child->ComputeFinal();
     AddChild(child);
 }
@@ -203,7 +203,7 @@ void UiElement::ComputeFinal()
 
     // TODO : I haven't checked if this is really necessary, but I'm 90% sure
     for (std::unique_ptr<UiElement>& e : m_childs)
-        e->SetParentSize(GetSize());
+        e->SetParentSize(GetTextureSize());
 
     ComputePosition(m_params.xAnchor, m_params.yAnchor);
     UsePaddingOnPosition(m_params.xPadding, m_params.yPadding);

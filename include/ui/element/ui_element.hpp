@@ -24,7 +24,7 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         
         // UiElement const* m_parent; 
         UiElement* m_parent; 
-        // Because UiElement can be subroot (without real parent, only UiController), I can't use UiElement::GetPosition() and GetSize()
+        // Because UiElement can be subroot (without real parent, only UiController), I can't use UiElement::GetPosition() and GetTextureSize()
         // That's why I still need parentPosition and parentSize members
         ScreenPosition m_parentPosition;
         AreaSize m_parentSize;

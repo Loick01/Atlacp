@@ -13,11 +13,9 @@ SceneDrawable(textureController, std::string(AssetDirectory::Spritesheet)+sprite
 m_walkSpeed(walkSpeed), m_runSpeed(runSpeed), m_isRunning(false), m_cameraZoom(cameraZoom), m_id(id),
 m_movementState(EntityMovementState::Free), m_interactionState(EntityInteractionState::None), m_animation(fileReader, spriteFilepath)
 {
-    const AreaSize spriteSize = m_animation.GetSpriteSize();
-    m_textureWidth = spriteSize.x;
-    m_textureHeight = spriteSize.y;
+    m_textureSize = m_animation.GetSpriteSize();
     // Sprites could have a different size than tiles
-    SetDisplayOffset(ScenePosition{(m_textureWidth-tilemap.GetTileSize())/2, m_textureHeight-tilemap.GetTileSize()});
+    SetDisplayOffset(ScenePosition{(m_textureSize.x-tilemap.GetTileSize())/2, m_textureSize.y-tilemap.GetTileSize()});
     Reset(initialDirection);
     // Player and NPC constructors use the camera zoom in GetFinalDrawingPosition(), that's why I added it as a parameter here
 }
@@ -112,9 +110,9 @@ ScenePosition MapEntity::GetFinalDrawingPosition(const ScenePosition sp) const
 void MapEntity::DrawTexture() const
 {
     const Vec2 sprite = m_animation.GetCurrentSprite(); 
-    const SDL_Rect src{sprite.x, sprite.y, m_textureWidth, m_textureHeight};
-    const SDL_Rect dst{m_position.x-m_cameraPosition.x, m_position.y-m_cameraPosition.y,
-                       static_cast<int>(m_textureWidth*m_cameraZoom), static_cast<int>(m_textureHeight*m_cameraZoom)};
+    const AreaSize drawingSize = GetTextureSize()*m_cameraZoom;
+    const SDL_Rect src{sprite.x, sprite.y, m_textureSize.x, m_textureSize.y};
+    const SDL_Rect dst{m_position.x-m_cameraPosition.x, m_position.y-m_cameraPosition.y, drawingSize.x, drawingSize.y};
     m_textureController.RenderTexture(m_textureKey, src, dst);
 }
 

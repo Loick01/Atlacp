@@ -88,7 +88,7 @@ class TilemapScene : public Scene
 class GameMapScene : public TilemapScene
 {
     private:
-        MapEntityController m_elementsController; // TODO : Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
+        MapEntityController m_mapEntityController; // TODO : Could be in TilemapScene with empty vectors ? (and remove HandleTilemapEvent override)
         OrderController m_orderController;
         InteractionController m_interactionController;
         TriggerController m_triggerController;

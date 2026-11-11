@@ -10,4 +10,8 @@ struct SpriteAnimationData
     AreaSize spriteSize;
     int step; // How many step for the animation
     float frameDuration;
+
+    SpriteAnimationData() {
+        spriteSize = {0,0};
+    }
 };

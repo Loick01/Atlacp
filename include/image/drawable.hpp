@@ -17,14 +17,12 @@ class Drawable
         
         TextureController& m_textureController;
         TextureKey m_textureKey;
-        int m_textureWidth;
-        int m_textureHeight;
+        AreaSize m_textureSize;
     
     public:
         virtual ~Drawable();
         virtual TextureKey GetTextureKey() const;
-        virtual int GetTextureWidth() const; // TODO : Remove virtual ?
-        virtual int GetTextureHeight() const; // TODO : Remove virtual ?
+        virtual AreaSize GetTextureSize() const;
         virtual void DrawTexture() const = 0;
 
         bool IsPositionInTexture(const Vec2 sp) const; // TODO : Should not use Vec2 for the parameter ?
@@ -61,7 +59,7 @@ class ScreenDrawable : public Drawable
         ScreenDrawable(TextureController& textureController, const ScreenPosition position={0, 0}, const bool shouldDraw=true);
 
         ScreenPosition GetScreenPosition() const;
-        ScreenPosition GetSize() const;
+        AreaSize GetTextureSize() const override;
         float GetZoom() const;
         bool GetShouldDraw() const;
         void SetZoom(const float zoom);

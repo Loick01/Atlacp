@@ -19,7 +19,7 @@ void UiSpriteAnimation::Open()
     UiComponent::Open();
     // TODO : Need to check if a UiAnimatedElement is read in the ui file ?
     
-    // UpdatePath calls Drawable::LoadTexture and will write on m_textureWidth and m_textureHeight
+    // UpdatePath calls Drawable::LoadTexture and will write on m_textureSize
     // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
     m_uiController.UpdatePath(m_uiKey, std::string(AssetDirectory::Spritesheet)+m_animationPath);
 
