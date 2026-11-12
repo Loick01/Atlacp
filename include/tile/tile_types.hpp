@@ -7,7 +7,7 @@
 #include "image/image_types.hpp" // TextureKey
 #include "tile/tile_types.hpp" // Tile
 
-using Tile = unsigned int; // TODO : Use a struct ?
+using Tile = int;
 
 struct WorldData
 {

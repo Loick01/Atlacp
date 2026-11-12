@@ -27,7 +27,10 @@ bool SpriteAnimation::IsDone() const
 
 void SpriteAnimation::UpdateAnimationData(const std::string& animationFilepath)
 {
-    m_animationData = m_fileReader.ReadAnimationFile(animationFilepath);
+    std::optional<SpriteAnimationData> optAnimData = m_fileReader.ReadAnimationFile(animationFilepath); 
+    if (!optAnimData.has_value())
+        return;
+    m_animationData = optAnimData.value();
 }
 
 void SpriteAnimation::Continue(const float deltaTime)

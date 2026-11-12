@@ -20,7 +20,10 @@ Tileset::~Tileset()
 // TODO : Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 {
-    TilesetData data = fileReader.ReadTilesetFile(path);
+    std::optional<TilesetData> optTilesetData = fileReader.ReadTilesetFile(path);
+    if (!optTilesetData.has_value())
+        return;
+    TilesetData data = optTilesetData.value();
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
     else if (data.tileSize != m_tileSize) {
@@ -136,8 +139,8 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
             }
         }
     }
-    Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile); // TODO : Log
-    return 0;
+    // Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile); // TODO : Log (Remove ?)
+    return -1;
 }
 
 void Tileset::CleanTilesets(const bool shouldDeleteCurrent)

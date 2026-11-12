@@ -123,12 +123,16 @@ bool Tilemap::IsPositionInTexture(const Vec2 sp) const
 
 bool Tilemap::IsFreePosition(const MapPosition p)
 {
+    if (m_mapData.occupancyGrid.size() <= GetTileIndex(p)) {
+        Logger::GetInstance().AddLog(Level::L4, "Invalid MapPosition used in Tilemap::IsFreePosition"); // TODO : Level
+        return false;
+    }
     return m_mapData.occupancyGrid.at(GetTileIndex(p));
 }
 
 void Tilemap::TakePosition(const MapPosition p)
 {
-    if (m_mapData.occupancyGrid.size() <= GetTileIndex(p)) { // TODO : Should also be in IsFreePosition and FreePosition ?
+    if (m_mapData.occupancyGrid.size() <= GetTileIndex(p)) { // TODO : Should also be in FreePosition ?
         Logger::GetInstance().AddLog(Level::L4, "Invalid MapPosition used in Tilemap::TakePosition"); // TODO : Level
         return;
     }
@@ -196,7 +200,10 @@ void Tilemap::LoadMap(const std::string& mapFilepath)
 
     // TileLayer are created in ReadMapFile. Because they are SceneDrawable, they need camera and texture controller
     // TileLayer also need a Tileset to be rendered
-    m_mapData = m_fileReader.ReadMapFile(mapFilepath, m_camera, m_textureController, m_tileset);
+    std::optional<MapData> optMapData = m_fileReader.ReadMapFile(mapFilepath, m_camera, m_textureController, m_tileset);
+    if (!optMapData.has_value())
+        return;
+    m_mapData = std::move(optMapData.value());
     
     // Load tilesets read in the header of the map file
     for (const std::string& p : m_mapData.tilesets)

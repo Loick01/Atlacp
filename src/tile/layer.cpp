@@ -38,13 +38,15 @@ void TileLayer::DrawTexture() const
 
     for (int j = startIndex.y ; j < endIndex.y ; j++){
         for (int i = startIndex.x ; i < endIndex.x ; i++){
-            int tile = m_tileset.GetNormalizedTile(m_tiles[j*m_layerSize.x+i]); // TODO : Should use Tile type ?
-            int tilesetWidth = m_tileset.GetTilesetWidth(); // Keep this line inside for-loop (selected tileset can be modified by Tileset::GetNormalizedTileset)
-            const SDL_Rect src{(tile%tilesetWidth)*tileSize, (tile/tilesetWidth)*tileSize, tileSize, tileSize};
-            const int tileScreenSize = static_cast<int>(tileSize*zoom+1);
-            const ScreenPosition dstPosition = (Vec2{i,j}*tileSize)*zoom-cameraPosition;
-            const SDL_Rect dst{dstPosition.x, dstPosition.y, tileScreenSize, tileScreenSize};
-            m_textureController.RenderTexture(m_tileset.GetTextureKey(), src, dst);
+            const Tile tile = m_tileset.GetNormalizedTile(m_tiles[j*m_layerSize.x+i]);
+            if (tile != -1) { // TODO : Use an ExtraTileLayer to draw a placeholder tile at (i,j) ?
+                const int tilesetWidth = m_tileset.GetTilesetWidth(); // Keep this line inside for-loop (selected tileset can be modified by Tileset::GetNormalizedTileset)
+                const int tileScreenSize = static_cast<int>(tileSize*zoom+1);
+                const ScreenPosition dstPosition = (Vec2{i,j}*tileSize)*zoom-cameraPosition;
+                const SDL_Rect src{(tile%tilesetWidth)*tileSize, (tile/tilesetWidth)*tileSize, tileSize, tileSize};
+                const SDL_Rect dst{dstPosition.x, dstPosition.y, tileScreenSize, tileScreenSize};
+                m_textureController.RenderTexture(m_tileset.GetTextureKey(), src, dst);
+            }
         }
     }
 }

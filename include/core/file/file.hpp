@@ -93,10 +93,10 @@ class FileReader
         std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
         std::optional<WorldData> ReadWorldFile(const std::string& worldFilepath) const;
-        MapData ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
+        std::optional<MapData> ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
-        TilesetData ReadTilesetFile(const std::string& path) const;
-        SpriteAnimationData ReadAnimationFile(const std::string& animationFilepath) const;
+        std::optional<TilesetData> ReadTilesetFile(const std::string& path) const;
+        std::optional<SpriteAnimationData> ReadAnimationFile(const std::string& animationFilepath) const;
 
         void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
 

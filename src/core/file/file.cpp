@@ -281,11 +281,12 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     }
 }
 
-MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
+std::optional<MapData> FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Map) + mapFilepath);
-    // TODO : has_value()
+    if (!optInput.has_value())
+        return std::nullopt;
     std::ifstream& input = optInput.value();
 
     MapData data;
@@ -309,10 +310,11 @@ MapData FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, 
     return data;
 }
 
-SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFilepath) const
+std::optional<SpriteAnimationData> FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::SpriteAnimation) + animationFilepath);
-    // TODO : has_value()
+    if (!optInput.has_value())
+        return std::nullopt;
     std::ifstream& input = optInput.value();
 
     SpriteAnimationData data;
@@ -331,10 +333,11 @@ SpriteAnimationData FileReader::ReadAnimationFile(const std::string& animationFi
     return data;
 }
 
-TilesetData FileReader::ReadTilesetFile(const std::string& path) const
+std::optional<TilesetData> FileReader::ReadTilesetFile(const std::string& path) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Tileset) + path);
-    // TODO : has_value()
+    if (!optInput.has_value())
+        return std::nullopt;
     std::ifstream& input = optInput.value();
 
     TilesetData data;
