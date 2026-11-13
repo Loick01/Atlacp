@@ -1,9 +1,11 @@
 #pragma once
 
 #include "core/notifier.hpp"
+#include "map/npc.hpp"
 #include "map/player.hpp" // EntityEvent comes from map_entity.hpp <- player.hpp
 
 struct DataMapElement;
+struct DataNPC;
 
 class Camera;
 class FileReader;
@@ -20,17 +22,17 @@ class MapEntityController : public Notifier<EntityEvent>
         Tilemap& m_tilemap;
         
         Player m_player;
-        
-        // TODO++ : Will have a std::vector<MapEntity>
-        // m_renderedEntities and m_updatedEntities both include the Player and every NPC
-        std::vector<MapEntity*> m_renderedEntities; // Sorted by y position
-        // A specific order could be necessary for MapEntity updating (for example with MapFollowBehaviour), I use a second vector of MapEntity*
-        std::vector<MapEntity*> m_updatedEntities;
+        std::vector<std::unique_ptr<NPC>> m_npcs;
 
+        std::vector<MapEntity*> m_entities;
+        std::vector<MapEntity*> m_renderedEntities;
         MapEntity* m_currentMapEntityUpdated;
 
-        bool m_shouldUpdateNpc;
-        
+        bool m_shouldUpdateNpcs;
+
+        void RefreshRenderedEntities();
+        void AddNpc(const DataNPC& data, const MapPosition spawn);
+
     public:
         MapEntityController(const FileReader& fileReader, TextureController& textureController,
             Camera& camera, Tilemap& tilemap, const std::string& spritePlayerPath);
@@ -46,7 +48,7 @@ class MapEntityController : public Notifier<EntityEvent>
         void SortRenderedEntities();
         void HandleEntityEvent(const EntityEvent e);
 
-        void CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition); // TODO : npcFilepath will be removed ?
+        void CreateEntity(const std::string& npcFilepath, const unsigned int idEntity, const MapPosition spawnPosition);
         void DeleteEntity(const unsigned int idEntity);
         void DeleteNPCs();
         void LoadNPCsForMap(const std::string& filepath, const unsigned int mapIndex);
