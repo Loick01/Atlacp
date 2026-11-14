@@ -3,8 +3,6 @@
 #include "event/event_types.hpp" // GameMapEventState
 #include "map/map_entity.hpp"
 
-// Forward declaration of Tilemap is already in map_entity.hpp
-
 class Player : public MapEntity, public EventStateHolder<GameMapEventState>
 {
     public:

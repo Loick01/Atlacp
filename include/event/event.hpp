@@ -8,7 +8,6 @@
 #include "event/action.hpp"
 #include "event/event_types.hpp" // GameMapEventState, EditorMapEventState, BattleEventState
 
-// Because of EditorMapEventController // TODO : Remove ?
 class Camera;
 class Tilemap;
 class Tileset;
@@ -59,10 +58,9 @@ class EditorMapEventController : public EventController, public EventStateHolder
         ScreenPosition GetMouseScreenPosition() const;
         ScenePosition GetMouseScenePosition() const;
         
-        ScenePosition m_lastKnownPosition; // Tileset screen position when m_tileset.GetShouldDraw(), otherwise m_camera scene position // TODO++ : Rename ?
+        ScenePosition m_lastPosition; // Tileset screen position when m_tileset.GetShouldDraw(), otherwise m_camera scene position
 
-        // TODO : Will be removed ?
-        Tileset& m_tileset; // TODO : Could be a UiElement ?
+        Tileset& m_tileset;
         Tilemap& m_tilemap;
         Camera& m_camera;
         
@@ -75,7 +73,7 @@ class EditorMapEventController : public EventController, public EventStateHolder
         void HandlePollEvents() override;
 
         void SetLayerCount(const unsigned int layerCount);
-        void Reset(); // TODO : Remove ?
+        void Reset();
 };
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>

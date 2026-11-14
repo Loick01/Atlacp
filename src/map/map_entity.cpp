@@ -4,7 +4,6 @@
 
 #include "core/path.hpp"
 #include "image/texture.hpp"
-#include "tile/tilemap.hpp"
 
 MapEntity::MapEntity(TextureController& textureController, const std::string& spriteFilepath, const FileReader& fileReader,
     Tilemap& tilemap, const Direction initialDirection, const float walkSpeed, const float runSpeed, const float cameraZoom,
@@ -34,6 +33,11 @@ MapMovement MapEntity::GetCurrentMovement() const
 {
     return m_currentMovement;
 }
+
+ScenePosition MapEntity::GetDisplayOffset() const
+{
+    return m_displayOffset;
+}   
 
 void MapEntity::SetOrientation(const Direction direction)
 {
@@ -197,6 +201,11 @@ void MapEntity::SetCameraZoom(const float zoom)
 void MapEntity::SetCameraPosition(const ScenePosition sp)
 {
     m_cameraPosition = sp;
+}
+
+void MapEntity::SetDisplayOffset(const ScenePosition offset)
+{
+    m_displayOffset = offset;
 }
 
 void MapEntity::FreePosition()

@@ -1,6 +1,5 @@
 #include "event/event.hpp"
 
-// Because of EditorMapEventController
 #include "core/camera.hpp"
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
@@ -205,9 +204,9 @@ void EditorMapEventController::HandlePollEvents()
                     const ScreenPosition mousePosition = GetMouseScreenPosition();
                     if (m_tileset.GetShouldDraw()) {
                         // Do not m_tileset.SetScreenPosition on mousePosition here
-                        m_lastKnownPosition = m_tileset.GetScreenPosition() - mousePosition;
+                        m_lastPosition = m_tileset.GetScreenPosition() - mousePosition;
                     } else {
-                        m_lastKnownPosition = m_camera.GetPosition() + mousePosition; // Do not use the zoom here
+                        m_lastPosition = m_camera.GetPosition() + mousePosition; // Do not use the zoom here
                     }
                     m_eventState.isCameraMoving = true;
                 }
@@ -243,10 +242,10 @@ void EditorMapEventController::HandlePollEvents()
     if (m_eventState.isCameraMoving){
         if (m_tileset.GetShouldDraw()) {
             const ScreenPosition mousePosition = GetMouseScreenPosition();
-            m_tileset.SetScreenPosition(m_lastKnownPosition+mousePosition);
+            m_tileset.SetScreenPosition(m_lastPosition+mousePosition);
         } else {
             const ScreenPosition mousePosition = GetMouseScreenPosition();
-            m_camera.SetCameraPosition(m_lastKnownPosition-mousePosition);
+            m_camera.SetCameraPosition(m_lastPosition-mousePosition);
         }
     } else if (m_eventState.isReplacingTile){
         const ScenePosition normScenePos = GetMouseScenePosition();

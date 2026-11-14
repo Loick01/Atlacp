@@ -87,7 +87,9 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     m_tileKey += std::to_string(wantedTileSize);
     pathToLoad += m_tileKey + ".png";
     
-    m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, m_tileSize);
+    AreaSize as;
+    m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, as);
+    m_tileSize = as.x;
 
     if (wantedTileSize != m_tileSize) // If this happens, pathToLoad is probably incorrect (because I use m_tileKey += std::to_string(wantedTileSize);)
         Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // TODO : Log

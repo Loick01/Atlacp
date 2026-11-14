@@ -5,9 +5,7 @@
 #include "ai_map/map_behaviour.hpp"
 #include "map/map_entity.hpp"
 
-// Forward declaration of Tilemap is already in map_entity.hpp
-
-class NPC : public MapEntity // TODO++ : Should have a Tilemap& member ?
+class NPC : public MapEntity
 {
     private:
         std::unique_ptr<MapEntityBehaviour> m_behaviour;
@@ -22,7 +20,7 @@ class NPC : public MapEntity // TODO++ : Should have a Tilemap& member ?
         void Update(const float deltaTime) override;
         
         void SetRandomBehaviour();
-        void SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target);
+        void SetGoToBehaviour(const MapPosition target);
         void SetFollowBehaviour(const MapEntity* trackedEntity);
         void SetIdleBehaviour(const Direction direction);
 };

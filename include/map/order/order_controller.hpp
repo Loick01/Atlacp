@@ -53,7 +53,6 @@ class OrderController : public Notifier<OrderExecutionEvent>
         void ExecuteOrder(const LoadMapOrder& o);
         void ExecuteOrder(const BoxingAnimationOrder& o);
 
-        // TODO++ : Rename IsOrderDone() ? (because it returns true if the Order is done)
         bool UpdateOrder(const Order& o); // Default when there is no function with the specific Order type
         bool UpdateOrder(const FrameTextOrder& o);
         bool UpdateOrder(const DialogTextOrder& o);
@@ -73,8 +72,8 @@ class OrderController : public Notifier<OrderExecutionEvent>
         void StopOrder(const BoxingAnimationOrder& o);
 
         void Execute(Order& order);
-        bool Update(const Order& order); // TODO++ : Rename IsOrderDone() ?
-        void Stop(const Order& order); // TODO++ : Rename ?
+        bool Update(const Order& order);
+        void Stop(const Order& order);
 
     public:
         OrderController(Boxing& boxing, Camera& camera, FileReader& fileReader, MapEntityController& mapElementController,

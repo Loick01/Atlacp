@@ -1,15 +1,13 @@
 #include "map/npc.hpp"
 
-#include "tile/tilemap.hpp"
-
 NPC::NPC(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController, const std::string& spriteFilepath,
     const MapPosition position, const float walkSpeed, const float runSpeed, const float cameraZoom, const unsigned int id):
     MapEntity(textureController, spriteFilepath, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed, cameraZoom, id)
 {
     SetMapPosition(position);
     const MapPosition mp = GetMapPosition();
-    tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
-    UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
+    m_tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position is defined in NPC constructor)
+    UpdateDrawingPosition(mp.ToScenePosition(m_tilemap.GetTileSize()));
     m_behaviour = std::make_unique<MapRandomBehaviour>();
 }
 
@@ -60,9 +58,9 @@ void NPC::SetRandomBehaviour()
     m_behaviour = std::make_unique<MapRandomBehaviour>();
 }
 
-void NPC::SetGoToBehaviour(const Tilemap& tilemap, const MapPosition target)
+void NPC::SetGoToBehaviour(const MapPosition target)
 {
-    m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, tilemap);
+    m_behaviour = std::make_unique<MapGoToBehaviour>(GetMapPosition(), target, m_tilemap);
 }
 
 void NPC::SetFollowBehaviour(const MapEntity* trackedEntity)

@@ -1,7 +1,6 @@
 #include "map/player.hpp"
 
 #include "core/logger.hpp"
-#include "tile/tilemap.hpp"
 
 Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController& textureController,
     const std::string& spriteFilepath, const float walkSpeed, const float runSpeed, const float cameraZoom):

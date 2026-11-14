@@ -158,7 +158,7 @@ enum class PlayerReposition
 
 struct LoadMapOrder { // Load a new map
     size_t mapIndex;
-    PlayerReposition reposition; // For now, I don't read this value in File::ReadLoadMapOrder, I always use MapSpawn, and Projection is only use for map transitions (when the player exits the map) 
+    PlayerReposition reposition; // I don't read this value in File::ReadLoadMapOrder, I always use MapSpawn, and Projection is only use for map transitions (when the player exits the map) 
     // TODO++ : Add MapPosition spawnPosition here ? (For now, I use the spawn position defined in the map file)
     
     std::string GetString() const

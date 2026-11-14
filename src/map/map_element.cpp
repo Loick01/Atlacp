@@ -1,7 +1,5 @@
 #include "map/map_element.hpp"
 
-#include "tile/tilemap.hpp"
-
 MapElement::MapElement(Tilemap& tilemap):
     m_tilemap(tilemap)
 {}

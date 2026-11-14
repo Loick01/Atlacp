@@ -49,19 +49,9 @@ SceneDrawable::SceneDrawable(TextureController& textureController, const std::st
     Drawable(textureController, textureFilepath), m_position(position)
 {}
 
-ScenePosition SceneDrawable::GetDisplayOffset() const
-{
-    return m_displayOffset;
-}   
-
 ScenePosition SceneDrawable::GetScenePosition() const
 {
     return m_position;
-}
-
-void SceneDrawable::SetDisplayOffset(const ScenePosition offset)
-{
-    m_displayOffset = offset;
 }
 
 ScreenDrawable::ScreenDrawable(TextureController& textureController, const std::string& textureFilepath, const ScreenPosition position, const bool shouldDraw):

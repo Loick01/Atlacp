@@ -33,9 +33,8 @@ class TextureController
         ~TextureController();
         
         void CreateTextureFromSurface(SDL_Surface* surface, const TextureKey& key, const std::string& s, int& textureWidth, int& textureHeight);
-        void AddTexture(const TextureKey& key, int& textureWidth, int& textureHeight); // TODO++ : Rename (UseTexture ?)
+        void UseTexture(const TextureKey& key, int& textureWidth, int& textureHeight);
 
-        void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int& textureSize); // TODO++ : Remove
         void LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, AreaSize& textureSize);
         void LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
             AreaSize& textureSize, const SDL_Color textColor, const int maxWidth);

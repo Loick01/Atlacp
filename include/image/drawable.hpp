@@ -34,14 +34,10 @@ class SceneDrawable : public Drawable
 {
     protected:
         ScenePosition m_position;
-        ScenePosition m_displayOffset; // TODO++ : Should be in MapEntity
-
-        void SetDisplayOffset(const ScenePosition offset);
     
     public:
         SceneDrawable(TextureController& textureController, const std::string& textureFilepath, const ScenePosition position);
         
-        ScenePosition GetDisplayOffset() const;
         ScenePosition GetScenePosition() const;
 };
 

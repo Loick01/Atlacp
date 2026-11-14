@@ -34,24 +34,10 @@ void TextureController::CreateTextureFromSurface(SDL_Surface* surface, const Tex
     m_textures[key].texture = texture;
 }
 
-void TextureController::AddTexture(const TextureKey& key, int& textureWidth, int& textureHeight)
+void TextureController::UseTexture(const TextureKey& key, int& textureWidth, int& textureHeight)
 {
     m_textures[key].count++;
     SDL_QueryTexture(m_textures[key].texture, nullptr, nullptr, &textureWidth, &textureHeight);
-}
-
-// TODO : Remove
-void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, int& textureSize)
-{
-    if (m_textures.find(key) == m_textures.end()){
-        SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
-        if (!surface) 
-            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Log
-        else
-            CreateTextureFromSurface(surface, key, textureFilepath, textureSize, textureSize);
-    } else { // Filepath has already been loaded as a texture
-        AddTexture(key, textureSize, textureSize);
-    }
 }
 
 void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, AreaSize& textureSize)
@@ -63,7 +49,7 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
         else
             CreateTextureFromSurface(surface, key, textureFilepath, textureSize.x, textureSize.y);
     } else { // Filepath has already been loaded as a texture
-        AddTexture(key, textureSize.x, textureSize.y);
+        UseTexture(key, textureSize.x, textureSize.y);
     }
 }
 
@@ -79,7 +65,7 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
         SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
         CreateTextureFromSurface(surface, key, text, textureSize.x, textureSize.y);
     }else{ // Text has already been generated as a texture
-        AddTexture(key, textureSize.x, textureSize.y);
+        UseTexture(key, textureSize.x, textureSize.y);
     }
 }
 

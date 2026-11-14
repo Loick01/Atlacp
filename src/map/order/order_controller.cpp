@@ -93,7 +93,7 @@ void OrderController::ExecuteOrder(const NpcGoToOrder& o)
     NPC* npc = static_cast<NPC*>(m_mapEntityController.GetMapEntityFromId(o.idNpc)); // TODO : Will be dynamic_cast, in case the order of the list changes (could be Player instead of NPC ?)
     npc->SetMovementState(EntityMovementState::Free); // TODO : Should be in SetGoToBehaviour() ? 
     // TODO : It needs to be EntityMovementState::Free otherwise it would prevent the NPC from moving, but Player can still interact with NPC ? Do I need a new state ?
-    npc->SetGoToBehaviour(m_tilemap, o.targetPosition);
+    npc->SetGoToBehaviour(o.targetPosition);
     
     // SetGoToBehaviour() can fail (when there is no path from start to end position)
     MapGoToBehaviour* goTo = dynamic_cast<MapGoToBehaviour*>(npc->GetMapBehaviour());

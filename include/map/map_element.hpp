@@ -4,8 +4,7 @@
 
 #include "map/order/order_controller.hpp" // Order
 #include "map/map_types.hpp" // MapPosition, Direction
-
-class Tilemap;
+#include "tile/tilemap.hpp"
 
 class MapElement
 {
