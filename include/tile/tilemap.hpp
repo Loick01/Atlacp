@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "core/notifier.hpp"
+#include "map/map_element_types.hpp"
 #include "tile/tile_types.hpp" // Tile
-#include "tile/layer.hpp"
+#include "tile/tile_map_types.hpp" // DataMap
 
 enum class TilemapEvent
 {
@@ -14,6 +15,7 @@ enum class TilemapEvent
 
 class Camera;
 class FileReader;
+class TileLayer;
 class Tileset;
 
 class Tilemap : public Notifier<TilemapEvent>
@@ -23,8 +25,8 @@ class Tilemap : public Notifier<TilemapEvent>
         Tileset& m_tileset;
         TextureController& m_textureController;
         Camera& m_camera; // TODO++ : Could be removed and use a parameter in LoadMap ?
-        WorldData m_worldData;
-        MapData m_mapData;
+        DataWorld m_dataWorld;
+        DataMap m_dataMap;
         size_t m_currentMap;
         const bool m_shouldCulling;
 
@@ -40,7 +42,7 @@ class Tilemap : public Notifier<TilemapEvent>
         const std::vector<DataMapElement>& GetTriggersData() const;
         const std::vector<TileLayer>& GetLayers() const;
         const std::vector<bool>& GetOccupancyGrid() const;
-        const WorldData& GetWorldData() const;
+        const DataWorld& GetDataWorld() const;
 
         MapBound IsOutOfMap(const MapPosition p) const; // TODO : Rename
         MapPosition GetSpawnPosition() const;

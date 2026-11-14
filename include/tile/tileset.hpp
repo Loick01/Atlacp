@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "image/drawable.hpp"
-#include "tile/tile_types.hpp" // Tile, TilesetData, TilesetNormalizationInfo
+#include "tile/tile_types.hpp" // Tile, DataTileset, TilesetNormalizationInfo
 
 class FileReader;
 class TextureController;
@@ -11,12 +11,12 @@ class TextureController;
 class Tileset : public ScreenDrawable // TODO : Could be a UiElement instead of ScreenDrawable ?
 {
     private:
-        std::vector<TilesetData> m_tilesets;
+        std::vector<DataTileset> m_tilesets;
         TilesetNormalizationInfo m_normalizationInfo;
         int m_tileSize; // All loaded file in a Tileset instance must have the same tileSize
         size_t m_indexTileset;
 
-        TilesetData GetTilesetData() const;
+        DataTileset GetDataTileset() const;
         
     public:
         Tileset(TextureController& textureController);

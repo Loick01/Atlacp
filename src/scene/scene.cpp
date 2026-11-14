@@ -187,14 +187,14 @@ void TilemapScene::HandleTilemapEvent(const TilemapEvent e)
 }
 
 GameMapScene::GameMapScene(GameContext& context):
-    TilemapScene(context, true), m_mapEntityController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetWorldData().spritePlayerPath),
+    TilemapScene(context, true), m_mapEntityController(m_context.fileReader, m_context.textureController, m_camera, m_tilemap, m_tilemap.GetDataWorld().spritePlayerPath),
     m_orderController(m_context.window.GetBoxing(), m_camera, m_context.fileReader, m_mapEntityController, m_tilemap, m_context.time, m_context.uiComponentController), 
     m_interactionController(m_orderController), m_triggerController(m_orderController), m_sceneState(GameMapSceneState::Update)
 {
     UpdateTilemapLayer();
     m_context.eventController = std::make_unique<GameMapEventController>();
     
-    m_mapEntityController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+    m_mapEntityController.LoadNPCsForMap(m_tilemap.GetDataWorld().npcsFile, m_tilemap.GetCurrentMapIndex());
     m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
     m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
 
@@ -288,7 +288,7 @@ void GameMapScene::HandleTilemapEvent(const TilemapEvent e)
     switch(e) {
         case TilemapEvent::LoadingMap : {
             UpdateTilemapLayer();
-            m_mapEntityController.LoadNPCsForMap(m_tilemap.GetWorldData().npcsFile, m_tilemap.GetCurrentMapIndex());
+            m_mapEntityController.LoadNPCsForMap(m_tilemap.GetDataWorld().npcsFile, m_tilemap.GetCurrentMapIndex());
             m_interactionController.SetInteractions(m_tilemap.GetElementsData(), m_tilemap);
             m_triggerController.SetTriggers(m_tilemap.GetTriggersData(), m_tilemap);
             break;

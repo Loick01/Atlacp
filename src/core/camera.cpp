@@ -16,7 +16,7 @@ void Camera::ComputeViewport(Window& window, const GridSize rangeTile, const int
                                             (windowSize.y/m_rangeTile.y)/static_cast<float>(tileSize)};
     m_zoom = std::min(bestPossibleZoom.x, bestPossibleZoom.y);
     m_viewport = m_rangeTile*tileSize*m_zoom;
-    const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport; // TODO : Rename ?
+    const ScenePosition outsideViewport = ScenePosition{windowSize.x, windowSize.y} - m_viewport;
     if (bestPossibleZoom.x < bestPossibleZoom.y){ 
         window.SetBoxing(
             ScreenPosition{0, windowSize.y-outsideViewport.y/2},

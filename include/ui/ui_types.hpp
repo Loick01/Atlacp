@@ -71,7 +71,7 @@ struct PartialSize // TODO++ : Should be in ui_element.hpp ?
     PartialSize(const UiKey& key, const Axis axs, const float amnt) { srcElement = key; axis = axs; amount = amnt; }
 };
 
-struct DataUi // TODO : Rename ? // TODO : Should not be here
+struct DataUiElement
 {
     UiKey parentKey; // If "root", the current UiElement is a subroot, thus it will be created with BuildSubRoot instead of BuildChild
     UiKey key;
@@ -89,7 +89,7 @@ struct DataUi // TODO : Rename ? // TODO : Should not be here
     PartialSize xPadding;
     PartialSize yPadding;
 
-    DataUi() { // TODO : Should I remove it ? (should not happen)
+    DataUiElement() { // TODO : Should I remove it ? (should not happen)
         text = "invalid_text";
         fontSize = FontSize::Small; // TODO : Small as default font size ?
     }

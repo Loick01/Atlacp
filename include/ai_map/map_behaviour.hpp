@@ -39,11 +39,11 @@ class MapRandomBehaviour : public MapEntityBehaviour // Always try to move in ra
         void OnStopCase(MapEntity& entity) override;
 };
 
-class MapFollowBehaviour : public MapEntityBehaviour // TODO : Rename MapFollowEntitybehaviour ?
+class MapFollowBehaviour : public MapEntityBehaviour
 {
-    // Assume the tracked entity is one tile away from the follower. TODO : Follow behaviour with pathfiding
+    // Assume the tracked entity is one tile away from the follower
     private:
-        const MapEntity* m_trackedEntity; // TODO++ : Could be MapEntity& when I remove trackedEntity from NPC constructor ?
+        const MapEntity* m_trackedEntity;
 
     public:
         MapFollowBehaviour(const MapEntity* followerEntity, const MapEntity* trackedEntity);

@@ -67,7 +67,7 @@ FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const
     
     input >> nrText;
     for (unsigned int i = 0 ; i < nrText ; i++) {
-        std::getline(input >> std::ws, s, TEXT_DELIMITER);
+        std::getline(input >> std::ws, s, MINOR_DELIMITER);
         texts.push_back(s);
     }
     
@@ -85,7 +85,7 @@ DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const
     input >> facePath;
     
     for (unsigned int i = 0 ; i < nrText ; i++) {
-        std::getline(input >> std::ws, s, TEXT_DELIMITER);
+        std::getline(input >> std::ws, s, MINOR_DELIMITER);
         texts.push_back(s);
     }
     

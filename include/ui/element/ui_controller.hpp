@@ -33,8 +33,8 @@ class UiController // TODO : Should be renamed UiElementController ?
         ScreenPosition m_position; // Initialized with the viewport position
         AreaSize m_size; // Initialized with the viewport size
 
-        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const; // TODO : Rename ?
-        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const; // TODO : Rename ?
+        float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const;
+        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const;
         
         // Add/Remove in UiController::m_elements
         void AddElement(const UiKey& key, UiElement* element);
@@ -52,7 +52,7 @@ class UiController // TODO : Should be renamed UiElementController ?
         std::unique_ptr<UiAnimatedElement> CreateAnimatedElement(const UiKey& key, const std::string& animationPath);
         std::unique_ptr<UiElement> RemoveSubRoots(const UiKey& key);
 
-        std::unique_ptr<UiElement> GenerateElementFromData(const DataUi& data); // TODO : Rename
+        std::unique_ptr<UiElement> GenerateElementFromData(const DataUiElement& data); // TODO : Rename
         std::vector<UiKey> BuildUiFile(const std::string& filepath);
 
         std::unordered_map<UiKey, UiElement*>::const_iterator GetIteratorOnElement(const UiKey& key) const;

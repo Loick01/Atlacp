@@ -4,14 +4,14 @@
 
 #include "core/core_types.hpp" // Vec2
 
-struct SpriteAnimationData
+struct DataSpriteAnimation
 {
     std::vector<Vec2> sprites; // Position of each sprites in spritesheet
     AreaSize spriteSize;
     int step; // How many step for the animation
     float frameDuration;
 
-    SpriteAnimationData() {
+    DataSpriteAnimation() {
         spriteSize = {0,0};
     }
 };

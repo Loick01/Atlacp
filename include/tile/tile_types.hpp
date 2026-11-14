@@ -9,7 +9,7 @@
 
 using Tile = int;
 
-struct WorldData
+struct DataWorld
 {
     std::vector<std::string> maps;
     std::string mapDirectoryPath;
@@ -19,7 +19,7 @@ struct WorldData
     size_t startMap;
 };
 
-struct TilesetData
+struct DataTileset
 {
     TextureKey tilesetKey;
     std::set<Tile> solidTiles; // TODO++ : Should use unordered set ?

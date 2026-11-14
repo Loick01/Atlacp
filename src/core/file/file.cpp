@@ -3,9 +3,10 @@
 #include <unordered_map>
 
 #include "core/camera.hpp"
+#include "core/logger.hpp"
 #include "core/path.hpp"
 #include "image/texture.hpp"
-#include "tile/layer.hpp" // MapData, TileLayer
+#include "tile/layer.hpp"
 #include "tile/tileset.hpp"
 
 std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const std::string& moveFilepath) const
@@ -45,7 +46,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     std::vector<DataBattleActor> actorsData;
     std::string s;
     
-    while (input >> s && s != SECTION_DELIMITER) {
+    while (input >> s && s != MAJOR_DELIMITER) {
         DataBattleActor data;
         data.isAiActor = true;
         if (s == "ally") data.team = Team::Ally;
@@ -68,7 +69,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> data.health;
         input >> data.turnSpeed;
         input >> data.spritePath;
-        while (input >> s && s != SECTION_DELIMITER)
+        while (input >> s && s != MAJOR_DELIMITER)
             data.moveIds.push_back(std::stoi(s)); // TODO : Should catch invalid_argument ? 
         
         actorsData.push_back(data);
@@ -108,7 +109,7 @@ std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepa
     std::string s;
     
     while(count < mapIndex && input >> s) { // Skip to the data associated with the chosen map
-        if (s == SECTION_DELIMITER) count++;
+        if (s == MAJOR_DELIMITER) count++;
     }
     if (count != mapIndex) {
         Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath); // TODO : Log
@@ -147,7 +148,7 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
     return std::nullopt;
 }
 
-std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
+std::vector<DataUiElement> FileReader::ReadUiFile(const std::string& uiFilepath) const
 {
     std::optional<std::ifstream> optInput;
     if (CheckFileExtension(uiFilepath, FileExtension::UiFile))
@@ -159,17 +160,17 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
         return {};
     std::ifstream& input = optInput.value();
 
-    std::vector<DataUi> uisData;
+    std::vector<DataUiElement> uisData;
     std::string s;
-    while (input >> s && s != SECTION_DELIMITER) {
+    while (input >> s && s != MAJOR_DELIMITER) {
         if (s == "load") {
             input >> s;
-            std::vector<DataUi> load = ReadUiFile(s);
+            std::vector<DataUiElement> load = ReadUiFile(s);
             uisData.insert(std::end(uisData), std::begin(load), std::end(load));
-            input >> s; // After the load line, the next line must be SECTION_DELIMITER
+            input >> s; // After the load line, the next line must be MAJOR_DELIMITER
             continue;
         }
-        DataUi data;
+        DataUiElement data;
         // No verification yet on what is read 
         data.parentKey = s;
         input >> data.key; 
@@ -178,7 +179,7 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
             input >> data.imagePath;
         
         // Read optional data 
-        while (input >> s && s != SECTION_DELIMITER) {
+        while (input >> s && s != MAJOR_DELIMITER) {
             if (s == "scale") {
                 input >> data.scale.srcElement;
                 data.scale.axis = ReadAxis(input);
@@ -211,9 +212,9 @@ std::vector<DataUi> FileReader::ReadUiFile(const std::string& uiFilepath) const
     return uisData;
 }
 
-std::optional<WorldData> FileReader::ReadWorldFile(const std::string& worldFilepath) const
+std::optional<DataWorld> FileReader::ReadWorldFile(const std::string& worldFilepath) const
 {
-    WorldData data;
+    DataWorld data;
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::World) + worldFilepath);
     if (!optInput.has_value())
         return std::nullopt;
@@ -246,7 +247,7 @@ DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
     return e;
 }
 
-void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
+void FileReader::ReadHeaderMapFile(std::ifstream& input, DataMap& data) const
 {
     std::string s;
     unsigned int count = 0;
@@ -281,7 +282,7 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, MapData& data) const
     }
 }
 
-std::optional<MapData> FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
+std::optional<DataMap> FileReader::ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController, 
     Tileset& tileset) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Map) + mapFilepath);
@@ -289,7 +290,7 @@ std::optional<MapData> FileReader::ReadMapFile(const std::string& mapFilepath, C
         return std::nullopt;
     std::ifstream& input = optInput.value();
 
-    MapData data;
+    DataMap data;
 
     ReadHeaderMapFile(input, data);
     Tile t;
@@ -310,14 +311,14 @@ std::optional<MapData> FileReader::ReadMapFile(const std::string& mapFilepath, C
     return data;
 }
 
-std::optional<SpriteAnimationData> FileReader::ReadAnimationFile(const std::string& animationFilepath) const
+std::optional<DataSpriteAnimation> FileReader::ReadAnimationFile(const std::string& animationFilepath) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::SpriteAnimation) + animationFilepath);
     if (!optInput.has_value())
         return std::nullopt;
     std::ifstream& input = optInput.value();
 
-    SpriteAnimationData data;
+    DataSpriteAnimation data;
 
     input >> data.spriteSize.x;
     input >> data.spriteSize.y;
@@ -333,14 +334,14 @@ std::optional<SpriteAnimationData> FileReader::ReadAnimationFile(const std::stri
     return data;
 }
 
-std::optional<TilesetData> FileReader::ReadTilesetFile(const std::string& path) const
+std::optional<DataTileset> FileReader::ReadTilesetFile(const std::string& path) const
 {
     std::optional<std::ifstream> optInput = OpenFile(std::string(DataDirectory::Tileset) + path);
     if (!optInput.has_value())
         return std::nullopt;
     std::ifstream& input = optInput.value();
 
-    TilesetData data;
+    DataTileset data;
 
     input >> data.size.x;
     input >> data.size.y;
@@ -354,25 +355,25 @@ std::optional<TilesetData> FileReader::ReadTilesetFile(const std::string& path) 
     return data;
 }
 
-void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const
+void FileReader::SaveMapFile(const std::string& mapFilepath, const DataMap& dataMap) const
 {
     std::ofstream output(std::string(DataDirectory::Map) + mapFilepath);
-    const int width = mapData.size.x;
-    const int height = mapData.size.y;
-    const int layerCount = mapData.layerCount; 
+    const int width = dataMap.size.x;
+    const int height = dataMap.size.y;
+    const int layerCount = dataMap.layerCount; 
 
-    output << layerCount << " " << mapData.layerSplitIndex << " " << width << " " << height << " " << mapData.spawnPosition.x << " " << mapData.spawnPosition.y << "\n\n";
+    output << layerCount << " " << dataMap.layerSplitIndex << " " << width << " " << height << " " << dataMap.spawnPosition.x << " " << dataMap.spawnPosition.y << "\n\n";
     
     // Tilesets
-    output << "tileset " << mapData.tilesets.size() << " ";
-    output << mapData.tilesetDirectoryPath << "\n";
-    for (const TextureKey& k : mapData.tilesets) { // Tileset filepath must be write in order
+    output << "tileset " << dataMap.tilesets.size() << " ";
+    output << dataMap.tilesetDirectoryPath << "\n";
+    for (const TextureKey& k : dataMap.tilesets) { // Tileset filepath must be write in order
         output << k << "\n"; // TilesetKey need definition for operator<<
     }
     
     // MapElement (with Orders)
-    output << "\nelement " << mapData.elements.size() << "\n\n";
-    for (const DataMapElement& me : mapData.elements) {
+    output << "\nelement " << dataMap.elements.size() << "\n\n";
+    for (const DataMapElement& me : dataMap.elements) {
         output << me.position.x << " " << me.position.y << " " << me.orders.size() << "\n";
         for (const Order& o : me.orders)
             output << GetStringDescription(o) << "\n";
@@ -381,8 +382,8 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
     }
 
     // Trigger (with Orders)
-    output << "trigger " << mapData.triggers.size() << "\n\n";
-    for (const DataMapElement& me : mapData.triggers) {
+    output << "trigger " << dataMap.triggers.size() << "\n\n";
+    for (const DataMapElement& me : dataMap.triggers) {
         output << me.position.x << " " << me.position.y << " " << me.orders.size() << "\n";
         for (const Order& o : me.orders)
             output << GetStringDescription(o) << "\n";
@@ -392,7 +393,7 @@ void FileReader::SaveMapFile(const std::string& mapFilepath, const MapData& mapD
 
     // Map layers
     for (unsigned int l=0 ; l < layerCount ; l++){
-        const std::vector<Tile> tiles = mapData.layers[l].GetTiles();
+        const std::vector<Tile> tiles = dataMap.layers[l].GetTiles();
         for (size_t j = 0 ; j < height ; j++){
             for (size_t i = 0 ; i < width ; i++){
                 output << tiles[j*width+i] << " ";

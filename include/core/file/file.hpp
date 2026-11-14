@@ -6,37 +6,20 @@
 #include <unordered_map>
 #include <vector>
 
-#include "animation/animation_types.hpp" // SpriteAnimationData
+#include "animation/animation_types.hpp" // DataSpriteAnimation
 #include "battle/battle_types.hpp" // DataBattleActor
-#include "core/logger.hpp"
+#include "map/map_element_types.hpp" // DataNPC, DataMapElement
 #include "map/order/order.hpp" // Order
-#include "tile/tile_types.hpp" // WorldData, TilesetData
-#include "ui/ui_types.hpp" // DataUi
+#include "tile/tile_types.hpp" // DataWorld, DataTileset
+#include "tile/tile_map_types.hpp" // DataMap
+#include "ui/ui_types.hpp" // DataUiElement
 
-#define SECTION_DELIMITER "###" // TODO : Rename ?
-#define TEXT_DELIMITER ';' // TODO : Rename ?
+#define MAJOR_DELIMITER "###"
+#define MINOR_DELIMITER ';'
 
 class Camera;
 class TextureController;
 class Tileset;
-
-struct MapData;
-
-struct DataNPC // TODO++ : Should not be here
-{
-    std::vector<Order> orders;
-    MapPosition position;
-    std::string sprite;
-    float walkSpeed;
-    float runSpeed;
-    unsigned int id;
-};
-
-struct DataMapElement // TODO++ : Should not be here // TODO : Rename ?
-{
-    std::vector<Order> orders;
-    MapPosition position;
-};
 
 class FileReader
 {
@@ -78,7 +61,7 @@ class FileReader
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;
         DataNPC ReadDataNPC(std::ifstream& input, const unsigned int targetId=-1) const;
-        void ReadHeaderMapFile(std::ifstream& input, MapData& m) const;
+        void ReadHeaderMapFile(std::ifstream& input, DataMap& m) const;
 
     public:
         FileReader() = default;
@@ -90,15 +73,15 @@ class FileReader
         std::vector<DataNPC> GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
         std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const;
 
-        std::vector<DataUi> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
+        std::vector<DataUiElement> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
-        std::optional<WorldData> ReadWorldFile(const std::string& worldFilepath) const;
-        std::optional<MapData> ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
+        std::optional<DataWorld> ReadWorldFile(const std::string& worldFilepath) const;
+        std::optional<DataMap> ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
             Tileset& tileset) const;
-        std::optional<TilesetData> ReadTilesetFile(const std::string& path) const;
-        std::optional<SpriteAnimationData> ReadAnimationFile(const std::string& animationFilepath) const;
+        std::optional<DataTileset> ReadTilesetFile(const std::string& path) const;
+        std::optional<DataSpriteAnimation> ReadAnimationFile(const std::string& animationFilepath) const;
 
-        void SaveMapFile(const std::string& mapFilepath, const MapData& mapData) const;
+        void SaveMapFile(const std::string& mapFilepath, const DataMap& dataMap) const;
 
         // FileOrder
         std::vector<Order> ReadCinematicFile(const std::string& cinematicFilepath) const;

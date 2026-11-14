@@ -10,14 +10,14 @@ SpriteAnimation::SpriteAnimation(const FileReader& fileReader, const std::string
 
 Vec2 SpriteAnimation::GetCurrentSprite() const
 {
-    if (m_animationData.sprites.size() <= m_currentSpriteIndex)
+    if (m_dataSpriteAnim.sprites.size() <= m_currentSpriteIndex)
         return Vec2{0, 0};
-    return m_animationData.sprites.at(m_currentSpriteIndex);
+    return m_dataSpriteAnim.sprites.at(m_currentSpriteIndex);
 }
 
 AreaSize SpriteAnimation::GetSpriteSize() const
 {
-    return m_animationData.spriteSize;
+    return m_dataSpriteAnim.spriteSize;
 }
 
 bool SpriteAnimation::IsDone() const
@@ -27,18 +27,18 @@ bool SpriteAnimation::IsDone() const
 
 void SpriteAnimation::UpdateAnimationData(const std::string& animationFilepath)
 {
-    std::optional<SpriteAnimationData> optAnimData = m_fileReader.ReadAnimationFile(animationFilepath); 
+    std::optional<DataSpriteAnimation> optAnimData = m_fileReader.ReadAnimationFile(animationFilepath); 
     if (!optAnimData.has_value())
         return;
-    m_animationData = optAnimData.value();
+    m_dataSpriteAnim = optAnimData.value();
 }
 
 void SpriteAnimation::Continue(const float deltaTime)
 {
     m_count += deltaTime;
-    if (m_count >= m_animationData.frameDuration){
-        m_count -= m_animationData.frameDuration;
+    if (m_count >= m_dataSpriteAnim.frameDuration){
+        m_count -= m_dataSpriteAnim.frameDuration;
         ++m_currentSpriteIndex;
-        if (m_currentSpriteIndex == m_animationData.step) m_isDone = true;
+        if (m_currentSpriteIndex == m_dataSpriteAnim.step) m_isDone = true;
     }
 }

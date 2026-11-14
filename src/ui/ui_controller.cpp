@@ -82,7 +82,7 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Sam
     return nullptr;
 }
 
-std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& data)
+std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUiElement& data)
 {
     std::unique_ptr<UiElement> element;
     if (data.type == "uielement") {
@@ -120,10 +120,10 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUi& d
 
 std::vector<UiKey> UiController::BuildUiFile(const std::string& filepath) 
 {
-    std::vector<DataUi> fileResult = m_fileReader.ReadUiFile(filepath);
+    std::vector<DataUiElement> fileResult = m_fileReader.ReadUiFile(filepath);
     std::vector<UiKey> createdElements;
     
-    for (const DataUi& data : fileResult) { 
+    for (const DataUiElement& data : fileResult) { 
         const UiKey& k = data.key;
         if (GetIteratorOnElement(k) != m_elements.end()) continue; // I assumed it is possible to try to create elements that already exist   
         createdElements.push_back(k); // TODO : Maybe I could use a flag in ui file to mark specific elements

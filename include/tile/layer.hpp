@@ -1,7 +1,5 @@
 #pragma once
 
-#include "core/file/file.hpp" // DataMapElement
-#include "map/map_types.hpp" // MapPosition
 #include "tile/tile_types.hpp" // Tile
 
 class Camera;
@@ -38,7 +36,6 @@ class TileLayer
         void SetTile(const size_t index, const Tile t);
 };
 
-// TODO : Rename ?
 class ExtraTileLayer : public TileLayer // Used for tile border layer + will be used for tile collision layer
 {
     private:
@@ -57,26 +54,4 @@ class ExtraTileLayer : public TileLayer // Used for tile border layer + will be 
         void BuildBorderLayer();
         void BuildCollisionLayer(const std::vector<bool>& occupancyGrid);
         void DrawTexture() const override;
-};
-
-struct MapData // TODO++ : Should be in map/map_types.hpp ?
-{
-    size_t layerCount;
-    size_t layerSplitIndex; // TODO : Later, each MapEntity will have its own value so that it can be drawn independently 
-    std::vector<TileLayer> layers;
-    std::vector<bool> occupancyGrid; // TODO : Could be a TileLayer ?
-    std::vector<TextureKey> tilesets; // Tileset keys (read from the header of the map file) that will be used to build the map
-    std::vector<DataMapElement> elements;
-    std::vector<DataMapElement> triggers;
-    MapPosition spawnPosition; // Position where the player will start when loading the associated map (-1 if no specific position)
-    GridSize size; // TODO : Should not be here, and only in TileLayer ?
-    std::string tilesetDirectoryPath;
-
-    MapData() {
-        layerCount = 0;
-        spawnPosition = {0, 0};
-        layerSplitIndex = 0;
-        occupancyGrid.clear();
-        layers.clear();
-    }
 };

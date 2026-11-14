@@ -1,6 +1,6 @@
 #pragma once
 
-#include "animation/animation_types.hpp" // SpriteAnimationData
+#include "animation/animation_types.hpp" // DataSpriteAnimation
 #include "core/core_types.hpp" // Vec2, AreaSize
 
 class FileReader;
@@ -12,7 +12,7 @@ class SpriteAnimation
         bool m_isDone;
 
     protected:
-        SpriteAnimationData m_animationData;
+        DataSpriteAnimation m_dataSpriteAnim;
         float m_count; // Elapsed time since the last sprite update
         int m_currentSpriteIndex;
 

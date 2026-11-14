@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-enum class CommandType // TODO : Rename ?
+enum class CommandType
 {
     Attack, Heal
 };
 
-enum class MoveType // TODO : Rename ?
+enum class MoveType
 {
     Physical, Magic
 };
@@ -29,7 +29,7 @@ struct DataBattleActor
     bool isAiActor;
 };
 
-struct MoveDefinition // TODO : Rename ?
+struct MoveDefinition
 {
     std::string name;
     CommandType commandType;

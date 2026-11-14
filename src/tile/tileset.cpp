@@ -20,10 +20,10 @@ Tileset::~Tileset()
 // TODO : Should be an override of Drawable::LoadTexture ?
 void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 {
-    std::optional<TilesetData> optTilesetData = fileReader.ReadTilesetFile(path);
-    if (!optTilesetData.has_value())
+    std::optional<DataTileset> optDataTileset = fileReader.ReadTilesetFile(path);
+    if (!optDataTileset.has_value())
         return;
-    TilesetData data = optTilesetData.value();
+    DataTileset data = optDataTileset.value();
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
     else if (data.tileSize != m_tileSize) {
@@ -53,7 +53,7 @@ void Tileset::SetDisplayedTileset(const int tilesetIndex)
     // Drawable::m_textureKey/m_textureSize is not used in Tileset class, except in editor mode (when displaying the tileset) 
     if (m_tilesets.size() <= tilesetIndex) // TODO : Log ?
         return;
-    const TilesetData tileset = m_tilesets.at(tilesetIndex);
+    const DataTileset tileset = m_tilesets.at(tilesetIndex);
     m_textureKey = tileset.tilesetKey;
     m_textureSize = tileset.size*m_tileSize;
 }
@@ -95,15 +95,15 @@ void Tileset::UpdateSelectedTile(const ScreenPosition sp, const int tilesetIndex
         int c = sp.x/m_tileSize;
         int l = sp.y/m_tileSize;
         int offset = 0;
-        for (size_t i = 0 ; i < tilesetIndex ; i++){ // TODO : Should store the offset for each tileset in TilesetData ?
-            TilesetData t = m_tilesets[i];
+        for (size_t i = 0 ; i < tilesetIndex ; i++){ // TODO : Should store the offset for each tileset in DataTileset ?
+            DataTileset t = m_tilesets[i];
             offset += t.size.x*t.size.y;
         }
         tile = offset + l*GetTilesetWidth(tilesetIndex)+c;
     }
 }
 
-TilesetData Tileset::GetTilesetData() const // TODO : Use this function everytime I try to get a tileset from m_indexTileset ?
+DataTileset Tileset::GetDataTileset() const // TODO : Use this function everytime I try to get a tileset from m_indexTileset ?
 {
     return m_tilesets[m_indexTileset];
 }
@@ -117,7 +117,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
     if (t > m_normalizationInfo.lastUpperBound){
         t -= m_normalizationInfo.lastUpperBound+1;
         for (size_t i = m_indexTileset+1 ; i < m_tilesets.size() ; i++){
-            const TilesetData data = m_tilesets[i];
+            const DataTileset data = m_tilesets[i];
             int size = data.size.x*data.size.y;
             m_normalizationInfo.lastLowerBound = m_normalizationInfo.lastUpperBound+1;
             m_normalizationInfo.lastUpperBound = m_normalizationInfo.lastUpperBound+size;
@@ -129,7 +129,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
         }
     }else{ // t < m_normalizationInfo.lastLowerBound
         for (size_t i = m_indexTileset-1 ; i >= 0 ; i--){
-            const TilesetData data = m_tilesets[i];
+            const DataTileset data = m_tilesets[i];
             int size = data.size.x*data.size.y;
             m_normalizationInfo.lastUpperBound = m_normalizationInfo.lastLowerBound-1;
             m_normalizationInfo.lastLowerBound = m_normalizationInfo.lastLowerBound-size;
@@ -145,7 +145,7 @@ Tile Tileset::GetNormalizedTile(const Tile tile)
 
 void Tileset::CleanTilesets(const bool shouldDeleteCurrent)
 {
-    for (const TilesetData& e : m_tilesets){
+    for (const DataTileset& e : m_tilesets){
         if (shouldDeleteCurrent || e.tilesetKey != m_textureKey) // Tileset with m_textureKey will be deleted with ~Drawable
             m_textureController.DeleteTexture(e.tilesetKey);
     }
