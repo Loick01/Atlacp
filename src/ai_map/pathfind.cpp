@@ -13,7 +13,7 @@ std::vector<MapPosition> Pathfind::ComputePath(const MapPosition startPosition, 
     std::vector<bool> visited(tilemap.GetGridSize(), false);
     visited[tilemap.GetTileIndex(startPosition)] = true; 
     std::vector<MapPosition> parents(tilemap.GetGridSize());
-    std::vector<MapPosition> directions = {{1,0}, {-1,0}, {0,1}, {0,-1}}; // TODO++ : Should get it from EventController ?
+    static const std::array<MapPosition, 4> directions = {{{1,0}, {-1,0}, {0,1}, {0,-1}}};
 
     while (!queue.empty()){
         const MapPosition current = queue.front();

@@ -69,18 +69,17 @@ class UiController // TODO : Should be renamed UiElementController ?
         void SetSize(const AreaSize size);
         void SetPosition(const ScreenPosition position);
 
-        // TODO++ : Rename these functions, I should not use Update in the name
-        void UpdatePath(const UiKey& key, const std::string& path);
-        void UpdatePath(const UiValue<std::string>& path);
-        void UpdateText(const UiKey& key, const std::string& text);
-        void UpdateText(const UiValue<std::string>& uiv);
-        void UpdateText(const UiValue<unsigned int>& uiv);
-        void UpdateParent(const UiKey& key, const UiKey& parent);
-        void UpdateScalingSize(const UiKey& key, const PartialSize ps); // TODO : Should use UiKey+Axis+float, instead of PartialSize (which is from file.hpp)
+        void EditPath(const UiKey& key, const std::string& path);
+        void EditPath(const UiValue<std::string>& path);
+        void EditText(const UiKey& key, const std::string& text);
+        void EditText(const UiValue<std::string>& uiv);
+        void EditText(const UiValue<unsigned int>& uiv);
+        void EditParent(const UiKey& key, const UiKey& parent);
+        void EditScalingSize(const UiKey& key, const PartialSize ps);
         // TODO : Should add UpdateScalingAxis ? (I don't need it for now)
-        void UpdatePadding(const UiKey& key, const PartialSize ps, const Axis axis);
-        void UpdateKey(const UiKey& key, const UiKey& newKey); // Used for ui template instanciation (uit file)
-        void UpdateParams(const UiKey& key, const UiParams& params);
+        void EditPadding(const UiKey& key, const PartialSize ps, const Axis axis);
+        void EditKey(const UiKey& key, const UiKey& newKey); // Used for ui template instanciation (uit file)
+        void EditParams(const UiKey& key, const UiParams& params);
 
         void Draw() const;
 };

@@ -209,7 +209,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
     switch (e) {
         case EntityEvent::HasMoved: {
             MapEntity* currentEntity = m_mapEntityController.GetCurrentMapEntityUpdated();
-            if (currentEntity->GetId() != 0) break; // TODO++ : Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
+            if (currentEntity->GetId() != 0) break; // TODO : Remove --> I use this because I only want triggers with the player for now (Player Id is 0) 
             m_triggerController.LookForTrigger(currentEntity);
             break;
         }
@@ -368,7 +368,7 @@ void EditorMapScene::BuildUILayerSelection()
 
         if (i != m_layers.size()-1) layerDisplay += " | ";
 
-        m_context.uiController.UpdateText(keys[i], layerDisplay);
+        m_context.uiController.EditText(keys[i], layerDisplay);
     }
     m_selector->Open();
     m_selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 1.f, -0.05f);
@@ -396,7 +396,7 @@ void EditorMapScene::Gameloop()
     
     if (eventState.selectedLayer != m_lastLayer){
         m_lastLayer = eventState.selectedLayer;
-        m_context.uiController.UpdateText("editedLayerText", "Edited layer:" + std::to_string(m_lastLayer));
+        m_context.uiController.EditText("editedLayerText", "Edited layer:" + std::to_string(m_lastLayer));
     } 
 
     if (m_selector->HorizontalNavigation(eventState.uiDirection, eventState.isAction)) {

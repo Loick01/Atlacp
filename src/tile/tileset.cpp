@@ -85,7 +85,7 @@ int Tileset::GetTilesetHeight() const
 
 bool Tileset::IsEmptyTile(const Tile tile)
 {
-    Tile t = GetNormalizedTile(tile); 
+    Tile t = ComputeCurrentTileset(tile); 
     return m_tilesets[m_indexTileset].solidTiles.find(t) == m_tilesets[m_indexTileset].solidTiles.end();
 }
 
@@ -108,34 +108,33 @@ DataTileset Tileset::GetDataTileset() const // TODO : Use this function everytim
     return m_tilesets[m_indexTileset];
 }
 
-Tile Tileset::GetNormalizedTile(const Tile tile)
+Tile Tileset::ComputeCurrentTileset(Tile tile)
 {
-    int t = tile; // TODO : Should be Tile instead of int
-    if (t >= m_normalizationInfo.lastLowerBound && t <= m_normalizationInfo.lastUpperBound)
-        return t-m_normalizationInfo.lastLowerBound;
+    if (tile >= m_normalizationInfo.lastLowerBound && tile <= m_normalizationInfo.lastUpperBound)
+        return tile-m_normalizationInfo.lastLowerBound;
 
-    if (t > m_normalizationInfo.lastUpperBound){
-        t -= m_normalizationInfo.lastUpperBound+1;
+    if (tile > m_normalizationInfo.lastUpperBound){
+        tile -= m_normalizationInfo.lastUpperBound+1;
         for (size_t i = m_indexTileset+1 ; i < m_tilesets.size() ; i++){
             const DataTileset data = m_tilesets[i];
             int size = data.size.x*data.size.y;
             m_normalizationInfo.lastLowerBound = m_normalizationInfo.lastUpperBound+1;
             m_normalizationInfo.lastUpperBound = m_normalizationInfo.lastUpperBound+size;
-            if (t-size < 0){
+            if (tile-size < 0){
                 m_indexTileset = i;
-                return t;
+                return tile;
             }
-            t -= size;
+            tile -= size;
         }
-    }else{ // t < m_normalizationInfo.lastLowerBound
+    }else{ // tile < m_normalizationInfo.lastLowerBound
         for (size_t i = m_indexTileset-1 ; i >= 0 ; i--){
             const DataTileset data = m_tilesets[i];
             int size = data.size.x*data.size.y;
             m_normalizationInfo.lastUpperBound = m_normalizationInfo.lastLowerBound-1;
             m_normalizationInfo.lastLowerBound = m_normalizationInfo.lastLowerBound-size;
-            if (t-m_normalizationInfo.lastLowerBound >= 0){
+            if (tile-m_normalizationInfo.lastLowerBound >= 0){
                 m_indexTileset = i;
-                return t-m_normalizationInfo.lastLowerBound;
+                return tile-m_normalizationInfo.lastLowerBound;
             }
         }
     }

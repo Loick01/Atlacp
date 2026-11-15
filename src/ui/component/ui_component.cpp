@@ -21,7 +21,7 @@ void UiComponent::Open()
         // Or I could use a function similar to BuildUiFile ?
         for (UiKey& k : created) {
             const UiKey newKey = k + std::to_string(countInstance);
-            m_uiController.UpdateKey(k, newKey);
+            m_uiController.EditKey(k, newKey);
             k = newKey; // Necessary only for the first key (the one used for m_uiKey below)  
         }
     }

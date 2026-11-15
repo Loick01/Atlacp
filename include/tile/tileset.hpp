@@ -28,7 +28,8 @@ class Tileset : public ScreenDrawable // TODO : Could be a UiElement instead of 
         int GetTilesetWidth() const;
         int GetTilesetWidth(const int tilesetIndex) const;
         int GetTilesetHeight() const;
-        Tile GetNormalizedTile(const Tile tile); // TODO++ : Rename (it also update m_indexTileset)
+        
+        Tile ComputeCurrentTileset(Tile tile);
         bool IsEmptyTile(const Tile tile);
         void UpdateSelectedTile(const ScreenPosition sp, const int tilesetIndex, Tile& tile) const;
         void LoadTileset(const FileReader& fileReader, const std::string& path);

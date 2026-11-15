@@ -58,7 +58,7 @@ struct UiParams
     }
 };
 
-struct PartialSize // TODO++ : Should be in ui_element.hpp ?
+struct PartialSize
 {
     UiKey srcElement;
     Axis axis;

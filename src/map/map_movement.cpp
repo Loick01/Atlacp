@@ -66,7 +66,7 @@ Direction MapMovement::GetDirectionFromMove(const MapPosition move) const
         else if (move.x==1) return Direction::Right;
     }
     
-    Logger::GetInstance().AddLog(Level::L4, "Direction::None"); // TODO : Log
+    Logger::GetInstance().AddLog(Level::L4, "(MapMovement::GetDirectionFromMove) Direction::None"); // TODO : LEvel
     return Direction::None;
 }
 

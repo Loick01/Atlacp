@@ -121,12 +121,12 @@ struct EntityOrientationOrder { // Set the orientation of a MapEntity
 
 struct EntityCreateOrder { // Create a new MapEntity (NPC only) whose data is read from a file 
     unsigned int idEntity;
-    MapPosition spawnPosition;
+    MapPosition spawn;
     std::string entityFilepath; // The data to build the MapEntity will be read in this file. TODO : Will be removed ?  
 
     std::string GetString() const
     {
-        std::string res = "entity_create " + std::to_string(idEntity) + " " + std::to_string(spawnPosition.x) + " " + std::to_string(spawnPosition.y) + " " + entityFilepath;
+        std::string res = "entity_create " + std::to_string(idEntity) + " " + std::to_string(spawn.x) + " " + std::to_string(spawn.y) + " " + entityFilepath;
         return res;
     }
 };
@@ -159,11 +159,11 @@ enum class PlayerReposition
 struct LoadMapOrder { // Load a new map
     size_t mapIndex;
     PlayerReposition reposition; // I don't read this value in File::ReadLoadMapOrder, I always use MapSpawn, and Projection is only use for map transitions (when the player exits the map) 
-    // TODO++ : Add MapPosition spawnPosition here ? (For now, I use the spawn position defined in the map file)
+    MapPosition spawn; // If -1, -1, the default position defined in the map file is used
     
     std::string GetString() const
     {
-        std::string res = "load_map " + std::to_string(mapIndex);
+        std::string res = "load_map " + std::to_string(mapIndex) + " " + std::to_string(spawn.x) + " " + std::to_string(spawn.y);
         return res;
     }
 };

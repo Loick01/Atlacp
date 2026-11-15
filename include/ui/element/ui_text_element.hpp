@@ -18,6 +18,8 @@ class UiTextElement : public UiElement
         FontSize m_fontSize;
         int m_maxWidth;
 
+        static unsigned int m_countTextElement;
+
     public:
         UiTextElement(TextureController& textureController, const UiKey& key, 
             const SDL_Color color=SDL_Color{0,0,0,255});

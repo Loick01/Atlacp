@@ -34,17 +34,17 @@ void UiDynamicList::Open()
         
         for (UiKey& k : created) {
             const UiKey newKey = k + std::to_string(i) + "_" + std::to_string(countInstance);
-            m_uiController.UpdateKey(k, newKey);
+            m_uiController.EditKey(k, newKey);
             k = newKey;
         }
         const UiKey& itemParent = created[0];
         
         if (i == 0) {
             m_uiKey = itemParent;
-            m_uiController.UpdateParams(itemParent, m_firstItemParams);
+            m_uiController.EditParams(itemParent, m_firstItemParams);
             // TODO : Parent of itemParent (which is here parent of the first built item) will be the one given in the template file (should not be like that ?) 
         } else {
-            m_uiController.UpdateParent(itemParent, lastItemParent);
+            m_uiController.EditParent(itemParent, lastItemParent);
         }
         m_itemsKey.push_back(itemParent);
         lastItemParent = itemParent;

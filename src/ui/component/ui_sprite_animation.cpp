@@ -19,9 +19,9 @@ void UiSpriteAnimation::Open()
     UiComponent::Open();
     // TODO : Need to check if a UiAnimatedElement is read in the ui file ?
     
-    // UpdatePath calls Drawable::LoadTexture and will write on m_textureSize
+    // EditPath calls Drawable::LoadTexture and will write on m_textureSize
     // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
-    m_uiController.UpdatePath(m_uiKey, std::string(AssetDirectory::Spritesheet)+m_animationPath);
+    m_uiController.EditPath(m_uiKey, std::string(AssetDirectory::Spritesheet)+m_animationPath);
 
     m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // TODO : static_cast ?
     if (m_animated == nullptr) { 
@@ -30,10 +30,10 @@ void UiSpriteAnimation::Open()
     }
 
     m_animated->GetAnimation().UpdateAnimationData(m_animationPath); // Must be called before UpdateSpriteSizeFromAnimation
-    m_animated->UpdateSpriteSizeFromAnimation(); // Must be called after UpdatePath() and before UpdateScalingSize()
+    m_animated->UpdateSpriteSizeFromAnimation(); // Must be called after EditPath() and before EditScalingSize()
     
-    m_uiController.UpdateParent(m_uiKey, m_targetElement);
-    m_uiController.UpdateScalingSize(m_uiKey, PartialSize{m_targetElement, Axis::Width, 0.8f});
+    m_uiController.EditParent(m_uiKey, m_targetElement);
+    m_uiController.EditScalingSize(m_uiKey, PartialSize{m_targetElement, Axis::Width, 0.8f});
 }
 
 void UiSpriteAnimation::SetAnimationPath(const std::string animationPath)

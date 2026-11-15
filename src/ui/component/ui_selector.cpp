@@ -46,7 +46,7 @@ bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
 void UiSelector::UpdateToOptionIndex()
 {
     const UiKey& parentKey = m_optionKeys[m_optionIndex];
-    m_uiController.UpdateParent(m_uiKey, parentKey); 
+    m_uiController.EditParent(m_uiKey, parentKey); 
     m_uiController.GetElement(parentKey)->UpdatePosition();
 }
 
@@ -66,8 +66,8 @@ void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis 
     m_optionKeys = optionKeys;
     Reset(); 
     // When selector file is build, scale is based on root element, and there is no padding
-    m_uiController.UpdateScalingSize(GetKey(), PartialSize{optionKeys[0], scaleAxis, scaleValue}); 
-    m_uiController.UpdatePadding(GetKey(), PartialSize(optionKeys[0], padAxis, padValue), padAxis);
+    m_uiController.EditScalingSize(GetKey(), PartialSize{optionKeys[0], scaleAxis, scaleValue}); 
+    m_uiController.EditPadding(GetKey(), PartialSize(optionKeys[0], padAxis, padValue), padAxis);
 }
 
 void UiSelector::Previous()

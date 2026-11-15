@@ -24,7 +24,8 @@ class Tilemap : public Notifier<TilemapEvent>
         const FileReader& m_fileReader;
         Tileset& m_tileset;
         TextureController& m_textureController;
-        Camera& m_camera; // TODO++ : Could be removed and use a parameter in LoadMap ?
+        Camera& m_camera;
+        
         DataWorld m_dataWorld;
         DataMap m_dataMap;
         size_t m_currentMap;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <unordered_set>
 #include <vector>
 
 #include "core/core_types.hpp" // GridSize
@@ -22,7 +22,7 @@ struct DataWorld
 struct DataTileset
 {
     TextureKey tilesetKey;
-    std::set<Tile> solidTiles; // TODO++ : Should use unordered set ?
+    std::unordered_set<Tile> solidTiles;
     GridSize size;
     int tileSize;
 };

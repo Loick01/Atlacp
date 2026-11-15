@@ -13,5 +13,5 @@ UiDialogBox::UiDialogBox(UiController& uiController, const std::string& uiFilepa
 
 void UiDialogBox::SetFacePath(const std::string& facePath)
 {
-    m_uiController.UpdatePath(std::string(keyFace), facePath);
+    m_uiController.EditPath(std::string(keyFace), facePath);
 }

@@ -13,7 +13,7 @@ UiFrameText::UiFrameText(UiController& uiController, const std::string& uiFilepa
 bool UiFrameText::NextText()
 {
     if (m_texts.empty()) return false;
-    m_uiController.UpdateText(std::string(keyFrameText), m_texts.front());
+    m_uiController.EditText(std::string(keyFrameText), m_texts.front());
     m_texts.pop();
     return true;
 }

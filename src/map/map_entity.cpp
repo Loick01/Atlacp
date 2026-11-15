@@ -122,7 +122,11 @@ void MapEntity::DrawTexture() const
 
 void MapEntity::OrderStartMovement(const Direction direction, const bool isFirstMovement, const bool canExitMap)
 {
-    // TODO++ : Should verify if direction != Direction::None ?
+    if (direction == Direction::None) {
+        Logger::GetInstance().AddLog(Level::L4, "(MapEntity::OrderStartMovement) Direction is None"); // TODO : Level
+        return;
+    }
+    
     MapMovement movement;
     movement.DefineMovement(direction);
     TryStartMovement(movement, isFirstMovement, canExitMap);

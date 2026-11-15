@@ -13,7 +13,7 @@ class TextureController;
 class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
 {
     private:
-        UiKey m_key; // Could be const if I removed UiController::UpdateKey(), but I need it for ui template instanciation
+        UiKey m_key; // Could be const if I removed UiController::EditKey(), but I need it for ui template instanciation
         
     protected:
         std::vector<std::unique_ptr<UiElement>> m_childs;
@@ -49,7 +49,7 @@ class UiElement : public ScreenDrawable, public Notifier<UiElementEvent>
         // Warning : BuildChild must be used only once configuration of the current calling object has been done
         void BuildChild(std::unique_ptr<UiElement> child);
 
-        void SetKey(const UiKey& key); // Do not use directly (UiController::UpdateKey)
+        void SetKey(const UiKey& key); // Do not use directly (UiController::EditKey)
         void SetParent(UiElement* parent);
         void SetParentSize(const AreaSize parentSize);
         void SetParentPosition(const ScreenPosition parentPosition);

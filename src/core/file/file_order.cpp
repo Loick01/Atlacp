@@ -159,12 +159,12 @@ EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& inp
 EntityCreateOrder FileReader::ReadEntityCreateOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
-    MapPosition spawnPosition;
+    MapPosition spawn;
     std::string filepath;
     input >> idEntity;
-    input >> spawnPosition.x; input >> spawnPosition.y;
+    input >> spawn.x; input >> spawn.y;
     input >> filepath;
-    return EntityCreateOrder{idEntity, spawnPosition, filepath};
+    return EntityCreateOrder{idEntity, spawn, filepath};
 }
 
 EntityDeleteOrder FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
@@ -184,8 +184,10 @@ TimeDelayOrder FileReader::ReadTimeDelayOrder(std::ifstream& input) const
 LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
 {
     unsigned int mapIndex;
+    MapPosition spawn;
     input >> mapIndex;
-    return LoadMapOrder{mapIndex, PlayerReposition::MapSpawn};
+    input >> spawn.x; input >> spawn.y;
+    return LoadMapOrder{mapIndex, PlayerReposition::MapSpawn, spawn};
 }
 
 BoxingAnimationOrder FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const

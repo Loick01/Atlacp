@@ -20,12 +20,12 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
 {
     // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 
     // it anymore (until next time), I call these functions once here, and then I only use UiComponent::Open()/Close()
-    // I could do either one, but I prefer this solution (for now)
+    // I could do either one, but I prefer this solution (for now ?)
     m_uiComponentController.CreateDynamicList("moveSelection", "move_text.uit");
     m_uiComponentController.CreateList("actionSelectionList", "battle_action_selection.uif");
-    m_uiComponentController.CreateSelector("selector", "selector.uit"); // TODO++ : Should have optionKey in its constructor ?
+    m_uiComponentController.CreateSelector("selector", "selector.uit");
     m_uiComponentController.CreateFrameText("frameText", "frame_text.uif");
-    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit"); // TODO++ : Could have animationPath and targetElement in its constructor ? 
+    m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit");
 }
 
 BattleController::~BattleController()
@@ -128,7 +128,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
 {
     const unsigned int damage = m_currentCommand.amount;
     targetActor.RemoveHealth(damage);
-    m_uiController.UpdateText(targetActor.GetHealth());
+    m_uiController.EditText(targetActor.GetHealth());
     
     UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
     frameText->Open();
@@ -138,7 +138,7 @@ void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetAct
     if (targetActor.GetLifeState() == LifeState::Dead) {
         frameText->AddText({targetActor.GetName().value + " fainted !"});
         targetActor.SetSpritePath("battle/gravestone");   
-        m_uiController.UpdatePath(targetActor.GetSpritePath());
+        m_uiController.EditPath(targetActor.GetSpritePath());
         SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Death));
     }
     
@@ -149,7 +149,7 @@ void BattleController::ApplyHeal(BattleActor& srcActor, BattleActor& targetActor
 {
     const unsigned int hp = m_currentCommand.amount;
     targetActor.AddHealth(hp);
-    m_uiController.UpdateText(targetActor.GetHealth());
+    m_uiController.EditText(targetActor.GetHealth());
     
     UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
     frameText->Open();
@@ -190,7 +190,7 @@ void BattleController::OpenMoveSelection()
     
     const std::vector<UiKey> keys = moveSelection->GetItemsKey();
     for (unsigned int i = 0 ; i < keys.size() ; i++) // keys.size = moves.size()
-        m_uiController.UpdateText(keys[i], moves[i].name);
+        m_uiController.EditText(keys[i], moves[i].name);
 
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     selector->Open();
@@ -380,9 +380,9 @@ void BattleController::InitializeActors(const std::string& dataFile)
     opponentList->Open();
 
     for (const std::unique_ptr<BattleActor>& b : m_actors) {
-        m_uiController.UpdateText(b->GetName());
-        m_uiController.UpdateText(b->GetHealth()); 
-        m_uiController.UpdatePath(b->GetSpritePath());
+        m_uiController.EditText(b->GetName());
+        m_uiController.EditText(b->GetHealth()); 
+        m_uiController.EditPath(b->GetSpritePath());
     }
 }
 

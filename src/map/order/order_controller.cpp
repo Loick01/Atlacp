@@ -168,7 +168,7 @@ void OrderController::ExecuteOrder(const EntityOrientationOrder& o)
 
 void OrderController::ExecuteOrder(const EntityCreateOrder& o)
 {
-    m_mapEntityController.CreateEntity(o.entityFilepath, o.idEntity, o.spawnPosition);
+    m_mapEntityController.CreateEntity(o.entityFilepath, o.idEntity, o.spawn);
     NextOrder();
 }
 
@@ -191,9 +191,14 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
     Player* player = static_cast<Player*>(m_mapEntityController.GetMapEntityFromId(0));
 
     switch (o.reposition) {
-        case PlayerReposition::MapSpawn :
-            player->SetMapPosition(m_tilemap.GetSpawnPosition());
+        case PlayerReposition::MapSpawn : {
+            const MapPosition spawn = (o.spawn.x == -1 || o.spawn.y == -1) ? m_tilemap.GetSpawnPosition() : o.spawn;
+            if (!m_tilemap.IsFreePosition(spawn))
+                Logger::GetInstance().AddLog(Level::L4, "MapEntity can only spawn on free position"); // TODO : Level
+
+            player->SetMapPosition(spawn);
             break;
+        }
         case PlayerReposition::Projection :
             player->SetMapPosition(m_tilemap.GetProjectedPosition(player->GetMapPosition()));
             m_tilemap.SetCurrentBound(MapBound::Inside);

@@ -2,6 +2,8 @@
 
 #include "image/texture.hpp"
 
+unsigned int UiTextElement::m_countTextElement = 0; // TODO : For now, no reset of this value
+
 UiTextElement::UiTextElement(TextureController& textureController, const UiKey& key, const SDL_Color color):
     UiElement(textureController, key), m_textColor(color), m_text("No_Text") // By default, FontSize in DataUiElement (used for UiTextElement construction) is FontSize::Small
 {}
@@ -18,7 +20,7 @@ void UiTextElement::SetTextSize(const FontSize size)
 
 void UiTextElement::GenerateText() // TODO : Same than Drawable::LoadTexture(), will be improved
 {
-    m_textureKey = m_text; // TODO++ : Will use something else than just text as texture key
+    m_textureKey = "text" + std::to_string(m_countTextElement++);
     m_textureController.LoadTextureFromText(m_fontSize, m_textureKey, m_text, m_textureSize, m_textColor, m_maxWidth);
 }
 

@@ -246,7 +246,7 @@ void UiController::SetPosition(const ScreenPosition position)
     m_position = position;
 }
 
-void UiController::UpdatePath(const UiKey& key, const std::string& path)
+void UiController::EditPath(const UiKey& key, const std::string& path)
 {
     UiElement* element = GetElement(key);
     element->DeleteTexture(); // Delete the previous used texture in TextureController (and remove its key in TextureController::m_textures)
@@ -255,31 +255,31 @@ void UiController::UpdatePath(const UiKey& key, const std::string& path)
     element->UpdatePosition();
 }
 
-void UiController::UpdatePath(const UiValue<std::string>& path) // TODO : Should I use UpdatePath(const UiKey& key, const std::string& path) ? (same with the different version of UpdateText())
+void UiController::EditPath(const UiValue<std::string>& path) // TODO : Should I use EditPath(const UiKey& key, const std::string& path) ? (same with the different version of EditText())
 {
-    UpdatePath(path.id, path.value);
+    EditPath(path.id, path.value);
 }
 
-void UiController::UpdateText(const UiKey& key, const std::string& text)
+void UiController::EditText(const UiKey& key, const std::string& text)
 {
-    UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key)); // I assume key will give a UiTextElement key
+    UiTextElement* textElement = static_cast<UiTextElement*>(GetElement(key));
     textElement->DeleteTexture(); // Delete the previous generated texture
     textElement->SetText(text);
     textElement->ComputeFinal(); // Load the new texture (GenerateText())
     textElement->UpdatePosition();
 }
 
-void UiController::UpdateText(const UiValue<std::string>& uiv)
+void UiController::EditText(const UiValue<std::string>& uiv)
 {
-    UpdateText(uiv.id, uiv.value);
+    EditText(uiv.id, uiv.value);
 }
 
-void UiController::UpdateText(const UiValue<unsigned int>& uiv)
+void UiController::EditText(const UiValue<unsigned int>& uiv)
 {
-    UpdateText(uiv.id, std::to_string(uiv.value));
+    EditText(uiv.id, std::to_string(uiv.value));
 }
 
-void UiController::UpdateParent(const UiKey& key, const UiKey& parent)
+void UiController::EditParent(const UiKey& key, const UiKey& parent)
 {
     UiElement* currentElement = GetElement(key);
     UiElement* previousParent = currentElement->GetParent();
@@ -292,7 +292,7 @@ void UiController::UpdateParent(const UiKey& key, const UiKey& parent)
         ownedElement = previousParent->RemoveChild(key);
 
     // BuildChild will call ComputeFinal() -> GenerateText() for UiTextElement.
-    // Same problem in UiController::UpdateParams()
+    // Same problem in UiController::EditParams()
     if (dynamic_cast<UiTextElement*>(currentElement) != nullptr)
         currentElement->DeleteTexture();
 
@@ -301,7 +301,7 @@ void UiController::UpdateParent(const UiKey& key, const UiKey& parent)
     newParent->BuildChild(std::move(ownedElement));
 }
 
-void UiController::UpdateScalingSize(const UiKey& key, const PartialSize ps)
+void UiController::EditScalingSize(const UiKey& key, const PartialSize ps)
 {
     const float result = GetResultFromPartialSize(ps);
     UiElement* e = GetElement(key);
@@ -311,7 +311,7 @@ void UiController::UpdateScalingSize(const UiKey& key, const PartialSize ps)
     e->UpdatePosition();
 }
 
-void UiController::UpdatePadding(const UiKey& key, const PartialSize ps, const Axis axis)
+void UiController::EditPadding(const UiKey& key, const PartialSize ps, const Axis axis)
 {
     const float result = GetResultFromPartialSize(ps);
     UiElement* e = GetElement(key);
@@ -320,7 +320,7 @@ void UiController::UpdatePadding(const UiKey& key, const PartialSize ps, const A
     e->UpdatePosition();
 }
 
-void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
+void UiController::EditKey(const UiKey& key, const UiKey& newKey)
 {
     if (m_elements.find(newKey) != m_elements.end()) {
         Logger::GetInstance().AddLog(Level::L4, "Try to update a node in UiController::m_elements with an already existing key: " + newKey); // TODO : Log
@@ -338,14 +338,14 @@ void UiController::UpdateKey(const UiKey& key, const UiKey& newKey)
     m_elements.insert(std::move(node));
 }
 
-void UiController::UpdateParams(const UiKey& key, const UiParams& params)
+void UiController::EditParams(const UiKey& key, const UiParams& params)
 {
     UiElement* element = GetElement(key);
 
     // UiTextElement::ComputeFinal() (override from UiElement) calls GenerateText() -> LoadTextureFromText()
     // That's why the previously generated texture must be deleted. It can't be done in GenerateText() or 
     // ComputeFinal() because it would also happen when creating the UiTextElement, while it's only needed when
-    // updating it. There is the same problem in UiController::UpdateParent() (and maybe in some other functions
+    // updating it. There is the same problem in UiController::EditParent() (and maybe in some other functions
     // in this class ?) 
     if (dynamic_cast<UiTextElement*>(element) != nullptr)
         element->DeleteTexture();
