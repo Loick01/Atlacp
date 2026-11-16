@@ -42,21 +42,31 @@ class FileReader
 
         // FileOrder
         std::vector<Order> ReadOrders(std::ifstream& input) const;
-        FrameTextOrder ReadFrameTextOrder(std::ifstream& input) const;
-        DialogTextOrder ReadDialogTextOrder(std::ifstream& input) const;
-        NpcGoToOrder ReadNpcGoToOrder(std::ifstream& input) const;
-        NpcFollowOrder ReadNpcFollowOrder(std::ifstream& input) const;
-        NpcIdleOrder ReadNpcIdleOrder(std::ifstream& input) const;
-        PlayCinematicOrder ReadPlayCinematicOrder(std::ifstream& input) const;
-        CameraSlideToPositionOrder ReadCameraSlideToPositionOrder(std::ifstream& input) const;
-        CameraSlideToEntityOrder ReadCameraSlideToEntityOrder(std::ifstream& input) const;
-        CameraAnchorEntityOrder ReadCameraAnchorEntityOrder(std::ifstream& input) const;
-        EntityOrientationOrder ReadEntityOrientationOrder(std::ifstream& input) const;
-        EntityCreateOrder ReadEntityCreateOrder(std::ifstream& input) const;
-        EntityDeleteOrder ReadEntityDeleteOrder(std::ifstream& input) const;
-        TimeDelayOrder ReadTimeDelayOrder(std::ifstream& input) const;
-        LoadMapOrder ReadLoadMapOrder(std::ifstream& input) const;
-        BoxingAnimationOrder ReadBoxingAnimationOrder(std::ifstream& input) const;
+        Order ReadFrameTextOrder(std::ifstream& input) const;
+        Order ReadDialogTextOrder(std::ifstream& input) const;
+        Order ReadNpcGoToOrder(std::ifstream& input) const;
+        Order ReadNpcFollowOrder(std::ifstream& input) const;
+        Order ReadNpcIdleOrder(std::ifstream& input) const;
+        Order ReadPlayCinematicOrder(std::ifstream& input) const;
+        Order ReadCameraSlideToPositionOrder(std::ifstream& input) const;
+        Order ReadCameraSlideToEntityOrder(std::ifstream& input) const;
+        Order ReadCameraAnchorEntityOrder(std::ifstream& input) const;
+        Order ReadEntityOrientationOrder(std::ifstream& input) const;
+        Order ReadEntityCreateOrder(std::ifstream& input) const;
+        Order ReadEntityDeleteOrder(std::ifstream& input) const;
+        Order ReadTimeDelayOrder(std::ifstream& input) const;
+        Order ReadLoadMapOrder(std::ifstream& input) const;
+        Order ReadBoxingAnimationOrder(std::ifstream& input) const;
+
+        // FileUi
+        void ReadScale(std::ifstream& input, DataUiElement& data) const;
+        void ReadScaleAxis(std::ifstream& input, DataUiElement& data) const;
+        void ReadAnchorX(std::ifstream& input, DataUiElement& data) const;
+        void ReadAnchorY(std::ifstream& input, DataUiElement& data) const;
+        void ReadPaddingX(std::ifstream& input, DataUiElement& data) const;
+        void ReadPaddingY(std::ifstream& input, DataUiElement& data) const;
+        void ReadText(std::ifstream& input, DataUiElement& data) const;
+        void ReadTextSize(std::ifstream& input, DataUiElement& data) const;
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;
@@ -72,8 +82,6 @@ class FileReader
 
         std::vector<DataNPC> GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
         std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const;
-
-        std::vector<DataUiElement> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
         
         std::optional<DataWorld> ReadWorldFile(const std::string& worldFilepath) const;
         std::optional<DataMap> ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,
@@ -86,7 +94,13 @@ class FileReader
         // FileOrder
         std::vector<Order> ReadCinematicFile(const std::string& cinematicFilepath) const;
         
+        // FileUi
+        std::vector<DataUiElement> ReadUiFile(const std::string& uiFilepath) const; // Can be used for UiFile AND UiTemplate
+        
         // FileIO
         std::string GetFileExtension(const std::string& filepath) const;
         bool CheckFileExtension(const std::string& filepath, const std::string_view extension) const;
 };
+
+using OrderReader = Order(FileReader::*)(std::ifstream&) const;
+using UiReader = void(FileReader::*)(std::ifstream&, DataUiElement&) const;

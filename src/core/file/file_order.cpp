@@ -4,6 +4,24 @@
 
 std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
 {
+    static const std::unordered_map<std::string, OrderReader> orderReaders = {
+        {"frame_text", &FileReader::ReadFrameTextOrder},
+        {"dialog_text", &FileReader::ReadDialogTextOrder},
+        {"npc_goto", &FileReader::ReadNpcGoToOrder},
+        {"npc_follow", &FileReader::ReadNpcFollowOrder},
+        {"npc_idle", &FileReader::ReadNpcIdleOrder},
+        {"play_cinematic", &FileReader::ReadPlayCinematicOrder},
+        {"camera_slide_to_position", &FileReader::ReadCameraSlideToPositionOrder},
+        {"camera_slide_to_entity", &FileReader::ReadCameraSlideToEntityOrder},
+        {"camera_anchor_entity", &FileReader::ReadCameraAnchorEntityOrder},
+        {"entity_orientation", &FileReader::ReadEntityOrientationOrder},
+        {"entity_create", &FileReader::ReadEntityCreateOrder},
+        {"entity_delete", &FileReader::ReadEntityDeleteOrder},
+        {"time_delay", &FileReader::ReadTimeDelayOrder},
+        {"load_map", &FileReader::ReadLoadMapOrder},
+        {"boxing_animation", &FileReader::ReadBoxingAnimationOrder},
+    };
+
     std::vector<Order> orders;
     std::string s;
     unsigned int nrOrder;
@@ -12,41 +30,15 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
     orders.reserve(nrOrder);
     for (unsigned int i = 0 ; i < nrOrder ; i++) {
         input >> s;
-        if (s == "frame_text")
-            orders.push_back(ReadFrameTextOrder(input));
-        else if (s == "dialog_text")
-            orders.push_back(ReadDialogTextOrder(input));
-        else if (s == "npc_goto")
-            orders.push_back(ReadNpcGoToOrder(input));
-        else if (s == "npc_follow")
-            orders.push_back(ReadNpcFollowOrder(input));
-        else if (s == "npc_idle")
-            orders.push_back(ReadNpcIdleOrder(input));
-        else if (s == "play_cinematic")
-            orders.push_back(ReadPlayCinematicOrder(input));
-        else if (s == "camera_slide_to_position")
-            orders.push_back(ReadCameraSlideToPositionOrder(input));
-        else if (s == "camera_slide_to_entity")
-            orders.push_back(ReadCameraSlideToEntityOrder(input));
-        else if (s == "camera_anchor_entity")
-            orders.push_back(ReadCameraAnchorEntityOrder(input));
-        else if (s == "entity_orientation")
-            orders.push_back(ReadEntityOrientationOrder(input));
-        else if (s == "entity_create")
-            orders.push_back(ReadEntityCreateOrder(input));
-        else if (s == "entity_delete")
-            orders.push_back(ReadEntityDeleteOrder(input));
-        else if (s == "time_delay")
-            orders.push_back(ReadTimeDelayOrder(input));
-        else if (s == "load_map")
-            orders.push_back(ReadLoadMapOrder(input));
-        else if (s == "boxing_animation")
-            orders.push_back(ReadBoxingAnimationOrder(input));
+
+        if (std::unordered_map<std::string, OrderReader>::const_iterator it = orderReaders.find(s); it != orderReaders.end())
+            orders.push_back((this->*(it->second))(input));
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Unknown order type read in FileReader::ReadOrders: " + s); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unknown order type read in FileReader::ReadOrders: " + s); // TODO : Level
             break;
         }
     }
+
     return orders;
 }
 
@@ -59,7 +51,7 @@ std::vector<Order> FileReader::ReadCinematicFile(const std::string& cinematicFil
         return {};
 }
 
-FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const
+Order FileReader::ReadFrameTextOrder(std::ifstream& input) const
 {
     std::vector<std::string> texts;
     std::string s;
@@ -74,7 +66,7 @@ FrameTextOrder FileReader::ReadFrameTextOrder(std::ifstream& input) const
     return FrameTextOrder{texts};
 }
 
-DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const
+Order FileReader::ReadDialogTextOrder(std::ifstream& input) const
 {
     std::vector<std::string> texts;
     std::string s;
@@ -92,7 +84,7 @@ DialogTextOrder FileReader::ReadDialogTextOrder(std::ifstream& input) const
     return DialogTextOrder{texts, facePath};
 }
 
-NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
+Order FileReader::ReadNpcGoToOrder(std::ifstream& input) const
 {
     MapPosition targetPosition;
     unsigned int id;
@@ -102,7 +94,7 @@ NpcGoToOrder FileReader::ReadNpcGoToOrder(std::ifstream& input) const
     return NpcGoToOrder{targetPosition, id};
 }
 
-NpcFollowOrder FileReader::ReadNpcFollowOrder(std::ifstream& input) const
+Order FileReader::ReadNpcFollowOrder(std::ifstream& input) const
 {
     unsigned int idLeader;
     unsigned int idFollower;
@@ -111,7 +103,7 @@ NpcFollowOrder FileReader::ReadNpcFollowOrder(std::ifstream& input) const
     return NpcFollowOrder{idLeader, idFollower};
 }
 
-NpcIdleOrder FileReader::ReadNpcIdleOrder(std::ifstream& input) const
+Order FileReader::ReadNpcIdleOrder(std::ifstream& input) const
 {
     Direction direction;
     unsigned int id;
@@ -120,35 +112,35 @@ NpcIdleOrder FileReader::ReadNpcIdleOrder(std::ifstream& input) const
     return NpcIdleOrder{direction, id};
 }
 
-PlayCinematicOrder FileReader::ReadPlayCinematicOrder(std::ifstream& input) const
+Order FileReader::ReadPlayCinematicOrder(std::ifstream& input) const
 {
     std::string s;
     input >> s;
     return PlayCinematicOrder{s};
 }
 
-CameraSlideToPositionOrder FileReader::ReadCameraSlideToPositionOrder(std::ifstream& input) const
+Order FileReader::ReadCameraSlideToPositionOrder(std::ifstream& input) const
 {
     ScenePosition pos;
     input >> pos.x; input >> pos.y;
     return CameraSlideToPositionOrder{pos};
 }
 
-CameraSlideToEntityOrder FileReader::ReadCameraSlideToEntityOrder(std::ifstream& input) const
+Order FileReader::ReadCameraSlideToEntityOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     input >> idEntity;
     return CameraSlideToEntityOrder{idEntity};
 }
 
-CameraAnchorEntityOrder FileReader::ReadCameraAnchorEntityOrder(std::ifstream& input) const
+Order FileReader::ReadCameraAnchorEntityOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     input >> idEntity;
     return CameraAnchorEntityOrder{idEntity};
 }
 
-EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& input) const
+Order FileReader::ReadEntityOrientationOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     input >> idEntity;
@@ -156,7 +148,7 @@ EntityOrientationOrder FileReader::ReadEntityOrientationOrder(std::ifstream& inp
     return EntityOrientationOrder{idEntity, direction};
 }
 
-EntityCreateOrder FileReader::ReadEntityCreateOrder(std::ifstream& input) const
+Order FileReader::ReadEntityCreateOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     MapPosition spawn;
@@ -167,21 +159,21 @@ EntityCreateOrder FileReader::ReadEntityCreateOrder(std::ifstream& input) const
     return EntityCreateOrder{idEntity, spawn, filepath};
 }
 
-EntityDeleteOrder FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
+Order FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
 {
     unsigned int idEntity;
     input >> idEntity;
     return EntityDeleteOrder{idEntity};
 }
 
-TimeDelayOrder FileReader::ReadTimeDelayOrder(std::ifstream& input) const
+Order FileReader::ReadTimeDelayOrder(std::ifstream& input) const
 {
     float delay;
     input >> delay;
     return TimeDelayOrder{delay};
 }
 
-LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
+Order FileReader::ReadLoadMapOrder(std::ifstream& input) const
 {
     unsigned int mapIndex;
     MapPosition spawn;
@@ -190,7 +182,7 @@ LoadMapOrder FileReader::ReadLoadMapOrder(std::ifstream& input) const
     return LoadMapOrder{mapIndex, PlayerReposition::MapSpawn, spawn};
 }
 
-BoxingAnimationOrder FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const
+Order FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const
 {
     float speed;
     input >> speed;

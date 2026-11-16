@@ -20,7 +20,7 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
     std::string s;
     while (input >> s) {
         MoveDefinition m;
-        const unsigned int moveId = std::stoi(s); // TODO : Should catch invalid_argument ?
+        const unsigned int moveId = std::stoi(s); // TODO : Log ?
         
         m.name = ReadString(input);
         m.commandType = ReadCommandType(input);
@@ -146,70 +146,6 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
     }
     Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Log
     return std::nullopt;
-}
-
-std::vector<DataUiElement> FileReader::ReadUiFile(const std::string& uiFilepath) const
-{
-    std::optional<std::ifstream> optInput;
-    if (CheckFileExtension(uiFilepath, FileExtension::UiFile))
-        optInput = OpenFile(std::string(DataDirectory::UiFile) + uiFilepath);
-    else if (CheckFileExtension(uiFilepath, FileExtension::UiTemplate))
-        optInput = OpenFile(std::string(DataDirectory::UiTemplate) + uiFilepath);
-
-    if (!optInput.has_value())
-        return {};
-    std::ifstream& input = optInput.value();
-
-    std::vector<DataUiElement> uisData;
-    std::string s;
-    while (input >> s && s != MAJOR_DELIMITER) {
-        if (s == "load") {
-            input >> s;
-            std::vector<DataUiElement> load = ReadUiFile(s);
-            uisData.insert(std::end(uisData), std::begin(load), std::end(load));
-            input >> s; // After the load line, the next line must be MAJOR_DELIMITER
-            continue;
-        }
-        DataUiElement data;
-        // No verification yet on what is read 
-        data.parentKey = s;
-        input >> data.key; 
-        input >> data.type; // Verification on type will be in UiController
-        if (data.type == "uielement" || data.type == "animatedelement") // Not for "textelement"
-            input >> data.imagePath;
-        
-        // Read optional data 
-        while (input >> s && s != MAJOR_DELIMITER) {
-            if (s == "scale") {
-                input >> data.scale.srcElement;
-                data.scale.axis = ReadAxis(input);
-                input >> data.scale.amount;
-            } else if (s == "scaleAxis") {
-                data.dstScaleAxis = ReadAxis(input);
-            } else if (s == "xAnchor") {
-                data.xAnchor = ReadAnchor(input);
-            } else if (s == "yAnchor") {
-                data.yAnchor = ReadAnchor(input);
-            } else if (s == "xPadding") {
-                input >> data.xPadding.srcElement;
-                data.xPadding.axis = ReadAxis(input);
-                input >> data.xPadding.amount;
-            } else if (s == "yPadding") {
-                input >> data.yPadding.srcElement;
-                data.yPadding.axis = ReadAxis(input);
-                input >> data.yPadding.amount;
-            } else if (s == "text") {
-                std::getline(input >> std::ws, data.text); // std::ws discards leading whitespace from input stream // TODO : Should use ReadString ?
-            } else if (s == "textsize") {
-                data.fontSize = ReadFontSize(input);
-            } else {
-                Logger::GetInstance().AddLog(Level::L4, "UiParams has no member with this name: " + s); // TODO : Log
-                return uisData; // TODO : ?
-            }
-        }
-        uisData.push_back(data);
-    }
-    return uisData;
 }
 
 std::optional<DataWorld> FileReader::ReadWorldFile(const std::string& worldFilepath) const
