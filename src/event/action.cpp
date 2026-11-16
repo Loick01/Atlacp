@@ -85,11 +85,14 @@ bool KeyboardActionController::IsSecondaryActionPoll(const SDL_Event& event)
 // JOYSTICK
 
 JoystickActionController::JoystickActionController() :
-    m_joystick(nullptr), m_joystickState(JoystickState::Neutral)
+    m_joystick(nullptr), m_joystickState(JoystickState::Neutral), m_isInitialized(false)
 {
     m_joystick = SDL_JoystickOpen(0);
-    if (m_joystick == nullptr)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open Joystick: " + std::string(SDL_GetError())); // TODO : Log
+    if (m_joystick == nullptr) {
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open Joystick: " + std::string(SDL_GetError())); // TODO : Level
+        return;
+    }
+    m_isInitialized = true;
 }
 
 bool JoystickActionController::IsJoystickAvailable()
@@ -98,12 +101,16 @@ bool JoystickActionController::IsJoystickAvailable()
     if (joystick==0) {
         return SDL_NumJoysticks() != 0;
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Unable to initialize Joystick: " + std::string(SDL_GetError())); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Unable to initialize Joystick: " + std::string(SDL_GetError())); // TODO : Level
         return false;
     }
 }
 
-// TODO 
+bool JoystickActionController::IsInitialized() const
+{
+    return m_isInitialized;
+}
+
 /* If I need to know when the joystick is removed
 for (SDL_Event event : m_events){
     switch (event.type){

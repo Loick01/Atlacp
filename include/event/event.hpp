@@ -17,10 +17,12 @@ class EventController
     protected:
         std::vector<SDL_Event> m_events;
 
-        // TODO : m_actionController should be here instead of GameMapEventController, BattleEventController, etc. ? (but EditorMapEventController should not have an ActionController)
+        std::unique_ptr<ActionController> m_actionController;
+        
+        void InitActionController();
         
     public:
-        EventController() = default;
+        EventController();
         virtual ~EventController() = default;
         virtual void HandleStateEvents() = 0; 
         virtual void HandlePollEvents() = 0;
@@ -30,9 +32,6 @@ class EventController
 
 class MainMenuEventController : public EventController, public EventStateHolder<MainMenuEventState>
 {
-    private:
-        std::unique_ptr<ActionController> m_actionController;
-
     public:
         MainMenuEventController();
 
@@ -42,9 +41,6 @@ class MainMenuEventController : public EventController, public EventStateHolder<
 
 class GameMapEventController : public EventController, public EventStateHolder<GameMapEventState>
 {
-    private:
-        std::unique_ptr<ActionController> m_actionController;
-
     public:
         GameMapEventController();
 
@@ -78,9 +74,6 @@ class EditorMapEventController : public EventController, public EventStateHolder
 
 class BattleEventController : public EventController, public EventStateHolder<BattleEventState>
 {
-    private:
-        std::unique_ptr<ActionController> m_actionController;
-
     public:
         BattleEventController();
 

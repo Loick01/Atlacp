@@ -4,6 +4,10 @@
 #include "tile/tilemap.hpp"
 #include "tile/tileset.hpp"
 
+EventController::EventController():
+    m_actionController(nullptr)
+{}
+
 bool EventController::HandleWindowEvents() const
 {
     for (SDL_Event event : m_events){
@@ -21,6 +25,19 @@ bool EventController::HandleWindowEvents() const
     return true;
 }
 
+void EventController::InitActionController()
+{
+    if (JoystickActionController::IsJoystickAvailable()) {
+        std::unique_ptr<JoystickActionController> joystickAC = std::make_unique<JoystickActionController>();
+        if (joystickAC->IsInitialized()) {
+            m_actionController = std::move(joystickAC);
+            return;
+        }
+    }
+
+    m_actionController = std::make_unique<KeyboardActionController>();
+}
+
 void EventController::PollAllEvents()
 {
     m_events.clear();
@@ -30,12 +47,10 @@ void EventController::PollAllEvents()
     }
 }
 
-MainMenuEventController::MainMenuEventController() 
+MainMenuEventController::MainMenuEventController():
+    EventController()
 {
-    if (JoystickActionController::IsJoystickAvailable())
-        m_actionController = std::make_unique<JoystickActionController>();
-    else
-        m_actionController = std::make_unique<KeyboardActionController>();
+    InitActionController();
 }
 
 void MainMenuEventController::HandleStateEvents()
@@ -73,10 +88,7 @@ void MainMenuEventController::HandlePollEvents()
 GameMapEventController::GameMapEventController():
     EventController()
 {
-    if (JoystickActionController::IsJoystickAvailable())
-        m_actionController = std::make_unique<JoystickActionController>();
-    else
-        m_actionController = std::make_unique<KeyboardActionController>();
+    InitActionController();
 }
 
 void GameMapEventController::HandleStateEvents()
@@ -110,7 +122,7 @@ void GameMapEventController::HandlePollEvents()
 }
 
 EditorMapEventController::EditorMapEventController(Tileset& tileset, Camera& camera, Tilemap& tilemap):
-    m_tileset(tileset), m_tilemap(tilemap), m_camera(camera)
+    EventController(), m_tileset(tileset), m_tilemap(tilemap), m_camera(camera)
 {
     m_tileset.SetDisplayedTileset(m_eventState.selectedTileset);
 }
@@ -265,12 +277,10 @@ void EditorMapEventController::Reset()
     m_eventState.isAction = false;
 }
 
-BattleEventController::BattleEventController() 
+BattleEventController::BattleEventController():
+    EventController()
 {
-    if (JoystickActionController::IsJoystickAvailable())
-        m_actionController = std::make_unique<JoystickActionController>();
-    else
-        m_actionController = std::make_unique<KeyboardActionController>();
+    InitActionController();
 }
 
 void BattleEventController::HandleStateEvents()

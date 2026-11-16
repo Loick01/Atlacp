@@ -52,7 +52,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         if (s == "ally") data.team = Team::Ally;
         else if (s == "opponent") data.team = Team::Opponent;
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ally\" or \"opponent\""); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ally\" or \"opponent\""); // TODO : Level
             break;
         }
         
@@ -61,7 +61,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         if (s == "ai") data.isAiActor = true;
         else if (s == "player") data.isAiActor = false;
         else {
-            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\""); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Error FileReader::ReadBattleFile : Must be \"ai\" or \"player\""); // TODO : Level
             break;
         }
 
@@ -70,7 +70,7 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         input >> data.turnSpeed;
         input >> data.spritePath;
         while (input >> s && s != MAJOR_DELIMITER)
-            data.moveIds.push_back(std::stoi(s)); // TODO : Should catch invalid_argument ? 
+            data.moveIds.push_back(std::stoi(s)); // TODO : Log
         
         actorsData.push_back(data);
     }
@@ -108,11 +108,11 @@ std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepa
     unsigned int count = 0;
     std::string s;
     
-    while(count < mapIndex && input >> s) { // Skip to the data associated with the chosen map
+    while(count < mapIndex && input >> s) // Skip to the data associated with the chosen map
         if (s == MAJOR_DELIMITER) count++;
-    }
+
     if (count != mapIndex) {
-        Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "NPC file is invalid: " + npcsFilepath); // TODO : Level
         return {};
     }
 
@@ -144,7 +144,7 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
         if (data.id == idEntity)
             return data;
     }
-    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Log
+    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Level
     return std::nullopt;
 }
 

@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767 // TODO : Should be a member in JoystickActionController to verify ?
+#define JOYSTICK_DEAD_ZONE 15000 // Must be a positive value between 0 and 32767
 
 class ActionController
 {
@@ -68,10 +68,14 @@ class JoystickActionController : public ActionController
         int m_axisX;
         int m_axisY;
 
+        bool m_isInitialized; // For now, I don't use this value in the JoystickActionController functions
+        // Instead, I check whether it's true in EventController. If it's not, I switch to a KeyboardActionController (in EventController::InitActionController())
+
     public:
         JoystickActionController();
         static bool IsJoystickAvailable();
-        
+        bool IsInitialized() const;
+
         void GetStateActions() override; // Don't need to call it for joystick button events
         
         bool IsLeftActionState() override;
