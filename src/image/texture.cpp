@@ -14,17 +14,23 @@ TextureController::TextureController(FontController& fontController, SDL_Rendere
 TextureController::~TextureController()
 {
     for (const std::pair<const TextureKey, Texture>& p : m_textures){
-        std::cout << "Should not be here --> Deleting " << p.first << " in ~TextureController\n"; // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Should not be here --> Deleting " + p.first + " in ~TextureController"); // TODO : Level
         SDL_DestroyTexture(p.second.texture);
     }
     IMG_Quit();
 }
 
-void TextureController::CreateTextureFromSurface(SDL_Surface* surface, const TextureKey& key, const std::string& s, int& textureWidth, int& textureHeight)
+void TextureController::CreateTextureFromSurface(SDL_Surface* surface, const TextureKey& key, const std::string& s, int& textureWidth, int& textureHeight, const bool onFailure)
 {
     SDL_Texture* texture = SDL_CreateTextureFromSurface(m_windowRenderer, surface);
     if (!texture) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to convert the surface " + s + " into a texture: " + std::string(SDL_GetError())); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Failed to convert the surface " + s + " into a texture: " + std::string(SDL_GetError())); // TODO : Level
+        if (!onFailure) {
+            AreaSize textureSize;
+            LoadTextureFromFile("../assets/default_placeholder.png", key, textureSize, false);
+            textureWidth = textureSize.x;
+            textureHeight = textureSize.y;
+        }
         return;
     }
 
@@ -40,15 +46,18 @@ void TextureController::UseTexture(const TextureKey& key, int& textureWidth, int
     SDL_QueryTexture(m_textures[key].texture, nullptr, nullptr, &textureWidth, &textureHeight);
 }
 
-void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, AreaSize& textureSize)
+void TextureController::LoadTextureFromFile(const std::string& textureFilepath, const TextureKey& key, AreaSize& textureSize, const bool onFailure)
 {
     if (m_textures.find(key) == m_textures.end()){
         SDL_Surface* surface = IMG_Load(textureFilepath.c_str());
-        if (!surface) 
-            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Log
-        else
-            CreateTextureFromSurface(surface, key, textureFilepath, textureSize.x, textureSize.y);
-    } else { // Filepath has already been loaded as a texture
+        if (surface) {
+            CreateTextureFromSurface(surface, key, textureFilepath, textureSize.x, textureSize.y, onFailure);
+        } else {
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the surface from: " + textureFilepath + " : " + std::string(IMG_GetError())); // TODO : Level
+            if (!onFailure) 
+                LoadTextureFromFile("../assets/default_placeholder.png", key, textureSize, false);
+        }
+    } else {
         UseTexture(key, textureSize.x, textureSize.y);
     }
 }
@@ -56,11 +65,12 @@ void TextureController::LoadTextureFromFile(const std::string& textureFilepath, 
 void TextureController::LoadTextureFromText(const FontSize fontSize, const TextureKey& key, const std::string& text, 
     AreaSize& textureSize, const SDL_Color textColor, const int maxWidth)
 {
-    if (key.empty()) {
-        Logger::GetInstance().AddLog(Level::L4, "Texture key (string) is empty, text in UiTextElement should never be \"\""); // TODO : Log
+    if (text.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "Text in UiTextElement should never be empty"); // TODO : Level
         return;
     }
     
+    // TODO : Use placeholder texture if text texture creation fails
     if (m_textures.find(key) == m_textures.end()) {
         SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
         CreateTextureFromSurface(surface, key, text, textureSize.x, textureSize.y);
@@ -71,9 +81,11 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
 
 void TextureController::RenderTexture(const TextureKey& key, const SDL_Rect& src, const SDL_Rect& dst) const
 {
-    // TODO : A texture with m_key=key must already be in the map, otherwise std::out_of_range
-    if (m_textures.find(key) == m_textures.end())
-        return; // TODO : Log
+    if (m_textures.find(key) == m_textures.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "No " + key + " in TextureController"); // TODO : Level
+        return;
+    }
+
     SDL_RenderCopy(m_windowRenderer, m_textures.at(key).texture, &src, &dst);
 }
 
@@ -88,6 +100,6 @@ void TextureController::DeleteTexture(const TextureKey& key)
             it->second.count--;
         }
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Try to delete a texture not in m_textures: " + key); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Try to delete a texture not in m_textures: " + key); // TODO : Level
     }
 }
