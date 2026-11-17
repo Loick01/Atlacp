@@ -33,14 +33,13 @@ void OrderController::Execute(Order& order)
 {
     m_currentOrder = order; // The current order is used in Scene (not for all Order, currently only for NpcGoToOrder)
 
-    return std::visit( // Use return (even if void) to exit the function before reaching the Log
+    return std::visit(
         [this](const auto& o)
         {
             ExecuteOrder(o);
         },
         order
     );
-    Logger::GetInstance().AddLog(Level::L4, "No OrderController::ExecuteOrder with this type of Order"); // Every type in variant Order must have a ExecuteOrder // TODO : Log
 }
 
 bool OrderController::Update(const Order& order)
@@ -52,19 +51,17 @@ bool OrderController::Update(const Order& order)
         },
         order
     );
-    UpdateOrder(order); // Call UpdateOrder(const Order&)
 }
 
 void OrderController::Stop(const Order& order)
 {
-    return std::visit( // Use return (even if void) to exit the function before calling StopOrder(const Order&)
+    return std::visit(
         [this](const auto& o)
         {
             StopOrder(o);
         },
         order
     );
-    StopOrder(order); // Call StopOrder(const Order&)
 }
 
 void OrderController::ExecuteOrder(const FrameTextOrder& o)
@@ -204,7 +201,8 @@ void OrderController::ExecuteOrder(const LoadMapOrder& o)
             m_tilemap.SetCurrentBound(MapBound::Inside);
             break;
         default :
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled PlayerReposition used in ExecuteOrder(LoadMapOrder)"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled PlayerReposition used in ExecuteOrder(LoadMapOrder)"); // TODO : Level
+            player->SetMapPosition({0, 0});
             break;
     }
     
@@ -342,7 +340,7 @@ void OrderController::NextOrder()
     }
 
     if (HasNoOrders()) {
-        Logger::GetInstance().AddLog(Level::L4, "OrderController::m_orders should not be empty when reaching here"); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "OrderController::m_orders should not be empty when reaching here"); // TODO : Level
         return;
     }
     

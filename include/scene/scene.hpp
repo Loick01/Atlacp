@@ -159,5 +159,6 @@ class SceneController
 
     public:
         SceneController(const int mode);
+        const Scene* GetCurrentScene() const;
         void StartGameloop(); 
 };

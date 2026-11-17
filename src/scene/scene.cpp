@@ -7,7 +7,7 @@ SceneController::SceneController(const int mode):
     m_window("Atlacp", {150,150,150}), m_fontController("PixelOperator8.ttf", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
     m_uiController(m_fileReader, m_textureController, "PixelOperator8"), m_uiComponentController(m_time, m_uiController),
     m_context{m_window, m_time, m_fontController, m_textureController, m_fileReader, m_uiController, m_uiComponentController},
-    m_pendingSwitch(std::nullopt)
+    m_pendingSwitch(std::nullopt), m_currentScene(nullptr)
 {
     const SwitchEvent e = GetSwitchEventFromMode(mode);
     SetCurrentScene(e);
@@ -25,7 +25,7 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
         case 3:
             return SwitchEvent::ToEditorMap;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled mode used in SceneController::GetSwitchEventFromMode"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled mode used in SceneController::GetSwitchEventFromMode"); // TODO : Level
             return SwitchEvent::Invalid;
     };
 }
@@ -51,7 +51,7 @@ void SceneController::SetCurrentScene(const SwitchEvent e)
             break;
         }
         default: {
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled SwitchEvent used in SceneController::SetCurrentScene"); // TODO : Log (SetCurrentScene() should return a bool)
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled SwitchEvent used in SceneController::SetCurrentScene"); // TODO : Level
             return;
         }
     }
@@ -68,6 +68,11 @@ void SceneController::ApplySwitchScene()
     if (!m_pendingSwitch) return;
     SetCurrentScene(*m_pendingSwitch); // Use * to get SwitchEvent from std::optional<SwitchEvent>
     m_pendingSwitch.reset();
+}
+
+const Scene* SceneController::GetCurrentScene() const
+{
+    return m_currentScene.get();
 }
 
 void SceneController::StartGameloop()
@@ -138,7 +143,7 @@ void MainMenuScene::Gameloop()
                 m_gameloop = false;
                 return;
             default:
-                Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index: " + std::to_string(m_selector.GetOptionIndex())); // TODO : Log
+                Logger::GetInstance().AddLog(Level::L4, "Selector is not supposed to be on this index: " + std::to_string(m_selector.GetOptionIndex())); // TODO : Level
                 return;
         }
         Notify(se);
@@ -238,7 +243,7 @@ void GameMapScene::HandleEntityEvent(const EntityEvent e)
             break;
         }
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityEvent used in GameMapScene::HandleEntityEvent"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityEvent used in GameMapScene::HandleEntityEvent"); // TODO : Level
             break;
     }
 }

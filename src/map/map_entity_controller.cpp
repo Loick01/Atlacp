@@ -32,7 +32,7 @@ MapEntity* MapEntityController::GetMapEntityFromId(const unsigned int id)
         if (m->GetId() == id)
             return m;
     }
-    Logger::GetInstance().AddLog(Level::L4, "The MapEntity " + std::to_string(id) + " was not found in MapEntityController::m_entities"); // TODO : Log
+    Logger::GetInstance().AddLog(Level::L4, "The MapEntity " + std::to_string(id) + " was not found in MapEntityController::m_entities"); // TODO : Level
     return nullptr;
 }
 
@@ -206,8 +206,8 @@ void MapEntityController::LoadNPCsForMap(const std::string& filepath, const unsi
         DataNPC data = npcsData[i];
         const MapPosition spawn = data.position;
         if (!m_tilemap.IsFreePosition(spawn)) {
-            Logger::GetInstance().AddLog(Level::L4, "NPC can only spawn on free position"); // TODO : Log
-            continue; // TODO : Do something else than skipping the NPC ?
+            Logger::GetInstance().AddLog(Level::L4, "NPC can only spawn on free position"); // TODO : Level
+            continue; // This NPC will be missing on the map
         }
         
         AddNpc(data, spawn);

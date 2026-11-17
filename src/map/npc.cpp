@@ -47,8 +47,8 @@ void NPC::Update(const float deltaTime)
         }
 
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in NPC::Update"); // TODO : Log
-            // TODO : SetMovementState(Free) ?
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in NPC::Update"); // TODO : Level
+            SetMovementState(EntityMovementState::Free);
             break; 
     }
 }

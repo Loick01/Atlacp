@@ -47,10 +47,11 @@ void MapEntity::SetOrientation(const Direction direction)
 
 void MapEntity::Reset(const Direction direction)
 {
-    if (direction == Direction::None) 
-        Logger::GetInstance().AddLog(Level::L4, "Direction should not be None"); // TODO : Log
+    if (direction != Direction::None) 
+        SetOrientation(direction);
+    else
+        Logger::GetInstance().AddLog(Level::L4, "(MapEntity::Reset) Direction should not be None"); // TODO : Level
 
-    SetOrientation(direction);
     m_movementState = EntityMovementState::Free;
 }
 

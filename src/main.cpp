@@ -10,7 +10,9 @@ int main(int argc, char* argv[])
         // n = 0 : Game mode, n = 1 : Editor mode, n = 2 : Battle mode
         const int mode = argc == 1 ? 0 : std::stoi(argv[1]);
         SceneController scenes(mode);
-        scenes.StartGameloop();
+
+        if (scenes.GetCurrentScene() != nullptr)
+            scenes.StartGameloop();
 
         // Because textureController is created before every Drawable, its destructor is called after every Drawable destructor
         // It means that there should no longer be any textures to SDL_Destroy. 

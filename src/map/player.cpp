@@ -6,13 +6,13 @@ Player::Player(const FileReader& fileReader, Tilemap& tilemap, TextureController
     const std::string& spriteFilepath, const float walkSpeed, const float runSpeed, const float cameraZoom):
     MapEntity(textureController, spriteFilepath, fileReader, tilemap, Direction::Down, walkSpeed, runSpeed, cameraZoom)
 {
-    const MapPosition spawn = tilemap.GetSpawnPosition();
-    if (spawn.x != -1 && spawn.y != -1)
-        SetMapPosition(spawn);
-    else {
-        SetMapPosition(MapPosition{0, 0}); // TODO : The position could be not free
-        Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map"); // TODO : Log
+    MapPosition spawn = tilemap.GetSpawnPosition();
+    if (spawn.x == -1 || spawn.y == -1) {
+        Logger::GetInstance().AddLog(Level::L4, "A spawn position for the Player must be defined for the first loaded map"); // TODO : Level
+        spawn = {0, 0}; // This position could be not free
     }
+
+    SetMapPosition(spawn);
     const MapPosition mp = GetMapPosition();
     tilemap.TakePosition(mp); // TODO : Should be in MapEntity (currently not possible because spawn position if defined in Player constructor)
     UpdateDrawingPosition(mp.ToScenePosition(tilemap.GetTileSize()));
@@ -40,7 +40,8 @@ void Player::Update(const float deltaTime)
             }
 
             default:
-                Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityInteractionState used in Player::Update"); // TODO : Log
+                Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityInteractionState used in Player::Update"); // TODO : Level
+                SetInteractionState(EntityInteractionState::None); // TODO : Should use ReleaseInteracting() instead ?
                 break; 
         }
         return;
@@ -98,7 +99,8 @@ void Player::Update(const float deltaTime)
         }
 
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in Player::Update"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled EntityMovementState used in Player::Update"); // TODO : Level
+            SetMovementState(EntityMovementState::Free);
             break; 
     }
 }
