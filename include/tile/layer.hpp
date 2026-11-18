@@ -44,6 +44,8 @@ class ExtraTileLayer : public TileLayer // Used for tile border layer + will be 
         std::string m_uiDisplay; // How this ExtraTileLayer will be displayed in the UI. For TileLayer, it only uses 0,1,2,etc.
         int m_tileSize;
 
+        bool m_init;
+
     public:
         // Tileset parameter is useless, but I can't remove because of TileLayer constructor
         ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, 
@@ -51,6 +53,7 @@ class ExtraTileLayer : public TileLayer // Used for tile border layer + will be 
         ~ExtraTileLayer() override;
         
         std::string GetUiDisplay() const;
+        bool IsInit() const;
         void BuildBorderLayer();
         void BuildCollisionLayer(const std::vector<bool>& occupancyGrid);
         void DrawTexture() const override;

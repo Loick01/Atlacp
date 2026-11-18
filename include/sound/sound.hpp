@@ -6,6 +6,8 @@
 #include <SDL2/SDL_mixer.h>
 // Mix_FadeOutMusic(int ms), Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 
+using ChunkKey = std::string;
+
 namespace BaseSfx{
     inline constexpr std::string_view Accept = "Accept";
     inline constexpr std::string_view Open = "Open";
@@ -18,9 +20,9 @@ namespace BaseSfx{
 class SoundController
 {
     private:
-        std::unordered_map<std::string, Mix_Chunk*> m_chunks; // TODO : string as key ?
-        Mix_Music* m_backgroundMusic;
-        std::string m_requestedChunk;
+        std::unordered_map<ChunkKey, Mix_Chunk*> m_chunks;
+        Mix_Music* m_bgm;
+        ChunkKey m_requestedChunk;
 
         SoundController();
         ~SoundController();
@@ -31,13 +33,13 @@ class SoundController
     public:
         static SoundController& GetInstance();
 
-        void SetBackgroundMusic(const std::string& filepath);
+        void SetBackgroundMusic(const std::string& filename);
 
         void ClearChunk();
-        void RequestChunk(const std::string& path);
+        void RequestChunk(const ChunkKey& key);
         void PlayRequestedChunk();
         
-        void PlayChunk(const std::string& path); // TODO : private ?
-        void LoadChunk(const std::string& path);
-        void DeleteChunk(const std::string& path); // Used only in BattleController::PlayNextTurn (TurnState::End) for now 
+        void PlayChunk(const ChunkKey& key); // TODO : private ?
+        void LoadChunk(const ChunkKey& key);
+        void DeleteChunk(const ChunkKey& key); // Used only in BattleController::PlayNextTurn (TurnState::End) for now 
 };

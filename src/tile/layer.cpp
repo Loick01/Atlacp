@@ -63,7 +63,7 @@ void TileLayer::SetTile(const size_t index, const Tile t)
 
 ExtraTileLayer::ExtraTileLayer(const GridSize layerSize, Camera& camera, TextureController& textureController, Tileset& tileset, 
 const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
-    TileLayer(layerSize, camera, textureController, tileset), m_layerType(layerType)
+    TileLayer(layerSize, camera, textureController, tileset), m_layerType(layerType), m_init(false)
 {
     unsigned int wantedTileSize = tileset.GetTileSize();
     std::string pathToLoad = "../assets/tileset/extra_tile/"; // TODO : Should not be here ?
@@ -80,8 +80,8 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
             BuildCollisionLayer(occupancyGrid);
             break;
         default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer"); // TODO : Log
-            return; // TODO : ?
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled ExtraLayerType used in ExtraTileLayer"); // TODO : Level
+            return;
     }
 
     m_tileKey += std::to_string(wantedTileSize);
@@ -91,8 +91,12 @@ const ExtraLayerType layerType, const std::vector<bool>& occupancyGrid):
     m_textureController.LoadTextureFromFile(pathToLoad, m_tileKey, as);
     m_tileSize = as.x;
 
-    if (wantedTileSize != m_tileSize) // If this happens, pathToLoad is probably incorrect (because I use m_tileKey += std::to_string(wantedTileSize);)
-        Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // TODO : Log
+    if (wantedTileSize != m_tileSize) { // If this happens, pathToLoad is probably incorrect (because I use m_tileKey += std::to_string(wantedTileSize);)
+        Logger::GetInstance().AddLog(Level::L4, "Size of the texture used for the extra layer is not the same as the tile size in the current Tileset"); // TODO : Level
+        return;
+    }
+
+    m_init = true;
 }
 
 ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is deleted in ~TextureController
@@ -103,6 +107,11 @@ ExtraTileLayer::~ExtraTileLayer() // TODO : Unused for now, m_tileKey texture is
 std::string ExtraTileLayer::GetUiDisplay() const
 {
     return m_uiDisplay;
+}
+
+bool ExtraTileLayer::IsInit() const
+{
+    return m_init;
 }
 
 void ExtraTileLayer::BuildBorderLayer()

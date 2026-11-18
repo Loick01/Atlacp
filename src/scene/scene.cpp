@@ -334,15 +334,17 @@ void EditorMapScene::CreateExtraLayers()
     m_extraLayers.emplace_back(m_tilemap.GetLayerSize(), m_camera, m_context.textureController, m_tileset, 
         ExtraLayerType::Collision, m_tilemap.GetOccupancyGrid());
 
-    for (const ExtraTileLayer& extraLayer : m_extraLayers)
-        m_layers.push_back(&extraLayer);
+    for (const ExtraTileLayer& extraLayer : m_extraLayers) {
+        if (extraLayer.IsInit())
+            m_layers.push_back(&extraLayer);
+    }
 }
 
 void EditorMapScene::UpdateTilemapLayer()
 {   
     m_extraLayers.clear();
     TilemapScene::UpdateTilemapLayer(); // m_layers is clear() here 
-    // CreateExtraLayers();
+    CreateExtraLayers();
 
     const unsigned int layerCount = m_tilemap.GetLayerCount();
     m_previousLayerCount = layerCount;

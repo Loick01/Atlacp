@@ -27,7 +27,7 @@ void Tileset::LoadTileset(const FileReader& fileReader, const std::string& path)
 
     if (m_tilesets.empty()) m_tileSize = data.tileSize; // Use data.tileSize for m_tileSize only when loading the first tileset
     else if (data.tileSize != m_tileSize) {
-        Logger::GetInstance().AddLog(Level::L4, "Try to load a tileset with a different tileSize: " + data.tileSize); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Try to load a tileset with a different tileSize: " + data.tileSize); // TODO : Level
         return;
     }
     
@@ -51,8 +51,11 @@ TextureKey Tileset::GetTextureKey() const
 void Tileset::SetDisplayedTileset(const int tilesetIndex)
 {
     // Drawable::m_textureKey/m_textureSize is not used in Tileset class, except in editor mode (when displaying the tileset) 
-    if (m_tilesets.size() <= tilesetIndex) // TODO : Log ?
-        return;
+    if (m_tilesets.size() <= tilesetIndex) {
+        Logger::GetInstance().AddLog(Level::L4, "(Tileset::SetDisplayedTileset) Tileset index is lower than Tileset::m_tilesets size"); // TODO : Level
+        return; // TODO : I have not tested this yet
+    }
+    
     const DataTileset tileset = m_tilesets.at(tilesetIndex);
     m_textureKey = tileset.tilesetKey;
     m_textureSize = tileset.size*m_tileSize;
@@ -138,7 +141,7 @@ Tile Tileset::ComputeCurrentTileset(Tile tile)
             }
         }
     }
-    // Logger::GetInstance().AddLog(Level::L4, "No tileset can be found to draw this tile: " + tile); // TODO : Log (Remove ?)
+    
     return -1;
 }
 

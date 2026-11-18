@@ -74,8 +74,8 @@ MapPosition Tilemap::GetProjectedPosition(const MapPosition p) const
         case MapBound::OutLeft:
             projectedPosition.x = m_dataMap.size.x-1;
             break;
-        default:
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled MapBound (MapBound::Inside ?) used in Tilemap::GetProjectedPosition"); // TODO : Log
+        default: // TODO : Could be MapBound::Inside ?
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled MapBound used in Tilemap::GetProjectedPosition"); // TODO : Level
             return {0,0};
     }
     return projectedPosition;
