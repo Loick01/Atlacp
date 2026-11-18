@@ -24,8 +24,7 @@ class UiComponentController
         Time& m_time;
         UiController& m_uiController;
 
-        bool IsKeyAvailable(const ComponentKey& key) const;
-        bool IsKeyUsed(const ComponentKey& key) const;
+        bool IsKeyUsed(const ComponentKey& key) const; 
     
     public:
         UiComponentController(Time& time, UiController& uiController);

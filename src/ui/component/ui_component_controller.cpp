@@ -13,19 +13,10 @@ UiComponentController::UiComponentController(Time& time, UiController& uiControl
     m_time(time), m_uiController(uiController)
 {}
 
-bool UiComponentController::IsKeyAvailable(const ComponentKey& key) const
-{
-    if (m_components.find(key) != m_components.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "This key is already used for a component in UiComponentController: " + key); // TODO : Log
-        return false;
-    }
-    return true;
-}
-
 bool UiComponentController::IsKeyUsed(const ComponentKey& key) const
 {
     if (m_components.find(key) == m_components.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "This key is not used for a component in UiComponentController: " + key); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "This key is not used for a component in UiComponentController: " + key); // TODO : Level
         return false;
     }
     return true;
@@ -63,66 +54,66 @@ void UiComponentController::CloseComponent(const ComponentKey& key)
 
 UiDialogBox* UiComponentController::CreateDialogBox(const ComponentKey& key, const std::string& filePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+
     std::unique_ptr<UiDialogBox> c = std::make_unique<UiDialogBox>(m_uiController, filePath);
-    if (IsKeyAvailable(key)) {
-        UiDialogBox* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiDialogBox* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiDynamicList* UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+
     std::unique_ptr<UiDynamicList> c = std::make_unique<UiDynamicList>(m_uiController, templatePath);
-    if (IsKeyAvailable(key)) {
-        UiDynamicList* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiDynamicList* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiList* UiComponentController::CreateList(const ComponentKey& key, const std::string& filePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+
     std::unique_ptr<UiList> c = std::make_unique<UiList>(m_uiController, filePath);
-    if (IsKeyAvailable(key)) {
-        UiList* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiList* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiSelector* UiComponentController::CreateSelector(const ComponentKey& key, const std::string& templatePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+
     std::unique_ptr<UiSelector> c = std::make_unique<UiSelector>(m_uiController, templatePath);
-    if (IsKeyAvailable(key)) {
-        UiSelector* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiSelector* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+
     std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_time, m_uiController, templatePath);
-    if (IsKeyAvailable(key)) {
-        UiSpriteAnimation* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiSpriteAnimation* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }
 
 UiFrameText* UiComponentController::CreateFrameText(const ComponentKey& key, const std::string& filePath)
 {
+    if (IsKeyUsed(key))
+        return nullptr;
+    
     std::unique_ptr<UiFrameText> c = std::make_unique<UiFrameText>(m_uiController, filePath);
-    if (IsKeyAvailable(key)) {
-        UiFrameText* r = c.get();
-        m_components[key] = std::move(c);
-        return r;
-    }
-    return nullptr;
+    UiFrameText* r = c.get();
+    m_components[key] = std::move(c);
+    return r;
 }

@@ -4,10 +4,7 @@
 
 UiDynamicList::UiDynamicList(UiController& uiController, const std::string& uiFilepath):
     UiList(uiController, uiFilepath)
-{
-    if (!m_uiController.IsTemplateUiFile(m_uiFilepath))
-        Logger::GetInstance().AddLog(Level::L4, "The file used for UiDynamicList must be a template file: " + m_uiFilepath); // TODO : Log
-}
+{}
 
 unsigned int UiDynamicList::GetInstanceCount()
 {
@@ -21,8 +18,13 @@ void UiDynamicList::ResetInstanceCount()
         
 void UiDynamicList::Open()
 {   
+    if (!m_uiController.IsTemplateUiFile(m_uiFilepath)) {
+        Logger::GetInstance().AddLog(Level::L4, "The file used for UiDynamicList must be a template file: " + m_uiFilepath); // TODO : Level
+        return;
+    }
+    
     if (m_nrItem == 0) {
-        Logger::GetInstance().AddLog(Level::L4, "UiDynamicList::m_nrItem should not be 0"); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "UiDynamicList::m_nrItem should not be 0"); // TODO : Level
         return;
     }
      

@@ -23,9 +23,9 @@ void UiSpriteAnimation::Open()
     // That's why I must call UiAnimatedElement::UpdateSpriteSizeFromAnimation
     m_uiController.EditPath(m_uiKey, std::string(AssetDirectory::Spritesheet)+m_animationPath);
 
-    m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey)); // TODO : static_cast ?
+    m_animated = dynamic_cast<UiAnimatedElement*>(m_uiController.GetElement(m_uiKey));
     if (m_animated == nullptr) { 
-        Logger::GetInstance().AddLog(Level::L4, "This UiElement must be a UiAnimatedElement: " + m_uiKey); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "This UiElement must be a UiAnimatedElement: " + m_uiKey); // TODO : Level
         return;
     }
 

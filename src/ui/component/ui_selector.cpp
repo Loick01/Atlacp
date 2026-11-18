@@ -45,7 +45,7 @@ bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
 
 void UiSelector::UpdateToOptionIndex()
 {
-    const UiKey& parentKey = m_optionKeys[m_optionIndex];
+    const UiKey& parentKey = m_optionKeys[m_optionIndex]; // TODO : Do not use []
     m_uiController.EditParent(m_uiKey, parentKey); 
     m_uiController.GetElement(parentKey)->UpdatePosition();
 }
@@ -59,7 +59,7 @@ void UiSelector::Reset()
 void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis scaleAxis, const Axis padAxis, const float scaleValue, const float padValue)
 {
     if (optionKeys.empty()) {
-        Logger::GetInstance().AddLog(Level::L4, "UiSelector must have at least one key in m_optionKeys"); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "UiSelector must have at least one key in m_optionKeys"); // TODO : Level
         return;
     }
     

@@ -18,7 +18,7 @@ void UiController::RemoveElement(const UiKey& key)
 {
     std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveElement) This Ui element can't be found: " + key); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveElement) This Ui element can't be found: " + key); // TODO : Level
         return;
     }
     m_elements.erase(it);
@@ -78,7 +78,7 @@ std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Sam
             return removed;
         }
     }
-    Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveSubRoots) No subroots have this key: " + key); // TODO : Log
+    Logger::GetInstance().AddLog(Level::L4, "(UiController::RemoveSubRoots) No subroots have this key: " + key); // TODO : Level
     return nullptr;
 }
 
@@ -95,8 +95,8 @@ std::unique_ptr<UiElement> UiController::GenerateElementFromData(const DataUiEle
     } else if (data.type == "animatedelement") {
         element = CreateAnimatedElement(data.key, data.imagePath);
     } else {
-        Logger::GetInstance().AddLog(Level::L4, "Unknown UI element type: " + data.type); // TODO : Log
-        return nullptr; // TODO : ?
+        Logger::GetInstance().AddLog(Level::L4, "Unknown UI element type: " + data.type); // TODO : Level
+        return nullptr;
     }
 
     UiParams& params = element->GetParams();
@@ -144,7 +144,7 @@ UiElement* UiController::GetElement(const UiKey& key) const
 {
     std::unordered_map<UiKey, UiElement*>::const_iterator it = GetIteratorOnElement(key);
     if (it == m_elements.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "(UiController::GetElement) This Ui element can't be found: " + key); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "(UiController::GetElement) This Ui element can't be found: " + key); // TODO : Level
         return nullptr;
     }
     return it->second;
@@ -154,34 +154,26 @@ float UiController::GetPartialElementSizeOnAxis(const UiKey& key, const Axis axi
 {
     const UiElement* element = GetElement(key); // ComputeFinal must have been called on this UiElement
     switch(axis) {
-        case Axis::Width : {
+        case Axis::Width :
             return element->GetTextureSize().x * amount;
-            break;
-        }
-        case Axis::Height : {
+        case Axis::Height :
             return element->GetTextureSize().y * amount;
-            break;
-        }
         default : {
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialElementSizeOnAxis"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialElementSizeOnAxis"); // TODO : Level
             return 0.f;
         }
     }
 }
 
-float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount) const
+float UiController::GetPartialViewportSizeOnAxis(const Axis axis, const float amount) const
 {
     switch(axis) {
-        case Axis::Width : {
+        case Axis::Width :
             return m_size.x * amount;
-            break;
-        }
-        case Axis::Height : {
+        case Axis::Height :
             return m_size.y * amount;
-            break;
-        }
         default : {
-            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialRootSizeOnAxis"); // TODO : Log
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled Axis used in UiController::GetPartialViewportSizeOnAxis"); // TODO : Level
             return 0.f;
         }
     }
@@ -190,7 +182,7 @@ float UiController::GetPartialRootSizeOnAxis(const Axis axis, const float amount
 float UiController::GetResultFromPartialSize(const PartialSize& ps) const
 {
     if (ps.srcElement == "root")
-        return GetPartialRootSizeOnAxis(ps.axis, ps.amount);
+        return GetPartialViewportSizeOnAxis(ps.axis, ps.amount);
     else 
         return GetPartialElementSizeOnAxis(ps.srcElement, ps.axis, ps.amount);
 }
@@ -323,7 +315,7 @@ void UiController::EditPadding(const UiKey& key, const PartialSize ps, const Axi
 void UiController::EditKey(const UiKey& key, const UiKey& newKey)
 {
     if (m_elements.find(newKey) != m_elements.end()) {
-        Logger::GetInstance().AddLog(Level::L4, "Try to update a node in UiController::m_elements with an already existing key: " + newKey); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Try to update a node in UiController::m_elements with an already existing key: " + newKey); // TODO : Level
         return;
     }
 

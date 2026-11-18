@@ -4,11 +4,7 @@
 
 UiList::UiList(UiController& uiController, const std::string& uiFilepath) :
     UiComponent(uiController, uiFilepath)
-{
-    // TODO : There is something wrong here
-    if (!m_uiController.IsBaseUiFile(m_uiFilepath))
-        Logger::GetInstance().AddLog(Level::L4, "The file used for UiList must be a base file: " + m_uiFilepath); // TODO : Log
-}
+{}
 
 std::vector<UiKey> UiList::GetItemsKey() const
 {
@@ -17,7 +13,11 @@ std::vector<UiKey> UiList::GetItemsKey() const
 
 void UiList::Open()
 {
-    // m_uiFilepath is a .uif
+    if (!m_uiController.IsBaseUiFile(m_uiFilepath)) {
+        Logger::GetInstance().AddLog(Level::L4, "The file used for UiList must be a base file: " + m_uiFilepath); // TODO : Level
+        return;
+    }
+
     const std::vector<UiKey> created = m_uiController.BuildUiFile(m_uiFilepath);
     m_uiKey = created[0];
     m_itemsKey = created;

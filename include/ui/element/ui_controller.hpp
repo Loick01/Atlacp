@@ -34,7 +34,7 @@ class UiController // TODO : Should be renamed UiElementController ?
         AreaSize m_size; // Initialized with the viewport size
 
         float GetPartialElementSizeOnAxis(const UiKey& key, const Axis axis, const float amount) const;
-        float GetPartialRootSizeOnAxis(const Axis axis, const float amount) const;
+        float GetPartialViewportSizeOnAxis(const Axis axis, const float amount) const;
         
         // Add/Remove in UiController::m_elements
         void AddElement(const UiKey& key, UiElement* element);
