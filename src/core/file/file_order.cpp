@@ -24,13 +24,11 @@ std::vector<Order> FileReader::ReadOrders(std::ifstream& input) const
 
     std::vector<Order> orders;
     std::string s;
-    unsigned int nrOrder;
+    const unsigned int nrOrder = ReadInt(input);
 
-    input >> nrOrder;
     orders.reserve(nrOrder);
     for (unsigned int i = 0 ; i < nrOrder ; i++) {
         input >> s;
-
         if (std::unordered_map<std::string, OrderReader>::const_iterator it = orderReaders.find(s); it != orderReaders.end())
             orders.push_back((this->*(it->second))(input));
         else {
@@ -55,9 +53,8 @@ Order FileReader::ReadFrameTextOrder(std::ifstream& input) const
 {
     std::vector<std::string> texts;
     std::string s;
-    unsigned int nrText;
+    const unsigned int nrText = ReadInt(input);
     
-    input >> nrText;
     for (unsigned int i = 0 ; i < nrText ; i++) {
         std::getline(input >> std::ws, s, MINOR_DELIMITER);
         texts.push_back(s);
@@ -71,9 +68,8 @@ Order FileReader::ReadDialogTextOrder(std::ifstream& input) const
     std::vector<std::string> texts;
     std::string s;
     std::string facePath;
-    unsigned int nrText;
+    const unsigned int nrText = ReadInt(input);
 
-    input >> nrText;
     input >> facePath;
     
     for (unsigned int i = 0 ; i < nrText ; i++) {
@@ -87,28 +83,24 @@ Order FileReader::ReadDialogTextOrder(std::ifstream& input) const
 Order FileReader::ReadNpcGoToOrder(std::ifstream& input) const
 {
     MapPosition targetPosition;
-    unsigned int id;
-    input >> targetPosition.x;
-    input >> targetPosition.y;
-    input >> id;
+    targetPosition.x = ReadInt(input);
+    targetPosition.y = ReadInt(input);
+    const unsigned int id = ReadInt(input);
     return NpcGoToOrder{targetPosition, id};
 }
 
 Order FileReader::ReadNpcFollowOrder(std::ifstream& input) const
 {
-    unsigned int idLeader;
-    unsigned int idFollower;
-    input >> idLeader;
-    input >> idFollower;
+    const unsigned int idLeader = ReadInt(input);
+    const unsigned int idFollower = ReadInt(input);
     return NpcFollowOrder{idLeader, idFollower};
 }
 
 Order FileReader::ReadNpcIdleOrder(std::ifstream& input) const
 {
     Direction direction;
-    unsigned int id;
     direction = ReadDirection(input);
-    input >> id;
+    const unsigned int id = ReadInt(input);
     return NpcIdleOrder{direction, id};
 }
 
@@ -122,69 +114,64 @@ Order FileReader::ReadPlayCinematicOrder(std::ifstream& input) const
 Order FileReader::ReadCameraSlideToPositionOrder(std::ifstream& input) const
 {
     ScenePosition pos;
-    input >> pos.x; input >> pos.y;
+    pos.x = ReadInt(input);
+    pos.y = ReadInt(input);
     return CameraSlideToPositionOrder{pos};
 }
 
 Order FileReader::ReadCameraSlideToEntityOrder(std::ifstream& input) const
 {
-    unsigned int idEntity;
-    input >> idEntity;
+    const unsigned int idEntity = ReadInt(input);
     return CameraSlideToEntityOrder{idEntity};
 }
 
 Order FileReader::ReadCameraAnchorEntityOrder(std::ifstream& input) const
 {
-    unsigned int idEntity;
-    input >> idEntity;
+    const unsigned int idEntity = ReadInt(input);
     return CameraAnchorEntityOrder{idEntity};
 }
 
 Order FileReader::ReadEntityOrientationOrder(std::ifstream& input) const
 {
-    unsigned int idEntity;
-    input >> idEntity;
+    const unsigned int idEntity = ReadInt(input);
     Direction direction = ReadDirection(input);
     return EntityOrientationOrder{idEntity, direction};
 }
 
 Order FileReader::ReadEntityCreateOrder(std::ifstream& input) const
 {
-    unsigned int idEntity;
+    const unsigned int idEntity = ReadInt(input);
     MapPosition spawn;
+    spawn.x = ReadInt(input);
+    spawn.y = ReadInt(input);
     std::string filepath;
-    input >> idEntity;
-    input >> spawn.x; input >> spawn.y;
     input >> filepath;
     return EntityCreateOrder{idEntity, spawn, filepath};
 }
 
 Order FileReader::ReadEntityDeleteOrder(std::ifstream& input) const
 {
-    unsigned int idEntity;
-    input >> idEntity;
+    const unsigned int idEntity = ReadInt(input);
     return EntityDeleteOrder{idEntity};
 }
 
 Order FileReader::ReadTimeDelayOrder(std::ifstream& input) const
 {
-    float delay;
-    input >> delay;
+    const float delay = ReadFloat(input);
     return TimeDelayOrder{delay};
 }
 
 Order FileReader::ReadLoadMapOrder(std::ifstream& input) const
 {
-    unsigned int mapIndex;
+    const unsigned int mapIndex = ReadInt(input);
     MapPosition spawn;
-    input >> mapIndex;
-    input >> spawn.x; input >> spawn.y;
+    spawn.x = ReadInt(input);
+    spawn.y = ReadInt(input);
     return LoadMapOrder{mapIndex, PlayerReposition::MapSpawn, spawn};
 }
 
 Order FileReader::ReadBoxingAnimationOrder(std::ifstream& input) const
 {
-    float speed;
-    input >> speed;
+    const float speed = ReadFloat(input);
     return BoxingAnimationOrder{speed};
 }

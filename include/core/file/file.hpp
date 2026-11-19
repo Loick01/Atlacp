@@ -26,7 +26,13 @@ class FileReader
     private:
         // FileIO
         static std::optional<std::ifstream> OpenFile(const std::string& filepath);
-        std::string ReadString(std::ifstream& input) const;
+
+        std::optional<int> GetIntFromStr(const std::string& s) const;
+        std::optional<float> GetFloatFromStr(const std::string& s) const;
+
+        std::string ReadString(std::ifstream& input) const; // TODO : Return std::optional ?
+        int ReadInt(std::ifstream& input) const;
+        float ReadFloat(std::ifstream& input) const;
 
         // FileUtils
         template <typename T>
@@ -70,7 +76,7 @@ class FileReader
         
         // File
         DataMapElement ReadMapElement(std::ifstream& input) const;
-        DataNPC ReadDataNPC(std::ifstream& input, const unsigned int targetId=-1) const;
+        DataNPC ReadDataNPC(std::ifstream& input) const;
         void ReadHeaderMapFile(std::ifstream& input, DataMap& m) const;
 
     public:
@@ -81,7 +87,7 @@ class FileReader
         std::vector<DataBattleActor> ReadBattleFile(const std::string& battleFilepath) const;
 
         std::vector<DataNPC> GetDataNPCsForMap(const std::string& npcsFilepath, const unsigned int mapIndex) const;
-        std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const;
+        std::optional<DataNPC> GetDataNPCFromId(const std::string& npcFilepath, const unsigned int targetId) const;
         
         std::optional<DataWorld> ReadWorldFile(const std::string& worldFilepath) const;
         std::optional<DataMap> ReadMapFile(const std::string& mapFilepath, Camera& camera, TextureController& textureController,

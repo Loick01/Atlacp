@@ -1,5 +1,8 @@
+0
 ###
+0
 ###
+0
 ###
 8
 40 npc16_inverted 11 10 4. 6. 0
@@ -39,7 +42,11 @@ dialog_text 3 ui/face/eskimo_face One Ring to rule them all,;One Ring to find th
 dialog_text 1 ui/face/knight_face (1-1) My spawn position is 9, 5;
 dialog_text 1 ui/face/knight_face (2-1) Second text for this NPC Second text for this NPC Second text for this NPC Second text for this NPC;
 ###
+0
 ###
+0
 ###
+0
 ###
+0
 ###

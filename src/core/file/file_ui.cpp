@@ -61,7 +61,7 @@ void FileReader::ReadScale(std::ifstream& input, DataUiElement& data) const
 {
     input >> data.scale.srcElement;
     data.scale.axis = ReadAxis(input);
-    input >> data.scale.amount;
+    data.scale.amount = ReadFloat(input);
 }
 
 void FileReader::ReadScaleAxis(std::ifstream& input, DataUiElement& data) const
@@ -83,14 +83,14 @@ void FileReader::ReadPaddingX(std::ifstream& input, DataUiElement& data) const
 {
     input >> data.xPadding.srcElement;
     data.xPadding.axis = ReadAxis(input);
-    input >> data.xPadding.amount;
+    data.xPadding.amount = ReadFloat(input);
 }
 
 void FileReader::ReadPaddingY(std::ifstream& input, DataUiElement& data) const
 {
     input >> data.yPadding.srcElement;
     data.yPadding.axis = ReadAxis(input);
-    input >> data.yPadding.amount;
+    data.yPadding.amount = ReadFloat(input);
 }
 
 void FileReader::ReadText(std::ifstream& input, DataUiElement& data) const

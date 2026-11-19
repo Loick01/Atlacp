@@ -20,12 +20,12 @@ std::unordered_map<unsigned int, MoveDefinition> FileReader::ReadMoveFile(const 
     std::string s;
     while (input >> s) {
         MoveDefinition m;
-        const unsigned int moveId = std::stoi(s); // TODO : Log ?
+        const unsigned int moveId = GetIntFromStr(s).value(); // TODO : has_value()
         
         m.name = ReadString(input);
         m.commandType = ReadCommandType(input);
         m.moveType = ReadMoveType(input);
-        input >> m.baseValue;
+        m.baseValue = ReadInt(input);
         input >> m.sfxPath;
         input >> s;
         m.animationPath = std::string(DataDirectory::BattleMoveDirectory)+s;
@@ -66,11 +66,11 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
         }
 
         data.name = ReadString(input);
-        input >> data.health;
-        input >> data.turnSpeed;
+        data.health = ReadInt(input);
+        data.turnSpeed = ReadInt(input);
         input >> data.spritePath;
         while (input >> s && s != MAJOR_DELIMITER)
-            data.moveIds.push_back(std::stoi(s)); // TODO : Log
+            data.moveIds.push_back(GetIntFromStr(s).value()); // TODO : has_value()
         
         actorsData.push_back(data);
     }
@@ -78,15 +78,16 @@ std::vector<DataBattleActor> FileReader::ReadBattleFile(const std::string& battl
     return actorsData;
 }
 
-DataNPC FileReader::ReadDataNPC(std::ifstream& input, const unsigned int targetId) const
+DataNPC FileReader::ReadDataNPC(std::ifstream& input) const
 {
     DataNPC data; // NPC always spawn with random behaviour
 
-    input >> data.id;
+    data.id = ReadInt(input);
     input >> data.sprite; 
-    input >> data.position.x; input >> data.position.y;
-    input >> data.walkSpeed;
-    input >> data.runSpeed;
+    data.position.x = ReadInt(input);
+    data.position.y = ReadInt(input);
+    data.walkSpeed = ReadFloat(input);
+    data.runSpeed = ReadFloat(input);
     data.orders = ReadOrders(input);
     
     return data;
@@ -116,7 +117,7 @@ std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepa
         return {};
     }
 
-    input >> count;
+    count = ReadInt(input);
     for (unsigned int i = 0 ; i < count ; i++) {
         const DataNPC data = ReadDataNPC(input);
         npcsData.push_back(data);
@@ -125,7 +126,7 @@ std::vector<DataNPC> FileReader::GetDataNPCsForMap(const std::string& npcsFilepa
     return npcsData;
 }
 
-std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepath, const unsigned int idEntity) const
+std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepath, const unsigned int targetId) const
 {
     if (!CheckFileExtension(npcFilepath, FileExtension::Npcs)) {
         Logger::GetInstance().AddLog(Level::L4, "Npcs file extension is incorrect"); // TODO : Level
@@ -140,11 +141,11 @@ std::optional<DataNPC> FileReader::GetDataNPCFromId(const std::string& npcFilepa
     std::string s;
 
     while (input >> s) {
-        const DataNPC data = ReadDataNPC(input, idEntity);
-        if (data.id == idEntity)
+        const DataNPC data = ReadDataNPC(input);
+        if (data.id == targetId)
             return data;
     }
-    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(idEntity)); // TODO : Level
+    Logger::GetInstance().AddLog(Level::L4, "No NPC was found with in file " + npcFilepath + " with id = " + std::to_string(targetId)); // TODO : Level
     return std::nullopt;
 }
 
@@ -156,9 +157,9 @@ std::optional<DataWorld> FileReader::ReadWorldFile(const std::string& worldFilep
         return std::nullopt;
     std::ifstream& input = optInput.value();
     
-    input >> data.startMap;
-    input >> data.size.x;
-    input >> data.size.y;
+    data.startMap = ReadInt(input);
+    data.size.x = ReadInt(input);
+    data.size.y = ReadInt(input);
     input >> data.mapDirectoryPath;
     input >> data.spritePlayerPath;
     input >> data.npcsFile;
@@ -175,28 +176,26 @@ std::optional<DataWorld> FileReader::ReadWorldFile(const std::string& worldFilep
 DataMapElement FileReader::ReadMapElement(std::ifstream& input) const
 {
     DataMapElement e;
-   
-    input >> e.position.x;
-    input >> e.position.y;
+    e.position.x = ReadInt(input);
+    e.position.y = ReadInt(input);
     e.orders = ReadOrders(input);
-    
     return e;
 }
 
 void FileReader::ReadHeaderMapFile(std::ifstream& input, DataMap& data) const
 {
     std::string s;
-    unsigned int count = 0;
+    unsigned int count;
     
-    input >> data.layerCount;
-    input >> data.layerSplitIndex;
-    input >> data.size.x;
-    input >> data.size.y;
-    input >> data.spawnPosition.x;
-    input >> data.spawnPosition.y;
+    data.layerCount = ReadInt(input);
+    data.layerSplitIndex = ReadInt(input);
+    data.size.x = ReadInt(input);
+    data.size.y = ReadInt(input);
+    data.spawnPosition.x = ReadInt(input);
+    data.spawnPosition.y = ReadInt(input);
 
     input >> s; // Skip "tileset"
-    input >> count;
+    count = ReadInt(input);
     input >> data.tilesetDirectoryPath;
     for (unsigned int i = 0 ; i < count ; i++) {
         input >> s;
@@ -204,14 +203,14 @@ void FileReader::ReadHeaderMapFile(std::ifstream& input, DataMap& data) const
     }
 
     input >> s; // Skip "element"
-    input >> count;
+    count = ReadInt(input);
     for (unsigned int i = 0 ; i < count ; i++) {
         const DataMapElement e = ReadMapElement(input);
         data.elements.push_back(e);
     }
 
     input >> s; // Skip "trigger"
-    input >> count;
+    count = ReadInt(input);
     for (unsigned int i = 0 ; i < count ; i++) {
         const DataMapElement e = ReadMapElement(input);
         data.triggers.push_back(e);
@@ -238,7 +237,7 @@ std::optional<DataMap> FileReader::ReadMapFile(const std::string& mapFilepath, C
     for (unsigned int i = 0 ; i < data.layerCount ; i++){
         TileLayer currentLayer(data.size, camera, textureController, tileset); // Currently, all layers have the same size
         for (size_t c = 0 ; c < layerSize ; c++){
-            input >> t; 
+            t = ReadInt(input); 
             currentLayer.AddTile(t);
         }
         data.layers.push_back(currentLayer);
@@ -256,14 +255,14 @@ std::optional<DataSpriteAnimation> FileReader::ReadAnimationFile(const std::stri
 
     DataSpriteAnimation data;
 
-    input >> data.spriteSize.x;
-    input >> data.spriteSize.y;
-    input >> data.step;
-    input >> data.frameDuration;
+    data.spriteSize.x = ReadInt(input);
+    data.spriteSize.y = ReadInt(input);
+    data.step = ReadInt(input);
+    data.frameDuration = ReadFloat(input);
 
     int v1, v2;
     data.sprites.reserve(data.step*4);
-    while (input >> v1 && input >> v2) // TODO : Use a for loop with data.step instead ?
+    while (input >> v1 && input >> v2) // TODO : Use a for loop with data.step instead ? // TODO++ : Use ReadInt()
         data.sprites.push_back(Vec2{v1, v2}*data.spriteSize);
 
     input.close();
@@ -279,13 +278,13 @@ std::optional<DataTileset> FileReader::ReadTilesetFile(const std::string& path) 
 
     DataTileset data;
 
-    input >> data.size.x;
-    input >> data.size.y;
-    input >> data.tileSize;
+    data.size.x = ReadInt(input);
+    data.size.y = ReadInt(input);
+    data.tileSize = ReadInt(input);
 
-    int v;
-    while (input >> v)
-        data.solidTiles.insert(v);
+    const unsigned int count = ReadInt(input);
+    for (unsigned int i = 0 ; i < count ; i++)
+        data.solidTiles.insert(ReadInt(input));
 
     input.close();
     return data;
