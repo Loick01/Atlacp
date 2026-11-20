@@ -5,10 +5,9 @@
 TextureController::TextureController(FontController& fontController, SDL_Renderer* windowRenderer) :
     m_fontController(fontController), m_windowRenderer(windowRenderer)
 {
-    // SDL_image initialization
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
     if ((IMG_Init(imgFlags) & imgFlags) != imgFlags)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_image: " + std::string(IMG_GetError())); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_image: " + std::string(IMG_GetError())); // TODO : Level
 }
 
 TextureController::~TextureController()

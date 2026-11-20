@@ -4,23 +4,23 @@
 #include "core/path.hpp"
 
 SoundController::SoundController():
-    m_bgm(nullptr)
+    m_bgm(nullptr), m_requestedChunk()
 {
-    // SDL_mixer initialization
     // https://lazyfoo.net/SDL_tutorials/lesson11/index.php
     int mixFlags = MIX_INIT_OGG;
     if ((Mix_Init(mixFlags) & mixFlags) != mixFlags)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_mixer: " + std::string(Mix_GetError())); // TODO : Log
+        Logger::GetInstance().AddLog(Level::L4, "Failed to initialize SDL_mixer: " + std::string(Mix_GetError())); // TODO : Level
 
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-        Logger::GetInstance().AddLog(Level::L4, "Failed to open Audio: " + std::string(Mix_GetError())); // TODO : Log
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
+        Logger::GetInstance().AddLog(Level::L4, "Failed to open Audio: " + std::string(Mix_GetError())); // TODO : Level
+        return;
+    }
 
     // TODO : Volume setting will not be here ?
     Mix_VolumeMusic(50 * MIX_MAX_VOLUME / 100); // For the background music (played with Mix_PlayMusic())
     Mix_Volume(-1, MIX_MAX_VOLUME); // For the sound effects (played with Mix_PlayChannel())
 
     LoadBaseSfx();
-    m_requestedChunk.clear();
 }
 
 SoundController::~SoundController()
@@ -118,7 +118,7 @@ void SoundController::LoadChunk(const ChunkKey& key)
 
     Mix_Chunk* chunk = Mix_LoadWAV((std::string(AssetDirectory::Sfx)+key+std::string(FileExtension::Sfx)).c_str());
     if (chunk == nullptr) {
-        Logger::GetInstance().AddLog(Level::L4, "Failed to load the Chunk (" + key + " ): " + std::string(Mix_GetError())); // TODO : Level
+        Logger::GetInstance().AddLog(Level::L4, "Failed to load the Chunk (" + key + "): " + std::string(Mix_GetError())); // TODO : Level
         return;
     }
 

@@ -10,7 +10,7 @@ SpriteAnimation::SpriteAnimation(const FileReader& fileReader, const std::string
 
 Vec2 SpriteAnimation::GetCurrentSprite() const
 {
-    if (m_dataSpriteAnim.sprites.size() <= m_currentSpriteIndex)
+    if (m_currentSpriteIndex >= m_dataSpriteAnim.sprites.size())
         return Vec2{0, 0};
     return m_dataSpriteAnim.sprites.at(m_currentSpriteIndex);
 }
@@ -39,6 +39,9 @@ void SpriteAnimation::Continue(const float deltaTime)
     if (m_count >= m_dataSpriteAnim.frameDuration){
         m_count -= m_dataSpriteAnim.frameDuration;
         ++m_currentSpriteIndex;
-        if (m_currentSpriteIndex == m_dataSpriteAnim.step) m_isDone = true;
+        if (m_currentSpriteIndex == m_dataSpriteAnim.step) {
+            m_isDone = true;
+            m_currentSpriteIndex = m_dataSpriteAnim.step-1;
+        }
     }
 }

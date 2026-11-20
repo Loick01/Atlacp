@@ -17,11 +17,11 @@ struct DataMap
     GridSize size; // TODO : Should not be here, and only in TileLayer ?
     std::string tilesetDirectoryPath;
 
-    DataMap() {
+    DataMap():
+        occupancyGrid(), layers()
+    {
         layerCount = 0;
         spawnPosition = {0, 0};
         layerSplitIndex = 0;
-        occupancyGrid.clear();
-        layers.clear();
     }
 };
