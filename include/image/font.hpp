@@ -11,11 +11,11 @@
 class FontController
 {
     private:
-        std::map<FontSize,TTF_Font*> m_fonts; // One font only, with different size
+        std::map<FontSize,TTF_Font*> m_fonts; // TODO : m_fonts key will be FontKey
         unsigned int m_smallTextSize;
         
         TTF_Font* GetFontForSize(const FontSize fontSize) const;
-        void LoadFontForSize(const std::string& fontFilepath, const FontSize fontSize, const unsigned int textSize);
+        void LoadFontForSize(const std::string& fontFilepath, const FontSize fontSize, const unsigned int textSize); // TODO : FontSize will be FontKey
         
     public:
         FontController(const std::string& fontFilepath, const unsigned int targetWidthForSmallText); // fontFilepath is not the full path, just the filename in the font directory

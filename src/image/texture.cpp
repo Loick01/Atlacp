@@ -69,11 +69,15 @@ void TextureController::LoadTextureFromText(const FontSize fontSize, const Textu
         return;
     }
     
-    // TODO : Use placeholder texture if text texture creation fails
     if (m_textures.find(key) == m_textures.end()) {
         SDL_Surface* surface = m_fontController.GenerateSurfaceFromText(fontSize, text, textColor, maxWidth);
-        CreateTextureFromSurface(surface, key, text, textureSize.x, textureSize.y);
-    }else{ // Text has already been generated as a texture
+        if (surface) {
+            CreateTextureFromSurface(surface, key, text, textureSize.x, textureSize.y);
+        } else {
+            Logger::GetInstance().AddLog(Level::L4, "Failed to create the text surface for: " + key + " : " + std::string(IMG_GetError())); // TODO : Level
+            LoadTextureFromFile("../assets/default_placeholder.png", key, textureSize, false);
+        }
+    } else {
         UseTexture(key, textureSize.x, textureSize.y);
     }
 }

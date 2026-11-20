@@ -9,7 +9,7 @@ T FileReader::ReadEnum(std::ifstream& input, const std::unordered_map<std::strin
     if (it != values.end())
         return it->second;
 
-    Logger::GetInstance().AddLog(Level::L4, "Unknown value read as " + typeName); // TODO : Log
+    Logger::GetInstance().AddLog(Level::L4, "Unknown value read as " + typeName); // TODO : Level
     return T{}; // Return a default value
 }
 
