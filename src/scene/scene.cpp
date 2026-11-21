@@ -33,6 +33,7 @@ SwitchEvent SceneController::GetSwitchEventFromMode(const int mode) const
 void SceneController::SetCurrentScene(const SwitchEvent e)
 {
     m_uiController.ClearAll();
+    m_uiComponentController.DeleteAll();
     switch(e){
         case SwitchEvent::ToGameMap: {
             m_currentScene = std::make_unique<GameMapScene>(m_context);

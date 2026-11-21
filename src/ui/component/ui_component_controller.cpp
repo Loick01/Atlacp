@@ -13,6 +13,15 @@ UiComponentController::UiComponentController(Time& time, UiController& uiControl
     m_time(time), m_uiController(uiController)
 {}
 
+bool UiComponentController::IsKeyAvailable(const ComponentKey& key) const
+{
+    if (m_components.find(key) != m_components.end()) {
+        Logger::GetInstance().AddLog(Level::L4, "This key is already used for a component in UiComponentController: " + key); // TODO : Level
+        return false;
+    }
+    return true;
+}
+
 bool UiComponentController::IsKeyUsed(const ComponentKey& key) const
 {
     if (m_components.find(key) == m_components.end()) {
@@ -54,7 +63,7 @@ void UiComponentController::CloseComponent(const ComponentKey& key)
 
 UiDialogBox* UiComponentController::CreateDialogBox(const ComponentKey& key, const std::string& filePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
 
     std::unique_ptr<UiDialogBox> c = std::make_unique<UiDialogBox>(m_uiController, filePath);
@@ -65,7 +74,7 @@ UiDialogBox* UiComponentController::CreateDialogBox(const ComponentKey& key, con
 
 UiDynamicList* UiComponentController::CreateDynamicList(const ComponentKey& key, const std::string& templatePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
 
     std::unique_ptr<UiDynamicList> c = std::make_unique<UiDynamicList>(m_uiController, templatePath);
@@ -76,7 +85,7 @@ UiDynamicList* UiComponentController::CreateDynamicList(const ComponentKey& key,
 
 UiList* UiComponentController::CreateList(const ComponentKey& key, const std::string& filePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
 
     std::unique_ptr<UiList> c = std::make_unique<UiList>(m_uiController, filePath);
@@ -87,7 +96,7 @@ UiList* UiComponentController::CreateList(const ComponentKey& key, const std::st
 
 UiSelector* UiComponentController::CreateSelector(const ComponentKey& key, const std::string& templatePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
 
     std::unique_ptr<UiSelector> c = std::make_unique<UiSelector>(m_uiController, templatePath);
@@ -98,7 +107,7 @@ UiSelector* UiComponentController::CreateSelector(const ComponentKey& key, const
 
 UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentKey& key, const std::string& templatePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
 
     std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_time, m_uiController, templatePath);
@@ -109,7 +118,7 @@ UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentK
 
 UiFrameText* UiComponentController::CreateFrameText(const ComponentKey& key, const std::string& filePath)
 {
-    if (IsKeyUsed(key))
+    if (!IsKeyAvailable(key))
         return nullptr;
     
     std::unique_ptr<UiFrameText> c = std::make_unique<UiFrameText>(m_uiController, filePath);

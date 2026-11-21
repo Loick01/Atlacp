@@ -119,7 +119,6 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
     public:
         BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
-        ~BattleController();
         
         void InitializeActors(const std::string& dataFile);
         void PlayNextTurn();

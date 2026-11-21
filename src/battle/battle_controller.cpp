@@ -28,11 +28,6 @@ BattleController::BattleController(FileReader& fileReader, UiComponentController
     m_uiComponentController.CreateSpriteAnimation("moveAnimation", "move_animation.uit");
 }
 
-BattleController::~BattleController()
-{
-    m_uiComponentController.DeleteAll();
-}
-
 std::vector<BattleActor*> BattleController::GetActorsInTeam(const Team team) const
 {
     switch(team) {
