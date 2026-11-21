@@ -19,10 +19,8 @@ bool UiSelector::VerticalNavigation(const Direction d, const bool isAction)
         SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Accept));
         return true;
     } else if (d == Direction::Down) {
-        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Next() ?
         Next();
     } else if (d == Direction::Up) {
-        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Previous() ?
         Previous();
     }
     return false;
@@ -34,10 +32,8 @@ bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
         SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Accept));
         return true;
     } else if (d == Direction::Right) {
-        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Next() ?
         Next();
     } else if (d == Direction::Left) {
-        SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move)); // TODO : Should be in Previous() ?
         Previous();
     }
     return false;
@@ -45,7 +41,11 @@ bool UiSelector::HorizontalNavigation(const Direction d, const bool isAction)
 
 void UiSelector::UpdateToOptionIndex()
 {
-    const UiKey& parentKey = m_optionKeys[m_optionIndex]; // TODO : Do not use []
+    if (!(m_optionIndex >= 0 && m_optionIndex < m_optionKeys.size())) {
+        Logger::GetInstance().AddLog(Level::L4, "(UiSelector::UpdateToOptionIndex) Invalid index used with this selector: " + m_uiKey); // TODO : Level
+        return;
+    }
+    const UiKey& parentKey = m_optionKeys.at(m_optionIndex);
     m_uiController.EditParent(m_uiKey, parentKey); 
     m_uiController.GetElement(parentKey)->UpdatePosition();
 }
@@ -60,6 +60,7 @@ void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis 
 {
     if (optionKeys.empty()) {
         Logger::GetInstance().AddLog(Level::L4, "UiSelector must have at least one key in m_optionKeys"); // TODO : Level
+        m_optionKeys.clear(); // Otherwise, it will keep the previous keys
         return;
     }
     
@@ -72,14 +73,24 @@ void UiSelector::SetOptionKeys(const std::vector<UiKey>& optionKeys, const Axis 
 
 void UiSelector::Previous()
 {
+    if (m_optionKeys.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "(UiSelector::Previous) No options for this selector: " + m_uiKey); // TODO : Level
+        return;
+    }
     m_optionIndex = (m_optionIndex-1+m_optionKeys.size())%m_optionKeys.size();
     UpdateToOptionIndex();
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move));
 }
 
 void UiSelector::Next()
 {
+    if (m_optionKeys.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "(UiSelector::Next) No options for this selector: " + m_uiKey); // TODO : Level
+        return;
+    }
     m_optionIndex = (m_optionIndex+1)%m_optionKeys.size();   
     UpdateToOptionIndex();
+    SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Move));
 }
 
 unsigned int UiSelector::GetInstanceCount()

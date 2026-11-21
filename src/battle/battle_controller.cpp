@@ -74,12 +74,12 @@ BattleActor* BattleController::PopNextTurn()
     return actor;
 }
 
-BattleActor* BattleController::GetActorSelection() // TODO : Could return BattleActor index in m_actors ?
+BattleActor* BattleController::GetActorSelection()
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction)) {
         std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
-        BattleActor* targetActor = actors[selector->GetOptionIndex()];
+        BattleActor* targetActor = actors.at(selector->GetOptionIndex()); // This should not fail, because the selector keys are initialized with the same filtered BattleActors in OpenActorSelection()
         return targetActor;
     }
     return nullptr;
@@ -87,9 +87,9 @@ BattleActor* BattleController::GetActorSelection() // TODO : Could return Battle
 
 ExitEvent BattleController::CheckBattleEnd() const
 {
-    if (!HasAliveActor(Team::Ally))
+    if (!HasAliveActorsInTeam(Team::Ally))
         return ExitEvent::ExitLost;
-    else if (!HasAliveActor(Team::Opponent))
+    else if (!HasAliveActorsInTeam(Team::Opponent))
         return ExitEvent::ExitWin;
     return ExitEvent::None;
 }
@@ -113,10 +113,9 @@ BattleCommand BattleController::CreateCommand(const BattleActor* srcActor, const
     return BattleCommand(md.commandType, srcActor->GetTeam(), LifeState::Alive, amount, md.sfxPath, md.animationPath); // TODO : Will not be LifeState::Alive
 }
 
-bool BattleController::HasAliveActor(const Team team) const
+bool BattleController::HasAliveActorsInTeam(const Team team) const
 {
-    const std::vector<BattleActor*> actors = GetActorsInTeam(team);
-    return (FilterActorsByLifeState(actors, LifeState::Alive)).size() > 0;
+    return (FilterActorsByLifeState(GetActorsInTeam(team), LifeState::Alive)).size() > 0;
 }
 
 void BattleController::ApplyDamage(BattleActor& srcActor, BattleActor& targetActor)
@@ -202,9 +201,10 @@ void BattleController::OpenActorSelection()
 {
     UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
     selector->Open();
-    std::vector<BattleActor*> aliveActors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
+    std::vector<BattleActor*> actors = FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetLifeState);
     std::vector<UiKey> keys;
-    for (const BattleActor* actor : aliveActors)
+    
+    for (const BattleActor* actor : actors)
         keys.push_back(actor->GetSpritePath().id); // SpritePath.id is the parent key of each item in allyList/opponentList
     selector->SetOptionKeys(keys, Axis::Height, Axis::Width, 0.2f, 0.2f);
 

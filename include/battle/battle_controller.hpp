@@ -91,7 +91,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         UiController& m_uiController;
         FileReader& m_fileReader;
 
-        std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // Not a Filter... function. Return either m_allies or m_opponents // TODO : Should return a reference ?
+        std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // TODO : Should be FilterActorsByTeam(const std::vector<BattleActor*>&, const Team) const ?
         std::vector<BattleActor*> FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
@@ -99,7 +99,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         ExitEvent CheckBattleEnd() const;
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
         unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
-        bool HasAliveActor(const Team team) const;
+        bool HasAliveActorsInTeam(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
