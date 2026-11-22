@@ -12,5 +12,5 @@ class AiActor : public BattleActor
         AiActor(const Team team, const UiKey& nameId, const UiKey& healthId, const UiKey& pathId, 
             const std::string name, const unsigned int health, const unsigned int turnSpeed);
         
-        const BattleBehaviour& GetBehaviour() const;
+        BattleBehaviour& GetBehaviour();
 };

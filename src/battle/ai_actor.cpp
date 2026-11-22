@@ -5,7 +5,7 @@ AiActor::AiActor(const Team team, const UiKey& nameId, const UiKey& healthId, co
 BattleActor(team, nameId, healthId, pathId, name, health, turnSpeed)
 {}
 
-const BattleBehaviour& AiActor::GetBehaviour() const
+BattleBehaviour& AiActor::GetBehaviour()
 {
     return m_behaviour;
 }

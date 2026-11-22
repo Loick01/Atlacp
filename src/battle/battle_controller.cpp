@@ -227,7 +227,7 @@ void BattleController::HandleActionSelection(const int selectorIndex)
     switch (selectorIndex) {
         case 0: {
             OpenMoveSelection();
-            m_turnState = TurnState::MoveSelection; // TODO : Should be in OpenMoveSelection() ?
+            m_turnState = TurnState::MoveSelection;
             break;
         }
 
@@ -255,15 +255,47 @@ void BattleController::HandleActionSelection(const int selectorIndex)
 
 void BattleController::HandleAiActionSelection(AiActor& srcActor)
 {
-    const unsigned int moveIndex = rand() % m_currentActor->GetMoves().size(); // TODO : Move selection in BattleBehaviour (will use Random)
-    const MoveDefinition md = m_currentActor->GetMove(moveIndex);
-    m_currentCommand = CreateCommand(m_currentActor, md);
+    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    const AiAction action = srcBehaviour.ChooseAiAction();
 
-    const BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    switch (action) {
+        case AiAction::Fight : {
+            m_turnState = TurnState::AiMoveSelection;
+            break;
+        }
+        case AiAction::Flee : {
+            UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
+            frameText->Open();
+            frameText->AddText({srcActor.GetName().value + " has fled"});
+            frameText->NextText();
+
+            // TODO : Once a BattleActor flee, it should not stay in m_actors, m_turns, m_allies/m_opponents, etc. 
+            // m_uiController.DeleteElement(srcActor.GetSpritePath().id);  // SpritePath.id is the parent key of each item in allyList/opponentList
+            
+            m_turnState = TurnState::WaitingForText;
+            break;
+        }
+        default:
+            Logger::GetInstance().AddLog(Level::L4, "Unhandled CommandType used in BattleController::HandleCurrentCommand"); // TODO : Level
+            EndTurn();
+            break;
+    }
+}
+
+void BattleController::HandleAiMoveSelection(AiActor& srcActor)
+{
+    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    const MoveDefinition aiMove = srcBehaviour.GetAiMove(srcActor.GetMoves());
+    m_currentCommand = CreateCommand(m_currentActor, aiMove); // m_currentActor is srcActor
+    m_turnState = TurnState::AiActorSelection;
+}
+
+void BattleController::HandleAiActorSelection(AiActor& srcActor)
+{
+    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
     const LifeState lf = m_currentCommand.targetLifeState;
     m_targetActor = srcBehaviour.SelectTarget(FilterActorsByLifeState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
-    
-    m_turnState = TurnState::HandleCommand;
+    m_turnState = TurnState::HandleCommand; // TODO : Will not be here
 }
 
 void BattleController::HandleMoveSelection(const int moveIndex)
@@ -274,7 +306,7 @@ void BattleController::HandleMoveSelection(const int moveIndex)
     m_currentCommand = CreateCommand(m_currentActor, md);
 
     OpenActorSelection(); // Selectable actors are filtered with targetTeam and targetLifeState in m_currentCommand
-    m_turnState = TurnState::ActorSelection; // TODO : Should be in OpenActorSelection() ?
+    m_turnState = TurnState::ActorSelection;
 }
 
 void BattleController::HandleCurrentCommand()
@@ -394,21 +426,29 @@ void BattleController::PlayNextTurn()
                 break;
             }
         
-            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) 
+            if (dynamic_cast<AiActor*>(m_currentActor) == nullptr) { 
                 OpenActionSelection();
-            
-            m_turnState = TurnState::ActionSelection; 
+                m_turnState = TurnState::ActionSelection; 
+            } else {
+                m_turnState = TurnState::AiActionSelection;
+            }
         }
         
-        case TurnState::ActionSelection : { // TODO : Should have TurnState::AiActionSelection to avoid dynamic_cast ?
-            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
+        case TurnState::ActionSelection : {
             UiSelector* selector = dynamic_cast<UiSelector*>(m_uiComponentController.GetComponent("selector"));
+            if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
+                HandleActionSelection(selector->GetOptionIndex());
+            SoundController::GetInstance().PlayRequestedChunk();
+            break;
+        }
+
+        case TurnState::AiActionSelection : {
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
             if (aiActor != nullptr) {
                 HandleAiActionSelection(*aiActor);
             } else {
-                if (selector->VerticalNavigation(m_eventState.uiDirection, m_eventState.isAction))
-                    HandleActionSelection(selector->GetOptionIndex());
-                SoundController::GetInstance().PlayRequestedChunk();
+                Logger::GetInstance().AddLog(Level::L4, "(TurnState::AiActionSelection) Current BattleActor is not an AiActor"); // TODO : Level
+                EndTurn();
             }
             break;
         }
@@ -421,6 +461,17 @@ void BattleController::PlayNextTurn()
             break;
         }
 
+        case TurnState::AiMoveSelection : {
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
+            if (aiActor != nullptr) {
+                HandleAiMoveSelection(*aiActor);
+            } else {
+                Logger::GetInstance().AddLog(Level::L4, "(TurnState::AiMoveSelection) Current BattleActor is not an AiActor"); // TODO : Level
+                EndTurn();
+            }
+            break;
+        }
+
         case TurnState::ActorSelection : {
             m_targetActor = GetActorSelection();
             if (m_targetActor != nullptr) {
@@ -429,6 +480,17 @@ void BattleController::PlayNextTurn()
                 break; // Will not play BaseSfx::Accept at the same time as m_currentCommand.sfx
             }
             SoundController::GetInstance().PlayRequestedChunk();
+            break;
+        }
+
+        case TurnState::AiActorSelection : {
+            AiActor* aiActor = dynamic_cast<AiActor*>(m_currentActor);
+            if (aiActor != nullptr) {
+                HandleAiActorSelection(*aiActor);
+            } else {
+                Logger::GetInstance().AddLog(Level::L4, "(TurnState::AiActorSelection) Current BattleActor is not an AiActor"); // TODO : Level
+                EndTurn();
+            }
             break;
         }
 

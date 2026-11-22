@@ -27,7 +27,11 @@ enum class ExitEvent
 
 enum class TurnState
 {
-    Init, ActionSelection, MoveSelection, ActorSelection, HandleCommand, WaitingForText, WaitingForAnimation, End
+    Init, 
+    ActionSelection, AiActionSelection,
+    MoveSelection, AiMoveSelection,
+    ActorSelection, AiActorSelection,
+    HandleCommand, WaitingForText, WaitingForAnimation, End
 };
 
 struct BattleCommand
@@ -95,7 +99,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::vector<BattleActor*> FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const;
         
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
-        BattleActor* GetActorSelection();
+        BattleActor* GetActorSelection(); // TODO : Rename
         ExitEvent CheckBattleEnd() const;
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
         unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
@@ -110,9 +114,13 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void CloseMoveSelection();
         void OpenActorSelection();
         void CloseActorSelection();
+        
         void HandleActionSelection(const int index);
-        void HandleAiActionSelection(AiActor& srcActor); // TODO : Rename ?
         void HandleMoveSelection(const int moveIndex);
+
+        void HandleAiActionSelection(AiActor& srcActor);
+        void HandleAiMoveSelection(AiActor& srcActor);
+        void HandleAiActorSelection(AiActor& srcActor);
         
         void HandleCurrentCommand();
         void EndTurn();
