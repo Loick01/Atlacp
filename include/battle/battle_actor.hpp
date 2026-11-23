@@ -5,7 +5,7 @@
 #include "battle/battle_types.hpp"
 #include "ui/ui_types.hpp" // UiValue
 
-enum class BattleState // TODO : Should be in battle_types.hpp ?
+enum class BattleState
 {
     Alive, Dead, Fled
 };

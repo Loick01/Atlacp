@@ -28,9 +28,9 @@ enum class ExitEvent
 enum class TurnState
 {
     Init, 
-    ActionSelection, AiActionSelection,
-    MoveSelection, AiMoveSelection,
-    ActorSelection, AiActorSelection,
+    ActionSelection, ActionSelectionAi,
+    MoveSelection, MoveSelectionAi,
+    ActorSelection, ActorSelectionAi,
     HandleCommand, WaitingForText, WaitingForAnimation, End
 };
 
@@ -82,10 +82,12 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 {
     private:
         std::vector<std::unique_ptr<BattleActor>> m_actors;
+
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         std::vector<BattleActor*> m_allies; std::vector<BattleActor*> m_opponents;
         BattleActor* m_currentActor; // Actor that is playing his turn
         BattleActor* m_targetActor;
+
         TurnState m_turnState;
         ExitEvent m_exitEvent;
         BattleCommand m_currentCommand;
@@ -104,27 +106,30 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
 
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
         unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
-        
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
+        
+        void SetTurnState(const TurnState ts);
 
+        // battle_turn_state.cpp
+        void HandleInit();
+        void HandleCurrentCommand();
+
+        void HandleActionSelection(const int actionIndex);
+        void HandleMoveSelection(const int moveIndex);
+        void HandleActorSelection(const int actorIndex);
+
+        void HandleActionSelectionAi(AiActor& srcActor);
+        void HandleMoveSelectionAi(AiActor& srcActor);
+        void HandleActorSelectionAi(AiActor& srcActor);
+
+        // battle_ui_selection.cpp
         void OpenActionSelection(); 
         void CloseActionSelection();
         void OpenMoveSelection(); 
         void CloseMoveSelection();
         void OpenActorSelection();
         void CloseActorSelection();
-        
-        void HandleActionSelection(const int index);
-        void HandleMoveSelection(const int moveIndex);
-        BattleActor* HandleActorSelection(); // TODO : void
-
-        void HandleActionSelectionAi(AiActor& srcActor);
-        void HandleMoveSelectionAi(AiActor& srcActor);
-        void HandleActorSelectionAi(AiActor& srcActor);
-        
-        void HandleCurrentCommand();
-        void EndTurn();
 
     public:
         BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController);
