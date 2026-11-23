@@ -39,7 +39,7 @@ struct BattleCommand
     CommandType commandType;
     Team sourceTeam;
     Team targetTeam;
-    LifeState targetLifeState;
+    BattleState targetBattleState;
     unsigned int amount;
     std::string sfx;
     std::string animation;
@@ -59,11 +59,11 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const LifeState s, const unsigned int a, const std::string& sfxPath, const std::string& animationPath) {
+    BattleCommand(const CommandType ct, const Team st, const BattleState s, const unsigned int a, const std::string& sfxPath, const std::string& animationPath) {
         commandType = ct;
         sourceTeam = st;
         targetTeam = ComputeTargetTeam();
-        targetLifeState = s;
+        targetBattleState = s;
         amount = a;
         sfx = sfxPath;
         animation = animationPath;
@@ -96,14 +96,14 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         FileReader& m_fileReader;
 
         std::vector<BattleActor*> GetActorsInTeam(const Team team) const; // TODO : Should be FilterActorsByTeam(const std::vector<BattleActor*>&, const Team) const ?
-        std::vector<BattleActor*> FilterActorsByLifeState(const std::vector<BattleActor*>& actors, const LifeState lifeState) const;
-        
+        std::vector<BattleActor*> FilterActorsByBattleState(const std::vector<BattleActor*>& actors, const BattleState lifeState) const;
+        bool HasAliveActorsInTeam(const Team team) const;
+
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
-        BattleActor* GetActorSelection(); // TODO : Rename
         ExitEvent CheckBattleEnd() const;
+
         BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
         unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
-        bool HasAliveActorsInTeam(const Team team) const;
         
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
@@ -117,10 +117,11 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         
         void HandleActionSelection(const int index);
         void HandleMoveSelection(const int moveIndex);
+        BattleActor* HandleActorSelection(); // TODO : void
 
-        void HandleAiActionSelection(AiActor& srcActor);
-        void HandleAiMoveSelection(AiActor& srcActor);
-        void HandleAiActorSelection(AiActor& srcActor);
+        void HandleActionSelectionAi(AiActor& srcActor);
+        void HandleMoveSelectionAi(AiActor& srcActor);
+        void HandleActorSelectionAi(AiActor& srcActor);
         
         void HandleCurrentCommand();
         void EndTurn();

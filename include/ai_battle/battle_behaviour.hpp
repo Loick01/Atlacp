@@ -8,7 +8,7 @@ class BattleActor;
 
 enum class AiAction
 {
-    Fight, Flee, Undefined // TODO : Remove Undefined ?
+    MakeMove, Flee, Undefined
 };
 
 class BattleBehaviour 

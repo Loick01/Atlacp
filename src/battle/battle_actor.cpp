@@ -2,7 +2,7 @@
 
 BattleActor::BattleActor(const Team team, const UiKey& nameId, const UiKey& healthId, const UiKey& pathId, 
 const std::string name, const unsigned int health, const unsigned int turnSpeed):
-    m_team(team), m_name(nameId, name), m_health(healthId, health), m_spritePath(pathId, "none"), m_lifeState(LifeState::Alive), // UiValue initialization will not be here 
+    m_team(team), m_name(nameId, name), m_health(healthId, health), m_spritePath(pathId, "none"), m_battleState(BattleState::Alive), // UiValue initialization will not be here 
     m_maxHealth(health), m_strength(10), m_turnSpeed(turnSpeed) // TODO : m_turnSpeed will not be here ? (why not ?)
 {}
 
@@ -26,9 +26,9 @@ Team BattleActor::GetTeam() const
     return m_team;
 }
 
-LifeState BattleActor::GetLifeState() const
+BattleState BattleActor::GetBattleState() const
 {
-    return m_lifeState;
+    return m_battleState;
 }
 
 const std::vector<MoveDefinition>& BattleActor::GetMoves() const
@@ -66,6 +66,11 @@ void BattleActor::SetMoves(const std::vector<MoveDefinition>& moves)
     m_moves = moves;
 }
 
+void BattleActor::SetBattleState(const BattleState state)
+{
+    m_battleState = state;
+}
+
 void BattleActor::AddHealth(const unsigned int hp)
 { 
     m_health.value = std::min(m_health.value+hp, m_maxHealth);
@@ -75,7 +80,7 @@ void BattleActor::RemoveHealth(const unsigned int hp)
 { 
     if (m_health.value <= hp) {
         m_health.value = 0;
-        m_lifeState = LifeState::Dead;
+        m_battleState = BattleState::Dead;
     } else {
         m_health.value -= hp;
     }

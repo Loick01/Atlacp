@@ -5,9 +5,9 @@
 #include "battle/battle_types.hpp"
 #include "ui/ui_types.hpp" // UiValue
 
-enum class LifeState // TODO : Should be in battle_types.hpp ?
+enum class BattleState // TODO : Should be in battle_types.hpp ?
 {
-    Alive, Dead
+    Alive, Dead, Fled
 };
 
 class BattleActor
@@ -20,7 +20,7 @@ class BattleActor
         UiValue<unsigned int> m_health;
 
         const Team m_team;
-        LifeState m_lifeState;
+        BattleState m_battleState;
         
         const unsigned int m_maxHealth;
         float m_nextTurnTime;
@@ -39,7 +39,7 @@ class BattleActor
         UiValue<unsigned int> GetHealth() const;
 
         Team GetTeam() const;
-        LifeState GetLifeState() const;
+        BattleState GetBattleState() const;
         const std::vector<MoveDefinition>& GetMoves() const;
         MoveDefinition GetMove(const unsigned int index) const;
         float GetNextTurnTime() const;
@@ -48,6 +48,7 @@ class BattleActor
         void ComputeNextTurnTime(const float turnTime); // turnTime is the global current time from BattleController
         void SetSpritePath(const std::string& path);
         void SetMoves(const std::vector<MoveDefinition>& moves);
+        void SetBattleState(const BattleState state);
         void AddHealth(const unsigned int hp);
         void RemoveHealth(const unsigned int hp);
 };

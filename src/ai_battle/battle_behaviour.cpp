@@ -8,8 +8,7 @@ BattleBehaviour::BattleBehaviour():
 
 AiAction BattleBehaviour::ChooseAiAction()
 {
-    
-    m_currentAction = rand()%2 == 0 ? AiAction::Fight : AiAction::Flee; // TODO
+    m_currentAction = rand()%2 == 0 ? AiAction::MakeMove : AiAction::Flee; // TODO
     return m_currentAction;
 }
 
@@ -23,5 +22,3 @@ BattleActor* BattleBehaviour::SelectTarget(const std::vector<BattleActor*>& acto
     // TODO : Return nullptr if actors.empty() ?
     return actors[rand()%actors.size()];
 }
-
-// TODO
