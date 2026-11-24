@@ -14,7 +14,7 @@ namespace { // These values must be the same as in the template file used for th
 
 BattleController::BattleController(FileReader& fileReader, UiComponentController& uiComponentController, UiController& uiController):
     m_uiComponentController(uiComponentController), m_uiController(uiController), m_fileReader(fileReader), 
-    m_currentActor(nullptr), m_targetActor(nullptr), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None),
+    m_currentActor(nullptr), m_turnState(TurnState::Init), m_exitEvent(ExitEvent::None),
     m_globalTurnTime(0.f)
 {
     // Instead of using CreateDynamic, CreateSelector, etc. each time I need a UiComponent and DeleteComponent when I don't need 

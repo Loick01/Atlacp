@@ -19,6 +19,9 @@ MoveDefinition BattleBehaviour::GetAiMove(const std::vector<MoveDefinition>& mov
 
 BattleActor* BattleBehaviour::SelectTarget(const std::vector<BattleActor*>& actors) const
 {
-    // TODO : Return nullptr if actors.empty() ?
-    return actors[rand()%actors.size()];
+    if (actors.empty()) {
+        Logger::GetInstance().AddLog(Level::L4, "(BattleBehaviour::SelectTarget) BattleActors list is empty"); // TODO : Level
+        return nullptr;
+    }
+    return actors.at(rand()%actors.size()); // TODO
 }

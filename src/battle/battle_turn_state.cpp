@@ -24,21 +24,27 @@ void BattleController::HandleInit()
 
 void BattleController::HandleCurrentCommand()
 {
+    if (m_currentCommand.srcActor == nullptr || m_currentCommand.targetActor == nullptr) {
+        Logger::GetInstance().AddLog(Level::L4, "(BattleController::HandleCurrentCommand) BattleActors in BattleCommand are null"); // Level
+        SetTurnState(TurnState::Init);
+        return;
+    }
+
     SoundController::GetInstance().RequestChunk(m_currentCommand.sfx); // Request here, thus if ApplyDamage make a new request, the move sfx will not be played
 
     // TODO : Should call CreateSpriteAnimation() here, with animationPath and targetElement (instead of using setters) ?
     UiSpriteAnimation* moveAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
     moveAnimation->SetAnimationPath(m_currentCommand.animation);
-    moveAnimation->SetTargetElement(m_targetActor->GetSpritePath().id);
+    moveAnimation->SetTargetElement(m_currentCommand.targetActor->GetSpritePath().id);
     moveAnimation->Open();
 
     switch (m_currentCommand.commandType) {
         case CommandType::Attack: {
-            ApplyDamage(*m_currentActor, *m_targetActor);
+            ApplyDamage(*(m_currentCommand.srcActor), *(m_currentCommand.targetActor));
             break;
         }
         case CommandType::Heal: {
-            ApplyHeal(*m_currentActor, *m_targetActor);
+            ApplyHeal(*(m_currentCommand.srcActor), *(m_currentCommand.targetActor));
             break;
         }
         default:
@@ -98,14 +104,15 @@ void BattleController::HandleActorSelection(const int actorIndex)
     CloseActorSelection();
 
     std::vector<BattleActor*> actors = FilterActorsByBattleState(GetActorsInTeam(m_currentCommand.targetTeam), m_currentCommand.targetBattleState);
-    m_targetActor = actors.at(actorIndex); // This should not fail, because the selector keys are initialized with the same filtered BattleActors in OpenActorSelection()
+    m_currentCommand.srcActor = m_currentActor;
+    m_currentCommand.targetActor = actors.at(actorIndex); // This should not fail, because the selector keys are initialized with the same filtered BattleActors in OpenActorSelection()
 
     SetTurnState(TurnState::HandleCommand);
 }
 
-void BattleController::HandleActionSelectionAi(AiActor& srcActor)
+void BattleController::HandleActionSelectionAi(AiActor& aiActor)
 {
-    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    BattleBehaviour& srcBehaviour = aiActor.GetBehaviour();
     const AiAction action = srcBehaviour.ChooseAiAction();
 
     switch (action) {
@@ -116,11 +123,11 @@ void BattleController::HandleActionSelectionAi(AiActor& srcActor)
         case AiAction::Flee: {
             UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
             frameText->Open();
-            frameText->AddText({srcActor.GetName().value + " has fled"});
+            frameText->AddText({aiActor.GetName().value + " has fled"});
             frameText->NextText();
 
-            srcActor.SetBattleState(BattleState::Fled);
-            m_uiController.DeleteElement(srcActor.GetSpritePath().id);  // SpritePath.id is the parent key of each item in allyList/opponentList
+            aiActor.SetBattleState(BattleState::Fled);
+            m_uiController.DeleteElement(aiActor.GetSpritePath().id);  // SpritePath.id is the parent key of each item in allyList/opponentList
             
             SetTurnState(TurnState::WaitingForText);
             break;
@@ -132,20 +139,21 @@ void BattleController::HandleActionSelectionAi(AiActor& srcActor)
     }
 }
 
-void BattleController::HandleMoveSelectionAi(AiActor& srcActor)
+void BattleController::HandleMoveSelectionAi(AiActor& aiActor)
 {
-    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
-    const MoveDefinition aiMove = srcBehaviour.GetAiMove(srcActor.GetMoves());
-    m_currentCommand = CreateCommand(m_currentActor, aiMove); // m_currentActor is srcActor
+    BattleBehaviour& srcBehaviour = aiActor.GetBehaviour();
+    const MoveDefinition aiMove = srcBehaviour.GetAiMove(aiActor.GetMoves());
+    m_currentCommand = CreateCommand(&aiActor, aiMove); // TODO : Is m_currentActor always equal to &aiActor ?
 
     SetTurnState(TurnState::ActorSelectionAi);
 }
 
-void BattleController::HandleActorSelectionAi(AiActor& srcActor)
+void BattleController::HandleActorSelectionAi(AiActor& aiActor)
 {
-    BattleBehaviour& srcBehaviour = srcActor.GetBehaviour();
+    BattleBehaviour& srcBehaviour = aiActor.GetBehaviour();
     const BattleState lf = m_currentCommand.targetBattleState;
-    m_targetActor = srcBehaviour.SelectTarget(FilterActorsByBattleState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
+    m_currentCommand.srcActor = m_currentActor;
+    m_currentCommand.targetActor = srcBehaviour.SelectTarget(FilterActorsByBattleState(GetActorsInTeam(m_currentCommand.targetTeam), lf));
 
     SetTurnState(TurnState::HandleCommand);
 }

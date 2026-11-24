@@ -44,6 +44,9 @@ struct BattleCommand
     std::string sfx;
     std::string animation;
 
+    BattleActor* srcActor;
+    BattleActor* targetActor;
+
     Team ComputeTargetTeam() const
     {
         switch (commandType) {
@@ -59,15 +62,10 @@ struct BattleCommand
 
     BattleCommand() = default;
 
-    BattleCommand(const CommandType ct, const Team st, const BattleState s, const unsigned int a, const std::string& sfxPath, const std::string& animationPath) {
-        commandType = ct;
-        sourceTeam = st;
-        targetTeam = ComputeTargetTeam();
-        targetBattleState = s;
-        amount = a;
-        sfx = sfxPath;
-        animation = animationPath;
-    }
+    BattleCommand(const CommandType ct, const Team st, const BattleState s, const unsigned int a, const std::string& sfxPath, const std::string& animationPath):
+        srcActor(nullptr), targetActor(nullptr), commandType(ct), sourceTeam(st), 
+        targetTeam(ComputeTargetTeam()), targetBattleState(s), amount(a), sfx(sfxPath), animation(animationPath)
+    {}
 };
 
 struct TurnComparer
@@ -86,7 +84,6 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         std::priority_queue<BattleActor*, std::vector<BattleActor*>, TurnComparer> m_turns; // Used to store turn order
         std::vector<BattleActor*> m_allies; std::vector<BattleActor*> m_opponents;
         BattleActor* m_currentActor; // Actor that is playing his turn
-        BattleActor* m_targetActor;
 
         TurnState m_turnState;
         ExitEvent m_exitEvent;
@@ -104,7 +101,7 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         BattleActor* PopNextTurn(); // Return (and remove) the next actor in front of m_turns
         ExitEvent CheckBattleEnd() const;
 
-        BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const;
+        BattleCommand CreateCommand(const BattleActor* srcActor, const MoveDefinition& md) const; // srcActor might not necessarily be m_currentActor (for now, they are always the same)
         unsigned int ComputeAmount(const MoveType mt, const unsigned baseValue, const BattleActor* srcActor) const;
         void ApplyDamage(BattleActor& srcActor, BattleActor& targetActor);
         void ApplyHeal(BattleActor& srcActor, BattleActor& targetActor);
@@ -119,9 +116,9 @@ class BattleController : public Notifier<ExitEvent>, public EventStateHolder<Bat
         void HandleMoveSelection(const int moveIndex);
         void HandleActorSelection(const int actorIndex);
 
-        void HandleActionSelectionAi(AiActor& srcActor);
-        void HandleMoveSelectionAi(AiActor& srcActor);
-        void HandleActorSelectionAi(AiActor& srcActor);
+        void HandleActionSelectionAi(AiActor& aiActor);
+        void HandleMoveSelectionAi(AiActor& aiActor);
+        void HandleActorSelectionAi(AiActor& aiActor);
 
         // battle_ui_selection.cpp
         void OpenActionSelection(); 
