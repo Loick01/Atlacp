@@ -49,6 +49,7 @@ void SoundController::LoadBaseSfx()
     LoadChunk(std::string(BaseSfx::Close));
     LoadChunk(std::string(BaseSfx::Move));
     LoadChunk(std::string(BaseSfx::Next));
+    LoadChunk(std::string(BaseSfx::Flee));
     LoadChunk(std::string(BaseSfx::Death));
 }
 

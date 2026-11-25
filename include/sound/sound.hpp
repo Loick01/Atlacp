@@ -14,6 +14,7 @@ namespace BaseSfx{
     inline constexpr std::string_view Close = "Close";
     inline constexpr std::string_view Move = "Move";
     inline constexpr std::string_view Next = "Next";
+    inline constexpr std::string_view Flee = "Smoke";
     inline constexpr std::string_view Death = "Death"; // TODO : Should not be here (only used for BattleScene) ?
 }
 

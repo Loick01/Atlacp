@@ -280,6 +280,7 @@ void BattleController::PlayNextTurn()
                 break;
             }
             HandleActionSelectionAi(*aiActor);
+            SoundController::GetInstance().PlayRequestedChunk();
             break;
         }
 

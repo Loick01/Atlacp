@@ -125,10 +125,20 @@ void BattleController::HandleActionSelectionAi(AiActor& aiActor)
             frameText->Open();
             frameText->AddText({aiActor.GetName().value + " has fled"});
             frameText->NextText();
+            
+            // It is "actionAnimation", not "moveAnimation", but since I already have a UiSpriteAnimation created, I prefer to reuse it
+            // TODO
+            // UiSpriteAnimation* actionAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
+            // actionAnimation->SetAnimationPath("battle_move/smoke");
+            // actionAnimation->SetTargetElement(aiActor.GetSpritePath().id);
+            // actionAnimation->Open();
+
+            SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Flee));
 
             aiActor.SetBattleState(BattleState::Fled);
             m_uiController.DeleteElement(aiActor.GetSpritePath().id);  // SpritePath.id is the parent key of each item in allyList/opponentList
-            
+
+            // SetTurnState(TurnState::WaitingForAnimation); // TODO
             SetTurnState(TurnState::WaitingForText);
             break;
         }
