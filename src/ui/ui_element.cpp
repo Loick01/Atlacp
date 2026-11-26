@@ -175,6 +175,11 @@ void UiElement::AddChild(std::unique_ptr<UiElement>& child)
     m_childs.push_back(std::move(child));
 }
 
+std::vector<std::unique_ptr<UiElement>>& UiElement::GetChildren()
+{
+    return m_childs;
+}
+
 std::unique_ptr<UiElement> UiElement::RemoveChild(const UiKey& key)
 {
     std::vector<std::unique_ptr<UiElement>>::iterator it;

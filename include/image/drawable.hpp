@@ -61,5 +61,6 @@ class ScreenDrawable : public Drawable
         void SetZoom(const float zoom);
         void DrawTexture() const override;
         void SetScreenPosition(const ScreenPosition position);
+        void SetShouldDraw(const bool shouldDraw);
         void InvertShouldDraw();
 };

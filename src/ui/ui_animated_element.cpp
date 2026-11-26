@@ -21,10 +21,10 @@ void UiAnimatedElement::UpdateSpriteSizeFromAnimation()
 
 void UiAnimatedElement::DrawTexture() const
 {
-    // TODO : Do not add children UiAnimatedElement ?
-    // TODO : if (m_shouldDraw) ? (from ScreenDrawable::DrawTexture)
-    const Vec2 sprite = m_animation.GetCurrentSprite();
-    const SDL_Rect src{sprite.x, sprite.y, m_textureSize.x, m_textureSize.y};
-    const SDL_Rect dst{m_position.x, m_position.y, GetTextureSize().x, GetTextureSize().y};
-    m_textureController.RenderTexture(m_textureKey, src, dst);
+    if (m_shouldDraw) {
+        const Vec2 sprite = m_animation.GetCurrentSprite();
+        const SDL_Rect src{sprite.x, sprite.y, m_textureSize.x, m_textureSize.y};
+        const SDL_Rect dst{m_position.x, m_position.y, GetTextureSize().x, GetTextureSize().y};
+        m_textureController.RenderTexture(m_textureKey, src, dst);
+    }
 }

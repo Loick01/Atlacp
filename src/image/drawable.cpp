@@ -102,6 +102,11 @@ void ScreenDrawable::SetScreenPosition(const ScreenPosition position)
     m_position = position;
 }
 
+void ScreenDrawable::SetShouldDraw(const bool shouldDraw)
+{
+    m_shouldDraw = shouldDraw;
+}
+
 void ScreenDrawable::InvertShouldDraw()
 {
     m_shouldDraw = !m_shouldDraw;

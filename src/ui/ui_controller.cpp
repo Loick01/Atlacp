@@ -213,6 +213,16 @@ void UiController::BuildElement(std::unique_ptr<UiElement>& element, const UiKey
     }
 }
 
+void UiController::HideElement(const UiKey& key)
+{
+    UiElement* element = GetElement(key);
+    if (element != nullptr) {
+        element->SetShouldDraw(false);
+        for (std::unique_ptr<UiElement>& e : element->GetChildren()) // TODO : Remove ? Maybe I don't want to hide children
+            HideElement(e->GetKey());
+    }
+}
+
 void UiController::DeleteElement(const UiKey& key)
 {
     UiElement* const parent = GetElement(key)->GetParent();

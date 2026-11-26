@@ -121,25 +121,23 @@ void BattleController::HandleActionSelectionAi(AiActor& aiActor)
             break;
         }
         case AiAction::Flee: {
+            // It is "actionAnimation", not "moveAnimation", but since I already have a UiSpriteAnimation created, I prefer to reuse it
+            UiSpriteAnimation* actionAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
+            actionAnimation->SetAnimationPath("battle_move/smoke");
+            actionAnimation->SetTargetElement(aiActor.GetSpritePath().id);
+            m_uiController.HideElement(aiActor.GetSpritePath().id); // Hide before having actionAnimation as a child of the aiActor sprite, because HideElement set shouldDraw to false for each child
+            actionAnimation->Open();
+            
             UiFrameText* frameText = dynamic_cast<UiFrameText*>(m_uiComponentController.GetComponent("frameText"));
             frameText->Open();
             frameText->AddText({aiActor.GetName().value + " has fled"});
             frameText->NextText();
-            
-            // It is "actionAnimation", not "moveAnimation", but since I already have a UiSpriteAnimation created, I prefer to reuse it
-            // TODO
-            // UiSpriteAnimation* actionAnimation = dynamic_cast<UiSpriteAnimation*>(m_uiComponentController.GetComponent("moveAnimation"));
-            // actionAnimation->SetAnimationPath("battle_move/smoke");
-            // actionAnimation->SetTargetElement(aiActor.GetSpritePath().id);
-            // actionAnimation->Open();
 
             SoundController::GetInstance().RequestChunk(std::string(BaseSfx::Flee));
 
             aiActor.SetBattleState(BattleState::Fled);
-            m_uiController.DeleteElement(aiActor.GetSpritePath().id);  // SpritePath.id is the parent key of each item in allyList/opponentList
 
-            // SetTurnState(TurnState::WaitingForAnimation); // TODO
-            SetTurnState(TurnState::WaitingForText);
+            SetTurnState(TurnState::WaitingForAnimation);
             break;
         }
         default:

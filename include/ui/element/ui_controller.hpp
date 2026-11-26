@@ -64,6 +64,7 @@ class UiController // TODO : Should be renamed UiElementController ?
         
         void ClearAll();
         void BuildElement(std::unique_ptr<UiElement>& element, const UiKey& parentKey); // TODO : Rename
+        void HideElement(const UiKey& key);
         void DeleteElement(const UiKey& key);
 
         void SetSize(const AreaSize size);
