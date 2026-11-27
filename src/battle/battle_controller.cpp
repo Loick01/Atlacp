@@ -319,7 +319,6 @@ void BattleController::PlayNextTurn()
                 SetTurnState(TurnState::WaitingForText);
                 break;
             }
-            moveAnimation->ContinueAnimation();
             break;
         }
 

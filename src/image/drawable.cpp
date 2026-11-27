@@ -87,7 +87,7 @@ void ScreenDrawable::SetZoom(const float zoom)
     m_zoom = zoom;
 }
 
-void ScreenDrawable::DrawTexture() const
+void ScreenDrawable::DrawTexture()
 {
     if (m_shouldDraw){
         const AreaSize textureSize = GetTextureSize();

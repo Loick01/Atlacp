@@ -1,12 +1,11 @@
 #include "ui/component/ui_sprite_animation.hpp"
 
 #include "core/path.hpp"
-#include "core/time.hpp"
 #include "ui/element/ui_animated_element.hpp"
 #include "ui/element/ui_controller.hpp"
 
-UiSpriteAnimation::UiSpriteAnimation(const Time& time, UiController& uiController, const std::string& uiFilepath) :
-    UiComponent(uiController, uiFilepath), m_time(time), m_animated(nullptr), m_animationPath("invalid")
+UiSpriteAnimation::UiSpriteAnimation(UiController& uiController, const std::string& uiFilepath) :
+    UiComponent(uiController, uiFilepath), m_animated(nullptr), m_animationPath("invalid")
 {}
 
 bool UiSpriteAnimation::IsDone() const
@@ -44,11 +43,6 @@ void UiSpriteAnimation::SetAnimationPath(const std::string animationPath)
 void UiSpriteAnimation::SetTargetElement(const UiKey& key)
 {
     m_targetElement = key;
-}
-
-void UiSpriteAnimation::ContinueAnimation()
-{
-    m_animated->GetAnimation().Continue(m_time.GetDeltaTime()); // TODO : deltaTime should not be get here ?
 }
 
 unsigned int UiSpriteAnimation::GetInstanceCount()

@@ -112,7 +112,7 @@ ScenePosition MapEntity::GetFinalDrawingPosition(const ScenePosition sp) const
     return (sp-GetDisplayOffset())*m_cameraZoom;
 }
 
-void MapEntity::DrawTexture() const
+void MapEntity::DrawTexture()
 {
     const Vec2 sprite = m_animation.GetCurrentSprite(); 
     const AreaSize drawingSize = GetTextureSize()*m_cameraZoom;

@@ -1,12 +1,13 @@
 #include "ui/element/ui_controller.hpp"
 
 #include "core/file/file.hpp"
-#include "core/path.hpp"
 #include "core/logger.hpp"
+#include "core/path.hpp"
+#include "core/time.hpp"
 #include "image/texture.hpp"
 
-UiController::UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
-    m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
+UiController::UiController(const Time& time, const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath):
+    m_time(time), m_fileReader(fileReader), m_textureController(textureController), m_fontFilepath(fontFilepath)
 {} // WARNING : m_size and m_position are not defined, must use SetSize()/SetPosition()
 
 void UiController::AddElement(const UiKey& key, UiElement* element)
@@ -65,7 +66,7 @@ std::unique_ptr<UiTextElement> UiController::CreateTextElement(const UiKey& key)
 
 std::unique_ptr<UiAnimatedElement> UiController::CreateAnimatedElement(const UiKey& key, const std::string& animationPath)
 {
-    return std::make_unique<UiAnimatedElement>(m_fileReader, m_textureController, key, animationPath);
+    return std::make_unique<UiAnimatedElement>(m_fileReader, m_textureController, m_time, key, animationPath);
 }
 
 std::unique_ptr<UiElement> UiController::RemoveSubRoots(const UiKey& key) // Same than UiElement::RemoveChild

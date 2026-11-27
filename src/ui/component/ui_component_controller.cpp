@@ -1,6 +1,5 @@
 #include "ui/component/ui_component_controller.hpp"
 
-#include "core/time.hpp"
 #include "ui/component/ui_dialog_box.hpp"
 #include "ui/component/ui_dynamic_list.hpp"
 #include "ui/component/ui_list.hpp"
@@ -9,8 +8,8 @@
 #include "ui/component/ui_frame_text.hpp"
 #include "ui/element/ui_controller.hpp"
 
-UiComponentController::UiComponentController(Time& time, UiController& uiController) :
-    m_time(time), m_uiController(uiController)
+UiComponentController::UiComponentController(UiController& uiController) :
+    m_uiController(uiController)
 {}
 
 bool UiComponentController::IsKeyAvailable(const ComponentKey& key) const
@@ -110,7 +109,7 @@ UiSpriteAnimation* UiComponentController::CreateSpriteAnimation(const ComponentK
     if (!IsKeyAvailable(key))
         return nullptr;
 
-    std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_time, m_uiController, templatePath);
+    std::unique_ptr<UiSpriteAnimation> c = std::make_unique<UiSpriteAnimation>(m_uiController, templatePath);
     UiSpriteAnimation* r = c.get();
     m_components[key] = std::move(c);
     return r;

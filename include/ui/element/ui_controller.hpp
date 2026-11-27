@@ -9,6 +9,7 @@
 #include "ui/element/ui_text_element.hpp"
 #include "ui/ui_types.hpp"
 
+struct Time;
 class FileReader;
 class TextureController;
 
@@ -26,6 +27,7 @@ class UiController // TODO : Should be renamed UiElementController ?
         // If m_elements is deleted m_subRoots, the map is empty when deleting m_subRoots, and Remove() call will generate errors because the keys will not
         // be able to be found in m_elements
 
+        const Time& m_time;
         const FileReader& m_fileReader;
         TextureController& m_textureController;
         
@@ -45,7 +47,7 @@ class UiController // TODO : Should be renamed UiElementController ?
         void BuildSubRoot(std::unique_ptr<UiElement> subRoot);
 
     public:
-        UiController(const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath); 
+        UiController(const Time& time, const FileReader& fileReader, TextureController& textureController, const std::string& fontFilepath); 
 
         std::unique_ptr<UiElement> CreateElement(const UiKey& key, const std::string& textureFilepath);
         std::unique_ptr<UiTextElement> CreateTextElement(const UiKey& key);

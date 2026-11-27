@@ -75,7 +75,7 @@ void UiElement::SetParamsPadding(const Axis axis, const float value)
     }
 }
 
-void UiElement::DrawTexture() const
+void UiElement::DrawTexture()
 {
     ScreenDrawable::DrawTexture();
     for (const std::unique_ptr<UiElement>& e : m_childs)

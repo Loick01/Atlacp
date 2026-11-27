@@ -77,7 +77,7 @@ class MapEntity : public SceneDrawable, public MapElement, public Notifier<Entit
         void TakePosition();
 
         virtual void Update(const float deltaTime) = 0;
-        void DrawTexture() const override;
+        void DrawTexture() override;
         void UpdateDrawingPosition(const ScenePosition sp);
 
         // Default parameters are used when this function is called by NPC behaviours

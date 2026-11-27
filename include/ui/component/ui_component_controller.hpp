@@ -8,7 +8,6 @@
 
 using ComponentKey = std::string;
 
-struct Time;
 class UiController;
 class UiDialogBox;
 class UiDynamicList;
@@ -21,14 +20,13 @@ class UiComponentController
 {
     private:
         std::unordered_map<ComponentKey, std::unique_ptr<UiComponent>> m_components;
-        Time& m_time;
         UiController& m_uiController;
 
         bool IsKeyAvailable(const ComponentKey& key) const; 
         bool IsKeyUsed(const ComponentKey& key) const;
     
     public:
-        UiComponentController(Time& time, UiController& uiController);
+        UiComponentController(UiController& uiController);
 
         UiComponent* GetComponent(const ComponentKey& key);
         void DeleteComponent(const ComponentKey& key);

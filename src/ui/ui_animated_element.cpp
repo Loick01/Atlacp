@@ -3,10 +3,11 @@
 #include <SDL2/SDL_rect.h> 
 
 #include "core/path.hpp"
+#include "core/time.hpp"
 #include "image/texture.hpp" // TODO : Try to remove ? (TextureController::RenderTexture should not be call directly in UiAnimatedElement::DrawTexture() ?)
 
-UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const UiKey& key, const std::string& animationPath):
-    UiElement(textureController, key, std::string(AssetDirectory::Spritesheet)+animationPath), m_animation(fileReader, animationPath)
+UiAnimatedElement::UiAnimatedElement(const FileReader& fileReader, TextureController& textureController, const Time& time, const UiKey& key, const std::string& animationPath):
+    UiElement(textureController, key, std::string(AssetDirectory::Spritesheet)+animationPath), m_time(time), m_animation(fileReader, animationPath)
 {}
 
 SpriteAnimation& UiAnimatedElement::GetAnimation()
@@ -19,12 +20,16 @@ void UiAnimatedElement::UpdateSpriteSizeFromAnimation()
     m_textureSize = m_animation.GetSpriteSize();
 }
 
-void UiAnimatedElement::DrawTexture() const
+void UiAnimatedElement::DrawTexture()
 {
     if (m_shouldDraw) {
         const Vec2 sprite = m_animation.GetCurrentSprite();
         const SDL_Rect src{sprite.x, sprite.y, m_textureSize.x, m_textureSize.y};
         const SDL_Rect dst{m_position.x, m_position.y, GetTextureSize().x, GetTextureSize().y};
         m_textureController.RenderTexture(m_textureKey, src, dst);
+
+        GetAnimation().Continue(m_time.GetDeltaTime());
+
+        // TODO : No children ?
     }
 }

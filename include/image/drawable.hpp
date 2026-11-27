@@ -23,7 +23,7 @@ class Drawable
         virtual ~Drawable();
         virtual TextureKey GetTextureKey() const;
         virtual AreaSize GetTextureSize() const;
-        virtual void DrawTexture() const = 0;
+        virtual void DrawTexture() = 0;
 
         bool IsPositionInTexture(const Vec2 sp) const; // TODO : Should not use Vec2 for the parameter ?
         void LoadTexture(const std::string& textureFilepath); // Load a new texture and update the m_textureKey
@@ -59,7 +59,7 @@ class ScreenDrawable : public Drawable
         float GetZoom() const;
         bool GetShouldDraw() const;
         void SetZoom(const float zoom);
-        void DrawTexture() const override;
+        void DrawTexture() override;
         void SetScreenPosition(const ScreenPosition position);
         void SetShouldDraw(const bool shouldDraw);
         void InvertShouldDraw();

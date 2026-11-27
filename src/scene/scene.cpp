@@ -5,7 +5,7 @@
 // This controller is called only when the first Scene is loaded. Thus, the same Window is used for every Scene
 SceneController::SceneController(const int mode):
     m_window("Atlacp", {150,150,150}), m_fontController("PixelOperator8.ttf", m_window.GetSize().x*0.388), m_textureController(m_fontController, m_window.GetRenderer()), 
-    m_uiController(m_fileReader, m_textureController, "PixelOperator8"), m_uiComponentController(m_time, m_uiController),
+    m_uiController(m_time, m_fileReader, m_textureController, "PixelOperator8"), m_uiComponentController(m_uiController),
     m_context{m_window, m_time, m_fontController, m_textureController, m_fileReader, m_uiController, m_uiComponentController},
     m_pendingSwitch(std::nullopt), m_currentScene(nullptr)
 {
@@ -400,7 +400,7 @@ void EditorMapScene::Gameloop()
         if (m_isLayerRendered[i])
             m_layers[i]->DrawTexture(); // TODO : m_layers.at(i) ?
     }
-    for (const Drawable* d : m_drawables) d->DrawTexture(); // TODO : Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
+    for (Drawable* d : m_drawables) d->DrawTexture(); // TODO : Will be removed if m_tileset become a UiElement (drawed by UiController::Draw)
     
     if (eventState.selectedLayer != m_lastLayer){
         m_lastLayer = eventState.selectedLayer;

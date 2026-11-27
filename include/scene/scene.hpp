@@ -50,7 +50,7 @@ class Scene : public Notifier<SwitchEvent>
         Camera m_camera; // TODO : Could be in GameContext ?
         bool m_gameloop;
 
-        std::vector<const Drawable*> m_drawables; // TODO : Will be removed ?
+        std::vector<Drawable*> m_drawables; // TODO : Will be removed ?
 
     public:
         Scene(GameContext& context);
